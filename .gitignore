@@ -1,0 +1,10 @@
+# virtualenv
+venv/
+
+# packing
+lib/
+bin/
+
+# compiled
+*.pyc
+__pycache__/

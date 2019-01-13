@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <title>proj - Play</title>
+
+    <style>
+      #loader {
+        border: 16px solid #e2e3e5; /* Light grey */
+        border-top: 16px solid #007bff; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2.5s linear infinite;
+      }
+
+      .selected {
+        box-shadow: 0 0 0 0.2rem rgba(108,117,125,.5);
+        background-color: #5a6268;
+      }
+
+      .selected-style {
+        box-shadow: 0 0 0 0.2rem rgba(108,117,125,.5);
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-10" style="min-width: 300px; max-width: 400px;">
+
+          <div class="alert alert-warning text-center" role="alert" style="margin-top: 1.4em">
+            PRE-RELEASE
+          </div>
+
+          <form id="logout">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary" style="margin-top: 1.4em; margin: auto; display: block;">Logout</button>
+          </form>
+
+          <div id="loader" style="margin: 2.8em auto; display: block; postition: relative;"></div>
+
+          <div id="waiting-notification" style="display: none;">
+            <div id="start-time" class="alert alert-secondary text-center" role="alert">
+              Next match starts in <span id="countdown"></span>
+            </div>
+            <small class="form-text text-secondary">No need to refresh</small>
+          </div>
+
+          <div id="opponent" style="display: none;">
+            <div style="height: 202px; padding: 1.4em 0;">
+              <small class="form-text text-secondary">Opponent</small>
+              <h2><span id="opponent-str" class="badge badge-light" style="padding: .5em 16px; margin-top: 14px;">josh_schultheiss</span></h2>
+            </div>
+            <small id="action-text" class="form-text text-secondary"></small>
+          </div>
+
+          <form id="action" class="container" style="position: relative; padding: 0; display: none;">
+            {% csrf_token %}
+            <input id="action-input" type="text" name="action" value="" style="display: none;">
+            <div class="row justify-content-md-center" style="margin: auto; width: 252px;">
+              <button id="R" type="submit" class="btn btn-lg btn-secondary action-button" style="float: left; margin-top: 1.4em; margin: 0.7em; width: 2.8em;" value="R"><i style="color: #c0ebff" class="fas fa-hand-rock"></i></button>
+              <button id="P" type="submit" class="btn btn-lg btn-secondary action-button" style="float: left; margin-top: 1.4em; margin: 0.7em; width: 2.8em;" value="P"><i style="color: #ffc0cb" class="fas fa-hand-paper"></i></button>
+              <button id="S" type="submit" class="btn btn-lg btn-secondary action-button" style="float: left; margin-top: 1.4em; margin: 0.7em; width: 2.8em;" value="S"><i style="color: #c0ffd5" class="fas fa-hand-scissors"></i></button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script>
+      USER = '{{ request.user }}';
+      PENDING = '.'
+      WIN = 'w'
+      LOSS = 'l'
+      DRAW = 'd'
+      var CURR_MATCH = null;
+      var LAST_ACTION = null;
+      var LAST_RESULT = null;
+
+      function add_opponent_action_result(match) {
+        // TODO append circle with icon + color for result
+      }
+
+      function add_self_action_result(match) {
+        // TODO append circle with icon + color for result
+      }
+
+      function display_match(data) {
+          // TODO display the match data and re-enable buttons/ views
+          let match = data.data.match.fields;
+          if(data.data.match.pk !== CURR_MATCH) {
+              // nevermind
+          }
+          if(match.result_a === PENDING) {
+              if(match.user_a === USER && match.action_a !== null && match.action_a != PENDING) {
+                  LAST_ACTION = match.action_a
+                  $('#' + match.action_a).addClass('selected');
+                  $('.action-button').not('.selected').addClass('disabled');
+                  $('#action-text').text('Pending (no need to refresh)');
+              } else if(match.user_b === USER && match.action_b !== null && match.action_b != PENDING) {
+                  LAST_ACTION = match.action_b
+                  $('#' + match.action_b).addClass('selected');
+                  $('.action-button').not('.selected').addClass('disabled');
+                  $('#action-text').text('Pending (no need to refresh)');
+              } else if(match.user_c === USER && match.action_c !== null && match.action_c != PENDING) {
+                  LAST_ACTION = match.action_c
+                  $('#' + match.action_c).addClass('selected');
+                  $('.action-button').not('.selected').addClass('disabled');
+                  $('#action-text').text('Pending (no need to refresh)');
+              } else {
+                  if(match.user_a === USER) {
+                    $('#opponent-str').text(match.user_b);
+                  } else if(match.user_b === USER) {
+                    $('#opponent-str').text(match.user_a);
+                  }
+                  $('#action-text').text('Pick your action');
+                  $('.action-button').addClass('btn-secondary').removeClass('btn-success btn-danger btn-light disabled selected selected-style')
+              }
+          } else { // match is over
+              if(match.user_a === USER) {
+                  var result = match.result_a,
+                      action = match.action_a;
+              } else if(match.user_b === USER) {
+                  var result = match.result_b,
+                      action = match.action_c;
+              } else if(match.user_c === USER) {
+                  var result = match.result_c,
+                      action = match.action_c;
+              }
+              LAST_ACTION = action;
+              LAST_RESULT = result;
+              if(result === WIN) {
+                  var classs = 'btn-success'
+              } else if(result === LOSS) {
+                  var classs = 'btn-danger'
+              } else if(result === DRAW) {
+                  var classs = 'btn-light'
+              }
+              $('#' + action).removeClass('btn-secondary').addClass(classs).addClass('selected');
+              $('.action-button').not('.selected').addClass('disabled');
+              $('#' + action).removeClass('selected');
+              $('#' + action).addClass('selected-style');
+          }
+          $('#loader').hide();
+          $('#waiting-notification').hide();
+          $('#opponent').show();
+          $('#action').show();
+          // TODO display time left
+          // clearInterval(get_match_interval);
+      }
+
+      function get_match() {
+          $.ajax({
+              url:'../api/match/get',
+              type:'get',
+              error: function(e) {
+                  if(e.statusText === 'No Match exists that belongs to User') {
+                      $('#start-time').text(e.statusText);
+                      $('#waiting-notification').show()
+                  }
+              },
+              success: function(e) {
+                  let data = JSON.parse(e);
+                  CURR_MATCH = data.data.match.pk;
+                  display_match(data);
+              }
+          });
+      }
+
+      $('#logout').submit(function(e){
+          e.preventDefault();
+          $.ajax({
+              url: '../api/user/logout/',
+              type: 'post',
+              data: $('#logout').serialize(),
+              success: function() {
+                  window.location = '/'
+              }
+          });
+      });
+
+      $('#action').submit(function(e){
+          e.preventDefault();
+          if($('.disabled').length) {
+            $('.selected').focus();
+            return;
+          }
+          let $this = $(this).find(":focus" );
+          let val = $this.val();
+          LAST_ACTION = val;
+          $this.addClass('selected');
+          $('#action-input').val(val);
+          $('#action-text').text('Pending (no need to refresh)');
+          $('.action-button').not('.selected').addClass('disabled');
+          $.ajax({
+              url: '../api/match/action',
+              type: 'post',
+              data: $('#action').serialize(),
+              error: function(e, fdkjsl) {
+                  $('#action-text').removeClass('text-secondary').addClass('text-danger').text(e.statusText);
+              },
+              success: function(e, fdkjsl) {
+                  let data = JSON.parse(e).data;
+                  if(is_over) {
+                      display_results(data);
+                      if(is_draw) {
+                          setTimeout((function() {
+                              display_match(data);
+                          })(data), 1000);
+                      } else {
+                          get_match_interval = setInterval(get_match, 2000)
+                      }
+                  }
+                  $('#action-text').text('Pending')
+              }
+          });
+      });
+
+      get_match();
+      get_match_interval = setInterval(get_match, 2000)
+    </script>
+  </body>
+</html>
