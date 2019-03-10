@@ -13,7 +13,11 @@ class Chess(models.Model):
 
     objects = ChessManager.from_queryset(ChessQuerySet)()
 
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
 
     board = models.CharField(max_length=92)
 
