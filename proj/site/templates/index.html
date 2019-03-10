@@ -22,9 +22,9 @@
           <form id="sign-up">
             {% csrf_token %}
             <div class="form-group">
-              <label for="sign-up-username">Email</label>
-              <input type="text" class="form-control" id="sign-up-email" aria-describedby="sign-up-email-help" placeholder="Enter email" name="email">
-              <small id="sign-up-email-help" class="form-text text-muted">Used to identify your account.</small>
+              <label for="sign-up-username">Username</label>
+              <input type="text" class="form-control" id="sign-up-username" aria-describedby="sign-up-username-help" placeholder="Enter username" name="username">
+              <small id="sign-up-username-help" class="form-text text-muted">Used to identify your account.</small>
             </div>
             <div class="form-group">
               <label for="sign-up-username">Password</label>
@@ -36,7 +36,8 @@
               <label class="form-check-label" for="sign-up-terms">Agree to <a href="privacy-policy">Privacy Policy</a></label>
             </div>
 
-            <button type="button" class="btn btn-primary" style="margin-top: 1.4em; float: right;">Sign Up</button>
+            <button type="submit" form="sign-up" class="btn btn-primary" style="margin-top: 1.4em; float: right;">Sign Up</button>
+            <br><br><br>
 
             <p id="sign-up-error" class="text-info" style="margin-top: 1.4em"><p>
           </form>
@@ -46,9 +47,9 @@
           <form id="log-in">
             {% csrf_token %}
             <div class="form-group">
-              <label for="log-in-username">Email</label>
-              <input type="text" class="form-control" id="log-in-email" aria-describedby="log-in-email-help" placeholder="Enter email" name="email">
-              <small id="log-in-email-help" class="form-text text-muted">Used to identify your account.</small>
+              <label for="log-in-username">Username</label>
+              <input type="text" class="form-control" id="log-in-username" aria-describedby="log-in-username-help" placeholder="Enter username" name="username">
+              <small id="log-in-username-help" class="form-text text-muted">Used to identify your account.</small>
             </div>
             <div class="form-group">
               <label for="log-in-password">Password</label>
@@ -56,7 +57,7 @@
               <small id="log-in-password-help" class="form-text text-muted">Used to secure your account.</small>
             </div>
 
-            <button type="button" class="btn btn-primary" style="margin-top: 1.4em; float: right;">Log In</button>
+            <button type="submit" form="log-in" class="btn btn-primary" style="margin-top: 1.4em; float: right;">Log In</button>
 
             <p id="log-in-error" class="text-info" style="margin-top: 1.4em"><p>
           </form>
@@ -73,30 +74,31 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script>
       $('#sign-up').submit(function(e) {
+        console.log($('#sign-up').serialize())
           e.preventDefault();
           $.ajax({
-              url:'../api/user/create/',
-              type:'post',
-              data:$('#express-login').serialize(),
+              url: '../api/user/create/',
+              type: 'post',
+              data: $('#sign-up').serialize(),
               error: function(e) {
-                  $('#sign-up-error').text(e.statusText)
+                  $('#sign-up-error').text(e.statusText);
               },
               success: function(e) {
-                  window.location = 'home'
+                  window.location = 'home';
               }
           });
       });
       $('#log-in').submit(function(e) {
           e.preventDefault();
           $.ajax({
-              url:'../api/user/authenticate/',
-              type:'post',
-              data:$('#log-in').serialize(),
+              url: '../api/user/authenticate/',
+              type: 'post',
+              data: $('#log-in').serialize(),
               error: function(e) {
-                  $('#log-in-error').text(e.statusText)
+                  $('#log-in-error').text(e.statusText);
               },
               success: function(e) {
-                  window.location = 'home'
+                  window.location = 'home';
               }
           });
       });

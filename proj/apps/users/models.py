@@ -6,6 +6,7 @@ from django.utils import timezone
 from .managers import UserManager
 from .querysets import UserQuerySet
 
+
 class User(AbstractUser):
 
     objects = UserManager.from_queryset(UserQuerySet)()

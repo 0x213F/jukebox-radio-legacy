@@ -29,6 +29,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
 	SERVER_IP,
 	'localhost',
+	'127.0.0.1',
 ]
 
 
@@ -42,10 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 	'proj.apps.chess',
-	'proj.apps.user',
+	'proj.apps.users',
 ]
 
-AUTH_USER_MODEL = 'user.User'
+AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

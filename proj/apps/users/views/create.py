@@ -4,12 +4,14 @@ from django.contrib.auth import login
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_protect
 
-from proj.apps.user.forms import UserForm
+from proj.apps.users.forms import UserForm
 
 User = get_user_model()
 
 
+@csrf_protect
 def create_view(request):
 
     # authentication
@@ -22,28 +24,27 @@ def create_view(request):
     # - - - - - - - -
     username = request.POST.get('username', None)
     password = request.POST.get('password', None)
+    print(username, password)
     if not username or not password:
         return HttpResponse(status=400)
 
-    email_addr = request.POST.get('email', None)
-    phone_num = request.POST.get('phone', None)
-    if (not email_addr) and (not phone_num):
-        return HttpResponse(status=400)
-
-    # verify
-    # - - - - - -
-    Email.verify(email_addr) if email_addr else SMS.verify(phone_num)
+    # # recovery options
+    # # - - - - - - - - -
+    # email_addr = request.POST.get('email', None)
+    # phone_num = request.POST.get('phone', None)
+    # if (not email_addr) and (not phone_num):
+    #     return HttpResponse(status=400)
+    #
+    # # verify
+    # # - - - - - -
+    # Email.verify(email_addr) if email_addr else SMS.verify(phone_num)
 
     # create
     # - - - -
     try:
-        user = User.objects.create_user(
-            username,
-            password=password,
-            email=email,
-            phone=phone,
-        )
+        user = User.objects.create(username, password)
         login(request, user)
         return HttpResponse(status=201)
-    except Exception:
+    except Exception as e:
+        print(e)
         return HttpResponse(status=400)

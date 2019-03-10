@@ -9,7 +9,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 
-from proj.apps.user.forms import UserForm
+from proj.apps.users.forms import UserForm
 
 User = get_user_model()
 

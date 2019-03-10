@@ -11,7 +11,7 @@ def create_view(request):
     # create
     # - - - -
     fields = {
-        board=chess.Board().fen(),
+        board: chess.Board().fen(),
     }
     attr(fields, random.choice('black, white'), request.user)
     chess = Chess.objects.create(**fields)
