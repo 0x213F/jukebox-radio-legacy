@@ -82,11 +82,11 @@
       $('#create-game').submit(function(e){
           e.preventDefault();
           $.ajax({
-              url: '../api/chess/create/',
+              url: '../api/game/create/',
               type: 'post',
               data: $('#create-game').serialize(),
-              success: function() {
-                  window.location = '/play'
+              success: function(data, status) {
+                  window.location = `/play/${data.uuid}`
               }
           });
       });

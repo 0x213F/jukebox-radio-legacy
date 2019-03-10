@@ -1,6 +1,7 @@
 
+
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import JsonResponse
 
 from proj.apps.chess.models import Chess
 
@@ -8,11 +9,19 @@ from proj.apps.chess.models import Chess
 @login_required
 def create_view(request):
 
+    import chess
+    import json
+    import random
+
     # create
     # - - - -
     fields = {
-        board: chess.Board().fen(),
+        'board': chess.Board().fen(),
     }
-    attr(fields, random.choice('black, white'), request.user)
+    player = random.choice(['black', 'white'])
+    fields[player] = request.user
     chess = Chess.objects.create(**fields)
-    return HttpResponse(status=200)
+    return JsonResponse({
+        'uuid': chess.uuid,
+        'player': player,
+    })

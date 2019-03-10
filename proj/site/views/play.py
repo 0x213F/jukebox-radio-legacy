@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 
 
-def home_view(request):
+def play_view(request, uuid):
 
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/')
