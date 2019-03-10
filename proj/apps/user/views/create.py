@@ -12,36 +12,38 @@ User = get_user_model()
 
 def create_view(request):
 
-    # user must be logged out to create a user
+    # authentication
+    # - - - - - - - -
     if request.user.is_authenticated:
         return HttpResponse(status=403)
 
-    # required params
+
+    # form validation
+    # - - - - - - - -
     username = request.POST.get('username', None)
     password = request.POST.get('password', None)
-    if not (username and password):
+    if not username or not password:
         return HttpResponse(status=400)
 
-    # semi-optional params
-    email = request.POST.get('email', None)
-    phone = request.POST.get('phone', None)
-    if (not email) and (not phone):
-        return HttpResponse(status=400)
-    elif email:
-        pass  # TODO send email verification
-    elif phone:
-        pass  # TODO send phone verficiation
-
-    # verify the username doesn't already exist
-    if User.objects.filter(username=username).count():
+    email_addr = request.POST.get('email', None)
+    phone_num = request.POST.get('phone', None)
+    if (not email_addr) and (not phone_num):
         return HttpResponse(status=400)
 
-    # create user
-    user = User.objects.create_user(
-        username,
-        password=password,
-        email=email,
-        phone=phone,
-    )
-    login(request, user)
-    return HttpResponse(status=201)
+    # verify
+    # - - - - - -
+    Email.verify(email_addr) if email_addr else SMS.verify(phone_num)
+
+    # create
+    # - - - -
+    try:
+        user = User.objects.create_user(
+            username,
+            password=password,
+            email=email,
+            phone=phone,
+        )
+        login(request, user)
+        return HttpResponse(status=201)
+    except Exception:
+        return HttpResponse(status=400)

@@ -13,4 +13,9 @@ class User(AbstractUser):
     phone = models.CharField(
         max_length=32,
         null=True,
+        unique=True,
+    )
+
+    pin = models.CharField(
+        max_length=4,
     )

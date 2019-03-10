@@ -7,7 +7,8 @@ from django.contrib.auth import authenticate
 
 def authenticate_view(request):
 
-    # user must be logged out to login
+    # authentication
+    # - - - - - - - -
     if request.user.is_authenticated:
         return HttpResponse(status=403)
 
