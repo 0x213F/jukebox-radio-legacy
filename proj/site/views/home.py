@@ -8,4 +8,4 @@ def home_view(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/')
 
-    return TemplateResponse(request, 'play.html')
+    return TemplateResponse(request, 'home.html')
