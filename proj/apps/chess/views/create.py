@@ -8,20 +8,17 @@ from proj.apps.chess.models import Chess
 
 @login_required
 def create_view(request):
-
     import chess
     import json
     import random
 
-    # create
-    # - - - -
-    fields = {
-        'board': chess.Board().fen(),
-    }
+    fields = {'board': chess.Board().fen()}
     player = random.choice(['black', 'white'])
     fields[player] = request.user
+
     chess = Chess.objects.create(**fields)
+
     return JsonResponse({
-        'uuid': chess.uuid,
+        'code': chess.code,
         'player': player,
     })

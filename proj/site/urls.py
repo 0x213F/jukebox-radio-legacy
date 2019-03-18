@@ -10,6 +10,6 @@ from .views import privacy_policy_view
 urlpatterns = [
     path('', index_view),
     path('home/', home_view),
-    path('play/<uuid>/', play_view),
+    path('play/', play_view),
     path('privacy-policy/', privacy_policy_view),
 ]

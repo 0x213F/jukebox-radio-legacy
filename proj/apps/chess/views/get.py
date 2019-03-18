@@ -1,23 +1,33 @@
 
 import chess
 
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseNotFound
 from django.http import JsonResponse
 
 from proj.apps.chess.models import Chess
 
+
+@login_required
 def get_view(request):
-
     import chess
-    uuid = request.GET.get('uuid', None)
-    game = Chess.objects.get(uuid=uuid)
 
-    if request.user == game.white:
-        return JsonResponse({
-            'board': game.board,
-            'player': 'white',
-        })
+    code = request.GET.get('code', None)
+
+    games = Chess.objects.active()
+    if code:
+        games = games.filter(code=code)
     else:
-        return JsonResponse({
-            'board': game.board,
-            'player': 'black',
-        })
+        games = games.belongs_to(request.user)
+
+    if games.count() == 0:
+        return HttpResponseNotFound()
+    if games.count() != 1:
+        RuntimeError('Multiple games found.')
+
+    game = games.first()
+    player = 'white 'if request.user == game.white else 'black'
+    return JsonResponse({
+        'board': game.board,
+        'player': player,
+    })
