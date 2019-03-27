@@ -8,6 +8,9 @@ from proj.apps.chess.models import Chess
 
 @login_required
 def create_view(request):
+    '''
+    TODO docstring
+    '''
     import chess
     import json
     import random

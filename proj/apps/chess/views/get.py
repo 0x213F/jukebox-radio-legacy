@@ -10,6 +10,9 @@ from proj.apps.chess.models import Chess
 
 @login_required
 def get_view(request):
+    '''
+    TODO docstring
+    '''
     import chess
 
     code = request.GET.get('code', None)
