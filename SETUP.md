@@ -1,4 +1,4 @@
-# Chess
+# ChessGame
 
 ## macOS
 

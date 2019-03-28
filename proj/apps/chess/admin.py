@@ -2,6 +2,6 @@
 # from django.contrib import admin
 # from django.contrib.auth.admin import UserAdmin
 #
-# from .models import Chess
+# from .models import ChessGame
 #
-# admin.site.register(Chess, ChessAdmin)
+# admin.site.register(ChessGame, ChessGameAdmin)

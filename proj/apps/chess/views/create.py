@@ -3,7 +3,7 @@
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
-from proj.apps.chess.models import Chess
+from proj.apps.chess.models import ChessGame
 
 
 @login_required
@@ -19,7 +19,7 @@ def create_view(request):
     player = random.choice(['black', 'white'])
     fields[player] = request.user
 
-    chess = Chess.objects.create(**fields)
+    chess = ChessGame.objects.create(**fields)
 
     return JsonResponse({
         'code': chess.code,

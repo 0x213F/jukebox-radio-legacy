@@ -7,19 +7,20 @@ from django.conf import settings
 from django.db import models
 from django.forms import fields
 
-from .managers import ChessManager
-from .querysets import ChessQuerySet
+from proj.apps.chess.models.managers import ChessGameManager
+from proj.apps.chess.models.querysets import ChessGameQuerySet
 
-class Chess(models.Model):
+
+class ChessGame(models.Model):
 
     # - - - - - - -
-    # code config
+    # config join code
     # - - - - - - -
 
-    CODE_LENGTH = 4
+    JOIN_CODE_LENGTH = 4
 
     # - - - - - - - -
-    # status config
+    # config status
     # - - - - - - - -
 
     STATUS_PENDING = 'pending'
@@ -36,8 +37,19 @@ class Chess(models.Model):
         STATUS_COMPLETE,
     )
 
+    # - - - - - - - - -
+    # config defaults
+    # - - - - - - - - -
 
-    objects = ChessManager.from_queryset(ChessQuerySet)()
+    DEFAULT_USER_CLOCK_IN_SECONDS = 60 * 5
+
+    DEFAULT_MOVE_BOUNCE_BACK_IN_SECONDS = 5
+
+    # - - - - - - - - -
+    # game properties
+    # - - - - - - - - -
+
+    objects = ChessGameManager.from_queryset(ChessGameQuerySet)()
 
     created_at = models.DateTimeField(
         default=datetime.datetime.now
@@ -55,25 +67,47 @@ class Chess(models.Model):
         blank=True,
     )
 
-    code = models.CharField(
+    join_code = models.CharField(
         editable=False,
-        max_length=CODE_LENGTH,
+        max_length=JOIN_CODE_LENGTH,
     )
 
-    board = models.CharField(max_length=92)
+    board = models.CharField(
+        max_length=92,
+    )
 
-    black = models.ForeignKey(
+    bounce_back = models.FloatField(
+        default=DEFAULT_MOVE_BOUNCE_BACK_IN_SECONDS,
+    )
+
+    # - - - - - - - - -
+    # black properties
+    # - - - - - - - - -
+
+    black_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='blacks',
         on_delete=models.DO_NOTHING,
         null=True,
     )
 
-    white = models.ForeignKey(
+    black_time = models.FloatField(
+        default=DEFAULT_USER_CLOCK_IN_SECONDS,
+    )
+
+    # - - - - - - - - -
+    # white properties
+    # - - - - - - - - -
+
+    white_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='whites',
         on_delete=models.DO_NOTHING,
         null=True,
+    )
+
+    white_time = models.FloatField(
+        default=DEFAULT_USER_CLOCK_IN_SECONDS,
     )
 
     # - - - - -
@@ -83,16 +117,16 @@ class Chess(models.Model):
         '''
         Override default create method.
         '''
-        from .models import Chess
+        from .models import ChessGame
 
         code = kwargs.pop('code', False)
         if code:
-            raise ValueError('Chess.code must be randomly generated.')
+            raise ValueError('ChessGame.code must be randomly generated.')
 
         # randomly generate a code
         while True:
             code = self.generate_code()
-            if Chess.objects.active().filter(code=code).exists():
+            if ChessGame.objects.active().filter(code=code).exists():
                 continue
             break
 

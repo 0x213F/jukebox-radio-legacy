@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseNotFound
 from django.http import JsonResponse
 
-from proj.apps.chess.models import Chess
+from proj.apps.chess.models import ChessGame
 
 
 @login_required
@@ -17,7 +17,7 @@ def get_view(request):
 
     code = request.GET.get('code', None)
 
-    games = Chess.objects.active()
+    games = ChessGame.objects.active()
     if code:
         games = games.filter(code=code)
     else:
