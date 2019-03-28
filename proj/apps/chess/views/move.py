@@ -2,6 +2,7 @@
 import chess
 
 from django.contrib.auth.decorators import login_required
+from django.db.models import F
 from django.http import HttpResponse
 from django.http import JsonResponse
 
@@ -25,7 +26,15 @@ def move_view(request):
         move = chess.Move.from_uci(uci)
         board.push(move)
         updated_board = board.fen()
-        game.update(board=updated_board)
+
+        game.update(board=updated_board, steps=F('steps') + 1)
+
+        ChessSnapshot.objects.create(
+            actor=request.user,
+            is_move=True,
+            step=game.steps,
+        )
+
         return JsonResponse(updated_board.__dict__)
 
     except Exception:

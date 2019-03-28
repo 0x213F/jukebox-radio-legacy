@@ -30,7 +30,11 @@ class ChessSnapshot(models.Model):
         blank=True,
     )
 
-    is_move = models.BooleanField()
+    move = models.BooleanField()
+
+    step = models.IntegerField()
+
+    is_executed = models.BooleanField()
 
     # - - - - -
     # methods

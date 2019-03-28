@@ -110,6 +110,14 @@ class ChessGame(models.Model):
         default=DEFAULT_USER_CLOCK_IN_SECONDS,
     )
 
+    # - - - -
+    # state
+    # - - - -
+
+    steps = models.IntegerField(
+        default=0,
+    )
+
     # - - - - -
     # methods
     # - - - - -
