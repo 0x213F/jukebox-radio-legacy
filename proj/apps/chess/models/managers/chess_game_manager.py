@@ -55,14 +55,42 @@ class ChessGameManager(models.Manager):
 
     def join_match(self, game, user, **kwargs):
         '''
-        todo: docstring
+        Validates, then allows user to join match.
         '''
-        pass
+
+        if game:
+            raise Exception('Already in a game.')
+
+        join_code = kwargs.pop('join_code', None)
+        if join_code != game.join_code:
+            raise Exception('Invalid join code.')
+
+        if not game.black:
+            game.black = user
+        elif not game.white:
+            game.white = user
+        else:
+            raise Exception('Game already has 2 players.')
+
+        game.save()
+
+        ChessSnapshot.objects.create(
+            action=ChessSnapshot.ACTION_JOIN_MATCH,
+            actor=user,
+            board=game.board,
+            game=game,
+            step=game.steps,
+        )
+
+        return game
 
     def close_match(self, game, user, **kwargs):
         '''
         todo: docstring
         '''
+
+        if not game:
+            raise Exception('Not in game.')
 
         player = game.get_player(user)
 
@@ -81,36 +109,13 @@ class ChessGameManager(models.Manager):
         todo: docstring
         '''
 
+        if not game:
+            raise Exception('Not in game.')
+
         player = game.get_player(user)
 
         ChessSnapshot.objects.create(
             action=ChessSnapshot.ACTION_RESIGN,
-            actor=user,
-            board=game.board,
-            game=game,
-            step=game.steps,
-        )
-
-        return self._end(game)
-
-    def decline_rematch(self, game, user, **kwargs):
-        '''
-        todo: docstring
-        '''
-
-        player = game.get_player(user)
-
-        latest_move = (
-            game.snapshots.
-            filter(
-                action=ChessSnapshot.ACTION_TAKE_MOVE,
-            )
-        )
-        if latest_move.exists():
-            raise Exception('Cannot decline rematch for pending match.')
-
-        ChessSnapshot.objects.create(
-            action=ChessSnapshot.ACTION_DECLINE_REMATCH,
             actor=user,
             board=game.board,
             game=game,
@@ -126,11 +131,10 @@ class ChessGameManager(models.Manager):
     def take_move(self, game, user, **kwargs):
         '''
         todo: docstring
-
-        does this take into consideration castling?
-        promotion to queen?
-        whos turn it is?
         '''
+
+        if not game:
+            raise Exception('Not in game.')
 
         player = game.get_player(user)
 

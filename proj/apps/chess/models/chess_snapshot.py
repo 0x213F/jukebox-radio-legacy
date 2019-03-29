@@ -23,7 +23,6 @@ class ChessSnapshot(models.Model):
 
     ACTION_CLOSE_MATCH = 'close_match'
     ACTION_RESIGN = 'resign'
-    ACTION_DECLINE_REMATCH = 'decline_rematch'
 
     ACTION_TAKE_MOVE = 'take_move'
     ACTION_UNDO_MOVE = 'undo_move'
@@ -54,6 +53,7 @@ class ChessSnapshot(models.Model):
         default=datetime.datetime.now
     )
 
+    # TODO add the color of who did the action
     action = models.CharField()
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
