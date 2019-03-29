@@ -1,4 +1,6 @@
 
+import chess
+import json
 import random
 import string
 
@@ -20,3 +22,57 @@ class ChessGameManager(models.Manager):
             string.ascii_lowercase + string.digits,
             ChessGame.CODE_LENGTH
         )
+
+    def take_move(self, game, user):
+        '''
+        todo: docstring
+        '''
+        pass
+
+    def suggest_move(self, game, user=None):
+        '''
+        todo: docstring
+        '''
+        pass
+
+    def close_match(self, game, user=None):
+        '''
+        todo: docstring
+        '''
+        pass
+
+    def resign(self, game, user):
+        '''
+        todo: docstring
+        '''
+        pass
+
+    def decline_rematch(self, game, user):
+        '''
+        todo: docstring
+        '''
+        pass
+
+    def submit_undo_request(self, game, user):
+        '''
+        todo: docstring
+        '''
+        pass
+
+    def approve_undo_request(self, game, user):
+        '''
+        todo: docstring
+        '''
+        pass
+
+    def reject_undo_request(self, game, user):
+        '''
+        todo: docstring
+        '''
+        pass
+
+    def undo_move(self, game, user):
+        '''
+        todo: docstring
+        '''
+        pass

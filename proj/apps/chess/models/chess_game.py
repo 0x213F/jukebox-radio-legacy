@@ -13,6 +13,8 @@ from proj.apps.chess.models.querysets import ChessGameQuerySet
 
 class ChessGame(models.Model):
 
+    objects = ChessGameManager.from_queryset(ChessGameQuerySet)()
+
     # - - - - - - -
     # config join code
     # - - - - - - -
@@ -23,61 +25,72 @@ class ChessGame(models.Model):
     # config status
     # - - - - - - - -
 
-    STATUS_PENDING = 'pending'
-    STATUS_WARNING = 'warning'
+    STATUS_PENDING_GAME_START = 'pending_game_start'
+    STATUS_PENDING_OPPONENT = 'pending_opponent'
+    STATUS_WARNING_GAME_CANCELLATION = 'warning_game_cancellation'
+    STATUS_GAME_COMPLETE = 'complete'
+
     STATUS_MY_TURN = 'my_turn'
     STATUS_THEIR_TURN = 'their_turn'
-    STATUS_COMPLETE = 'complete'
 
     STATUS_CHOICES = (
-        STATUS_PENDING,
-        STATUS_WARNING,
+        STATUS_PENDING_GAME_START,
+        STATUS_PENDING_OPPONENT,
+        STATUS_WARNING_GAME_CANCELLATION,
+        STATUS_GAME_COMPLETE,
         STATUS_MY_TURN,
         STATUS_THEIR_TURN,
-        STATUS_COMPLETE,
     )
 
     # - - - - - - - - -
     # config defaults
     # - - - - - - - - -
 
-    DEFAULT_USER_CLOCK_IN_SECONDS = 60 * 5
+    DEFAULT_GAME_CLOCK_IN_SECONDS = 3000  # 5 minutes
+    DEFAULT_MOVE_REBOUND_IN_SECONDS = 5
 
-    DEFAULT_MOVE_BOUNCE_BACK_IN_SECONDS = 5
+    # - - - - - - - - - - - -
+    # identifier properties
+    # - - - - - - - - - - - -
+
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False,
+        unique=True,
+    )
+    join_code = models.CharField(
+        editable=False,
+        max_length=JOIN_CODE_LENGTH,
+    )
 
     # - - - - - - - - -
-    # game properties
+    # time properties
     # - - - - - - - - -
-
-    objects = ChessGameManager.from_queryset(ChessGameQuerySet)()
 
     created_at = models.DateTimeField(
         default=datetime.datetime.now
     )
-
     started_at = models.DateTimeField(
         default=None,
         null=True,
         blank=True,
     )
-
     finished_at = models.DateTimeField(
         default=None,
         null=True,
         blank=True,
     )
 
-    join_code = models.CharField(
-        editable=False,
-        max_length=JOIN_CODE_LENGTH,
-    )
+    # - - - - - - - - -
+    # configuration properties
+    # - - - - - - - - -
 
-    board = models.CharField(
-        max_length=92,
+    is_private = models.BooleanField()
+    game_clock = models.FloatField(
+        default=DEFAULT_GAME_CLOCK_IN_SECONDS,
     )
-
-    bounce_back = models.FloatField(
-        default=DEFAULT_MOVE_BOUNCE_BACK_IN_SECONDS,
+    move_rebound = models.FloatField(
+        default=DEFAULT_MOVE_REBOUND_IN_SECONDS,
     )
 
     # - - - - - - - - -
@@ -95,6 +108,10 @@ class ChessGame(models.Model):
         default=DEFAULT_USER_CLOCK_IN_SECONDS,
     )
 
+    black_status = models.CharField(
+        choices=STATUS_CHOICES,
+    )
+
     # - - - - - - - - -
     # white properties
     # - - - - - - - - -
@@ -110,6 +127,10 @@ class ChessGame(models.Model):
         default=DEFAULT_USER_CLOCK_IN_SECONDS,
     )
 
+    white_status = models.CharField(
+        choices=STATUS_CHOICES,
+    )
+
     # - - - -
     # state
     # - - - -
@@ -118,12 +139,17 @@ class ChessGame(models.Model):
         default=0,
     )
 
+    board = models.CharField(
+        max_length=92,
+    )
+
     # - - - - -
     # methods
     # - - - - -
+
     def create(self, *args, **kwargs):
         '''
-        Override default create method.
+        Override default create method to allow random generated join code.
         '''
         from .models import ChessGame
 

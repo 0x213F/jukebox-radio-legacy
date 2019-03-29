@@ -2,8 +2,10 @@
 from django.db import models
 from django.db.models import Q
 
+from proj.core.models.queryset import BaseQuerySet
 
-class ChessGameQuerySet(models.QuerySet):
+
+class ChessGameQuerySet(BaseQuerySet):
     '''
     todo: docstring
     '''
@@ -14,7 +16,7 @@ class ChessGameQuerySet(models.QuerySet):
         '''
         return self.filter(finished_at__isnull=True)
 
-    def belongs_to(self, *users):
+    def belong_to(self, *users):
         '''
         ChessGame objects that belong to certain users.
         '''
