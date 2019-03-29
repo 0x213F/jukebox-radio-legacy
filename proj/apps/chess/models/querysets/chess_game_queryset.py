@@ -21,3 +21,6 @@ class ChessGameQuerySet(BaseQuerySet):
         ChessGame objects that belong to certain users.
         '''
         return self.filter(Q(black__in=users) | Q(white__in=users))
+
+    def private(self):
+        return self.filter(is_private=False)

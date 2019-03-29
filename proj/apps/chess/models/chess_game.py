@@ -108,8 +108,8 @@ class ChessGame(models.Model):
         default=DEFAULT_USER_CLOCK_IN_SECONDS,
     )
 
-    black_status = models.CharField(
-        choices=STATUS_CHOICES,
+    black_status = models.CharField(  # NOTE: for convenience
+        choices=STATUS_CHOICES,       #       does NOT enforce state
     )
 
     # - - - - - - - - -
@@ -127,8 +127,8 @@ class ChessGame(models.Model):
         default=DEFAULT_USER_CLOCK_IN_SECONDS,
     )
 
-    white_status = models.CharField(
-        choices=STATUS_CHOICES,
+    white_status = models.CharField(  # NOTE: for convenience
+        choices=STATUS_CHOICES,       #       does NOT enforce state
     )
 
     # - - - -
@@ -166,3 +166,14 @@ class ChessGame(models.Model):
 
         kwargs['code'] = code
         return super.create(*args, **kwargs)
+
+    def get_player(self, user):
+        '''
+        todo: docstring
+        '''
+        if self.black == user:
+            return 'black'
+        elif self.white == user:
+            return 'white'
+        else:
+            raise Exception('User not in game.')
