@@ -53,7 +53,6 @@ class ChessSnapshot(models.Model):
         default=datetime.datetime.now
     )
 
-    # TODO add the color of who did the action
     action = models.CharField()
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -81,20 +80,18 @@ class ChessSnapshot(models.Model):
 
     def create(self, *args, **kwargs):
         '''
-        Override default create method.
+        Override default create method to set defaults for `board` and `step`.
         '''
         from .models import ChessGame
 
-        code = kwargs.pop('code', False)
-        if code:
-            raise ValueError('ChessGame.code must be randomly generated.')
+        game = kwargs.get('game', None)
+        if game:
+            raise ValueError('ChessSnapshot must have an associated game.')
 
-        # randomly generate a code
-        while True:
-            code = self.generate_code()
-            if ChessGame.objects.active().filter(code=code).exists():
-                continue
-            break
+        if not kwargs.get('board', None):
+            kwargs['board'] = game.board
 
-        kwargs['code'] = code
+        if not kwargs.get('step', None):
+            kwargs['step'] = game.steps
+
         return super.create(*args, **kwargs)

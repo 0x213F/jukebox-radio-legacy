@@ -108,8 +108,8 @@ class ChessGame(models.Model):
         default=DEFAULT_USER_CLOCK_IN_SECONDS,
     )
 
-    black_status = models.CharField(  # NOTE: for convenience
-        choices=STATUS_CHOICES,       #       does NOT enforce state
+    black_status = models.CharField(
+        choices=STATUS_CHOICES,
     )
 
     # - - - - - - - - -
@@ -157,7 +157,7 @@ class ChessGame(models.Model):
         if code:
             raise ValueError('ChessGame.code must be randomly generated.')
 
-        # randomly generate a code
+        # randomly generate a valid code
         while True:
             code = self.generate_code()
             if ChessGame.objects.active().filter(code=code).exists():
@@ -175,5 +175,13 @@ class ChessGame(models.Model):
             return 'black'
         elif self.white == user:
             return 'white'
+        else:
+            raise Exception('User not in game.')
+
+    def get_opponent(self, user):
+        if self.black == user:
+            return 'white'
+        elif self.white == user:
+            return 'black'
         else:
             raise Exception('User not in game.')

@@ -8,19 +8,31 @@ class ChessSnapshotQuerySet(models.QuerySet):
     todo: docstring
     '''
 
-    def most_recent(self):
-        '''
-        todo: docstring
-        '''
-        return self.order_by('+step')  # TODO only get most recent
+    def suggestions(self, game):
+        return (
+            self.filter(
+                step__gt=game.steps,
+                ChessSnapshot.ACTION_SUGGEST_MOVE,
+            )
+        )
 
-    def get_popular_move(self, game):
+    def relevant(self):
         '''
-        todo: docstring
+        todo
+        '''
+        return self
+
+    def latest_move(self):
+        '''
+        todo
         '''
         return (
-            game.snapshots.most_recent.
-            filter(
-                action=ChessSnapshot.ACTION_SUGGEST_MOVE,
-            )
+            self.filter(
+                action__in=[
+                    ChessSnapshot.ACTION_TAKE_MOVE,
+                    ChessSnapshot.ACTION_ASK_UNDO_REQUEST,
+                ],
+                game=game,
+            ).
+            latest('created_at')
         )
