@@ -33,16 +33,15 @@ class ChessSnapshot(models.Model):
     ACTION_REJECT_UNDO_REQUEST = 'reject_undo_request'
 
     ACTION_CHOICES = (
-        ACTION_JOIN_MATCH,
-        ACTION_CLOSE_MATCH,
-        ACTION_RESIGN,
-        ACTION_DECLINE_REMATCH,
-        ACTION_TAKE_MOVE,
-        ACTION_SUGGEST_MOVE,
-        ACTION_ASK_UNDO_REQUEST,
-        ACTION_APPROVE_UNDO_REQUEST,
-        ACTION_REJECT_UNDO_REQUEST,
-        ACTION_UNDO_MOVE,
+        (ACTION_JOIN_MATCH, ACTION_JOIN_MATCH),
+        (ACTION_CLOSE_MATCH, ACTION_CLOSE_MATCH),
+        (ACTION_RESIGN, ACTION_RESIGN),
+        (ACTION_TAKE_MOVE, ACTION_TAKE_MOVE),
+        (ACTION_SUGGEST_MOVE, ACTION_SUGGEST_MOVE),
+        (ACTION_ASK_UNDO_REQUEST, ACTION_ASK_UNDO_REQUEST),
+        (ACTION_APPROVE_UNDO_REQUEST, ACTION_APPROVE_UNDO_REQUEST),
+        (ACTION_REJECT_UNDO_REQUEST, ACTION_REJECT_UNDO_REQUEST),
+        (ACTION_UNDO_MOVE, ACTION_UNDO_MOVE)
     )
 
     # - - - - - -
@@ -53,7 +52,10 @@ class ChessSnapshot(models.Model):
         default=datetime.datetime.now
     )
 
-    action = models.CharField()
+    action = models.CharField(
+        choices=ACTION_CHOICES,
+        max_length=32,
+    )
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='actors',

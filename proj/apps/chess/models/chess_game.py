@@ -15,31 +15,43 @@ class ChessGame(models.Model):
 
     objects = ChessGameManager.from_queryset(ChessGameQuerySet)()
 
-    # - - - - - - -
+    # - - - - - - - - -
     # config join code
-    # - - - - - - -
+    # - - - - - - - - -
 
     JOIN_CODE_LENGTH = 4
+
+    # - - - - - - - -
+    # config players
+    # - - - - - - - -
+
+    PLAYER_BLACK = 'black'
+    PLAYER_WHITE = 'white'
+
+    PLAYER_CHOICES = (
+        PLAYER_BLACK,
+        PLAYER_WHITE
+    )
 
     # - - - - - - - -
     # config status
     # - - - - - - - -
 
-    STATUS_PENDING_GAME_START = 'pending_game_start'
-    STATUS_PENDING_OPPONENT = 'pending_opponent'
+    STATUS_PENDING_WAITING = 'pending_game_start'
+    STATUS_PENDING_EMPTY = 'pending_opponent'
     STATUS_WARNING_GAME_CANCELLATION = 'warning_game_cancellation'
-    STATUS_GAME_COMPLETE = 'complete'
+    STATUS_COMPLETE = 'complete'
 
     STATUS_MY_TURN = 'my_turn'
     STATUS_THEIR_TURN = 'their_turn'
 
     STATUS_CHOICES = (
-        STATUS_PENDING_GAME_START,
-        STATUS_PENDING_OPPONENT,
-        STATUS_WARNING_GAME_CANCELLATION,
-        STATUS_GAME_COMPLETE,
-        STATUS_MY_TURN,
-        STATUS_THEIR_TURN,
+        (STATUS_PENDING_WAITING, STATUS_PENDING_WAITING),
+        (STATUS_PENDING_EMPTY, STATUS_PENDING_EMPTY),
+        (STATUS_WARNING_GAME_CANCELLATION, STATUS_WARNING_GAME_CANCELLATION),
+        (STATUS_COMPLETE, STATUS_COMPLETE),
+        (STATUS_MY_TURN, STATUS_MY_TURN),
+        (STATUS_THEIR_TURN, STATUS_THEIR_TURN)
     )
 
     # - - - - - - - - -
@@ -105,11 +117,12 @@ class ChessGame(models.Model):
     )
 
     black_time = models.FloatField(
-        default=DEFAULT_USER_CLOCK_IN_SECONDS,
+        default=DEFAULT_GAME_CLOCK_IN_SECONDS,
     )
 
     black_status = models.CharField(
         choices=STATUS_CHOICES,
+        max_length=32,
     )
 
     # - - - - - - - - -
@@ -124,11 +137,12 @@ class ChessGame(models.Model):
     )
 
     white_time = models.FloatField(
-        default=DEFAULT_USER_CLOCK_IN_SECONDS,
+        default=DEFAULT_GAME_CLOCK_IN_SECONDS,
     )
 
     white_status = models.CharField(
         choices=STATUS_CHOICES,
+        max_length=32,
     )
 
     # - - - -
@@ -153,9 +167,22 @@ class ChessGame(models.Model):
         '''
         from .models import ChessGame
 
-        code = kwargs.pop('code', False)
-        if code:
-            raise ValueError('ChessGame.code must be randomly generated.')
+        black_user = kwargs.get('black_user', None)
+        white_user = kwargs.get('black_user', None)
+
+        kwargs = self._set_default_attribute('black_status')
+        kwargs = self._set_default_attribute('white_status')
+        self._assert_attribute_not_in_kwargs('code')
+        white_status = kwargs.pop('white_status', None)
+
+        kwargs['black_status'] = self.STATUS_PENDING_EMPTY
+        kwargs['white_status'] = self.STATUS_PENDING_EMPTY
+        if not black_user and not white_user:
+            raise ValueError('ChessGame must have at least one player.')
+        if black_user:
+            kwargs['black_user'] = self.STATUS_PENDING_WAITING
+        if white_user:
+            kwargs['white_user'] = self.STATUS_PENDING_WAITING
 
         # randomly generate a valid code
         while True:

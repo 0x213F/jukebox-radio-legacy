@@ -1,8 +1,9 @@
 
 from django.db import models
+from django.db.models import F
 from django.db.models import Q
 
-from proj.core.models.queryset import BaseQuerySet
+from proj.core.models.querysets import BaseQuerySet
 
 
 class ChessSnapshotQuerySet(BaseQuerySet):
@@ -13,8 +14,8 @@ class ChessSnapshotQuerySet(BaseQuerySet):
     def suggestions(self, game):
         return (
             self.filter(
-                step__gt=game.steps,
-                ChessSnapshot.ACTION_SUGGEST_MOVE,
+                step=(F(steps) + 1),
+                action=ChessSnapshot.ACTION_SUGGEST_MOVE,
             )
         )
 

@@ -1,4 +1,6 @@
 
+import json
+
 from django.contrib.auth.decorators import login_required
 from django.core.serializers import serialize
 from django.http import HttpResponse
@@ -20,16 +22,14 @@ def create_view(request):
     if pending_game.exists():
         return HttpResponse(status=500)
 
-    player, opponent = random.shuffle(['black', 'white'])
+    player = random.choice(list(ChessGame.PLAYER_CHOICES))
 
-    fields = {
+    fields = dict({
         'board': chess.Board().fen(),
         'is_private': True,
-        player: request.user,
-        f'{player}_status': ChessGame.STATUS_PENDING_GAME_START,
-        f'{opponent}_status': ChessGame.STATUS_PENDING_OPPONENT,
-    }
+    })
+    fields[f'{player}_user'] = request.user
 
     new_game = ChessGame.objects.create(**fields)
 
-    return JsonResponse(serialize(new_game))
+    return JsonResponse(json.dumps(serialize('json', [new_game])), safe=False)

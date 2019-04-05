@@ -2,7 +2,7 @@
 from django.db import models
 from django.db.models import Q
 
-from proj.core.models.queryset import BaseQuerySet
+from proj.core.models.querysets import BaseQuerySet
 
 
 class ChessGameQuerySet(BaseQuerySet):
@@ -20,7 +20,7 @@ class ChessGameQuerySet(BaseQuerySet):
         '''
         ChessGame objects that belong to certain users.
         '''
-        return self.filter(Q(black__in=users) | Q(white__in=users))
+        return self.filter(Q(black_user__in=users) | Q(white_user__in=users))
 
     def private(self):
         return self.filter(is_private=False)

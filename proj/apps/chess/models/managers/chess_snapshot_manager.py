@@ -2,7 +2,7 @@
 import random
 import string
 
-from proj.core.models.manager import BaseManager
+from proj.core.models.managers import BaseManager
 
 
 class ChessSnapshotManager(BaseManager):

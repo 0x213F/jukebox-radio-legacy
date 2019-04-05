@@ -48,9 +48,6 @@
           <form id="get-game">
             {% csrf_token %}
             <button type="submit" class="btn btn-secondary" style="margin-top: 1.4em; margin: auto; display: block;">Get Game</button>
-
-            <!-- TODO get from url lol -->
-            <input name="uuid" value="cae9d99b-b2b6-43c9-868d-415ca9a6b675" style="display: none;"/>
           </form>
 
           <br>
@@ -70,14 +67,21 @@
     <script>
       $('#get-game').submit(function(e){
           e.preventDefault();
-          data = $('#get-game').serialize();
+          var uuid = window.location.pathname.split('/').pop()
+          if(uuid) {
+            data = {
+              'uuid': uuid,
+            }
+          } else {
+            data={}
+          }
           $.ajax({
             // TODO not this...
               url: 'http://127.0.0.1:8000/api/game/get',
               type: 'get',
               data: data,
               success: function(data, status) {
-                $("#game-status").text(data["board"])
+                $("#game-status").text(data)
               }
           });
       });

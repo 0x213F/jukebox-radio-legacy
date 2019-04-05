@@ -9,7 +9,7 @@ from proj.apps.chess.models import ChessGame
 
 
 @login_required
-def get_view(request):
+def list_view(request):
     '''
     TODO docstring
     '''

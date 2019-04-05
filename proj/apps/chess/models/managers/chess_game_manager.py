@@ -6,7 +6,7 @@ import string
 
 from datetime import datetime
 
-from proj.core.models.manager import BaseManager
+from proj.core.models.managers import BaseManager
 
 
 def authenticate_game(func):
@@ -57,8 +57,8 @@ class ChessGameManager(BaseManager):
         '''
         return game.update(
             finished_at=datetime.now(),
-            black_status=self.model.STATUS_GAME_COMPLETE,
-            white_status=self.model.STATUS_GAME_COMPLETE,
+            black_status=self.model.STATUS_COMPLETE,
+            white_status=self.model.STATUS_COMPLETE,
         )
 
     # - - - - - - - -
