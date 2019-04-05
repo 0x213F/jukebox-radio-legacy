@@ -2,8 +2,10 @@
 from django.db import models
 from django.db.models import Q
 
+from proj.core.models.queryset import BaseQuerySet
 
-class ChessSnapshotQuerySet(models.QuerySet):
+
+class ChessSnapshotQuerySet(BaseQuerySet):
     '''
     todo: docstring
     '''
@@ -30,7 +32,7 @@ class ChessSnapshotQuerySet(models.QuerySet):
             self.filter(
                 action__in=[
                     ChessSnapshot.ACTION_TAKE_MOVE,
-                    ChessSnapshot.ACTION_ASK_UNDO_REQUEST,
+                    ChessSnapshot.ACTION_APPROVE_UNDO_REQUEST,
                 ],
                 game=game,
             ).

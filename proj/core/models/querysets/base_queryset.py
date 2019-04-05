@@ -5,13 +5,14 @@ from django.db.models import Q
 
 class BaseQuerySet(models.QuerySet):
     '''
-    todo: docstring
+    Inherits from Django QuerySet.
     '''
 
-    def assert_singular(self):
+    def get_singular(self):
         '''
-        todo: docstring
+        Get the singular object from a QuerySet which is expected to only have
+        1 object.
         '''
         if self.count() == 1:
-            return self
+            return self.first()
         raise Exception('Multiple objects found.')

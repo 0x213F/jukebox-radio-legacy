@@ -9,11 +9,11 @@ from proj.apps.chess.models import ChessGame
 
 
 @login_required
-def list_view(request):
+def get_view(request):
     '''
     TODO docstring
     '''
 
-    game = ChessGame.objects.active().belong_to(request.user).get_singular()
+    games = ChessGame.objects.belong_to(request.user)
 
-    return JsonResponse(serialize(game))
+    return JsonResponse(serialize(games))

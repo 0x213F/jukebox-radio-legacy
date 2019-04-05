@@ -2,10 +2,10 @@
 import random
 import string
 
-from django.db import models
+from proj.core.models.manager import BaseManager
 
 
-class ChessSnapshotManager(models.Manager):
+class ChessSnapshotManager(BaseManager):
     '''
     todo: docstring
     '''

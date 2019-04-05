@@ -127,8 +127,8 @@ class ChessGame(models.Model):
         default=DEFAULT_USER_CLOCK_IN_SECONDS,
     )
 
-    white_status = models.CharField(  # NOTE: for convenience
-        choices=STATUS_CHOICES,       #       does NOT enforce state
+    white_status = models.CharField(
+        choices=STATUS_CHOICES,
     )
 
     # - - - -

@@ -6,26 +6,43 @@ import string
 
 from datetime import datetime
 
-from django.db import models
+from proj.core.models.manager import BaseManager
 
 
-def validate_args(func):
-    def validate(*args):
-        if not all(args):
-            raise Exception('Missing required parameters.')
-        return func()
-    return validate
-
-
-@validate_args
 def authenticate_game(func):
-    def verify(game, user, **args, **kwargs):
-        game.get_player(user)
+    '''
+    @decorator to assert that the `user` has access to the `game`.
+    '''
+    def verify(*args, **kwargs):
+        game = kwargs.get('game')
+        user = kwargs.get('user')
+        game.get_player(user)  # assertion
         return func(game, user, *args, **kwargs)
     return verify
 
+def get_public_game(func):
+    '''
+    @decorator to get the active game.
+    '''
+    def query(*args, **kwargs):
+        uuid = kwargs.get('uuid')
+        game = ChessGame.objects.get(uuid=uuid)
+        return func(game, user, *args, **kwargs)
+    return query
 
-class ChessGameManager(models.Manager):
+
+def get_private_game(func):
+    '''
+    @decorator to get the active game.
+    '''
+    def query(*args, **kwargs):
+        user = kwargs.get('user')
+        game = ChessGame.objects.active().belong_to(user).get_singular()
+        return func(game, user, *args, **kwargs)
+    return query
+
+
+class ChessGameManager(BaseManager):
     '''
     todo: docstring
     '''
@@ -34,7 +51,7 @@ class ChessGameManager(models.Manager):
     # helper methods
     # - - - - - - - -
 
-    def _end(self, game):
+    def end(self, game):
         '''
         todo: docstring
         '''
@@ -66,19 +83,15 @@ class ChessGameManager(models.Manager):
         board.push(move_obj)
         updated_board = board.fen()
 
-    ''' ! ! ! ! ! ! ! ! ! ! ! ! ! ! !
-
-    PUBLIC METHODS ACCESSIBLE BY API
-
-    ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! '''
-
     # - - - - - - -
     # game status
     # - - - - - - -
 
-    def join(self, user, *, join_code=None):
+    def join(self, *, user=None, join_code=None):
         '''
-        Validates, then allows user to join match.
+        !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
+
+        Have a user join game by authenticating with a pending `join_code`.
         '''
 
         active_games = (
@@ -107,11 +120,10 @@ class ChessGameManager(models.Manager):
             game=game,
         )
 
-
-    @authenticate_game
-    def close_match(self, game, user):
+    @get_private_game
+    def close_match(self, *, game=None, user=None):
         '''
-        todo: docstring
+        PUBLIC METHOD ACCESSIBLE BY API
         '''
 
         ChessSnapshot.objects.create(
@@ -122,12 +134,12 @@ class ChessGameManager(models.Manager):
             step=game.steps,
         )
 
-        return self._end(game)
+        return self.end(game)
 
-    @authenticate_game
-    def resign(self, game, user):
+    @get_private_game
+    def resign(self, *, game=None, user=None):
         '''
-        todo: docstring
+        !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
 
         ChessSnapshot.objects.create(
@@ -138,16 +150,16 @@ class ChessGameManager(models.Manager):
             step=game.steps,
         )
 
-        return self._end(game)
+        return self.end(game)
 
     # - - - - - -
     # game state
     # - - - - - -
 
-    @authenticate_game
-    def take_move(self, game, user, *, uci=None):
+    @get_private_game
+    def take_move(self, *, game=None, user=None, uci=None):
         '''
-        todo: docstring
+        !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
 
         latest_move = game.snapshots.latest_move()
@@ -178,20 +190,20 @@ class ChessGameManager(models.Manager):
             f'{opponent}_status': self.model.STATUS_MY_TURN,
         })
 
-    def undo_move(self, game):
+    def undo_move(self):
         '''
-        todo: docstring
-        '''
-        pass
+        !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
 
-
-    @validate_args
-    def suggest_move(self, user, *, uci=None, uuid=None):
+        User may not directly undo a move without opponent's confirmation.
         '''
-        todo: docstring
+        raise NotImplementedError()
+
+    @get_public_game
+    def suggest_move(self, *, game=None, user=None, uci=None, uuid=None):
+        '''
+        !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
 
-        game = self.model.objects.get(uuid=uuid)
         updated_board = self.move(uci)
 
         ChessSnapshot.objects.create(
@@ -206,10 +218,10 @@ class ChessGameManager(models.Manager):
     # undo state
     # - - - - - -
 
-    @authenticate_game
-    def ask_undo_request(self, game, user, **kwargs):
+    @get_private_game
+    def ask_undo_request(self, *, game=None, user=None):
         '''
-        todo: docstring
+        !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
         return ChessSnapshot.objects.create(
             action=ChessSnapshot.ACTION_ASK_UNDO_REQUEST,
@@ -217,23 +229,38 @@ class ChessGameManager(models.Manager):
             game=game,
         )
 
-    def approve_undo_request(self, **kwargs):
+    @get_private_game
+    def approve_undo_request(self, *, game=None, user=None):
         '''
-        todo: docstring
+        !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
 
-        player = game.get_player(user)
-
-        return ChessSnapshot.objects.create(
-            action=ChessSnapshot.ACTION_ASK_UNDO_REQUEST,
+        ChessSnapshot.objects.create(
+            action=ChessSnapshot.ACTION_APPROVE_UNDO_REQUEST,
             actor=user,
             board=game.board,
             game=game,
             step=game.steps,
         )
 
-    def reject_undo_request(self, **kwargs):
+        latest_move = game.snapshots.latest_move()
+        player = game.get_player(user)
+        opponent = game.get_opponent(user)
+
+        return game.update(**{
+            'board': latest_move.board,
+            'steps': F('steps') - 1,
+            f'{player}_status': self.model.STATUS_THEIR_TURN,
+            f'{opponent}_status': self.model.STATUS_MY_TURN,
+        })
+
+    @get_private_game
+    def reject_undo_request(self, *, game=None, user=None):
         '''
-        todo: docstring
+        !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
-        pass
+        return ChessSnapshot.objects.create(
+            action=ChessSnapshot.ACTION_REJECT_UNDO_REQUEST,
+            actor=user,
+            game=game,
+        )
