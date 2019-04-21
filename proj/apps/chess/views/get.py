@@ -4,6 +4,7 @@ import chess
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.http import JsonResponse
 
 from proj.apps.chess.models import ChessGame
 
@@ -33,4 +34,4 @@ class GetView(BaseView):
                 get_singular()
             )
 
-        return self._http_response_object(game)
+        return JsonResponse(ChessGame.objects.response(game))

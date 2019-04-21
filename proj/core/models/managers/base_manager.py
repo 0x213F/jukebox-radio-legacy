@@ -30,8 +30,9 @@ class BaseManager(models.Manager):
 
         return do_thing(**kwargs)
 
-    def response(self, result):
+    def response(self, results):
         '''
         Subclass this method to transform a response object into a JSON object.
         '''
-        return json.loads(serialize('json', [result]))[0]
+        results = json.loads(serialize('json', results))
+        return results[0] if len(results) == 1 else results

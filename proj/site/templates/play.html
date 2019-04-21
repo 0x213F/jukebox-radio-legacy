@@ -49,19 +49,38 @@
             {% csrf_token %}
             <button type="submit" class="btn btn-secondary" style="margin-top: 1.4em; margin: auto; display: block;">Get Game</button>
           </form>
+          <br>
+
+          <form id="close-match">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-secondary" style="margin-top: 1.4em; margin: auto; display: block;">Close Match</button>
+          </form>
+          <br>
+
+          <form id="create-undo-request">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-secondary" style="margin-top: 1.4em; margin: auto; display: block;">Create Undo Request</button>
+          </form>
+          <br>
+
+          <form id="approve-undo-request">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-secondary" style="margin-top: 1.4em; margin: auto; display: block;">Approve Undo Request</button>
+          </form>
+          <br>
 
           <form id="join-match">
             {% csrf_token %}
             <input type="text" name='join_code' placeholder="JOIN_CODE">
             <button type="submit" class="btn btn-primary" style="margin-top: 1.4em; margin: auto; display: block;">Join Game</button>
           </form>
+          <br>
 
           <form id="take-move">
             {% csrf_token %}
             <input type="text" name='uci' placeholder="UCI">
             <button type="submit" class="btn btn-primary" style="margin-top: 1.4em; margin: auto; display: block;">Take Move</button>
           </form>
-
           <br>
 
           <p id="game-status" class="text-info" style="margin-top: 1.4em"><p>
@@ -93,9 +112,78 @@
               type: 'get',
               data: data,
               success: function(data, status) {
-                $("#game-status").text(data)
+                $("#game-status").text(JSON.stringify(data))
               }
           });
+      });
+      $('#close-match').submit(function(e){
+        e.preventDefault();
+        var data = $('#close-match').serializeArray()
+        var ok = {}
+        for(thi in data) {
+          f = data[thi]
+          ok[f['name']] = f['value']
+        }
+        console.log(ok)
+        var data = {
+            'thing': 'close-match',
+            'csrfmiddlewaretoken': ok['csrfmiddlewaretoken'],
+            'with_args': JSON.stringify({}),
+        }
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/game/do/',
+            type: 'post',
+            data: data,
+            success: function(data, status) {
+              $("#game-status").text(JSON.stringify(data))
+            }
+        });
+      });
+      $('#create-undo-request').submit(function(e){
+        e.preventDefault();
+        var data = $('#create-undo-request').serializeArray()
+        var ok = {}
+        for(thi in data) {
+          f = data[thi]
+          ok[f['name']] = f['value']
+        }
+        console.log(ok)
+        var data = {
+            'thing': 'create-undo-request',
+            'csrfmiddlewaretoken': ok['csrfmiddlewaretoken'],
+            'with_args': JSON.stringify({}),
+        }
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/game/do/',
+            type: 'post',
+            data: data,
+            success: function(data, status) {
+              $("#game-status").text(JSON.stringify(data))
+            }
+        });
+      });
+      $('#approve-undo-request').submit(function(e){
+        e.preventDefault();
+        var data = $('#approve-undo-request').serializeArray()
+        var ok = {}
+        for(thi in data) {
+          f = data[thi]
+          ok[f['name']] = f['value']
+        }
+        console.log(ok)
+        var data = {
+            'thing': 'approve-undo-request',
+            'csrfmiddlewaretoken': ok['csrfmiddlewaretoken'],
+            'with_args': JSON.stringify({}),
+        }
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/game/do/',
+            type: 'post',
+            data: data,
+            success: function(data, status) {
+              $("#game-status").text(JSON.stringify(data))
+            }
+        });
       });
       $('#take-move').submit(function(e){
           e.preventDefault();
@@ -120,7 +208,7 @@
               type: 'post',
               data: data,
               success: function(data, status) {
-                $("#game-status").text(data)
+                $("#game-status").text(JSON.stringify(data))
               }
           });
       });
@@ -143,7 +231,7 @@
               type: 'post',
               data: data,
               success: function(data, status) {
-                $("#join-match").text(data)
+                $("#game-status").text(JSON.stringify(data))
               }
           });
       });
