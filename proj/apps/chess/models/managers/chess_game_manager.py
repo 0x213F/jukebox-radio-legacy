@@ -96,10 +96,8 @@ class ChessGameManager(BaseManager):
     @staticmethod
     def move(game, uci):
         move_obj = chess.Move.from_uci(uci)
-        print(game.board)
         board = chess.Board(game.board)
         board.push(move_obj)
-        print(board.fen())
         return board.fen()
 
     # - - - - - - -
