@@ -26,7 +26,6 @@ class BaseManager(models.Manager):
 
         do_thing = getattr(self, action.replace('-', '_'))
         kwargs = json.loads(request.POST.get('with_args', '{}'))
-        print(kwargs)
         kwargs['user'] = request.user
 
         return do_thing(**kwargs)
@@ -35,5 +34,4 @@ class BaseManager(models.Manager):
         '''
         Subclass this method to transform a response object into a JSON object.
         '''
-        print(result)
         return json.loads(serialize('json', [result]))[0]

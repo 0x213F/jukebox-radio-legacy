@@ -24,7 +24,6 @@ def create_view(request):
     # - - - - - - - -
     username = request.POST.get('username', None)
     password = request.POST.get('password', None)
-    print(username, password)
     if not username or not password:
         return HttpResponse(status=400)
 
@@ -46,5 +45,4 @@ def create_view(request):
         login(request, user)
         return HttpResponse(status=201)
     except Exception as e:
-        print(e)
         return HttpResponse(status=400)

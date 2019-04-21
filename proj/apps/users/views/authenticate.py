@@ -15,9 +15,8 @@ def authenticate_view(request):
     # authenticate
     username = request.POST.get('username', None)
     password = request.POST.get('password', None)
-    print(username, password)
     user = authenticate(request, username=username, password=password)
-    print(user)
+
     if user is None:
         return HttpResponse(status=400)
 

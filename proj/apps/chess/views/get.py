@@ -22,7 +22,6 @@ class GetView(BaseView):
         '''
 
         uuid = request.GET.get('uuid', None)
-        print(uuid)
         if uuid:
             game = ChessGame.objects.get(uuid=uuid)
 

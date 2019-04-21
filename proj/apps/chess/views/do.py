@@ -18,10 +18,7 @@ def do_view(request):
 
     action_slug = request.POST.get('thing')
     action_method = action_slug.replace('-', '_')
-    print(action_method)
     if action_method not in [c[0] for c in ChessSnapshot.ACTION_CHOICES]:
-        print('o no')
-        print(ChessSnapshot.ACTION_CHOICES)
         return HttpResponse(status=500)
 
     result = ChessGame.objects.do(action_method, request)
