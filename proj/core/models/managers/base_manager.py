@@ -1,10 +1,14 @@
 
+import json
+
+from django.core.serializers import serialize
+
 from django.db import models
 
 
 class BaseManager(models.Manager):
     '''
-    Inherits from Django Manager. 
+    Inherits from Django Manager.
     '''
 
     def do(self, action, request):
@@ -18,8 +22,11 @@ class BaseManager(models.Manager):
         - with_action:  **kwargs passed to the manager method
         '''
 
-        do_thing = getattr(self, f'public_{action}')
-        kwargs = request.POST.get('with_args', {})
+        if not request.user:
+            raise Exception('User must be authenticated.')
+
+        do_thing = getattr(self, action.replace('-', '_'))
+        kwargs = json.loads(request.POST.get('with_args', '{}'))
         kwargs['user'] = request.user
 
         return do_thing(**kwargs)
@@ -28,4 +35,4 @@ class BaseManager(models.Manager):
         '''
         Subclass this method to transform a response object into a JSON object.
         '''
-        raise NotImplementedError()
+        return json.dumps(serialize('json', [result]))

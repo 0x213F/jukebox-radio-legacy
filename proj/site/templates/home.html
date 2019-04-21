@@ -79,14 +79,25 @@
               }
           });
       });
-      $('#create-game').submit(function(e){
+      $('#create-game').submit(function(e) {
           e.preventDefault();
+          var data = $('#create-game').serializeArray()
+          var ok = {}
+          for(thi in data) {
+            f = data[thi]
+            ok[f['name']] = f['value']
+          }
+          data = ok
+          data['thing'] = 'create-match'
+          data['with_args'] = {}
+          console.log(data)
           $.ajax({
-              url: '../api/game/create/',
+            // TODO not this...
+              url: 'http://127.0.0.1:8000/api/game/do/',
               type: 'post',
-              data: $('#create-game').serialize(),
+              data: data,
               success: function(data, status) {
-                  window.location = `/play/`
+                $("#game-status").text(data)
               }
           });
       });

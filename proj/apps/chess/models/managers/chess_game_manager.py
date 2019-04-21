@@ -9,26 +9,18 @@ from datetime import datetime
 from proj.core.models.managers import BaseManager
 
 
-def authenticate_game(func):
-    '''
-    @decorator to assert that the `user` has access to the `game`.
-    '''
-    def verify(*args, **kwargs):
-        game = kwargs.get('game')
-        user = kwargs.get('user')
-        game.get_player(user)  # assertion
-        return func(game, user, *args, **kwargs)
-    return verify
-
 def get_public_game(func):
     '''
     @decorator to get the active game.
     '''
     def query(*args, **kwargs):
+        self = args[0]
         uuid = kwargs.get('uuid')
-        game = ChessGame.objects.get(uuid=uuid)
-        return func(game, user, *args, **kwargs)
-    return query
+        try:
+            kwargs['game'] = self.model.objects.get(uuid=uuid)
+            return func(*args, **kwargs)
+        except self.model.DoesNotExist:
+            raise Exception('Game does not exist.')
 
 
 def get_private_game(func):
@@ -36,9 +28,33 @@ def get_private_game(func):
     @decorator to get the active game.
     '''
     def query(*args, **kwargs):
-        user = kwargs.get('user')
-        game = ChessGame.objects.active().belong_to(user).get_singular()
-        return func(game, user, *args, **kwargs)
+        self = args[0]
+        kwargs['game'] = (
+            self.model
+            .objects
+            .active()
+            .belong_to(user)
+            .get_singular()
+        )
+        return func(*args, **kwargs)
+    return query
+
+
+def verify_no_active_game(func):
+    '''
+    @decorator to verify no
+    '''
+    def query(*args, **kwargs):
+        self = args[0]
+        active_games = (
+            self.model
+            .objects
+            .active()
+            .belong_to(kwargs.get('user'))
+        )
+        if active_games.exists():
+            raise Exception('Already active in game.')
+        return func(*args, **kwargs)
     return query
 
 
@@ -65,15 +81,14 @@ class ChessGameManager(BaseManager):
     # static methods
     # - - - - - - - -
 
-    @staticmethod
-    def generate_code():
+    def _generate_code(self):
         '''
         todo: docstring
         '''
-        return random.sample(
+        return ''.join(random.sample(
             string.ascii_lowercase + string.digits,
-            self.model.CODE_LENGTH
-        )
+            self.model.JOIN_CODE_LENGTH
+        ))
 
     @staticmethod
     def move():
@@ -87,20 +102,44 @@ class ChessGameManager(BaseManager):
     # game status
     # - - - - - - -
 
-    def join(self, *, user=None, join_code=None):
+    @verify_no_active_game
+    def create_match(self, *, user=None):
+        '''
+        !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
+
+        Endpoint create method to allow user to create a `ChessGame`.
+        '''
+        ChessGame = self.model
+
+        data = {
+            'board': chess.Board().fen(),
+            'is_private': True,
+        }
+        player = random.choice(list(ChessGame.COLOR_CHOICES))
+        opponent = 'white' if player == 'black' else 'black'
+
+        data[f'{player}_user'] = user
+        data[f'{player}_status'] = ChessGame.STATUS_PENDING_WAITING
+        data[f'{opponent}_status'] = ChessGame.STATUS_PENDING_EMPTY
+
+        # randomly generate a valid code
+        while True:
+            join_code = self._generate_code()
+            if ChessGame.objects.active().filter(join_code=join_code).exists():
+                continue
+            break
+
+        data['join_code'] = join_code
+        print(data)
+        return super().create(**data)
+
+    @verify_no_active_game
+    def join_match(self, *, user=None, join_code=None):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
 
         Have a user join game by authenticating with a pending `join_code`.
         '''
-
-        active_games = (
-            self.model.objects.
-            active().
-            belong_to(request.user)
-        )
-        if active_games.exists():
-            raise Exception('Already in game.')
 
         if join_code != game.join_code:
             raise Exception('Invalid join code.')
@@ -137,7 +176,7 @@ class ChessGameManager(BaseManager):
         return self.end(game)
 
     @get_private_game
-    def resign(self, *, game=None, user=None):
+    def resign_match(self, *, game=None, user=None):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
@@ -165,7 +204,7 @@ class ChessGameManager(BaseManager):
         latest_move = game.snapshots.latest_move()
         lost_time = (datetime.now() - latest_move.created_at).total_seconds()
 
-        player = game.get_player(user)
+        player = game.get_color(user)
         opponent = game.get_opponent(user)
 
         time_left = getattr(game, f'{player}_time') - lost_time
@@ -219,7 +258,7 @@ class ChessGameManager(BaseManager):
     # - - - - - -
 
     @get_private_game
-    def ask_undo_request(self, *, game=None, user=None):
+    def create_undo_request(self, *, game=None, user=None):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
@@ -244,7 +283,7 @@ class ChessGameManager(BaseManager):
         )
 
         latest_move = game.snapshots.latest_move()
-        player = game.get_player(user)
+        player = game.get_color(user)
         opponent = game.get_opponent(user)
 
         return game.update(**{

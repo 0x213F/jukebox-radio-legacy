@@ -13,12 +13,20 @@ def do_view(request):
     '''
     Generic POST endpoint to perform methods related to `ChessGame`.
     '''
+    from proj.apps.chess.models import ChessSnapshot
+    from proj.apps.chess.models import ChessGame
 
-    action = request.POST.get('thing', None)
-    if action not in ChessSnapshot.ACTION_CHOICES:
+    action_slug = request.POST.get('thing')
+    action_method = action_slug.replace('-', '_')
+    print(action_method)
+    if action_method not in [c[0] for c in ChessSnapshot.ACTION_CHOICES]:
+        print('o no')
+        print(ChessSnapshot.ACTION_CHOICES)
         return HttpResponse(status=500)
 
-    result = Chess.objects.do(action, request)
-    response = Chess.objects.response(result)
+    result = ChessGame.objects.do(action_method, request)
+    response = ChessGame.objects.response(result)
+
+
 
     return JsonResponse(serialize(response))

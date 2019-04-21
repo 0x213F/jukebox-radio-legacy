@@ -10,8 +10,17 @@ from django.forms import fields
 from proj.apps.chess.models.managers import ChessSnapshotManager
 from proj.apps.chess.models.querysets import ChessSnapshotQuerySet
 
+from proj.core.models import BaseModel
 
-class ChessSnapshot(models.Model):
+
+class ChessSnapshot(BaseModel):
+
+    # - - - - - - - -
+    # config model
+    # - - - - - - - -
+
+    class Meta:
+        abstract = False
 
     objects = ChessSnapshotManager.from_queryset(ChessSnapshotQuerySet)()
 
@@ -19,26 +28,27 @@ class ChessSnapshot(models.Model):
     # config actions
     # - - - - - - - -
 
+    ACTION_CREATE_MATCH = 'create_match'
     ACTION_JOIN_MATCH = 'join_match'
-
     ACTION_CLOSE_MATCH = 'close_match'
-    ACTION_RESIGN = 'resign'
+    ACTION_RESIGN_MATCH = 'resign_match'
 
     ACTION_TAKE_MOVE = 'take_move'
     ACTION_UNDO_MOVE = 'undo_move'
     ACTION_SUGGEST_MOVE = 'suggest_move'
 
-    ACTION_ASK_UNDO_REQUEST = 'ask_undo_request'
+    ACTION_CREATE_UNDO_REQUEST = 'create_undo_request'
     ACTION_APPROVE_UNDO_REQUEST = 'approve_undo_request'
     ACTION_REJECT_UNDO_REQUEST = 'reject_undo_request'
 
     ACTION_CHOICES = (
+        (ACTION_CREATE_MATCH, ACTION_CREATE_MATCH),
         (ACTION_JOIN_MATCH, ACTION_JOIN_MATCH),
         (ACTION_CLOSE_MATCH, ACTION_CLOSE_MATCH),
-        (ACTION_RESIGN, ACTION_RESIGN),
+        (ACTION_RESIGN_MATCH, ACTION_RESIGN_MATCH),
         (ACTION_TAKE_MOVE, ACTION_TAKE_MOVE),
         (ACTION_SUGGEST_MOVE, ACTION_SUGGEST_MOVE),
-        (ACTION_ASK_UNDO_REQUEST, ACTION_ASK_UNDO_REQUEST),
+        (ACTION_CREATE_UNDO_REQUEST, ACTION_CREATE_UNDO_REQUEST),
         (ACTION_APPROVE_UNDO_REQUEST, ACTION_APPROVE_UNDO_REQUEST),
         (ACTION_REJECT_UNDO_REQUEST, ACTION_REJECT_UNDO_REQUEST),
         (ACTION_UNDO_MOVE, ACTION_UNDO_MOVE)

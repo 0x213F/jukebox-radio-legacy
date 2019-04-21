@@ -10,8 +10,17 @@ from django.forms import fields
 from proj.apps.chess.models.managers import ChessGameManager
 from proj.apps.chess.models.querysets import ChessGameQuerySet
 
+from proj.core.models import BaseModel
 
-class ChessGame(models.Model):
+
+class ChessGame(BaseModel):
+
+    # - - - - - - - -
+    # config model
+    # - - - - - - - -
+
+    class Meta:
+        abstract = False
 
     objects = ChessGameManager.from_queryset(ChessGameQuerySet)()
 
@@ -28,7 +37,7 @@ class ChessGame(models.Model):
     PLAYER_BLACK = 'black'
     PLAYER_WHITE = 'white'
 
-    PLAYER_CHOICES = (
+    COLOR_CHOICES = (
         PLAYER_BLACK,
         PLAYER_WHITE
     )
@@ -157,44 +166,15 @@ class ChessGame(models.Model):
         max_length=92,
     )
 
-    # - - - - -
-    # methods
-    # - - - - -
+    # - - - - - - - - - - -
+    # subclassed methods
+    # - - - - - - - - - - -
 
-    def create(self, *args, **kwargs):
-        '''
-        Override default create method to allow random generated join code.
-        '''
-        from .models import ChessGame
+    # - - - - - - - -
+    # model methods
+    # - - - - - - - -
 
-        black_user = kwargs.get('black_user', None)
-        white_user = kwargs.get('black_user', None)
-
-        kwargs = self._set_default_attribute('black_status')
-        kwargs = self._set_default_attribute('white_status')
-        self._assert_attribute_not_in_kwargs('code')
-        white_status = kwargs.pop('white_status', None)
-
-        kwargs['black_status'] = self.STATUS_PENDING_EMPTY
-        kwargs['white_status'] = self.STATUS_PENDING_EMPTY
-        if not black_user and not white_user:
-            raise ValueError('ChessGame must have at least one player.')
-        if black_user:
-            kwargs['black_user'] = self.STATUS_PENDING_WAITING
-        if white_user:
-            kwargs['white_user'] = self.STATUS_PENDING_WAITING
-
-        # randomly generate a valid code
-        while True:
-            code = self.generate_code()
-            if ChessGame.objects.active().filter(code=code).exists():
-                continue
-            break
-
-        kwargs['code'] = code
-        return super.create(*args, **kwargs)
-
-    def get_player(self, user):
+    def get_color(self, user):
         '''
         todo: docstring
         '''

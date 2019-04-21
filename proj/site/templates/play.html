@@ -50,6 +50,18 @@
             <button type="submit" class="btn btn-secondary" style="margin-top: 1.4em; margin: auto; display: block;">Get Game</button>
           </form>
 
+          <form id="join-game">
+            {% csrf_token %}
+            <input type="text" name='join_code' placeholder="JOIN_CODE">
+            <button type="submit" class="btn btn-primary" style="margin-top: 1.4em; margin: auto; display: block;">Join Game</button>
+          </form>
+
+          <form id="take-move">
+            {% csrf_token %}
+            <input type="text" name='uci' placeholder="UCI">
+            <button type="submit" class="btn btn-primary" style="margin-top: 1.4em; margin: auto; display: block;">Take Move</button>
+          </form>
+
           <br>
 
           <p id="game-status" class="text-info" style="margin-top: 1.4em"><p>
@@ -85,14 +97,33 @@
               }
           });
       });
-      $('#create-game').submit(function(e){
+      $('#take-move').submit(function(e){
           e.preventDefault();
+          var data = $('#take-move').serializeArray()
+          var ok = {}
+          for(thi in data) {
+            f = data[thi]
+            ok[f['name']] = f['value']
+          }
+          console.log(ok)
+          var data = {
+              'thing': 'take-move',
+              'csrfmiddlewaretoken': ok['csrfmiddlewaretoken'],
+              'with_action': JSON.stringify({'uci': ok['uci']}),
+          }
+          console.log(data)
+          data['thing'] = 'take-move'
+          data['with_args'] = {
+
+          }
+          delete data['uci']
           $.ajax({
-              url: '../../api/game/create/',
+            // TODO not this...
+              url: 'http://127.0.0.1:8000/api/game/do/',
               type: 'post',
-              data: $('#create-game').serialize(),
+              data: data,
               success: function(data, status) {
-                  window.location = `/play/${data.uuid}`
+                $("#game-status").text(data)
               }
           });
       });
