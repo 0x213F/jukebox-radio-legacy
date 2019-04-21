@@ -178,17 +178,17 @@ class ChessGame(BaseModel):
         '''
         todo: docstring
         '''
-        if self.black == user:
+        if self.black_user == user:
             return 'black'
-        elif self.white == user:
+        elif self.white_user == user:
             return 'white'
         else:
             raise Exception('User not in game.')
 
     def get_opponent(self, user):
-        if self.black == user:
+        if self.black_user == user:
             return 'white'
-        elif self.white == user:
+        elif self.white_user == user:
             return 'black'
         else:
             raise Exception('User not in game.')

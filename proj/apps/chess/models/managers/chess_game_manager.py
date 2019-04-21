@@ -6,6 +6,7 @@ import string
 
 from datetime import datetime
 
+from django.db.models import F
 from django.db.models import Q
 
 from proj.core.models.managers import BaseManager
@@ -35,7 +36,7 @@ def get_private_game(func):
             self.model
             .objects
             .active()
-            .belong_to(user)
+            .belong_to(kwargs.get('user'))
             .get_singular()
         )
         return func(*args, **kwargs)
@@ -93,12 +94,13 @@ class ChessGameManager(BaseManager):
         ))
 
     @staticmethod
-    def move():
+    def move(game, uci):
         move_obj = chess.Move.from_uci(uci)
-
+        print(game.board)
         board = chess.Board(game.board)
         board.push(move_obj)
-        updated_board = board.fen()
+        print(board.fen())
+        return board.fen()
 
     # - - - - - - -
     # game status
@@ -211,10 +213,17 @@ class ChessGameManager(BaseManager):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
+        ChessGame = self.model
         from proj.apps.chess.models import ChessSnapshot
 
-        latest_move = game.snapshots.latest_move()
-        lost_time = (datetime.now() - latest_move.created_at).total_seconds()
+        try:
+            latest_move = game.snapshots.latest_move(game)
+            lost_time = (
+                datetime.now() -
+                latest_move.created_at.replace(tzinfo=None)
+            ).total_seconds()
+        except ChessSnapshot.DoesNotExist:
+            lost_time = 0
 
         player = game.get_color(user)
         opponent = game.get_opponent(user)
@@ -223,7 +232,14 @@ class ChessGameManager(BaseManager):
         if time_left < 0:
             raise Exception('The player has run out of time.')
 
-        updated_board = self.move(uci)
+        is_players_turn = (
+            getattr(game, f'{player}_status') == ChessGame.STATUS_MY_TURN
+        )
+        if not is_players_turn:
+            raise Exception('It is not the player\'s turn.')
+
+        updated_board = self.move(game, uci)
+        player_time = getattr(game, f'{player}_time') - lost_time
 
         ChessSnapshot.objects.create(
             action=ChessSnapshot.ACTION_TAKE_MOVE,
@@ -233,13 +249,14 @@ class ChessGameManager(BaseManager):
             step=game.steps,
         )
 
-        return game.update(**{
-            'board': updated_board,
-            'steps': F('steps') + 1,
-            f'{player}_time': F(f'{player}_time') - lost_time,
-            f'{player}_status': self.model.STATUS_THEIR_TURN,
-            f'{opponent}_status': self.model.STATUS_MY_TURN,
-        })
+        game.board = updated_board
+        game.steps += 1
+        setattr(game, f'{player}_time', player_time)
+        setattr(game, f'{player}_status', self.model.STATUS_THEIR_TURN)
+        setattr(game, f'{opponent}_status', self.model.STATUS_MY_TURN)
+        game.save()
+
+        return game
 
     def undo_move(self):
         '''
@@ -298,7 +315,7 @@ class ChessGameManager(BaseManager):
             step=game.steps,
         )
 
-        latest_move = game.snapshots.latest_move()
+        latest_move = game.snapshots.latest_move(game)
         player = game.get_color(user)
         opponent = game.get_opponent(user)
 

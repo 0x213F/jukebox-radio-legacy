@@ -109,13 +109,10 @@
           var data = {
               'thing': 'take-move',
               'csrfmiddlewaretoken': ok['csrfmiddlewaretoken'],
-              'with_action': JSON.stringify({'uci': ok['uci']}),
+              'with_args': JSON.stringify({'uci': ok['uci']}),
           }
           console.log(data)
           data['thing'] = 'take-move'
-          data['with_args'] = {
-
-          }
           delete data['uci']
           $.ajax({
             // TODO not this...
