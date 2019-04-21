@@ -2,7 +2,6 @@
 import json
 
 from django.core.serializers import serialize
-
 from django.db import models
 
 
@@ -35,4 +34,5 @@ class BaseManager(models.Manager):
         '''
         Subclass this method to transform a response object into a JSON object.
         '''
-        return json.dumps(serialize('json', [result]))
+        print(result)
+        return json.loads(serialize('json', [result]))[0]

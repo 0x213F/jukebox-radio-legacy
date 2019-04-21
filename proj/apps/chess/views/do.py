@@ -27,6 +27,4 @@ def do_view(request):
     result = ChessGame.objects.do(action_method, request)
     response = ChessGame.objects.response(result)
 
-
-
-    return JsonResponse(serialize(response))
+    return JsonResponse(response, safe=False)

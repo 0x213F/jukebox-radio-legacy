@@ -24,3 +24,6 @@ class ChessGameQuerySet(BaseQuerySet):
 
     def private(self):
         return self.filter(is_private=False)
+
+    def join_code(self, join_code):
+        return self.active().filter(join_code=join_code).get_singular()

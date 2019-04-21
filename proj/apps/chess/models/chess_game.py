@@ -47,7 +47,7 @@ class ChessGame(BaseModel):
     # - - - - - - - -
 
     STATUS_PENDING_WAITING = 'pending_game_start'
-    STATUS_PENDING_EMPTY = 'pending_opponent'
+    STATUS_PENDING_OPPONENT = 'pending_opponent'
     STATUS_WARNING_GAME_CANCELLATION = 'warning_game_cancellation'
     STATUS_COMPLETE = 'complete'
 
@@ -56,7 +56,7 @@ class ChessGame(BaseModel):
 
     STATUS_CHOICES = (
         (STATUS_PENDING_WAITING, STATUS_PENDING_WAITING),
-        (STATUS_PENDING_EMPTY, STATUS_PENDING_EMPTY),
+        (STATUS_PENDING_OPPONENT, STATUS_PENDING_OPPONENT),
         (STATUS_WARNING_GAME_CANCELLATION, STATUS_WARNING_GAME_CANCELLATION),
         (STATUS_COMPLETE, STATUS_COMPLETE),
         (STATUS_MY_TURN, STATUS_MY_TURN),

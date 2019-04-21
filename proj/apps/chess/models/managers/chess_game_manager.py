@@ -6,6 +6,8 @@ import string
 
 from datetime import datetime
 
+from django.db.models import Q
+
 from proj.core.models.managers import BaseManager
 
 
@@ -120,7 +122,7 @@ class ChessGameManager(BaseManager):
 
         data[f'{player}_user'] = user
         data[f'{player}_status'] = ChessGame.STATUS_PENDING_WAITING
-        data[f'{opponent}_status'] = ChessGame.STATUS_PENDING_EMPTY
+        data[f'{opponent}_status'] = ChessGame.STATUS_PENDING_OPPONENT
 
         # randomly generate a valid code
         while True:
@@ -130,7 +132,6 @@ class ChessGameManager(BaseManager):
             break
 
         data['join_code'] = join_code
-        print(data)
         return super().create(**data)
 
     @verify_no_active_game
@@ -140,30 +141,39 @@ class ChessGameManager(BaseManager):
 
         Have a user join game by authenticating with a pending `join_code`.
         '''
+        from proj.apps.chess.models import ChessSnapshot
+        ChessGame = self.model
 
+        game = ChessGame.objects.join_code(join_code)
         if join_code != game.join_code:
             raise Exception('Invalid join code.')
 
-        if not game.black:
-            game.black = user
-        elif not game.white:
-            game.white = user
+        if not game.black_user:
+            game.black_user = user
+        elif not game.white_user:
+            game.white_user = user
         else:
             raise Exception('Game already has 2 players.')
 
-        game.save()
+        game.black_status = ChessGame.STATUS_THEIR_TURN
+        game.white_status = ChessGame.STATUS_MY_TURN
 
+        game.save()
         ChessSnapshot.objects.create(
             action=ChessSnapshot.ACTION_JOIN_MATCH,
             actor=user,
             game=game,
+            step=game.steps,
         )
+
+        return game
 
     @get_private_game
     def close_match(self, *, game=None, user=None):
         '''
         PUBLIC METHOD ACCESSIBLE BY API
         '''
+        from proj.apps.chess.models import ChessSnapshot
 
         ChessSnapshot.objects.create(
             action=ChessSnapshot.ACTION_CLOSE_MATCH,
@@ -180,6 +190,7 @@ class ChessGameManager(BaseManager):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
+        from proj.apps.chess.models import ChessSnapshot
 
         ChessSnapshot.objects.create(
             action=ChessSnapshot.ACTION_RESIGN,
@@ -200,6 +211,7 @@ class ChessGameManager(BaseManager):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
+        from proj.apps.chess.models import ChessSnapshot
 
         latest_move = game.snapshots.latest_move()
         lost_time = (datetime.now() - latest_move.created_at).total_seconds()
@@ -242,6 +254,7 @@ class ChessGameManager(BaseManager):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
+        from proj.apps.chess.models import ChessSnapshot
 
         updated_board = self.move(uci)
 
@@ -262,6 +275,8 @@ class ChessGameManager(BaseManager):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
+        from proj.apps.chess.models import ChessSnapshot
+
         return ChessSnapshot.objects.create(
             action=ChessSnapshot.ACTION_ASK_UNDO_REQUEST,
             actor=user,
@@ -273,6 +288,7 @@ class ChessGameManager(BaseManager):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
+        from proj.apps.chess.models import ChessSnapshot
 
         ChessSnapshot.objects.create(
             action=ChessSnapshot.ACTION_APPROVE_UNDO_REQUEST,
@@ -298,6 +314,8 @@ class ChessGameManager(BaseManager):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
+        from proj.apps.chess.models import ChessSnapshot
+
         return ChessSnapshot.objects.create(
             action=ChessSnapshot.ACTION_REJECT_UNDO_REQUEST,
             actor=user,

@@ -50,7 +50,7 @@
             <button type="submit" class="btn btn-secondary" style="margin-top: 1.4em; margin: auto; display: block;">Get Game</button>
           </form>
 
-          <form id="join-game">
+          <form id="join-match">
             {% csrf_token %}
             <input type="text" name='join_code' placeholder="JOIN_CODE">
             <button type="submit" class="btn btn-primary" style="margin-top: 1.4em; margin: auto; display: block;">Join Game</button>
@@ -124,6 +124,29 @@
               data: data,
               success: function(data, status) {
                 $("#game-status").text(data)
+              }
+          });
+      });
+      $('#join-match').submit(function(e){
+          e.preventDefault();
+          var data = $('#join-match').serializeArray()
+          var ok = {}
+          for(thi in data) {
+            f = data[thi]
+            ok[f['name']] = f['value']
+          }
+          console.log(ok)
+          var data = {
+              'thing': 'join-match',
+              'csrfmiddlewaretoken': ok['csrfmiddlewaretoken'],
+              'with_args': JSON.stringify({'join_code': ok['join_code']}),
+          }
+          $.ajax({
+              url: 'http://127.0.0.1:8000/api/game/do/',
+              type: 'post',
+              data: data,
+              success: function(data, status) {
+                $("#join-match").text(data)
               }
           });
       });
