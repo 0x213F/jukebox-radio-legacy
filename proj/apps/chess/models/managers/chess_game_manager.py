@@ -141,6 +141,7 @@ class ChessGameManager(BaseManager):
         Endpoint create method to allow user to create a `ChessGame`.
         '''
         ChessGame = self.model
+        from proj.apps.chess.models import ChessSnapshot
 
         data = {
             'board': chess.Board().fen(),
@@ -159,9 +160,19 @@ class ChessGameManager(BaseManager):
             if ChessGame.objects.active().filter(join_code=join_code).exists():
                 continue
             break
-
         data['join_code'] = join_code
-        return super().create(**data)
+
+        game =  super().create(**data)
+
+        ChessSnapshot.objects.create(
+            action=ChessSnapshot.ACTION_CREATE_MATCH,
+            actor=user,
+            board=game.board,
+            game=game,
+            step=game.steps,
+        )
+
+        return game
 
     @verify_no_active_game
     def join_match(self, *, user=None, join_code=None):
@@ -222,6 +233,7 @@ class ChessGameManager(BaseManager):
         return self.end(game)
 
     @get_private_game
+    @game_started
     def resign_match(self, *, game=None, user=None):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
@@ -229,7 +241,7 @@ class ChessGameManager(BaseManager):
         from proj.apps.chess.models import ChessSnapshot
 
         ChessSnapshot.objects.create(
-            action=ChessSnapshot.ACTION_RESIGN,
+            action=ChessSnapshot.ACTION_RESIGN_MATCH,
             actor=user,
             board=game.board,
             game=game,
@@ -327,7 +339,30 @@ class ChessGameManager(BaseManager):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
+        ChessGame = self.model
         from proj.apps.chess.models import ChessSnapshot
+
+        last_create_undo_request = None
+        try:
+            last_create_undo_request = (
+                ChessSnapshot.objects.latest_action(game, ChessSnapshot.ACTION_CREATE_UNDO_REQUEST)
+            )
+        except ChessSnapshot.DoesNotExist:
+            pass
+
+        if last_create_undo_request:
+            try:
+                last_reject_undo_request = (
+                    ChessSnapshot.objects.latest_action(game, ChessSnapshot.ACTION_REJECT_UNDO_REQUEST)
+                )
+                if last_create_undo_request.created_at > last_reject_undo_request.created_at:
+                    raise Exception('Request still pending.')
+            except ChessSnapshot.DoesNotExist:
+                raise Exception('Request still pending.')
+
+        player = game.get_color(user)
+        if getattr(game, f'{player}_status') == ChessGame.STATUS_MY_TURN:
+            raise Exception('It is not the user\'s turn')
 
         ChessSnapshot.objects.create(
             action=ChessSnapshot.ACTION_CREATE_UNDO_REQUEST,
@@ -379,8 +414,11 @@ class ChessGameManager(BaseManager):
         '''
         from proj.apps.chess.models import ChessSnapshot
 
-        return ChessSnapshot.objects.create(
+        ChessSnapshot.objects.create(
             action=ChessSnapshot.ACTION_REJECT_UNDO_REQUEST,
             actor=user,
             game=game,
+            step=game.steps,
         )
+
+        return game

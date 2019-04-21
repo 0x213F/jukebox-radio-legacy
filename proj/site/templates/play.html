@@ -57,6 +57,12 @@
           </form>
           <br>
 
+          <form id="resign-match">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-secondary" style="margin-top: 1.4em; margin: auto; display: block;">Resign Match</button>
+          </form>
+          <br>
+
           <form id="create-undo-request">
             {% csrf_token %}
             <button type="submit" class="btn btn-secondary" style="margin-top: 1.4em; margin: auto; display: block;">Create Undo Request</button>
@@ -66,6 +72,12 @@
           <form id="approve-undo-request">
             {% csrf_token %}
             <button type="submit" class="btn btn-secondary" style="margin-top: 1.4em; margin: auto; display: block;">Approve Undo Request</button>
+          </form>
+          <br>
+
+          <form id="reject-undo-request">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-secondary" style="margin-top: 1.4em; margin: auto; display: block;">Reject Undo Request</button>
           </form>
           <br>
 
@@ -139,6 +151,29 @@
             }
         });
       });
+      $('#resign-match').submit(function(e){
+        e.preventDefault();
+        var data = $('#resign-match').serializeArray()
+        var ok = {}
+        for(thi in data) {
+          f = data[thi]
+          ok[f['name']] = f['value']
+        }
+        console.log(ok)
+        var data = {
+            'thing': 'resign-match',
+            'csrfmiddlewaretoken': ok['csrfmiddlewaretoken'],
+            'with_args': JSON.stringify({}),
+        }
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/game/do/',
+            type: 'post',
+            data: data,
+            success: function(data, status) {
+              $("#game-status").text(JSON.stringify(data))
+            }
+        });
+      });
       $('#create-undo-request').submit(function(e){
         e.preventDefault();
         var data = $('#create-undo-request').serializeArray()
@@ -173,6 +208,29 @@
         console.log(ok)
         var data = {
             'thing': 'approve-undo-request',
+            'csrfmiddlewaretoken': ok['csrfmiddlewaretoken'],
+            'with_args': JSON.stringify({}),
+        }
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/game/do/',
+            type: 'post',
+            data: data,
+            success: function(data, status) {
+              $("#game-status").text(JSON.stringify(data))
+            }
+        });
+      });
+      $('#reject-undo-request').submit(function(e){
+        e.preventDefault();
+        var data = $('#reject-undo-request').serializeArray()
+        var ok = {}
+        for(thi in data) {
+          f = data[thi]
+          ok[f['name']] = f['value']
+        }
+        console.log(ok)
+        var data = {
+            'thing': 'reject-undo-request',
             'csrfmiddlewaretoken': ok['csrfmiddlewaretoken'],
             'with_args': JSON.stringify({}),
         }

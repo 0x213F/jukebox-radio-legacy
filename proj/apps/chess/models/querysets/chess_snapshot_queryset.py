@@ -25,6 +25,21 @@ class ChessSnapshotQuerySet(BaseQuerySet):
         '''
         return self
 
+    def latest_action(self, game, action):
+        '''
+        todo
+        '''
+        from proj.apps.chess.models import ChessSnapshot
+
+        return (
+            self.filter(
+                action=action,
+                game=game,
+                step=game.steps,
+            ).
+            latest('created_at')
+        )
+
     def latest_move(self, game):
         '''
         todo
