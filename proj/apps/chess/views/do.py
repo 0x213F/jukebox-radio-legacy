@@ -7,7 +7,6 @@ from django.db.models import F
 from django.http import JsonResponse
 
 
-@login_required
 def do_view(request):
     '''
     Generic POST endpoint to perform methods related to `ChessGame`.

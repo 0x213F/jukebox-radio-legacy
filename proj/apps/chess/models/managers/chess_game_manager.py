@@ -32,11 +32,14 @@ def get_private_game(func):
     '''
     def query(*args, **kwargs):
         self = args[0]
+        user = kwargs.get('user')
+        if not user:
+            raise Exception('User is not authenticated.')
         kwargs['game'] = (
             self.model
             .objects
             .active()
-            .belong_to(kwargs.get('user'))
+            .belong_to(user)
             .get_singular()
         )
         return func(*args, **kwargs)
@@ -49,14 +52,45 @@ def verify_no_active_game(func):
     '''
     def query(*args, **kwargs):
         self = args[0]
+        user = kwargs.get('user')
+        if not user:
+            raise Exception('User is not authenticated.')
         active_games = (
             self.model
             .objects
             .active()
-            .belong_to(kwargs.get('user'))
+            .belong_to(user)
         )
         if active_games.exists():
             raise Exception('Already active in game.')
+        return func(*args, **kwargs)
+    return query
+
+
+def user_status_their_turn(func):
+    '''
+    @decorator to verify no
+    '''
+    def query(*args, **kwargs):
+        self = args[0]
+        game = kwargs.get('game')
+        player = game.get_color(kwargs.get('user'))
+        if getattr(game, f'{player}_status') != self.model.STATUS_THEIR_TURN:
+            raise Exception('It is the user\'s turn')
+        return func(*args, **kwargs)
+    return query
+
+
+def user_status_my_turn(func):
+    '''
+    @decorator to verify no
+    '''
+    def query(*args, **kwargs):
+        self = args[0]
+        game = kwargs.get('game')
+        player = game.get_color(kwargs.get('user'))
+        if getattr(game, f'{player}_status') != self.model.STATUS_MY_TURN:
+            raise Exception('It is the opponent\'s turn')
         return func(*args, **kwargs)
     return query
 
@@ -335,6 +369,7 @@ class ChessGameManager(BaseManager):
 
     @get_private_game
     @game_started
+    @user_status_their_turn
     def create_undo_request(self, *, game=None, user=None):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
@@ -356,13 +391,21 @@ class ChessGameManager(BaseManager):
                     ChessSnapshot.objects.latest_action(game, ChessSnapshot.ACTION_REJECT_UNDO_REQUEST)
                 )
                 if last_create_undo_request.created_at > last_reject_undo_request.created_at:
-                    raise Exception('Request still pending.')
-            except ChessSnapshot.DoesNotExist:
-                raise Exception('Request still pending.')
+                    last_approve_undo_request = (
+                        ChessSnapshot.objects.latest_action(game, ChessSnapshot.ACTION_APPROVE_UNDO_REQUEST)
+                    )
+                    if last_create_undo_request.created_at > last_approve_undo_request.created_at:
+                        raise Exception('Request still pending.')
 
-        player = game.get_color(user)
-        if getattr(game, f'{player}_status') == ChessGame.STATUS_MY_TURN:
-            raise Exception('It is not the user\'s turn')
+            except ChessSnapshot.DoesNotExist:
+                try:
+                    last_approve_undo_request = (
+                        ChessSnapshot.objects.latest_action(game, ChessSnapshot.ACTION_APPROVE_UNDO_REQUEST)
+                    )
+                    if last_create_undo_request.created_at > last_approve_undo_request.created_at:
+                        raise Exception('Request still pending.')
+                except ChessSnapshot.DoesNotExist:
+                    raise Exception('Request still pending.')
 
         ChessSnapshot.objects.create(
             action=ChessSnapshot.ACTION_CREATE_UNDO_REQUEST,
@@ -375,12 +418,39 @@ class ChessGameManager(BaseManager):
 
     @get_private_game
     @game_started
+    @user_status_my_turn
     def approve_undo_request(self, *, game=None, user=None):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
         ChessGame = self.model
         from proj.apps.chess.models import ChessSnapshot
+
+        last_create_undo_request = None
+        try:
+            last_create_undo_request = (
+                ChessSnapshot.objects.latest_action(game, ChessSnapshot.ACTION_CREATE_UNDO_REQUEST)
+            )
+        except ChessSnapshot.DoesNotExist:
+            raise Exception('No undo was requested.')
+
+        try:
+            last_reject_undo_request = (
+                ChessSnapshot.objects.latest_action(game, ChessSnapshot.ACTION_REJECT_UNDO_REQUEST)
+            )
+            if last_create_undo_request.created_at < last_reject_undo_request.created_at:
+                raise Exception('No undo was requested.')
+        except ChessSnapshot.DoesNotExist:
+            pass
+
+        try:
+            last_approve_undo_request = (
+                ChessSnapshot.objects.latest_action(game, ChessSnapshot.ACTION_APPROVE_UNDO_REQUEST)
+            )
+            if last_create_undo_request.created_at < last_approve_undo_request.created_at:
+                raise Exception('No undo was requested.')
+        except ChessSnapshot.DoesNotExist:
+            pass
 
         ChessSnapshot.objects.create(
             action=ChessSnapshot.ACTION_APPROVE_UNDO_REQUEST,
@@ -394,7 +464,7 @@ class ChessGameManager(BaseManager):
             game=game,
             step=(game.steps-1),
             action=ChessSnapshot.ACTION_TAKE_MOVE,
-        ).get_singular()
+        ).latest('created_at')
         player = game.get_color(user)
         opponent = game.get_opponent(user)
 
@@ -408,11 +478,39 @@ class ChessGameManager(BaseManager):
 
     @get_private_game
     @game_started
+    @user_status_my_turn
     def reject_undo_request(self, *, game=None, user=None):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
+        ChessGame = self.model
         from proj.apps.chess.models import ChessSnapshot
+
+        last_create_undo_request = None
+        try:
+            last_create_undo_request = (
+                ChessSnapshot.objects.latest_action(game, ChessSnapshot.ACTION_CREATE_UNDO_REQUEST)
+            )
+        except ChessSnapshot.DoesNotExist:
+            raise Exception('No undo was requested.')
+
+        try:
+            last_reject_undo_request = (
+                ChessSnapshot.objects.latest_action(game, ChessSnapshot.ACTION_REJECT_UNDO_REQUEST)
+            )
+            if last_create_undo_request.created_at < last_reject_undo_request.created_at:
+                raise Exception('No undo was requested.')
+        except ChessSnapshot.DoesNotExist:
+            pass
+
+        try:
+            last_approve_undo_request = (
+                ChessSnapshot.objects.latest_action(game, ChessSnapshot.ACTION_APPROVE_UNDO_REQUEST)
+            )
+            if last_create_undo_request.created_at < last_approve_undo_request.created_at:
+                raise Exception('No undo was requested.')
+        except ChessSnapshot.DoesNotExist:
+            pass
 
         ChessSnapshot.objects.create(
             action=ChessSnapshot.ACTION_REJECT_UNDO_REQUEST,
