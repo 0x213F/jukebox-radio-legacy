@@ -35,13 +35,16 @@ def get_private_game(func):
         user = kwargs.get('user')
         if not user:
             raise Exception('User is not authenticated.')
-        kwargs['game'] = (
-            self.model
-            .objects
-            .active()
-            .belong_to(user)
-            .get_singular()
-        )
+        try:
+            kwargs['game'] = (
+                self.model
+                .objects
+                .active()
+                .belong_to(user)
+                .get_singular()
+            )
+        except self.model.DoesNotExist:
+            raise Exception('Game does not exist.')
         return func(*args, **kwargs)
     return query
 

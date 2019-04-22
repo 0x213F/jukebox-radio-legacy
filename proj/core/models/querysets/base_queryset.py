@@ -13,6 +13,9 @@ class BaseQuerySet(models.QuerySet):
         Get the singular object from a QuerySet which is expected to only have
         1 object.
         '''
-        if self.count() == 1:
+        count = self.count()
+        if count == 1:
             return self.first()
+        elif count == 0:
+            raise self.model.DoesNotExist()
         raise Exception('Multiple objects found.')
