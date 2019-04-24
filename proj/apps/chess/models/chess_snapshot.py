@@ -14,6 +14,10 @@ from proj.core.models import BaseModel
 
 
 class ChessSnapshot(BaseModel):
+    '''
+    Model which helps represent snapshots of a chess game to recreate a
+    play-by-play historical reference of games.
+    '''
 
     # - - - - - - - -
     # config model
@@ -41,6 +45,12 @@ class ChessSnapshot(BaseModel):
     ACTION_APPROVE_UNDO_REQUEST = 'approve_undo_request'
     ACTION_REJECT_UNDO_REQUEST = 'reject_undo_request'
 
+    # NOTE: These are methods accessible publically via the API. See the
+    #       following files for more information:
+    #
+    # proj.core.models.managers.base_manager.py       # {API: method} mapping
+    # proj.apps.chess.views.do.py                     # API endpoint
+    # proj.apps.chess.managers.chess_game_manager.py  # methods
     ACTION_CHOICES = (
         (ACTION_CREATE_MATCH, ACTION_CREATE_MATCH),
         (ACTION_JOIN_MATCH, ACTION_JOIN_MATCH),
@@ -66,6 +76,7 @@ class ChessSnapshot(BaseModel):
         choices=ACTION_CHOICES,
         max_length=32,
     )
+
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='actors',
@@ -85,25 +96,3 @@ class ChessSnapshot(BaseModel):
     )
 
     step = models.IntegerField()
-
-    # - - - - -
-    # methods
-    # - - - - -
-
-    def create(self, *args, **kwargs):
-        '''
-        Override default create method to set defaults for `board` and `step`.
-        '''
-        from .models import ChessGame
-
-        game = kwargs.get('game', None)
-        if game:
-            raise ValueError('ChessSnapshot must have an associated game.')
-
-        if not kwargs.get('board', None):
-            kwargs['board'] = game.board
-
-        if not kwargs.get('step', None):
-            kwargs['step'] = game.steps
-
-        return super.create(*args, **kwargs)

@@ -9,118 +9,32 @@ from datetime import datetime
 from django.db.models import F
 from django.db.models import Q
 
+from proj.apps.chess.utils.decorators import get_game_by_user
+from proj.apps.chess.utils.decorators import get_game_by_uuid
+from proj.apps.chess.utils.decorators import assert_game_started
+from proj.apps.chess.utils.decorators import assert_user_no_active_game
+from proj.apps.chess.utils.decorators import assert_user_status_my_turn
+from proj.apps.chess.utils.decorators import assert_user_status_their_turn
+
 from proj.core.models.managers import BaseManager
-
-
-def get_public_game(func):
-    '''
-    @decorator to get the active game.
-    '''
-    def query(*args, **kwargs):
-        self = args[0]
-        uuid = kwargs.get('uuid')
-        try:
-            kwargs['game'] = self.model.objects.get(uuid=uuid)
-            return func(*args, **kwargs)
-        except self.model.DoesNotExist:
-            raise Exception('Game does not exist.')
-
-
-def get_private_game(func):
-    '''
-    @decorator to get the active game.
-    '''
-    def query(*args, **kwargs):
-        self = args[0]
-        user = kwargs.get('user')
-        if not user:
-            raise Exception('User is not authenticated.')
-        try:
-            kwargs['game'] = (
-                self.model
-                .objects
-                .active()
-                .belong_to(user)
-                .get_singular()
-            )
-        except self.model.DoesNotExist:
-            raise Exception('Game does not exist.')
-        return func(*args, **kwargs)
-    return query
-
-
-def verify_no_active_game(func):
-    '''
-    @decorator to verify no
-    '''
-    def query(*args, **kwargs):
-        self = args[0]
-        user = kwargs.get('user')
-        if not user:
-            raise Exception('User is not authenticated.')
-        active_games = (
-            self.model
-            .objects
-            .active()
-            .belong_to(user)
-        )
-        if active_games.exists():
-            raise Exception('Already active in game.')
-        return func(*args, **kwargs)
-    return query
-
-
-def user_status_their_turn(func):
-    '''
-    @decorator to verify no
-    '''
-    def query(*args, **kwargs):
-        self = args[0]
-        game = kwargs.get('game')
-        player = game.get_color(kwargs.get('user'))
-        if getattr(game, f'{player}_status') != self.model.STATUS_THEIR_TURN:
-            raise Exception('It is the user\'s turn')
-        return func(*args, **kwargs)
-    return query
-
-
-def user_status_my_turn(func):
-    '''
-    @decorator to verify no
-    '''
-    def query(*args, **kwargs):
-        self = args[0]
-        game = kwargs.get('game')
-        player = game.get_color(kwargs.get('user'))
-        if getattr(game, f'{player}_status') != self.model.STATUS_MY_TURN:
-            raise Exception('It is the opponent\'s turn')
-        return func(*args, **kwargs)
-    return query
-
-
-def game_started(func):
-    '''
-    @decorator to verify no
-    '''
-    def query(*args, **kwargs):
-        if kwargs.get('game').steps == 0:
-            raise Exception('There are no moves to undo.')
-        return func(*args, **kwargs)
-    return query
 
 
 class ChessGameManager(BaseManager):
     '''
-    todo: docstring
+    Engine that controls a game of chess.
     '''
 
     def response(self, game):
         '''
-        todo: docstring
+        Tranform a `ChessGame` object into a JSON response with additional
+        context from relevant `ChessSnapshot` objects.
         '''
         from proj.apps.chess.models import ChessSnapshot
 
-        snapshots = ChessSnapshot.objects.filter(game=game)
+        snapshots = ChessSnapshot.objects.filter(
+            game=game,
+            step__gte=game.steps,  # the `gt` part includes suggested moves
+        )
 
         return {
             'game': super().response([game]),
@@ -170,7 +84,7 @@ class ChessGameManager(BaseManager):
     # game status
     # - - - - - - -
 
-    @verify_no_active_game
+    @assert_user_no_active_game
     def create_match(self, *, user=None):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
@@ -201,17 +115,11 @@ class ChessGameManager(BaseManager):
 
         game =  super().create(**data)
 
-        ChessSnapshot.objects.create(
-            action=ChessSnapshot.ACTION_CREATE_MATCH,
-            actor=user,
-            board=game.board,
-            game=game,
-            step=game.steps,
-        )
+        game.take_snapshot(user, ChessSnapshot.ACTION_CREATE_MATCH)
 
         return game
 
-    @verify_no_active_game
+    @assert_user_no_active_game
     def join_match(self, *, user=None, join_code=None):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
@@ -221,7 +129,7 @@ class ChessGameManager(BaseManager):
         from proj.apps.chess.models import ChessSnapshot
         ChessGame = self.model
 
-        game = ChessGame.objects.join_code(join_code)
+        game = ChessGame.objects.get_by_join_code(join_code)
         if join_code != game.join_code:
             raise Exception('Invalid join code.')
 
@@ -236,16 +144,11 @@ class ChessGameManager(BaseManager):
         game.white_status = ChessGame.STATUS_MY_TURN
 
         game.save()
-        ChessSnapshot.objects.create(
-            action=ChessSnapshot.ACTION_JOIN_MATCH,
-            actor=user,
-            game=game,
-            step=game.steps,
-        )
+        game.take_snapshot(user, ChessSnapshot.ACTION_JOIN_MATCH)
 
         return game
 
-    @get_private_game
+    @get_game_by_user
     def close_match(self, *, game=None, user=None):
         '''
         PUBLIC METHOD ACCESSIBLE BY API
@@ -259,31 +162,19 @@ class ChessGameManager(BaseManager):
         ):
             raise Exception('Game has already started.')
 
-        ChessSnapshot.objects.create(
-            action=ChessSnapshot.ACTION_CLOSE_MATCH,
-            actor=user,
-            board=game.board,
-            game=game,
-            step=game.steps,
-        )
+        game.take_snapshot(user, ChessSnapshot.ACTION_CLOSE_MATCH)
 
         return self.end(game)
 
-    @get_private_game
-    @game_started
+    @get_game_by_user
+    @assert_game_started
     def resign_match(self, *, game=None, user=None):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
         '''
         from proj.apps.chess.models import ChessSnapshot
 
-        ChessSnapshot.objects.create(
-            action=ChessSnapshot.ACTION_RESIGN_MATCH,
-            actor=user,
-            board=game.board,
-            game=game,
-            step=game.steps,
-        )
+        game.take_snapshot(user, ChessSnapshot.ACTION_RESIGN_MATCH)
 
         return self.end(game)
 
@@ -291,7 +182,7 @@ class ChessGameManager(BaseManager):
     # game state
     # - - - - - -
 
-    @get_private_game
+    @get_game_by_user
     def take_move(self, *, game=None, user=None, uci=None):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
@@ -324,13 +215,7 @@ class ChessGameManager(BaseManager):
         updated_board = self.move(game, uci)
         player_time = getattr(game, f'{player}_time') - lost_time
 
-        ChessSnapshot.objects.create(
-            action=ChessSnapshot.ACTION_TAKE_MOVE,
-            actor=user,
-            board=game.board,
-            game=game,
-            step=game.steps,
-        )
+        game.take_snapshot(user, ChessSnapshot.ACTION_TAKE_MOVE)
 
         game.board = updated_board
         game.steps += 1
@@ -349,7 +234,7 @@ class ChessGameManager(BaseManager):
         '''
         raise NotImplementedError()
 
-    @get_public_game
+    @get_game_by_uuid
     def suggest_move(self, *, game=None, user=None, uci=None, uuid=None):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
@@ -358,21 +243,19 @@ class ChessGameManager(BaseManager):
 
         updated_board = self.move(uci)
 
-        ChessSnapshot.objects.create(
-            action=ChessSnapshot.ACTION_SUGGEST_MOVE,
-            actor=user,
-            board=updated_board,
-            game=game,
-            step=(game.steps + 1),
+        game.take_snapshot(
+            user,
+            ChessSnapshot.ACTION_SUGGEST_MOVE,
+            step=(game.steps + 1)
         )
 
     # - - - - - -
     # undo state
     # - - - - - -
 
-    @get_private_game
-    @game_started
-    @user_status_their_turn
+    @get_game_by_user
+    @assert_game_started
+    @assert_user_status_their_turn
     def create_undo_request(self, *, game=None, user=None):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
@@ -410,18 +293,13 @@ class ChessGameManager(BaseManager):
                 except ChessSnapshot.DoesNotExist:
                     raise Exception('Request still pending.')
 
-        ChessSnapshot.objects.create(
-            action=ChessSnapshot.ACTION_CREATE_UNDO_REQUEST,
-            actor=user,
-            game=game,
-            step=game.steps,
-        )
+        game.take_snapshot(user, ChessSnapshot.ACTION_CREATE_UNDO_REQUEST)
 
         return game
 
-    @get_private_game
-    @game_started
-    @user_status_my_turn
+    @get_game_by_user
+    @assert_game_started
+    @assert_user_status_my_turn
     def approve_undo_request(self, *, game=None, user=None):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
@@ -429,6 +307,7 @@ class ChessGameManager(BaseManager):
         ChessGame = self.model
         from proj.apps.chess.models import ChessSnapshot
 
+        # TODO refactor this
         last_create_undo_request = None
         try:
             last_create_undo_request = (
@@ -455,19 +334,20 @@ class ChessGameManager(BaseManager):
         except ChessSnapshot.DoesNotExist:
             pass
 
-        ChessSnapshot.objects.create(
-            action=ChessSnapshot.ACTION_APPROVE_UNDO_REQUEST,
-            actor=user,
-            board=game.board,
-            game=game,
-            step=game.steps,
-        )
+        game.take_snapshot(user, ChessSnapshot.ACTION_APPROVE_UNDO_REQUEST)
 
         latest_move = ChessSnapshot.objects.filter(
             game=game,
             step=(game.steps-1),
             action=ChessSnapshot.ACTION_TAKE_MOVE,
         ).latest('created_at')
+
+        if not latest_move:
+            raise RuntimeError(
+                'An undo request was successfully approved, but no latest '
+                'move was found.'
+            )
+
         player = game.get_color(user)
         opponent = game.get_opponent(user)
 
@@ -479,9 +359,9 @@ class ChessGameManager(BaseManager):
 
         return game
 
-    @get_private_game
-    @game_started
-    @user_status_my_turn
+    @get_game_by_user
+    @assert_game_started
+    @assert_user_status_my_turn
     def reject_undo_request(self, *, game=None, user=None):
         '''
         !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
@@ -489,6 +369,7 @@ class ChessGameManager(BaseManager):
         ChessGame = self.model
         from proj.apps.chess.models import ChessSnapshot
 
+        # TODO refactor this
         last_create_undo_request = None
         try:
             last_create_undo_request = (
@@ -515,11 +396,6 @@ class ChessGameManager(BaseManager):
         except ChessSnapshot.DoesNotExist:
             pass
 
-        ChessSnapshot.objects.create(
-            action=ChessSnapshot.ACTION_REJECT_UNDO_REQUEST,
-            actor=user,
-            game=game,
-            step=game.steps,
-        )
+        game.take_snapshot(user, ChessSnapshot.ACTION_REJECT_UNDO_REQUEST)
 
         return game

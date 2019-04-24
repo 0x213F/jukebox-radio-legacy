@@ -14,6 +14,9 @@ from proj.core.models import BaseModel
 
 
 class ChessGame(BaseModel):
+    '''
+    Model which represents a game of chess in the database.
+    '''
 
     # - - - - - - - -
     # config model
@@ -166,10 +169,6 @@ class ChessGame(BaseModel):
         max_length=92,
     )
 
-    # - - - - - - - - - - -
-    # subclassed methods
-    # - - - - - - - - - - -
-
     # - - - - - - - -
     # model methods
     # - - - - - - - -
@@ -192,3 +191,6 @@ class ChessGame(BaseModel):
             return 'black'
         else:
             raise Exception('User not in game.')
+
+    def take_snapshot(self, user, action):
+        ChessSnapshot.objects.take_snapshot(self, user, action)

@@ -8,7 +8,7 @@ from proj.core.models.querysets import BaseQuerySet
 
 class ChessSnapshotQuerySet(BaseQuerySet):
     '''
-    todo: docstring
+    Query methods to retrieve `ChessSnapshot` objects from the database.
     '''
 
     def suggestions(self, game):

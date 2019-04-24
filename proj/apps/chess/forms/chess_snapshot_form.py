@@ -2,5 +2,5 @@
 from django import forms
 
 
-class ChessGameForm(forms.Form):
+class ChessSnapshotForm(forms.Form):
     pass
