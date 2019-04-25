@@ -14,6 +14,7 @@ def do_view(request):
     from proj.apps.chess.models import ChessSnapshot
     from proj.apps.chess.models import ChessGame
 
+    # TODO refactor URLs to be /chess/<action>
     action_slug = request.POST.get('thing')
     action_method = action_slug.replace('-', '_')
     if action_method not in [c[0] for c in ChessSnapshot.ACTION_CHOICES]:

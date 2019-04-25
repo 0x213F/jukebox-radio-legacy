@@ -95,6 +95,13 @@
           </form>
           <br>
 
+          <form id="suggest-move">
+            {% csrf_token %}
+            <input type="text" name='uci' placeholder="UCI">
+            <button type="submit" class="btn btn-primary" style="margin-top: 1.4em; margin: auto; display: block;">Take Move</button>
+          </form>
+          <br>
+
           <p id="game-status" class="text-info" style="margin-top: 1.4em"><p>
 
         </div>
@@ -260,6 +267,33 @@
           console.log(data)
           data['thing'] = 'take-move'
           delete data['uci']
+          $.ajax({
+            // TODO not this...
+              url: 'http://127.0.0.1:8000/api/game/do/',
+              type: 'post',
+              data: data,
+              success: function(data, status) {
+                $("#game-status").text(JSON.stringify(data))
+              }
+          });
+      });
+      $('#suggest-move').submit(function(e){
+          e.preventDefault();
+          var data = $('#suggest-move').serializeArray()
+          var ok = {}
+          for(thi in data) {
+            f = data[thi]
+            ok[f['name']] = f['value']
+          }
+          console.log(ok)
+          var data = {
+              'thing': 'suggest-move',
+              'csrfmiddlewaretoken': ok['csrfmiddlewaretoken'],
+              'with_args': JSON.stringify({
+                  'uci': ok['uci'],
+                  'uuid': ok['uuid'],
+              }),
+          }
           $.ajax({
             // TODO not this...
               url: 'http://127.0.0.1:8000/api/game/do/',

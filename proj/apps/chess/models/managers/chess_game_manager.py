@@ -51,13 +51,11 @@ class ChessGameManager(BaseManager):
         '''
         ChessGame = self.model
 
-        ChessGame.objects.filter(id=game.id).update(
-            finished_at=datetime.now(),
-            black_status=ChessGame.STATUS_COMPLETE,
-            white_status=ChessGame.STATUS_COMPLETE,
-        )
+        game.finished_at = datetime.now()
+        game.black_status = ChessGame.STATUS_COMPLETE
+        game.white_status = ChessGame.STATUS_COMPLETE
+        game.save()
 
-        game.refresh_from_db()
         return game
 
     # - - - - - - - -
@@ -246,7 +244,7 @@ class ChessGameManager(BaseManager):
         game.take_snapshot(
             user,
             ChessSnapshot.ACTION_SUGGEST_MOVE,
-            step=(game.steps + 1)
+            step=(game.steps + 1),
         )
 
     # - - - - - -

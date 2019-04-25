@@ -17,6 +17,4 @@ class User(AbstractUser):
         unique=True,
     )
 
-    pin = models.CharField(
-        max_length=4,
-    )
+    # TODO friends!
