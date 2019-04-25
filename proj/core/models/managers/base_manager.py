@@ -21,6 +21,10 @@ class BaseManager(models.Manager):
         - with_action:  **kwargs passed to the manager method
         '''
 
+        # TODO: this is poor design. create a view that does authentication.
+        #       once the request has been authenticated, then call the manager
+        #       method. if there are similar authentication patterns, those
+        #       could be pulled out into methods at the developer's discretion
         if not request.user:
             raise Exception('User must be authenticated.')
 
