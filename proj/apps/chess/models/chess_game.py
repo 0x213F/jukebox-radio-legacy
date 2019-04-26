@@ -193,4 +193,5 @@ class ChessGame(BaseModel):
             raise Exception('User not in game.')
 
     def take_snapshot(self, user, action):
+        from proj.apps.chess.models import ChessSnapshot
         ChessSnapshot.objects.take_snapshot(self, user, action)
