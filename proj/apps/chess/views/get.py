@@ -34,4 +34,4 @@ class GetView(BaseView):
                 get_singular()
             )
 
-        return JsonResponse(ChessGame.objects.response(game))
+        return JsonResponse(ChessGame.objects.response(game, request))

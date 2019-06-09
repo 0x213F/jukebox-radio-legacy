@@ -114,7 +114,7 @@ class ChessGameManager(BaseManager):
     todo: docstring
     '''
 
-    def response(self, game):
+    def response(self, game, request):
         '''
         todo: docstring
         '''
@@ -125,6 +125,7 @@ class ChessGameManager(BaseManager):
         return {
             'game': super().response([game]),
             'snapshots': super().response(snapshots),
+            'user': super().response([request.user])
         }
 
     # - - - - - - - -

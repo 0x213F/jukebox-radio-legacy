@@ -20,6 +20,6 @@ def do_view(request):
         return HttpResponse(status=500)
 
     result = ChessGame.objects.do(action_method, request)
-    response = ChessGame.objects.response(result)
+    response = ChessGame.objects.response(result, request)
 
     return JsonResponse(response, safe=False)

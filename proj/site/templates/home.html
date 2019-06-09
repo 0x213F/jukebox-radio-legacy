@@ -1,65 +1,58 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% extends "base.html" %}
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+{% block basestyles %}
+{% load static %}
+<!-- Spectre.css ~ The lightweight, responsive and modern CSS framework -->
+<!--                                                                    -->
+<!--               https://picturepan2.github.io/spectre/               -->
+<!--                                                                    -->
+<link rel="stylesheet" href="../static/css/spectre/spectre.min.css">
+<link rel="stylesheet" href="../static/css/spectre/spectre-icons.min.css">
 
-    <title>proj - Play</title>
+<!-- custom styles -->
+<link rel="stylesheet" href="../static/css/proj/base.css">
+{% endblock %}
 
-    <style>
-      #loader {
-        border: 16px solid #e2e3e5; /* Light grey */
-        border-top: 16px solid #007bff; /* Blue */
-        border-radius: 50%;
-        width: 120px;
-        height: 120px;
-        animation: spin 2.5s linear infinite;
-      }
+{% block main %}
 
-      .selected {
-        box-shadow: 0 0 0 0.2rem rgba(108,117,125,.5);
-        background-color: #5a6268;
-      }
+<div class="card-body">
 
-      .selected-style {
-        box-shadow: 0 0 0 0.2rem rgba(108,117,125,.5);
-      }
+  <form id="logout">
 
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-    </style>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-  </head>
-  <body>
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-10" style="min-width: 300px; max-width: 400px;">
+    {% csrf_token %}
 
-          <div class="alert alert-warning text-center" role="alert" style="margin-top: 1.4em">
-            PRE-RELEASE
-          </div>
-
-          <form id="logout">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-secondary" style="margin-top: 1.4em; margin: auto; display: block;">Logout</button>
-          </form>
-
-          <br>
-
-          <form id="create-game">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-primary" style="margin-top: 1.4em; margin: auto; display: block;">Create Game</button>
-          </form>
-
-        </div>
-      </div>
+    <div class="form-group">
+      <button type="submit" form="logout" class="btn btn-primary">Logout</button>
+      <span id="sign-up-error" class="text-info" style="margin-left: 1.4em; color: red"><span>
     </div>
+
+  </form>
+
+  <br>
+  <div class="divider text-center" data-content="OR"></div>
+  <br>
+
+  <form id="create-game">
+
+    {% csrf_token %}
+
+    <div class="form-group" style='display: inline-block;"'>
+      <button type="submit" form="create-game" class="btn btn-secondary">Create Game</button>
+    </div>
+
+  </form>
+
+</div>
+
+{% endblock %}
+
+
+{% block basescripts %}
+<script src="../static/js/proj/main.js"></script>
+{% endblock %}
+
+
+{% block scripts %}
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -97,10 +90,10 @@
               type: 'post',
               data: data,
               success: function(data, status) {
-                $("#game-status").text(data)
+                window.location = '/play'
               }
           });
       });
     </script>
-  </body>
-</html>
+
+{% endblock %}

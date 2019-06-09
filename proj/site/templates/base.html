@@ -10,6 +10,7 @@
 
     <title>Chess</title>
 
+    {% block basestyles %}
     <!-- Spectre.css ~ The lightweight, responsive and modern CSS framework -->
     <!--                                                                    -->
     <!--               https://picturepan2.github.io/spectre/               -->
@@ -19,6 +20,7 @@
 
     <!-- custom styles -->
     <link rel="stylesheet" href="{% static 'css/proj/base.css' %}">
+    {% endblock %}
 
     {% block styles %}{% endblock %}
 </head>
@@ -32,7 +34,10 @@
 
     </div>
 
+    {% block basescripts %}
     <script src="{% static 'js/proj/main.js' %}"></script>
+    {% endblock %}
+
     {% block scripts %}{% endblock %}
 </body>
 
