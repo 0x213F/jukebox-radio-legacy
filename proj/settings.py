@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 	'proj.apps.chess',
 	'proj.apps.users',
+	'proj.apps.rooms',
 ]
 
 AUTH_USER_MODEL = 'users.User'
