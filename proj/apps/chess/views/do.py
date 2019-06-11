@@ -15,6 +15,7 @@ def do_view(request):
     from proj.apps.chess.models import ChessGame
 
     action_slug = request.POST.get('thing')
+    print(action_slug)
     action_method = action_slug.replace('-', '_')
     if action_method not in [c[0] for c in ChessSnapshot.ACTION_CHOICES]:
         return HttpResponse(status=500)
