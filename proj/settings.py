@@ -44,7 +44,17 @@ INSTALLED_APPS = [
 	'proj.apps.chess',
 	'proj.apps.users',
 	'proj.apps.rooms',
+	'channels',
 ]
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
+        },
+    },
+}
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -59,6 +69,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'proj.urls'
+ASGI_APPLICATION = 'proj.routing.application'
 
 # STATICFILES_DIRS = [
 # 	f'{BASE_DIR}proj/site/static/public/',
@@ -82,9 +93,6 @@ TEMPLATES = [
         },
     },
 ]
-
-WSGI_APPLICATION = 'proj.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases

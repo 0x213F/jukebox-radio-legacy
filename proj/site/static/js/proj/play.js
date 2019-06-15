@@ -1,4 +1,21 @@
 
+var chat_socket = new ReconnectingWebSocket("http://127.0.0.1:8000/play/");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // --- Begin Example JS --------------------------------------------------------
 // NOTE: this example uses the chess.js library:
 // https://github.com/jhlywa/chess.js
@@ -134,17 +151,14 @@ $('#take-move').submit(function(e){
     console.log(data)
     data['thing'] = 'take-move'
     delete data['uci']
-    console.log(data)
-    $.ajax({
-      // TODO not this...
-        url: 'http://127.0.0.1:8000/api/game/do/',
-        type: 'post',
-        data: data,
-        success: function(data, status) {
-          $("#game-status").text(JSON.stringify(data))
-        }
-    });
+    chat_socket.send(JSON.stringify(data));
+    return false;
 });
+
+chatsock.onmessage = function(message) {
+    var data = JSON.parse(message.data);
+    console.log(data);
+};
 
 
 $('#get-game').submit()
