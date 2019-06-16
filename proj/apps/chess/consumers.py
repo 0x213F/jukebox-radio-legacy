@@ -4,7 +4,7 @@ import json
 from channels.consumer import AsyncConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
-
+from django.core.serializers import serialize
 
 from proj.apps.chess.models import ChessGame
 
@@ -12,9 +12,8 @@ from proj.apps.chess.models import ChessGame
 class ChessGameConsumer(AsyncConsumer):
 
     async def websocket_connect(self, event):
-        user = self.scope['user']
         game = await database_sync_to_async(
-            ChessGame.objects.belong_to(user).get
+            ChessGame.objects.belong_to(self.scope['user']).get
         )()
         self.group_name = game.group_name
 
@@ -24,8 +23,25 @@ class ChessGameConsumer(AsyncConsumer):
         )
 
         await self.send({
-            'type': 'websocket.accept'
+            'type': 'websocket.accept',
         })
+
+        try:
+            game = await database_sync_to_async(
+                ChessGame.objects.get_websocket_private_game
+            )(self.scope['user'])
+            response = await database_sync_to_async(
+                ChessGame.objects.websocket_response
+            )(game, self.scope['user'])
+            await self.send({
+                'type': 'websocket.send',
+                'text': json.dumps(response),
+            })
+        except ChessGame.DoesNotExist:
+            await self.send({
+                'type': 'websocket.send',
+                'text': 'ChessGame.DoesNotExist',
+            })
 
         # await self.send({
         #     'type': 'websocket.send',
@@ -38,11 +54,25 @@ class ChessGameConsumer(AsyncConsumer):
 
     async def websocket_receive(self, event):
 
+        game = await database_sync_to_async(
+            ChessGame.objects.get_websocket_private_game
+        )(self.scope['user'])
+
+        if not game.is_users_turn(self.scope['user']):
+            raise Exception('It is the opponent\'s turn')
+
+        print(json.loads(event['text'])['uci'])
+
+        result = ChessGame.objects.move_piece(game, json.loads(event['text'])['uci'])
+        response = await database_sync_to_async(
+            ChessGame.objects.websocket_response
+        )(game, self.scope['user'])
+
         await self.channel_layer.group_send(
             self.group_name,
             {
                 'type': 'broadcast',
-                'text': json.dumps({'foo': 'bar'}),
+                'text': json.dumps(response),
             }
         )
 

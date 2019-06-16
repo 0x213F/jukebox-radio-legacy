@@ -1,9 +1,15 @@
 
 var endpoint = 'ws://' + window.location.host + window.location.pathname
 var socket = new WebSocket(endpoint)
+var my_color = null
 
 socket.onmessage = function(e) {
-  console.log('message', e)
+  let data = e.data;
+  if(data === 'ChessGame.DoesNotExist') {
+    // TODO
+  } else {
+    redrawBoard(JSON.parse(data));
+  }
 }
 socket.onopen = function(e) {
   console.log('open', e)
@@ -16,6 +22,31 @@ socket.onclose = function(e) {
 }
 
 
+function redrawBoard(data) {
+  position = data.game.fields.board
+  is_black = data.game.fields.black_user && data.game.fields.black_user == data.user.pk
+  console.log(is_black)
+  if(is_black) {
+    orientation = 'black'
+  } else {
+    orientation = 'white'
+  }
+  if(!my_color) {
+    my_color = orientation;
+  }
+  var config = {
+    orientation: my_color,
+    draggable: true,
+    position: position,
+    onDragStart: onDragStart,
+    onDrop: onDrop,
+    onSnapEnd: onSnapEnd,
+    pieceTheme: '../static/img/chesspieces/wikipedia/{piece}.png'
+  }
+  board = Chessboard('myBoard', config)
+  game = new Chess(position)
+  updateStatus()
+}
 
 
 
@@ -52,8 +83,7 @@ function onDrop (source, target) {
   // illegal move
   if (move === null) return 'snapback'
 
-  $('#take-move-uci').val(move.from + move.to)
-  $('#take-move').submit()
+  socket.send(JSON.stringify({'uci': move.from + move.to}));
 
   updateStatus()
 }
@@ -96,70 +126,5 @@ function updateStatus () {
   $fen.html(game.fen())
   $pgn.html(game.pgn())
 }
-
-$('#get-game').submit(function(e){
-    e.preventDefault();
-    var uuid = window.location.pathname.split('/').pop()
-    if(uuid) {
-      data = {
-        'uuid': uuid,
-      }
-    } else {
-      data={}
-    }
-    $.ajax({
-      // TODO not this...
-        url: 'http://127.0.0.1:8000/api/game/get',
-        type: 'get',
-        data: data,
-        success: function(data, status) {
-          position = data.game.fields.board
-          is_black = data.game.fields.black_user && data.game.fields.black_user == data.user.pk
-          console.log(is_black)
-          if(is_black) {
-            orientation = 'black'
-          } else {
-            orientation = 'white'
-          }
-          console.log(data)
-          var config = {
-            orientation: orientation,
-            draggable: true,
-            position: position,
-            onDragStart: onDragStart,
-            onDrop: onDrop,
-            onSnapEnd: onSnapEnd,
-            pieceTheme: '../static/img/chesspieces/wikipedia/{piece}.png'
-          }
-          board = Chessboard('myBoard', config)
-          game = new Chess(position)
-          updateStatus()
-        }
-    });
-});
-
-$('#take-move').submit(function(e){
-    e.preventDefault();
-    var data = $('#take-move').serializeArray()
-    var ok = {}
-    for(thi in data) {
-      f = data[thi]
-      ok[f['name']] = f['value']
-    }
-    console.log(ok)
-    var data = {
-        'thing': 'take-move',
-        'csrfmiddlewaretoken': ok['csrfmiddlewaretoken'],
-        'with_args': JSON.stringify({'uci': ok['uci']}),
-    }
-    console.log(data)
-    data['thing'] = 'take-move'
-    delete data['uci']
-    socket.send(data);
-    return false;
-});
-
-
-$('#get-game').submit()
 
 // --- End Example JS ----------------------------------------------------------

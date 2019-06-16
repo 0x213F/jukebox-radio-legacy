@@ -12,7 +12,7 @@ from proj.core.views import BaseView
 
 
 @method_decorator(login_required, name='dispatch')
-class GetView(BaseView):
+class GetMatchView(BaseView):
     '''
     TODO docstring
     '''
@@ -21,11 +21,9 @@ class GetView(BaseView):
         '''
         TODO docstring
         '''
-
         uuid = request.GET.get('uuid', None)
         if uuid:
             game = ChessGame.objects.get(uuid=uuid)
-
         else:
             game = (
                 ChessGame.objects.
@@ -34,4 +32,5 @@ class GetView(BaseView):
                 get_singular()
             )
 
-        return JsonResponse(ChessGame.objects.response(game, request))
+        response = ChessGame.objects.response(game, request)
+        return self.http_response(response)

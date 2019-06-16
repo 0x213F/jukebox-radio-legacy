@@ -175,11 +175,28 @@ class ChessGame(BaseModel):
     def group_name(self):
         return f'{ContentType.objects.get_for_model(self).id}-{self.id}'
 
+    @property
+    def is_started(self):
+        return self.steps != 0
+
+    @property
+    def get_user_status_my_turn(self):
+            if self.black_status == self.STATUS_MY_TURN:
+                return self.black_user
+            elif self.white_status == self.STATUS_MY_TURN:
+                return self.white_user
+            else:
+                raise Exception('Game is not active.')
+
     # - - - - - - - -
     # model methods
     # - - - - - - - -
 
-    def get_color(self, user):
+    def is_users_turn(self, user):
+        color = self.get_users_color(user)
+        return getattr(self, f'{color}_status') == self.STATUS_MY_TURN
+
+    def get_users_color(self, user):
         '''
         todo: docstring
         '''
@@ -190,7 +207,7 @@ class ChessGame(BaseModel):
         else:
             raise Exception('User not in game.')
 
-    def get_opponent(self, user):
+    def get_users_opponent(self, user):
         if self.black_user == user:
             return 'white'
         elif self.white_user == user:
