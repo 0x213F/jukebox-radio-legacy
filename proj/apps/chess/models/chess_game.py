@@ -4,6 +4,7 @@ import random
 import uuid
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.forms import fields
 
@@ -167,8 +168,12 @@ class ChessGame(BaseModel):
     )
 
     # - - - - - - - - - - -
-    # subclassed methods
+    # properties
     # - - - - - - - - - - -
+
+    @property
+    def group_name(self):
+        return f'{ContentType.objects.get_for_model(self).id}-{self.id}'
 
     # - - - - - - - -
     # model methods

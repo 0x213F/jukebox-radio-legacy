@@ -1,15 +1,19 @@
 
-var chat_socket = new ReconnectingWebSocket("http://127.0.0.1:8000/play/");
+var endpoint = 'ws://' + window.location.host + window.location.pathname
+var socket = new WebSocket(endpoint)
 
-
-
-
-
-
-
-
-
-
+socket.onmessage = function(e) {
+  console.log('message', e)
+}
+socket.onopen = function(e) {
+  console.log('open', e)
+}
+socket.onerror = function(e) {
+  console.log('error', e)
+}
+socket.onclose = function(e) {
+  console.log('close', e)
+}
 
 
 
@@ -151,14 +155,9 @@ $('#take-move').submit(function(e){
     console.log(data)
     data['thing'] = 'take-move'
     delete data['uci']
-    chat_socket.send(JSON.stringify(data));
+    socket.send(data);
     return false;
 });
-
-chatsock.onmessage = function(message) {
-    var data = JSON.parse(message.data);
-    console.log(data);
-};
 
 
 $('#get-game').submit()

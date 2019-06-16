@@ -7,5 +7,13 @@ from channels.security.websocket import OriginValidator
 
 from proj.apps.chess.consumers import ChessGameConsumer
 application = ProtocolTypeRouter({
-    # todo
+    'websocket': AllowedHostsOriginValidator(
+        AuthMiddlewareStack(
+            URLRouter(
+                [
+                    url('play/', ChessGameConsumer)
+                ]
+            )
+        )
+    )
 })
