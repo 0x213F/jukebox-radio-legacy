@@ -23,13 +23,13 @@ class JoinMatchView(BaseView):
         '''
 
         try:
-            game = ChessGame.objects.get_private_game(request.user)
+            game = ChessGame.objects.active().belongs_to(request.user).get()
             raise Exception('User is already active in a private game.')
         except ChessGame.DoesNotExist:
             pass
 
         join_code = request.POST.get('join_code', None)
-        result = ChessGame.objects.join(request.user, join_code)
+        result = ChessGame.objects.join_match(request.user, join_code)
 
         response = ChessGame.objects.response(result, request)
         return self.http_response(response)

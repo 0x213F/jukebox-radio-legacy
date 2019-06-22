@@ -23,7 +23,7 @@ class CreateMatchView(BaseView):
         '''
 
         try:
-            game = ChessGame.objects.get_private_game(request.user)
+            game = ChessGame.objects.active().belongs_to(request.user).get()
             raise Exception('User is already active in a private game.')
         except ChessGame.DoesNotExist:
             pass

@@ -1,31 +1,9 @@
 
-var endpoint = 'ws://' + window.location.host + window.location.pathname
-var socket = new WebSocket(endpoint)
 var my_color = null
 
-socket.onmessage = function(e) {
-  let data = e.data;
-  if(data === 'ChessGame.DoesNotExist') {
-    // TODO
-  } else {
-    redrawBoard(JSON.parse(data));
-  }
-}
-socket.onopen = function(e) {
-  console.log('open', e)
-}
-socket.onerror = function(e) {
-  console.log('error', e)
-}
-socket.onclose = function(e) {
-  console.log('close', e)
-}
-
-
-function redrawBoard(data) {
+function redraw_board(data) {
   position = data.game.fields.board
   is_black = data.game.fields.black_user && data.game.fields.black_user == data.user.pk
-  console.log(is_black)
   if(is_black) {
     orientation = 'black'
   } else {
@@ -34,6 +12,8 @@ function redrawBoard(data) {
   if(!my_color) {
     my_color = orientation;
   }
+  console.log(data)
+  console.log(my_color)
   var config = {
     orientation: my_color,
     draggable: true,
@@ -83,7 +63,16 @@ function onDrop (source, target) {
   // illegal move
   if (move === null) return 'snapback'
 
-  socket.send(JSON.stringify({'uci': move.from + move.to}));
+  var route = 'take_move'
+  var data = {'uci': move.from + move.to}
+
+  var payload = {
+    'route': route,
+    'data': data,
+  }
+  var text = JSON.stringify(payload)
+
+  socket.send(text);
 
   updateStatus()
 }

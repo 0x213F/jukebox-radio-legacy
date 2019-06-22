@@ -28,7 +28,7 @@ class GetMatchView(BaseView):
             game = (
                 ChessGame.objects.
                 active().
-                belong_to(request.user).
+                belongs_to(request.user).
                 get_singular()
             )
 

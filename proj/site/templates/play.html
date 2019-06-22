@@ -18,55 +18,113 @@
 
 <div class="card-body">
 
+  <!-- - - - - -->
+  <!--  BOARD  -->
   <div id="myBoard" style="width: 100%"></div>
-
   <br>
 
-  <form id="close-match">
+  <!-- - - - - - - - -->
+  <!--  CLOSE MATCH  -->
+  <form id="close-match" class="submit-form" route="close-match" type="webhook">
+
     {% csrf_token %}
-    <button type="submit" class="btn btn-secondary" style="margin-top: 1.4em; margin: auto; display: block;">Close Match</button>
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-secondary">
+        Close Match
+      </button>
+      <span class="text-info submit-form-error" style="margin-left: 1.4em; color: red"><span>
+    </div>
+
   </form>
   <br>
 
-  <form id="resign-match">
+  <!-- - - - - - - - --->
+  <!--  RESIGN MATCH  -->
+  <form id="resign-match" class="submit-form" route="resign-match" type="webhook">
+
     {% csrf_token %}
-    <button type="submit" class="btn btn-secondary" style="margin-top: 1.4em; margin: auto; display: block;">Resign Match</button>
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-secondary">
+        Resign Match
+      </button>
+      <span class="text-info submit-form-error" style="margin-left: 1.4em; color: red"><span>
+    </div>
+
   </form>
   <br>
 
-  <form id="create-undo-request">
+  <!-- - - --->
+  <!-- UNDO -->
+  <form id="undo-request" class="submit-form" route="undo-request" type="webhook">
+
     {% csrf_token %}
-    <button type="submit" class="btn btn-secondary" style="margin-top: 1.4em; margin: auto; display: block;">Create Undo Request</button>
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-secondary">
+        Undo
+      </button>
+      <span class="text-info submit-form-error" style="margin-left: 1.4em; color: red"><span>
+    </div>
+
   </form>
   <br>
 
-  <form id="approve-undo-request">
+  <!-- - - - - - - --->
+  <!-- APPROVE UNDO -->
+  <form id="undo-response" class="submit-form" route="undo-response" type="webhook">
+
     {% csrf_token %}
-    <button type="submit" class="btn btn-secondary" style="margin-top: 1.4em; margin: auto; display: block;">Approve Undo Request</button>
+
+    <input type="text" name='response' value='approve' style="display:none;">
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-secondary">
+        Approve Undo
+      </button>
+      <span class="text-info submit-form-error" style="margin-left: 1.4em; color: red"><span>
+    </div>
+
   </form>
   <br>
 
-  <form id="reject-undo-request">
+  <!-- - - - - - - -->
+  <!-- REJECT UNDO -->
+  <form id="undo-response" class="submit-form" route="undo-response" type="webhook">
+
     {% csrf_token %}
-    <button type="submit" class="btn btn-secondary" style="margin-top: 1.4em; margin: auto; display: block;">Reject Undo Request</button>
+
+    <input type="text" name='uci' value='reject' style="display:none;">
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-secondary">
+        Reject Undo
+      </button>
+      <span class="text-info submit-form-error" style="margin-left: 1.4em; color: red"><span>
+    </div>
+
   </form>
   <br>
 
-  <form id="join-match">
+  <!-- - - - - - --->
+  <!-- JOIN MATCH -->
+  <form id="join-match" class="submit-form" route="join-match" type="webhook">
+
     {% csrf_token %}
-    <input type="text" name='join_code' placeholder="JOIN_CODE">
-    <button type="submit" class="btn btn-primary" style="margin-top: 1.4em; margin: auto; display: block;">Join Game</button>
+
+    <div class="form-group">
+      <input class="form-input "type="text" name='join_code' placeholder="JOIN_CODE">
+    </div>
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-secondary">
+        Join Match
+      </button>
+      <span class="text-info submit-form-error" style="margin-left: 1.4em; color: red"><span>
+    </div>
   </form>
   <br>
-
-  <form id="take-move" style="display: none;">
-    {% csrf_token %}
-    <input id='take-move-uci' type="text" name='uci' placeholder="UCI">
-    <button type="submit" class="btn btn-primary" style="margin-top: 1.4em; margin: auto; display: block;">Take Move</button>
-  </form>
-  <br>
-
-  <p id="game-status" class="text-info" style="margin-top: 1.4em"><p>
 
 </div>
 
@@ -79,150 +137,4 @@
 <script src="../static/js/chess/chess.min.js"></script>
 <script src="../static/js/chessboard/chessboard-0.3.0.min.js"></script>
 <script src="../static/js/proj/play.js"></script>
-{% endblock %}
-
-
-{% block scripts %}
-
-<script>
-  $('#close-match').submit(function(e){
-    e.preventDefault();
-    var data = $('#close-match').serializeArray()
-    var ok = {}
-    for(thi in data) {
-      f = data[thi]
-      ok[f['name']] = f['value']
-    }
-    console.log(ok)
-    var data = {
-        'thing': 'close-match',
-        'csrfmiddlewaretoken': ok['csrfmiddlewaretoken'],
-        'with_args': JSON.stringify({}),
-    }
-    $.ajax({
-        url: 'http://127.0.0.1:8000/api/game/do/',
-        type: 'post',
-        data: data,
-        success: function(data, status) {
-          $("#game-status").text(JSON.stringify(data))
-        }
-    });
-  });
-  $('#resign-match').submit(function(e){
-    e.preventDefault();
-    var data = $('#resign-match').serializeArray()
-    var ok = {}
-    for(thi in data) {
-      f = data[thi]
-      ok[f['name']] = f['value']
-    }
-    console.log(ok)
-    var data = {
-        'thing': 'resign-match',
-        'csrfmiddlewaretoken': ok['csrfmiddlewaretoken'],
-        'with_args': JSON.stringify({}),
-    }
-    $.ajax({
-        url: 'http://127.0.0.1:8000/api/game/do/',
-        type: 'post',
-        data: data,
-        success: function(data, status) {
-          $("#game-status").text(JSON.stringify(data))
-        }
-    });
-  });
-  $('#create-undo-request').submit(function(e){
-    e.preventDefault();
-    var data = $('#create-undo-request').serializeArray()
-    var ok = {}
-    for(thi in data) {
-      f = data[thi]
-      ok[f['name']] = f['value']
-    }
-    console.log(ok)
-    var data = {
-        'thing': 'create-undo-request',
-        'csrfmiddlewaretoken': ok['csrfmiddlewaretoken'],
-        'with_args': JSON.stringify({}),
-    }
-    $.ajax({
-        url: 'http://127.0.0.1:8000/api/game/do/',
-        type: 'post',
-        data: data,
-        success: function(data, status) {
-          $("#game-status").text(JSON.stringify(data))
-        }
-    });
-  });
-  $('#approve-undo-request').submit(function(e){
-    e.preventDefault();
-    var data = $('#approve-undo-request').serializeArray()
-    var ok = {}
-    for(thi in data) {
-      f = data[thi]
-      ok[f['name']] = f['value']
-    }
-    console.log(ok)
-    var data = {
-        'thing': 'approve-undo-request',
-        'csrfmiddlewaretoken': ok['csrfmiddlewaretoken'],
-        'with_args': JSON.stringify({}),
-    }
-    $.ajax({
-        url: 'http://127.0.0.1:8000/api/game/do/',
-        type: 'post',
-        data: data,
-        success: function(data, status) {
-          $("#game-status").text(JSON.stringify(data))
-        }
-    });
-  });
-  $('#reject-undo-request').submit(function(e){
-    e.preventDefault();
-    var data = $('#reject-undo-request').serializeArray()
-    var ok = {}
-    for(thi in data) {
-      f = data[thi]
-      ok[f['name']] = f['value']
-    }
-    console.log(ok)
-    var data = {
-        'thing': 'reject-undo-request',
-        'csrfmiddlewaretoken': ok['csrfmiddlewaretoken'],
-        'with_args': JSON.stringify({}),
-    }
-    $.ajax({
-        url: 'http://127.0.0.1:8000/api/game/do/',
-        type: 'post',
-        data: data,
-        success: function(data, status) {
-          $("#game-status").text(JSON.stringify(data))
-        }
-    });
-  });
-  $('#join-match').submit(function(e){
-      e.preventDefault();
-      var data = $('#join-match').serializeArray()
-      var ok = {}
-      for(thi in data) {
-        f = data[thi]
-        ok[f['name']] = f['value']
-      }
-      console.log(ok)
-      var data = {
-          'thing': 'join-match',
-          'csrfmiddlewaretoken': ok['csrfmiddlewaretoken'],
-          'with_args': JSON.stringify({'join_code': ok['join_code']}),
-      }
-      $.ajax({
-          url: 'http://127.0.0.1:8000/api/game/do/',
-          type: 'post',
-          data: data,
-          success: function(data, status) {
-            $("#game-status").text(JSON.stringify(data))
-          }
-      });
-  });
-</script>
-
 {% endblock %}

@@ -89,11 +89,8 @@ class ChessGameManager(BaseManager):
     # game status
     # - - - - - - -
 
-    def create_match(self, *, user=None):
+    def create_match(self, user):
         '''
-        !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
-
-        Endpoint create method to allow user to create a `ChessGame`.
         '''
         ChessGame = self.model
         from proj.apps.chess.models import ChessSnapshot
@@ -131,14 +128,11 @@ class ChessGameManager(BaseManager):
 
     def join_match(self, user, join_code):
         '''
-        !!!!!!  PUBLIC METHOD ACCESSIBLE BY API
-
-        Have a user join game by authenticating with a pending `join_code`.
         '''
         from proj.apps.chess.models import ChessSnapshot
         ChessGame = self.model
 
-        game = ChessGame.objects.join_code(join_code)
+        game = ChessGame.objects.active().join_code(join_code).get()
         if join_code != game.join_code:
             raise Exception('Invalid join code.')
 

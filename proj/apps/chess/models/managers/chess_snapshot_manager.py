@@ -7,6 +7,6 @@ from proj.core.models.managers import BaseManager
 
 class ChessSnapshotManager(BaseManager):
     '''
-    todo: docstring
+    Django QuerySet used to query ChessSnapshot objects.
     '''
     pass

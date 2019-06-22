@@ -18,4 +18,4 @@ class ListMatchesView(BaseView):
         '''
         TODO docstring
         '''
-        return self.http_response(ChessGame.objects.belong_to(request.user))
+        return self.http_response(ChessGame.objects.belongs_to(request.user))

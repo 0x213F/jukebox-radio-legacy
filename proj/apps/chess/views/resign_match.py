@@ -22,7 +22,7 @@ class ResignMatchView(BaseView):
         TODO docstring
         '''
 
-        game = ChessGame.objects.get_private_game(request.user)
+        game = ChessGame.objects.active().belongs_to(request.user).get()
 
         if not game.is_started:
             raise Exception('Cannot resign a match that has not started.')

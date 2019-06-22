@@ -5,7 +5,14 @@ $(".submit-form").submit(function(e) {
     $error = $this.find(".submit-form-error")
     redirect = $this.attr("redirect")
     if($this.attr("type") === "socket") {
-      socket.send($(this).serialize())
+      let data = $(this).serialize()
+      let route = $this.attr("route")
+      let payload = {
+        'data': data,
+        'route': route,
+      }
+      let text = JSON.stringify(payload)
+      socket.send(text)
     } else {
       $.ajax({
           url: $this.attr("url"),
@@ -20,3 +27,16 @@ $(".submit-form").submit(function(e) {
       });
     }
 });
+
+var endpoint = 'ws://' + window.location.host + window.location.pathname
+var socket = new WebSocket(endpoint)
+
+socket.onmessage = function(event) {
+  let text = event.data
+  if(text === 'ChessGame.DoesNotExist') {
+    // TODO
+  } else {
+    let payload = JSON.parse(text);
+    window[payload.route](payload.data)
+  }
+}

@@ -16,12 +16,13 @@
     {% csrf_token %}
 
     <div class="form-group">
-      <button type="submit" form="logout" class="btn btn-primary">Logout</button>
+      <button type="submit" form="logout" class="btn btn-primary">
+        Logout
+      </button>
       <span class="text-info submit-form-error" style="margin-left: 1.4em; color: red"><span>
     </div>
 
   </form>
-
 
   <!-- - - --->
   <!--  OR  -->
@@ -31,14 +32,16 @@
 
   <!-- - - - - - - - --->
   <!--  CREATE MATCH  -->
-  <form id="create-game" class="submit-form" url="../api/game/do/" type="post" redirect="../play">
+  <form id="create-game" class="submit-form" url="../api/game/create-match/" type="post" redirect="../play">
 
     {% csrf_token %}
 
     <input name='thing' value="create-match" style="display: none;">
 
     <div class="form-group">
-      <button type="submit" form="create-game" class="btn btn-secondary">Create Match</button>
+      <button type="submit" form="create-game" class="btn btn-secondary">
+        Create Match
+      </button>
       <span class="text-info submit-form-error" style="margin-left: 1.4em; color: red"><span>
     </div>
 

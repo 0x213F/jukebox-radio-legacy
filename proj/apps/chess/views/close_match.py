@@ -22,7 +22,7 @@ class CloseMatchView(BaseView):
         TODO docstring
         '''
 
-        game = ChessGame.objects.get_private_game(request.user)
+        game = ChessGame.objects.active().belongs_to(request.user).get()
 
         if game.is_started:
             raise Exception('Cannot close a match that has already started.')

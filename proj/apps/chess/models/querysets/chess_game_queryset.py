@@ -7,12 +7,8 @@ from proj.core.models.querysets import BaseQuerySet
 
 class ChessGameQuerySet(BaseQuerySet):
     '''
-    todo: docstring
+    Django QuerySet used to query ChessGame objects.
     '''
-
-    # - - - - - - -
-    # logic filters
-    # - - - - - - -
 
     def active(self, code=None):
         '''
@@ -20,7 +16,7 @@ class ChessGameQuerySet(BaseQuerySet):
         '''
         return self.filter(finished_at__isnull=True)
 
-    def belong_to(self, *users):
+    def belongs_to(self, *users):
         '''
         ChessGame objects that belong to certain users.
         '''
@@ -28,28 +24,23 @@ class ChessGameQuerySet(BaseQuerySet):
 
     def private(self):
         '''
-        TODO docstring
+        ChessGame objects that have the following access levels:
+
+        - Player is in game: read and move. (selective write)
+        - Has access to UUID: read and suggest. (selective write)
         '''
         return self.filter(is_private=False)
 
-    # - - - - - - - - -
-    # business filters
-    # - - - - - - - - -
+    def public(self):
+        '''
+        ChessGame objects that have the following access levels:
+
+        - Has access to join code: read and suggest. (selective write)
+        '''
+        return self.filter(is_private=False)
 
     def join_code(self, join_code):
         '''
-        TODO docstring
+        ChessGame objects that match a given join code.
         '''
-        return self.active().filter(join_code=join_code).get()
-
-    def get_private_game(self, request):
-        '''
-        TODO docstring
-        '''
-        return self.active().belong_to(request.user).get()
-
-    def get_websocket_private_game(self, user):
-        '''
-        TODO docstring
-        '''
-        return self.active().belong_to(user).get()
+        return self.filter(join_code=join_code)
