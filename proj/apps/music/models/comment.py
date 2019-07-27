@@ -24,6 +24,12 @@ class Comment(BaseModel):
 
     objects = CommentManager.from_queryset(CommentQuerySet)()
 
+    STATUS_WAITING = 'waiting'
+    STATUS_LOW = 'low'
+    STATUS_MID_LOW = 'mid_low'
+    STATUS_MID_HIGH = 'mid_high'
+    STATUS_HIGH = 'high'
+
     # - - - -
     # fields
     # - - - -
@@ -34,6 +40,10 @@ class Comment(BaseModel):
         on_delete=models.DO_NOTHING,
         null=True,
     )
+
+    text = models.FloatField()
+
+    status = models.FloatField()
 
     showing = models.ForeignKey(
         'music.Showing',

@@ -20,3 +20,15 @@
     border-right: 10px;
     border-bottom: 10px;
 }
+
+.showing {
+  transition: background-color 0.3s ease;
+  border-radius: 6px;
+  cursor: pointer;
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+}
+
+.showing:hover {
+  background-color: rgba(48,55,66,.15);
+}

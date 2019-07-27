@@ -14,6 +14,7 @@ class ShowingConsumer(AsyncConsumer):
     # - - - - - - - - -
 
     async def websocket_connect(self, event):
+        print('!!!!!!!!!!!!!!')
         # game = await database_sync_to_async(
         #     ChessGame.objects.belongs_to(self.scope['user']).get
         # )()

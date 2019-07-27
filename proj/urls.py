@@ -9,6 +9,7 @@ from django.views.defaults import page_not_found
 from django.conf import settings
 
 urlpatterns = [
+    path('api/music/', include('proj.apps.music.urls')),
     path('api/user/', include('proj.apps.users.urls')),
     path('favicon.ico/', page_not_found, {'exception': Exception('Not Found')}),
     path('', include('proj.site.urls')),

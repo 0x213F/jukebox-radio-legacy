@@ -23,12 +23,7 @@ def create_view(request):
     username = generate_username(1)[0]
     email = request.POST.get('email', None)
     password = request.POST.get('password', None)
-<<<<<<< HEAD
-    if not username or not password:
-        print('what')
-=======
     if not username or not email or not password:
->>>>>>> foo
         return HttpResponse(status=400)
 
     # create

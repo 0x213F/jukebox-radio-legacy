@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block basestyles %}
 <link rel="stylesheet" href="../static/css/spectre/spectre.min.css">
 <link rel="stylesheet" href="../static/css/spectre/spectre-icons.min.css">
@@ -33,31 +35,24 @@
 
   <!-- - - - - - - - --->
   <!--  CREATE MATCH  -->
-  <form id="create-game" class="submit-form" url="../api/game/create-match/" type="post" redirect="../play">
+  <form id="list-showings" class="submit-form" url="../api/music/list_showings/" type="get" submit="onload" onsuccess='display_showings'>
 
     {% csrf_token %}
 
-    <input name='thing' value="create-match" style="display: none;">
-
-    <div class="form-group">
-      <h4>Scheduled Showings</h4>
-
-    </div>
-
-    <div class="form-group">
-
-    </div>
-
   </form>
+
+  <div class="form-group showings">
+    
+  </div>
 
 </div>
 {% endblock %}
 
 
 {% block basescripts %}
-<script src="../static/js/jquery.js"></script>
-<script src="../static/js/proj/main.js"></script>
-<!-- <script src="../static/js/chess/chess.min.js"></script>
-<script src="../static/js/chessboard/chessboard-0.3.0.min.js"></script>
-<script src="../static/js/proj/play.js"></script> -->
+<script src="{% static 'js/jquery.js' %}"></script>
+<script src="{% static 'js/proj/home.js' %}"></script>
+<script src="{% static 'js/proj/main.js' %}"></script>
+<script src="{% static 'js/chess/chess.min.js' %}"></script>
+<script src="{% static 'js/proj/consumer.js' %}"></script>
 {% endblock %}
