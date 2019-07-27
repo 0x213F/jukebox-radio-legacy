@@ -6,9 +6,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_protect
 
-from proj.apps.users.forms import UserForm
-
-User = get_user_model()
+from random_username.generate import generate_username
 
 
 @csrf_protect
@@ -22,27 +20,21 @@ def create_view(request):
 
     # form validation
     # - - - - - - - -
-    username = request.POST.get('username', None)
+    username = generate_username(1)[0]
+    email = request.POST.get('email', None)
     password = request.POST.get('password', None)
+<<<<<<< HEAD
     if not username or not password:
         print('what')
+=======
+    if not username or not email or not password:
+>>>>>>> foo
         return HttpResponse(status=400)
-
-    # # recovery options
-    # # - - - - - - - - -
-    # email_addr = request.POST.get('email', None)
-    # phone_num = request.POST.get('phone', None)
-    # if (not email_addr) and (not phone_num):
-    #     return HttpResponse(status=400)
-    #
-    # # verify
-    # # - - - - - -
-    # Email.verify(email_addr) if email_addr else SMS.verify(phone_num)
 
     # create
     # - - - -
     try:
-        user = User.objects.create(username, password)
+        user = User.objects.create_user(username, email, password)
         login(request, user)
         return HttpResponse(status=201)
     except Exception as e:

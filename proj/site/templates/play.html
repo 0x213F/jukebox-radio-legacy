@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!doctype html>
 <html lang="en">
   <head>
@@ -330,3 +331,150 @@
     </script>
   </body>
 </html>
+=======
+{% extends "base.html" %}
+
+{% block basestyles %}
+{% load static %}
+<!-- Spectre.css ~ The lightweight, responsive and modern CSS framework -->
+<!--                                                                    -->
+<!--               https://picturepan2.github.io/spectre/               -->
+<!--                                                                    -->
+<link rel="stylesheet" href="../static/css/spectre/spectre.min.css">
+<link rel="stylesheet" href="../static/css/spectre/spectre-icons.min.css">
+<link rel="stylesheet" href="../static/css/chessboard/chessboard-0.3.0.min.css">
+
+<!-- custom styles -->
+<link rel="stylesheet" href="../static/css/proj/base.css">
+{% endblock %}
+
+{% block main %}
+
+<div id='chess-game' class="card-body">
+
+  <!-- - - - - -->
+  <!--  BOARD  -->
+  <div id="board" style="width: 100%"></div>
+  <br>
+
+  <!-- - - - - - - -->
+  <!--  JOIN CODE  -->
+  <div id="join-code-display" style="text-transform: uppercase; text-align: center; font-weight: bold; font-size: 2em;"></div>
+  <br>
+
+  <!-- - - - - - - - -->
+  <!--  CLOSE MATCH  -->
+  <form id="close-match" class="submit-form" route="close-match" type="webhook">
+
+    {% csrf_token %}
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-secondary">
+        Close Match
+      </button>
+      <span class="text-info submit-form-error" style="margin-left: 1.4em; color: red"><span>
+    </div>
+
+  </form>
+  <br>
+
+  <!-- - - - - - - - --->
+  <!--  RESIGN MATCH  -->
+  <form id="resign-match" class="submit-form" route="resign-match" type="webhook">
+
+    {% csrf_token %}
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-secondary">
+        Resign Match
+      </button>
+      <span class="text-info submit-form-error" style="margin-left: 1.4em; color: red"><span>
+    </div>
+
+  </form>
+  <br>
+
+  <!-- - - --->
+  <!-- UNDO -->
+  <form id="undo-request" class="submit-form" route="undo-request" type="webhook">
+
+    {% csrf_token %}
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-secondary">
+        Undo
+      </button>
+      <span class="text-info submit-form-error" style="margin-left: 1.4em; color: red"><span>
+    </div>
+
+  </form>
+  <br>
+
+  <!-- - - - - - - --->
+  <!-- APPROVE UNDO -->
+  <form id="undo-response-approve" class="submit-form" route="undo-response" type="webhook">
+
+    {% csrf_token %}
+
+    <input type="text" name='response' value='approve' style="display:none;">
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-secondary">
+        Approve Undo
+      </button>
+      <span class="text-info submit-form-error" style="margin-left: 1.4em; color: red"><span>
+    </div>
+
+  </form>
+  <br>
+
+  <!-- - - - - - - -->
+  <!-- REJECT UNDO -->
+  <form id="undo-response-reject" class="submit-form" route="undo-response" type="webhook">
+
+    {% csrf_token %}
+
+    <input type="text" name='uci' value='reject' style="display:none;">
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-secondary">
+        Reject Undo
+      </button>
+      <span class="text-info submit-form-error" style="margin-left: 1.4em; color: red"><span>
+    </div>
+
+  </form>
+  <br>
+
+  <!-- - - - - - --->
+  <!-- JOIN MATCH -->
+  <form id="join-match" class="submit-form" route="join-match" type="webhook">
+
+    {% csrf_token %}
+
+    <div class="form-group">
+      <input class="form-input "type="text" name='join_code' placeholder="CODE">
+    </div>
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-secondary">
+        Join Match
+      </button>
+      <span class="text-info submit-form-error" style="margin-left: 1.4em; color: red"><span>
+    </div>
+  </form>
+  <br>
+
+</div>
+
+{% endblock %}
+
+
+{% block basescripts %}
+<script src="../static/js/jquery.js"></script>
+<script src="../static/js/proj/main.js"></script>
+<script src="../static/js/chess/chess.min.js"></script>
+<script src="../static/js/chessboard/chessboard-0.3.0.min.js"></script>
+<script src="../static/js/proj/play.js"></script>
+{% endblock %}
+>>>>>>> foo

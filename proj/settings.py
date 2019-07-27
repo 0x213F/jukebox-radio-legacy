@@ -41,11 +41,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-	'proj.apps.chess',
+	'proj.apps.music',
 	'proj.apps.users',
+	'channels',
 ]
 
-AUTH_USER_MODEL = 'users.User'
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+			"hosts": [('localhost', 6379)],
+        },
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -58,16 +66,15 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'proj.urls'
+ASGI_APPLICATION = 'proj.routing.application'
 
-# STATICFILES_DIRS = [
-# 	f'{BASE_DIR}proj/site/static/public/',
-# ]
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
 			f'{BASE_DIR}/proj/site/templates',
+			f'{BASE_DIR}/proj/site/static',
 		],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -80,9 +87,6 @@ TEMPLATES = [
         },
     },
 ]
-
-WSGI_APPLICATION = 'proj.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
@@ -135,5 +139,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = f'{BASE_DIR}/proj/site/static/'
+STATICFILES_DIRS = []

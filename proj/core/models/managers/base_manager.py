@@ -9,6 +9,7 @@ class BaseManager(models.Manager):
     '''
     Inherits from Django Manager.
     '''
+<<<<<<< HEAD
 
     def do(self, action, request):
         '''
@@ -40,3 +41,6 @@ class BaseManager(models.Manager):
         '''
         results = json.loads(serialize('json', results))
         return results[0] if len(results) == 1 else results
+=======
+    pass
+>>>>>>> foo

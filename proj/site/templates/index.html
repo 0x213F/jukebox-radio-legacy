@@ -1,107 +1,62 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% extends "base.html" %}
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+{% block main %}
 
-    <title>ChessGame - Signup</title>
-  </head>
-  <body>
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-10" style="min-width: 300px; max-width: 400px;">
+<div class="card-body">
 
-          <div class="alert alert-warning text-center" role="alert" style="margin-top: 1.4em">
-            PRE-RELEASE
-          </div>
+  <form id="sign-up" class="submit-form" url="../api/user/create/" type="post" redirect="/">
 
-          <form id="sign-up">
-            {% csrf_token %}
-            <div class="form-group">
-              <label for="sign-up-username">Username</label>
-              <input type="text" class="form-control" id="sign-up-username" aria-describedby="sign-up-username-help" placeholder="Enter username" name="username">
-              <small id="sign-up-username-help" class="form-text text-muted">Used to identify your account.</small>
-            </div>
-            <div class="form-group">
-              <label for="sign-up-username">Password</label>
-              <input type="password" class="form-control" id="sign-up-password" aria-describedby="sign-up-password-help" placeholder="Enter password" name="password">
-              <small id="sign-up-password-help" class="form-text text-muted">Used to secure your account.</small>
-            </div>
-            <div class="form-check">
-              <input type="checkbox" class="form-check-input" id="sign-up-terms" name="agree">
-              <label class="form-check-label" for="sign-up-terms">Agree to <a href="privacy-policy">Privacy Policy</a></label>
-            </div>
+    {% csrf_token %}
 
-            <button type="submit" form="sign-up" class="btn btn-primary" style="margin-top: 1.4em; float: right;">Sign Up</button>
-            <br><br><br>
-
-            <p id="sign-up-error" class="text-info" style="margin-top: 1.4em"><p>
-          </form>
-
-          <hr>
-
-          <form id="log-in">
-            {% csrf_token %}
-            <div class="form-group">
-              <label for="log-in-username">Username</label>
-              <input type="text" class="form-control" id="log-in-username" aria-describedby="log-in-username-help" placeholder="Enter username" name="username">
-              <small id="log-in-username-help" class="form-text text-muted">Used to identify your account.</small>
-            </div>
-            <div class="form-group">
-              <label for="log-in-password">Password</label>
-              <input type="password" class="form-control" id="log-in-password" aria-describedby="log-in-password-help" placeholder="Enter password" name="password">
-              <small id="log-in-password-help" class="form-text text-muted">Used to secure your account.</small>
-            </div>
-
-            <button type="submit" form="log-in" class="btn btn-primary" style="margin-top: 1.4em; float: right;">Log In</button>
-
-            <p id="log-in-error" class="text-info" style="margin-top: 1.4em"><p>
-          </form>
-
-        </div>
-      </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="text" name="email" placeholder="Enter email">
     </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <script>
-      $('#sign-up').submit(function(e) {
-        console.log($('#sign-up').serialize())
-          e.preventDefault();
-          $.ajax({
-              url: '../api/user/create/',
-              type: 'post',
-              data: $('#sign-up').serialize(),
-              error: function(e) {
-                  $('#sign-up-error').text(e.statusText);
-              },
-              success: function(e) {
-                  window.location = 'home';
-              }
-          });
-      });
-      $('#log-in').submit(function(e) {
-          e.preventDefault();
-          $.ajax({
-              url: '../api/user/authenticate/',
-              type: 'post',
-              data: $('#log-in').serialize(),
-              error: function(e) {
-                  $('#log-in-error').text(e.statusText);
-              },
-              success: function(e) {
-                  window.location = 'home';
-              }
-          });
-      });
-    </script>
-  </body>
-</html>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" name="password" placeholder="Enter password">
+    </div>
+
+    <div class="form-group">
+      <label class="form-checkbox">
+        <input type="checkbox" name="agree">
+        <i class="form-icon"></i> Agree to <a href="privacy-policy">Privacy Policy</a>
+      </label>
+    </div>
+
+    <div class="form-group">
+      <button type="submit" form="sign-up" class="btn btn-primary">Sign Up</button>
+      <span class="text-info submit-form-error" style="margin-left: 1.4em; color: red"><span>
+    </div>
+
+  </form>
+
+  <br>
+  <div class="divider text-center" data-content="OR"></div>
+  <br>
+
+  <form id="log-in" class="submit-form" url="../api/user/authenticate/" type="post" redirect="home">
+
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label class="form-label">Username</label>
+      <input type="text" class="form-input" name="username" placeholder="Enter username">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" class="form-input" name="password" placeholder="Enter password">
+    </div>
+
+    <div class="form-group">
+      <button type="submit" form="log-in" class="btn btn-secondary">Log In</button>
+      <span class="text-info submit-form-error" style="margin-left: 1.4em; color: red"><span>
+    </div>
+
+  </form>
+
+</div>
+
+{% endblock %}

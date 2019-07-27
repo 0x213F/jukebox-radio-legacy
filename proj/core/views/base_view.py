@@ -11,5 +11,10 @@ class BaseView(View):
     TODO docstring
     '''
 
-    def _http_response_object(self, obj):
-        return JsonResponse(serialize('json', [obj])[1:-1], safe=False)
+    def http_response(self, response):
+        if type(response) == dict:
+            print('~~~~~~~~~~~~~~~~~~~~~~~~')
+            return JsonResponse(response)
+        if type(response) == list:
+            return JsonResponse(serialize('json', response), safe=False)
+        return JsonResponse(serialize('json', [response])[1:-1], safe=False)

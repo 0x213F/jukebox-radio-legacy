@@ -1,0 +1,45 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Chess">
+
+    <title>Chess</title>
+
+    {% block basestyles %}
+    <!-- Spectre.css ~ The lightweight, responsive and modern CSS framework -->
+    <!--                                                                    -->
+    <!--               https://picturepan2.github.io/spectre/               -->
+    <!--                                                                    -->
+    <link rel="stylesheet" href="{% static 'css/spectre/spectre.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/spectre/spectre-icons.min.css' %}">
+
+    <!-- custom styles -->
+    <link rel="stylesheet" href="{% static 'css/proj/base.css' %}">
+    {% endblock %}
+
+    {% block styles %}{% endblock %}
+</head>
+
+<!-- min width supported ~ 320px -->
+<body>
+
+    <div class="main center card ">
+
+      {% block main %}{% endblock %}
+
+    </div>
+
+    {% block basescripts %}
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/proj/main.js' %}"></script>
+    {% endblock %}
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>
