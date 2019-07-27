@@ -26,10 +26,12 @@ class ListShowingsView(BaseView):
             Showing.objects.select_related('album', 'album__artist')
             .filter(status=Showing.STATUS_SCHEDULED)
         )
-        response = {'showings': []}
+        response = {'scheduled_showings': []}
         for showing in showings:
-            response['showings'].append({
+            response['scheduled_showings'].append({
+                'id': showing.id,
                 'status': showing.status,
+                'showtime': showing.showtime,
                 'album': {
                     'art': showing.album.art,
                     'name': showing.album.name,

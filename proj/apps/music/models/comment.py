@@ -24,7 +24,10 @@ class Comment(BaseModel):
 
     objects = CommentManager.from_queryset(CommentQuerySet)()
 
+    STATUS_JOINED = 'joined'
     STATUS_WAITING = 'waiting'
+    STATUS_LEFT = 'left'
+
     STATUS_LOW = 'low'
     STATUS_MID_LOW = 'mid_low'
     STATUS_MID_HIGH = 'mid_high'

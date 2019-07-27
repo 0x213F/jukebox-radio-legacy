@@ -1,4 +1,7 @@
 
+var VIEW = {}
+
+
 $(".submit-form").submit(function(e) {
     e.preventDefault();
     $this = $(this);
