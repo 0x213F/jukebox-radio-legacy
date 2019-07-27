@@ -41,9 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-	'proj.apps.chess',
+	'proj.apps.music',
 	'proj.apps.users',
-	'proj.apps.rooms',
 	'channels',
 ]
 
@@ -52,12 +51,9 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
 			"hosts": [('localhost', 6379)],
-            # "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
         },
     },
 }
-
-AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -72,9 +68,6 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'proj.urls'
 ASGI_APPLICATION = 'proj.routing.application'
 
-# STATICFILES_DIRS = [
-# 	f'{BASE_DIR}proj/site/static/public/',
-# ]
 
 TEMPLATES = [
     {
@@ -146,5 +139,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = f'{BASE_DIR}/proj/site/static/'
+STATICFILES_DIRS = []

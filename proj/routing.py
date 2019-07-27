@@ -5,13 +5,13 @@ from channels.auth import AuthMiddlewareStack
 from channels.security.websocket import AllowedHostsOriginValidator
 from channels.security.websocket import OriginValidator
 
-from proj.apps.chess.consumers import ChessGameConsumer
+from proj.apps.music.consumers import ShowingConsumer
 application = ProtocolTypeRouter({
     'websocket': AllowedHostsOriginValidator(
         AuthMiddlewareStack(
             URLRouter(
                 [
-                    url('play/', ChessGameConsumer)
+                    url('/', ShowingConsumer)
                 ]
             )
         )

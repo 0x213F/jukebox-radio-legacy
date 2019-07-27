@@ -19,3 +19,11 @@ class BaseQuerySet(models.QuerySet):
         elif count == 0:
             raise self.model.DoesNotExist()
         raise Exception('Multiple objects found.')
+
+    def get_by_priority(self, priority_filters):
+        for filter in priority_filters:
+            try:
+                return self.get(**filter)
+            except self.model.DoesNotExist:
+                pass
+        raise self.model.DoesNotExist
