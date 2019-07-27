@@ -1,7 +1,82 @@
 
+var VIEW = [
+  {
+    'id': 'board',
+    'display': true,
+  },
+  {
+    'id': 'join-code',
+    'display': true,
+  },
+  {
+    'id': 'close-match',
+    'display': true,
+  },
+  {
+    'id': 'resign-match',
+    'display': true,
+  },
+  {
+    'id': 'undo-request',
+    'display': true,
+  },
+  {
+    'id': 'undo-response-approve',
+    'display': true,
+  },
+  {
+    'id': 'undo-response-reject',
+    'display': true,
+  },
+  {
+    'id': 'join-match',
+    'display': true,
+  }
+]
+
+
+var endpoint = 'ws://' + window.location.host + window.location.pathname
+var socket = new WebSocket(endpoint)
+
+socket.onmessage = function(event) {
+  let text = event.data
+  if(text === 'ChessGame.DoesNotExist') {
+    // TODO
+  } else {
+    let payload = JSON.parse(text);
+    window[payload.route](payload.data)
+  }
+}
+
 var my_color = null
 
+function join_code(data) {
+  for(let view of VIEW) {
+    if(['board', 'join-code', 'close-match'].includes(view.id)) {
+      $(`#${view.id}`).show();
+    } else {
+      $(`#${view.id}`).hide();
+    }
+  }
+  console.log(data.game.fields.join_code)
+  console.log($('#join-code-display'))
+  $('#join-code-display').text(data.game.fields.join_code)
+  redraw_board(data)
+}
+
+function on_move(data) {
+  for(let view of VIEW) {
+    if(['board', 'join-code'].includes(view.id)) {
+      $(`#${view.id}`).show();
+    } else if(['join-code', 'close-match'].includes(view.id)) {
+      $(`#${view.id}`).hide();
+    }
+  }
+  redraw_board(data)
+}
+
 function redraw_board(data) {
+
   position = data.game.fields.board
   is_black = data.game.fields.black_user && data.game.fields.black_user == data.user.pk
   if(is_black) {
@@ -12,8 +87,6 @@ function redraw_board(data) {
   if(!my_color) {
     my_color = orientation;
   }
-  console.log(data)
-  console.log(my_color)
   var config = {
     orientation: my_color,
     draggable: true,
@@ -23,7 +96,7 @@ function redraw_board(data) {
     onSnapEnd: onSnapEnd,
     pieceTheme: '../static/img/chesspieces/wikipedia/{piece}.png'
   }
-  board = Chessboard('myBoard', config)
+  board = Chessboard('board', config)
   game = new Chess(position)
   updateStatus()
 }

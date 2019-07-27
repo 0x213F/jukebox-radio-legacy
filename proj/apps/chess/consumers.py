@@ -38,7 +38,10 @@ class ChessGameConsumer(AsyncConsumer):
             data = await database_sync_to_async(
                 ChessGame.objects.websocket_response
             )(game, self.scope['user'])
-            route = 'redraw_board'
+            route = 'on_move'
+
+            if game.get_users_status(self.scope['user']) == ChessGame.STATUS_PENDING_WAITING:
+                route = 'join_code'
 
             payload = {
                 'data': data,
@@ -65,7 +68,7 @@ class ChessGameConsumer(AsyncConsumer):
             response = self.move_piece(data)
         elif route == ChessSnapshot.ACTION_JOIN_MATCH:
             response = self.join_match(data)
-    
+
             game = await database_sync_to_async(
                 ChessGame.objects.belongs_to(self.scope['user']).get
             )()

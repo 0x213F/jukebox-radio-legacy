@@ -16,11 +16,16 @@
 
 {% block main %}
 
-<div class="card-body">
+<div id='chess-game' class="card-body">
 
   <!-- - - - - -->
   <!--  BOARD  -->
-  <div id="myBoard" style="width: 100%"></div>
+  <div id="board" style="width: 100%"></div>
+  <br>
+
+  <!-- - - - - - - -->
+  <!--  JOIN CODE  -->
+  <div id="join-code-display" style="text-transform: uppercase; text-align: center; font-weight: bold; font-size: 2em;"></div>
   <br>
 
   <!-- - - - - - - - -->
@@ -73,7 +78,7 @@
 
   <!-- - - - - - - --->
   <!-- APPROVE UNDO -->
-  <form id="undo-response" class="submit-form" route="undo-response" type="webhook">
+  <form id="undo-response-approve" class="submit-form" route="undo-response" type="webhook">
 
     {% csrf_token %}
 
@@ -91,7 +96,7 @@
 
   <!-- - - - - - - -->
   <!-- REJECT UNDO -->
-  <form id="undo-response" class="submit-form" route="undo-response" type="webhook">
+  <form id="undo-response-reject" class="submit-form" route="undo-response" type="webhook">
 
     {% csrf_token %}
 
@@ -114,7 +119,7 @@
     {% csrf_token %}
 
     <div class="form-group">
-      <input class="form-input "type="text" name='join_code' placeholder="JOIN_CODE">
+      <input class="form-input "type="text" name='join_code' placeholder="CODE">
     </div>
 
     <div class="form-group">

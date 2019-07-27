@@ -196,6 +196,17 @@ class ChessGame(BaseModel):
         color = self.get_users_color(user)
         return getattr(self, f'{color}_status') == self.STATUS_MY_TURN
 
+    def get_users_status(self, user):
+        '''
+        todo: docstring
+        '''
+        if self.black_user == user:
+            return self.black_status
+        elif self.white_user == user:
+            return self.white_status
+        else:
+            raise Exception('User not in game.')
+
     def get_users_color(self, user):
         '''
         todo: docstring

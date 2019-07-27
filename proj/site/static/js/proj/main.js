@@ -27,16 +27,3 @@ $(".submit-form").submit(function(e) {
       });
     }
 });
-
-var endpoint = 'ws://' + window.location.host + window.location.pathname
-var socket = new WebSocket(endpoint)
-
-socket.onmessage = function(event) {
-  let text = event.data
-  if(text === 'ChessGame.DoesNotExist') {
-    // TODO
-  } else {
-    let payload = JSON.parse(text);
-    window[payload.route](payload.data)
-  }
-}
