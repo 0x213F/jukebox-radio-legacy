@@ -43,6 +43,7 @@ function display_showings(e) {
         'message': null,
         'showing_id': showing_id,
         'track_id': null,
+        'text': null,
       }
       let msg = JSON.stringify(data);
       socket.send(msg)
@@ -57,13 +58,13 @@ function display_showings(e) {
         return;
       }
       if(($this.attr('id') === 'chat-input' && e.keyCode == 13) || $this.attr('id') === 'chat-submit') {
-        let status = window.localStorage.getItem('status')
+        let status = window.localStorage.getItem('status') || 'waiting'
         let data = {
           'status': status,
           'message': null,
           'showing_id': showing_id,
           'track_id': null,
-          'text': null,
+          'text': text,
         }
         let msg = JSON.stringify(data);
         socket.send(msg)
@@ -74,26 +75,11 @@ function display_showings(e) {
     $('#chat-input').on('keyup', submit);
     $('#chat-submit').on('click', submit);
 
-    // 4: leave chatroom behavior
+    // 8: leave chatroom
     $('.leave').click(function() {
       clearInterval(waiting)
       // 7: leaving chatroom
-      let data = {
-        'status': 'left',
-        'message': null,
-        'showing_id': showing_id,
-        'track_id': null,
-        'text': null,
-      }
-      let msg = JSON.stringify(data);
-      window['SOCKET'].send(msg)
-      socket.close()
-    })
 
-    // 8: change status
-    $('.leave').click(function() {
-      clearInterval(waiting)
-      // 7: leaving chatroom
       let data = {
         'status': 'left',
         'message': null,
@@ -102,8 +88,11 @@ function display_showings(e) {
         'text': null,
       }
       let msg = JSON.stringify(data);
-      window['SOCKET'].send(msg)
-      socket.close()
+      socket.send(msg)
+      setTimeout(socket.close, 1000);
+      $('#current-showing').hide();
+      $('#display-scheduled-showings').show();
+      $('#account').show();
     })
 
     // 5: bind to window

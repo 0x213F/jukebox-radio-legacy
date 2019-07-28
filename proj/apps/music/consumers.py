@@ -8,6 +8,7 @@ from django.core.serializers import serialize
 
 
 from proj.apps.music.models import Comment
+from proj.apps.users.models import Profile
 
 
 class ShowingConsumer(AsyncConsumer):
@@ -17,47 +18,9 @@ class ShowingConsumer(AsyncConsumer):
     # - - - - - - - - -
 
     async def websocket_connect(self, event):
-        print('!!!!!!!!!!!!!!')
-        # game = await database_sync_to_async(
-        #     ChessGame.objects.belongs_to(self.scope['user']).get
-        # )()
-        # self.group_name = game.group_name
-        #
-        # await self.channel_layer.group_add(
-        #     game.group_name,
-        #     self.channel_name,
-        # )
-
         await self.send({
             'type': 'websocket.accept',
         })
-
-        # try:
-        #     game = await database_sync_to_async(
-        #         ChessGame.objects.active().belongs_to(self.scope['user']).get
-        #     )()
-        #     data = await database_sync_to_async(
-        #         ChessGame.objects.websocket_response
-        #     )(game, self.scope['user'])
-        #     route = 'on_move'
-        #
-        #     if game.get_users_status(self.scope['user']) == ChessGame.STATUS_PENDING_WAITING:
-        #         route = 'join_code'
-        #
-        #     payload = {
-        #         'data': data,
-        #         'route': route,
-        #     }
-        #     text = json.dumps(payload)
-        #     await self.send({
-        #         'type': 'websocket.send',
-        #         'text': text,
-        #     })
-        # except ChessGame.DoesNotExist:
-        #     await self.send({
-        #         'type': 'websocket.send',
-        #         'text': 'ChessGame.DoesNotExist',
-        #     })
 
     async def websocket_receive(self, event):
         payload = json.loads(event['text'])
@@ -72,34 +35,27 @@ class ShowingConsumer(AsyncConsumer):
                 commenter=self.scope['user'],
                 timestamp=4.0,
             )
+        if payload['status'] == Comment.STATUS_LEFT:
+            await database_sync_to_async(
+                    Profile.objects.filter(user=self.scope['user']).update
+                )(
+                    active_showing_id=None,
+                )
+        else:
+            if payload['status'] == Comment.STATUS_LEFT:
+                await database_sync_to_async(
+                        Profile.objects.filter(user=self.scope['user']).update
+                    )(
+                        active_showing_id=payload['showing_id'],
+                    )
+        # await database_sync_to_async(
+        #         Profile.objects.get(user=self.scope['user']).update
+        #     )(
+        #         active_showing_id=payload['showing_id']
+        #     )
         print(payload)
         pass
-        # payload = json.loads(event['text'])
-        # route = payload['route']
-        # data = payload['data']
-        #
-        # if route == ChessSnapshot.ACTION_TAKE_MOVE:
-        #     response = self.move_piece(data)
-        # elif route == ChessSnapshot.ACTION_JOIN_MATCH:
-        #     response = self.join_match(data)
-        #
-        #     game = await database_sync_to_async(
-        #         ChessGame.objects.belongs_to(self.scope['user']).get
-        #     )()
-        #     self.group_name = game.group_name
-        #
-        #     await self.channel_layer.group_add(
-        #         game.group_name,
-        #         self.channel_name,
-        #     )
-        #
-        # await self.channel_layer.group_send(
-        #     self.group_name,
-        #     {
-        #         'type': 'broadcast',
-        #         'text': json.dumps(response),
-        #     }
-        # )
+
 
     async def broadcast(self, event):
         pass
@@ -110,8 +66,6 @@ class ShowingConsumer(AsyncConsumer):
 
     async def websocket_disconnect(self, event):
         pass
-        # print('disconnect', event)
-
 
     # - - - - - - -
     # route methods
