@@ -24,28 +24,51 @@
   <div id='current-showing' style='display: none;'>
     <div class='wrapper'>
       <button class="footer-button leave">
-        leave
+        Leave
       </button>
     </div>
     <div class="footer-delimeter"></div>
 
     <div class='main'>
 
-      <div class='chat'>
-        <div class="input-group status-options">
-          <button class="btn status-low">☹️</button>
-          <button class="btn status-mid-low">😕</button>
-          <button class="btn status-mid-high">🙂</button>
-          <button class="btn status-high">😀</button>
-        </div>
-        <div class="input-group chat-window">
-          <input id='chat-input' type="text" class="form-input" placeholder="...">
-          <button id='chat-submit' class="btn btn-primary input-group-btn">Send</button>
-        </div>
-      </div>
+      <div class="column col-12">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title h6">Comments</div>
+          </div>
+          <div class="panel-body" style='max-height: 600px;'>
 
-      <div class='status'>
 
+          </div>
+          <div class="panel-footer">
+            <div class='input-group'>
+              <div class="statuses" style="display: none;">
+                <button class='btn low'>
+                  <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/white-frowning-face_2639.png">
+                </button>
+                <button class='btn mid_low'>
+                  <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/confused-face_1f615.png">
+                </button>
+                <button class='btn mid_high'>
+                  <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/slightly-smiling-face_1f642.png">
+                </button>
+                <button class='btn high'>
+                  <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/grinning-face_1f600.png">
+                </button>
+              </div>
+              <div class="waiting" style='display: none;'>
+                <span class="label label-rounded label-primary showname waiting-countdown"></span><br>
+              </div> <!--
+              <div class="complete">
+
+              </div> -->
+            </div>
+            <div class="input-group">
+              <input id='chat-input' class="form-input" type="text">
+              <button id='chat-submit' class="btn btn-primary input-group-btn">Send</button>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -71,17 +94,17 @@
 
   <!-- - - - - - -->
   <!--  ACCOUNT  -->
-  <!-- <form id="logout" class="submit-form" url="../api/user/logout/" type="post" redirect="/">
+  <form id="logout" class="submit-form" url="../api/user/logout/" type="post" redirect="/">
 
     {% csrf_token %}
 
     <div class='wrapper'>
       <button class="footer-button">
-        Account
+        Logout
       </button>
     </div>
 
-  </form> -->
+  </form>
 
 </div>
 {% endblock %}

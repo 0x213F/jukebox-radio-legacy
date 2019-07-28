@@ -51,6 +51,7 @@
   background: rgba(48,55,66,.90)!important;
   margin-left: 14px;
   padding: 8px;
+  font-family: "Lucida Console", Monaco, monospace;
 }
 
 .wrapper {
@@ -91,7 +92,7 @@
   border-radius: 4px;
 }
 
-button:focus {outline:0;}
+/* button:focus {outline:0;} */
 
 #account {
   position: absolute;
@@ -112,7 +113,29 @@ button:focus {outline:0;}
   font-size: 18px;
   text-align: center;
   margin-right: 14px;
-  
+
+}
+
+.tile {
+  margin-top: 14px;
+}
+
+.title-content {
+  padding-left: 14px;
+}
+
+.tile-subtitle {
+  color: #3b4351!important;
+  background-color: #c4c9d3;
+  margin-left: -10px;
+  border-radius: 8px;
+  border-top-left-radius: 0px;
+  padding: 8px;
+}
+
+.avatar {
+  height: 2.4rem;
+  width: 2.4rem;
 }
 
 .chat-window {
@@ -120,4 +143,32 @@ button:focus {outline:0;}
   bottom: 28px;
   margin: 14px;
   width: 240px;
+}
+
+.input-group > .statuses > .btn {
+  width: 43.5px;
+  /* border-width: 0.25px; */
+  margin-right: 14px;
+  position: relative;
+  float: left;
+  margin-bottom: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.input-group > .statuses > .btn:last-child {
+    margin-right: 0px;
+}
+
+.input-group > .statuses > .btn > img {
+  height: calc(100%);
+}
+
+.waiting-countdown {
+  width: 100%;
+  margin-bottom: 14px;
+  margin-left: 0px;
+}
+
+.tile .tile-title {
+  margin-top: 2px;
 }

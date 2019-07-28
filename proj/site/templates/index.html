@@ -10,7 +10,7 @@
 
     <div class="form-group">
       <label class="form-label">Email</label>
-      <input class="form-input" type="text" name="email" placeholder="Enter email">
+      <input class="form-input" type="email" name="email" placeholder="Enter email">
     </div>
 
     <div class="form-group">
@@ -36,7 +36,7 @@
   <div class="divider text-center" data-content="OR"></div>
   <br>
 
-  <form id="log-in" class="submit-form" url="../api/user/authenticate/" type="post" redirect="home">
+  <form id="log-in" class="submit-form" url="../api/user/authenticate/" type="post" redirect="/">
 
     {% csrf_token %}
 

@@ -50,7 +50,6 @@ class ListShowingsView(BaseView):
                 status__in=[Comment.STATUS_JOINED, Comment.STATUS_LEFT]
             ).order_by('-created_at').first()
         )
-        print(last_active_comment.status)
         if last_active_comment and last_active_comment.status == Comment.STATUS_JOINED:
             active_showing = last_active_comment.showing
             response['active_showing'] = {

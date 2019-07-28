@@ -41,3 +41,7 @@ class Profile(BaseModel):
         null=True,
         blank=True,
     )
+
+    display_name = models.CharField(max_length=32, null=True, blank=True)
+
+    showing_uuid = models.CharField(max_length=64, null=True, blank=True)

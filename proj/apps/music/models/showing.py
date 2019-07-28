@@ -47,7 +47,7 @@ class Showing(BaseModel):
     def __str__(self):
         if self.status == self.STATUS_SCHEDULED:
             now = datetime.now(tz=timezone.utc)
-            starts_in_minutes = int((self.showtime - now).total_seconds() / 60)
+            starts_in_minutes = int((self.scheduled_showtime - now).total_seconds() / 60)
             return f'{self.album} starts in {starts_in_minutes} minutes.'
         else:
             return f'[{self.status.upper()}] {self.album}'

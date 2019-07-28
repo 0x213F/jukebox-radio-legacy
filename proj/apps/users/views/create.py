@@ -8,6 +8,8 @@ from django.views.decorators.csrf import csrf_protect
 
 from random_username.generate import generate_username
 
+from proj.apps.users.models import Profile
+
 
 @csrf_protect
 def create_view(request):
@@ -20,16 +22,16 @@ def create_view(request):
 
     # form validation
     # - - - - - - - -
-    username = generate_username(1)[0]
     email = request.POST.get('email', None)
     password = request.POST.get('password', None)
-    if not username or not email or not password:
+    if not email or not password:
         return HttpResponse(status=400)
 
     # create
     # - - - -
     try:
-        user = User.objects.create_user(username, email, password)
+        user = User.objects.create_user(email, email, password)
+        Profile.objects.create(user=user)
         login(request, user)
         return HttpResponse(status=201)
     except Exception as e:

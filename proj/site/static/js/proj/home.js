@@ -18,7 +18,7 @@ function display_showings(e) {
     $div.append( `
       <div id="showing-${showing.id}" class="showing">
         <img src="${showing.album.art}" alt="${showing.album.name}" style="width: calc(100% - 28px); border: rgba(48,55,66,.95) solid 2px; border-radius: 4px; margin: 14px;">
-        <span class="label label-rounded label-primary showname">${showing.album.name}</span>
+        <span class="label label-rounded label-primary showname">${showing.album.name}</span><br>
         <span class="label label-rounded showtime">${showtime_timestring}</span><br>
       </div>
     `);
@@ -68,6 +68,7 @@ function display_showings(e) {
         }
         let msg = JSON.stringify(data);
         socket.send(msg)
+        $('#chat-input').val('')
         clearInterval(waiting)
         waiting = setInterval(poll_waiting_status, 29000)
       }
@@ -89,11 +90,31 @@ function display_showings(e) {
       }
       let msg = JSON.stringify(data);
       socket.send(msg)
-      setTimeout(socket.close, 1000);
+      setTimeout(function() {
+        socket.close();
+      }, 50);
       $('#current-showing').hide();
       $('#display-scheduled-showings').show();
       $('#account').show();
+      $('.panel > .panel-body').empty();
     })
+
+    // A: setup status buttons
+    $('.input-group > .statuses > .btn').click(function(e) {
+      $('.input-group > .statuses > .btn').removeClass('active')
+      $(this).addClass('active')
+      status = this.className.substring(4)
+      window.localStorage.setItem('status', status)
+      let data = {
+        'status': status,
+        'message': null,
+        'showing_id': showing_id,
+        'track_id': null,
+        'text': null,
+      }
+      let msg = JSON.stringify(data);
+      socket.send(msg)
+    });
 
     // 5: bind to window
     window['SOCKET'] = socket
@@ -102,9 +123,7 @@ function display_showings(e) {
 
   //////////////////////
   // active showing
-  console.log(e.active_showing)
   if(e.active_showing) {
-    console.log('active showing')
     window.localStorage.setItem('active_showing', JSON.stringify(e.active_showing))
     $('#showing-' + e.active_showing.id).click();
   } else {
@@ -117,11 +136,58 @@ function display_showings(e) {
 function onopen(event) {
   let scheduled_showings = JSON.parse(window.localStorage.getItem('scheduled_showings'))
   let showing_id = JSON.parse(window.localStorage.getItem('preview_showing_id'))
-  for(let showing of scheduled_showings) {
+
+  // let has_no_messages = true
+  // if(has_no_messages) {
+  //   let user_statuses = JSON.parse(window.localStorage.getItem('user_statuses'))
+  //   if(!user_statuses) {
+  //     user_statuses = {}
+  //   }
+  //   user_statuses[payload.user.showing_uuid] = payload.payload.status
+  //   window.localStorage.setItem('user_statuses', JSON.stringify(user_statuses))
+  // }
+
+  var showing_obj = null
+  for(showing of scheduled_showings) {
     if(showing.id === showing_id) {
-      // console.log(showing)
+      showing_obj = showing
     }
   }
+
+  let curr_status = JSON.parse(window.localStorage.getItem('active_showing'))
+  if(curr_status.status === 'active') {
+    if(payload.system.message == 'start') {
+      $('.statuses').show()
+      $('.waiting').hide()
+    }
+  } else {
+    $('.statuses').hide()
+    $('.waiting').show()
+  }
+
+  countdown_timer = setInterval(function(display) {
+    milliseconds = Date.parse(showing_obj.showtime) - Date.now()
+    if(milliseconds < 0) {
+      clearInterval(countdown_timer)
+      $('.waiting-countdown').text('00:00:00')
+      return
+    }
+    seconds = Math.floor(milliseconds / 1000) % 60
+    minutes = Math.floor(milliseconds / 1000 / 60) % 60
+    if(minutes < 9) {
+      minutes = '0' + minutes
+    }
+    if(seconds < 9) {
+      seconds = '0' + seconds
+    }
+    hours = Math.floor(milliseconds / 1000 / 60 / 60)
+    if(hours < 9) {
+      hours = '0' + hours
+    }
+    let showtime = new Date(Date.parse(showing_obj.showtime))
+    $('.waiting-countdown').text(hours + ":" + minutes + ':' + seconds)
+  }, 15)
+
   $('#display-scheduled-showings').hide();
   $('#account').hide();
   $('#current-showing').show();
@@ -141,5 +207,58 @@ function onopen(event) {
 function onmessage(event) {
   let text = event.data
   let payload = JSON.parse(text);
-  // console.log(payload)
+
+  if(payload.system) {
+    if(payload.system.message == 'start') {
+      $('.statuses').show()
+      $('.waiting').hide()
+    }
+    return;
+  } else {
+    $('.statuses').hide()
+    $('.waiting').show()
+  }
+
+  if(!payload.payload.text) {
+    return
+  }
+
+  let shortname = ''
+  if(payload.user.first_name && payload.user.last_name) {
+    shortname = payload.user.first_name[0] + payload.user.last_name[0];
+  } else {
+    // shortname = 'X'
+  }
+
+  let user_statuses = JSON.parse(window.localStorage.getItem('user_statuses'))
+  if(!user_statuses) {
+    user_statuses = {}
+  }
+  user_statuses[payload.user.showing_uuid] = payload.payload.status
+  window.localStorage.setItem('user_statuses', JSON.stringify(user_statuses))
+  background_color = '#5764c6'
+  console.log(payload.payload.status)
+  if(payload.payload.status == 'waiting') {
+    background_color = '#c4c9d3';
+  }
+
+  let $last = $('.panel > .panel-body > .tile').last()
+  let last_showing_uuid = $last.attr('author')
+  if(last_showing_uuid === payload.user.showing_uuid) {
+    $last.find('.tile-content').append( `
+          <div class="tile-subtitle" style="margin-top: 4px;">${payload.payload.text}</div>
+    `);
+  } else {
+    $('.panel > .panel-body').append( `
+      <div class="tile" author="${payload.user.showing_uuid}">
+        <div class="tile-icon">
+          <figure class="avatar" data-initial="${shortname}" style="background-color: ${background_color}"></figure>
+        </div>
+        <div class="tile-content">
+          <p class="tile-title text-bold">${payload.user.display_name}</p>
+          <div class="tile-subtitle">${payload.payload.text}</div>
+        </div>
+      </div>
+    `);
+  }
 }
