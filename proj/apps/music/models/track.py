@@ -21,6 +21,7 @@ class Track(BaseModel):
 
     class Meta:
         abstract = False
+        unique_together = ['number', 'album']
 
     objects = TrackManager.from_queryset(TrackQuerySet)()
 
@@ -30,12 +31,15 @@ class Track(BaseModel):
 
     number = models.PositiveIntegerField()
 
-    track_name = models.CharField(editable=False, max_length=128)
+    name = models.CharField(max_length=128)
 
     album = models.ForeignKey(
-        'music.Artist',
+        'music.Album',
         related_name='tracks',
         on_delete=models.DO_NOTHING,
     )
 
     runtime = models.FloatField()
+
+    def __str__(self):
+        return f'[{self.number}] {self.name}'

@@ -44,9 +44,9 @@ class Comment(BaseModel):
         null=True,
     )
 
-    text = models.FloatField()
+    text = models.TextField(null=True, blank=True)
 
-    status = models.FloatField()
+    status = models.CharField(max_length=128)
 
     showing = models.ForeignKey(
         'music.Showing',
@@ -56,4 +56,10 @@ class Comment(BaseModel):
 
     timestamp = models.FloatField()
 
-    track = models.CharField(editable=False, max_length=128)
+    track = models.ForeignKey(
+        'music.Track',
+        related_name='comments',
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
+    )

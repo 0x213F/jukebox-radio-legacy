@@ -41,7 +41,8 @@ class Showing(BaseModel):
         on_delete=models.DO_NOTHING,
     )
     status = models.CharField(editable=False, max_length=128, default=STATUS_SCHEDULED)
-    showtime = models.DateTimeField()
+    scheduled_showtime = models.DateTimeField()
+    actual_showtime = models.DateTimeField(null=True, blank=False)
 
     def __str__(self):
         if self.status == self.STATUS_SCHEDULED:

@@ -31,7 +31,8 @@ class ListShowingsView(BaseView):
             response['scheduled_showings'].append({
                 'id': showing.id,
                 'status': showing.status,
-                'showtime': showing.showtime,
+                'showtime': showing.scheduled_showtime,
+                'actual_showtime': showing.actual_showtime,
                 'album': {
                     'art': showing.album.art,
                     'name': showing.album.name,

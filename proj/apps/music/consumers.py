@@ -57,6 +57,17 @@ class ShowingConsumer(AsyncConsumer):
         #     })
 
     async def websocket_receive(self, event):
+        payload = json.loads(event['text'])
+        self.scope['user']
+        await Comment.objects.create(
+            status=paylod['status'],
+            text=paylod['text'],
+            showing_id=paylod['showing_id'],
+            track_id=paylod['track_id'],
+            commenter=self.scope['user'],
+            timestamp=datetime.now(),
+        )
+        print(payload)
         pass
         # payload = json.loads(event['text'])
         # route = payload['route']

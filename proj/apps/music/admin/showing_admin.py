@@ -1,4 +1,6 @@
 
+from datetime import datetime
+
 from django import forms
 from django.contrib import admin
 
@@ -30,5 +32,8 @@ class ShowingAdmin(admin.ModelAdmin):
     actions = ['start_show']
 
     def start_show(self, request, queryset):
-        queryset.update(status=Showing.STATUS_ACTIVE)
+        queryset.update(
+            actual_showtime=datetime.now(),
+            status=Showing.STATUS_ACTIVE,
+        )
     start_show.short_description = "Start the show"

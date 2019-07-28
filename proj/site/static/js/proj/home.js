@@ -1,5 +1,17 @@
 function display_showings(e) {
   window.localStorage.setItem('scheduled_showings', JSON.stringify(e.scheduled_showings))
+
+  //////////////////////
+  // active showing
+  if(e.active_showing) {
+
+    return
+  }
+
+  ///////////////////////
+  // scheduled showings
+
+  /* build the UI */
   $div = $('.showings')
   for(let showing of e.scheduled_showings) {
     milliseconds = Date.parse(showing.showtime) - Date.now()
@@ -19,7 +31,11 @@ function display_showings(e) {
     `);
   }
   $('#display-scheduled-showings').show();
+
+  /* join a scheduled showing chatroom */
   $('.showing').click(function(e) {
+
+    // 1: open websocket
     let id = $(this).attr('id')
     let showing_id = id.split('-')[1]
     var endpoint = 'ws://' + window.location.host + window.location.pathname
@@ -27,11 +43,59 @@ function display_showings(e) {
     window.localStorage.setItem('preview_showing_id', showing_id)
     socket.onopen = onopen
     socket.onmessage = onmessage
+
+    // 2: poll the client to send "waiting" status every 29 seconds
+    function poll_waiting_status() {
+      let data = {
+        'status': 'waiting',
+        'message': null,
+        'showing_id': showing_id,
+        'track_id': null,
+      }
+      let msg = JSON.stringify(data);
+      socket.send(msg)
+    }
+    let waiting = setInterval(poll_waiting_status, 29000)
+
+    // 3: define submit msg behavior
+    function submit(e) {
+      let $this = $(this);
+      let text = $('#chat-input').val()
+      if(!text) {
+        return;
+      }
+      if(($this.attr('id') === 'chat-input' && e.keyCode == 13) || $this.attr('id') === 'chat-submit') {
+        let status = window.localStorage.getItem('status')
+        let data = {
+          'status': status,
+          'message': text,
+          'showing_id': showing_id,
+        }
+        let msg = JSON.stringify(data);
+        socket.send(msg)
+        clearInterval(waiting)
+        waiting = setInterval(poll_waiting_status, 29000)
+      }
+    }
+    $('#chat-input').on('keyup', submit);
+    $('#chat-submit').on('click', submit);
+
+    // 4: leave chatroom behavior
+    $('.leave').click(function() {
+      clearInterval(waiting)
+      let data = {
+        'status': 'left',
+        'message': null,
+        'showing_id': showing_id,
+      }
+      let msg = JSON.stringify(data);
+      socket.send(msg)
+      socket.close()
+    })
   })
 }
 
 function onopen(event) {
-  $('#display-scheduled-showings').hide();
   let scheduled_showings = JSON.parse(window.localStorage.getItem('scheduled_showings'))
   let showing_id = JSON.parse(window.localStorage.getItem('preview_showing_id'))
   for(let showing of scheduled_showings) {
@@ -39,6 +103,9 @@ function onopen(event) {
       console.log(showing)
     }
   }
+  $('#display-scheduled-showings').hide();
+  $('#account').hide();
+  $('#current-showing').show();
 }
 
 function onmessage(event) {
