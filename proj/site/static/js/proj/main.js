@@ -34,7 +34,7 @@ $(".submit-form").submit(function(e) {
 });
 
 $(".submit-form").each(function (index, value) {
-  console.log(index)
+  // console.log(index)
   let $this = $(this)
   let submit = $this.attr("submit");
   if(submit && (submit === 'onload')) $this.submit();

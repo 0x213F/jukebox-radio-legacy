@@ -54,6 +54,8 @@ class Comment(BaseModel):
         on_delete=models.DO_NOTHING,
     )
 
+    created_at = models.DateTimeField(auto_now_add=True)
+
     timestamp = models.FloatField()
 
     track = models.ForeignKey(

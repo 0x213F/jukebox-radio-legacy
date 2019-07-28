@@ -7,6 +7,9 @@ from django.contrib.auth import get_user_model
 from django.core.serializers import serialize
 
 
+from proj.apps.music.models import Comment
+
+
 class ShowingConsumer(AsyncConsumer):
 
     # - - - - - - - - -
@@ -59,14 +62,16 @@ class ShowingConsumer(AsyncConsumer):
     async def websocket_receive(self, event):
         payload = json.loads(event['text'])
         self.scope['user']
-        await Comment.objects.create(
-            status=paylod['status'],
-            text=paylod['text'],
-            showing_id=paylod['showing_id'],
-            track_id=paylod['track_id'],
-            commenter=self.scope['user'],
-            timestamp=datetime.now(),
-        )
+        await database_sync_to_async(
+                Comment.objects.create
+            )(
+                status=payload['status'],
+                text=payload['text'],
+                showing_id=payload['showing_id'],
+                track_id=payload['track_id'],
+                commenter=self.scope['user'],
+                timestamp=4.0,
+            )
         print(payload)
         pass
         # payload = json.loads(event['text'])

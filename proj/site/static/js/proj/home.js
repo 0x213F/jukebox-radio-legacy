@@ -1,13 +1,6 @@
 function display_showings(e) {
   window.localStorage.setItem('scheduled_showings', JSON.stringify(e.scheduled_showings))
 
-  //////////////////////
-  // active showing
-  if(e.active_showing) {
-
-    return
-  }
-
   ///////////////////////
   // scheduled showings
 
@@ -30,7 +23,6 @@ function display_showings(e) {
       </div>
     `);
   }
-  $('#display-scheduled-showings').show();
 
   /* join a scheduled showing chatroom */
   $('.showing').click(function(e) {
@@ -68,8 +60,10 @@ function display_showings(e) {
         let status = window.localStorage.getItem('status')
         let data = {
           'status': status,
-          'message': text,
+          'message': null,
           'showing_id': showing_id,
+          'track_id': null,
+          'text': null,
         }
         let msg = JSON.stringify(data);
         socket.send(msg)
@@ -83,16 +77,52 @@ function display_showings(e) {
     // 4: leave chatroom behavior
     $('.leave').click(function() {
       clearInterval(waiting)
+      // 7: leaving chatroom
       let data = {
         'status': 'left',
         'message': null,
         'showing_id': showing_id,
+        'track_id': null,
+        'text': null,
       }
       let msg = JSON.stringify(data);
-      socket.send(msg)
+      window['SOCKET'].send(msg)
       socket.close()
     })
+
+    // 8: change status
+    $('.leave').click(function() {
+      clearInterval(waiting)
+      // 7: leaving chatroom
+      let data = {
+        'status': 'left',
+        'message': null,
+        'showing_id': showing_id,
+        'track_id': null,
+        'text': null,
+      }
+      let msg = JSON.stringify(data);
+      window['SOCKET'].send(msg)
+      socket.close()
+    })
+
+    // 5: bind to window
+    window['SOCKET'] = socket
+
   })
+
+  //////////////////////
+  // active showing
+  console.log(e.active_showing)
+  if(e.active_showing) {
+    console.log('active showing')
+    window.localStorage.setItem('active_showing', JSON.stringify(e.active_showing))
+    $('#showing-' + e.active_showing.id).click();
+  } else {
+    $('#display-scheduled-showings').show();
+  }
+
+
 }
 
 function onopen(event) {
@@ -100,16 +130,27 @@ function onopen(event) {
   let showing_id = JSON.parse(window.localStorage.getItem('preview_showing_id'))
   for(let showing of scheduled_showings) {
     if(showing.id === showing_id) {
-      console.log(showing)
+      // console.log(showing)
     }
   }
   $('#display-scheduled-showings').hide();
   $('#account').hide();
   $('#current-showing').show();
+
+  // 6: initial mark of waiting in chatroom
+  let data = {
+    'status': 'joined',
+    'message': null,
+    'showing_id': showing_id,
+    'track_id': null,
+    'text': null,
+  }
+  let msg = JSON.stringify(data);
+  window['SOCKET'].send(msg)
 }
 
 function onmessage(event) {
   let text = event.data
   let payload = JSON.parse(text);
-  console.log(payload)
+  // console.log(payload)
 }

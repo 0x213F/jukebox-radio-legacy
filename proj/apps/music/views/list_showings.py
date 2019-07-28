@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.http import JsonResponse
 
+from proj.apps.music.models import Comment
 from proj.apps.music.models import Showing
 
 from proj.core.views import BaseView
@@ -41,4 +42,28 @@ class ListShowingsView(BaseView):
                     }
                 }
             })
+        last_active_comment = (
+            Comment.objects
+            .filter(
+                commenter=request.user,
+                showing__in=showings,
+                status__in=[Comment.STATUS_JOINED, Comment.STATUS_LEFT]
+            ).order_by('-created_at').first()
+        )
+        print(last_active_comment.status)
+        if last_active_comment and last_active_comment.status == Comment.STATUS_JOINED:
+            active_showing = last_active_comment.showing
+            response['active_showing'] = {
+                'id': active_showing.id,
+                'status': active_showing.status,
+                'showtime': active_showing.scheduled_showtime,
+                'actual_showtime': active_showing.actual_showtime,
+                'album': {
+                    'art': active_showing.album.art,
+                    'name': active_showing.album.name,
+                    'artist': {
+                        'name': active_showing.album.artist.name,
+                    }
+                }
+            }
         return self.http_response(response)
