@@ -262,3 +262,42 @@ function onmessage(event) {
     `);
   }
 }
+
+$('.account-button').click(function() {
+  console.log('modal')
+  $('#account-modal').addClass('active');
+
+  // cancel profile
+  $('.cancel-profile').click(function() {
+    $('#account-modal').removeClass('active');
+  })
+
+  // anyone tab
+  $('.tab-anyone > a').mousedown(function() {
+    $('.tab-anyone > a').blur()
+  })
+  $('.tab-anyone > a').click(function() {
+    $('.tab-anyone > a').blur()
+    $('.tab-anyone').addClass('active');
+    $('.tab-you').removeClass('active');
+    $('.content-anyone').show()
+    $('.content-you').hide()
+  })
+
+  // you tab
+  $('.tab-you > a').mousedown(function() {
+    $('.tab-you > a').blur()
+  })
+  $('.tab-you').click(function() {
+    $('.tab-you > a').blur()
+    $('.tab-you').addClass('active')
+    $('.tab-anyone').removeClass('active');
+    $('.content-you').show()
+    $('.content-anyone').hide()
+  })
+
+  // update profile
+  $('.cancel-profile').click(function() {
+    $('#account-modal').removeClass('active');
+  })
+})

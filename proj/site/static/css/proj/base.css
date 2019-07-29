@@ -92,7 +92,8 @@
   border-radius: 4px;
 }
 
-/* button:focus {outline:0;} */
+button:focus {outline:0;}
+a:focus {outline:0;}
 
 #account {
   position: absolute;
@@ -171,4 +172,8 @@
 
 .tile .tile-title {
   margin-top: 2px;
+}
+
+.modal.active .modal-container, .modal:target .modal-container {
+  max-width: 720px;
 }
