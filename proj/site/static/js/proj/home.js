@@ -46,7 +46,6 @@ function display_showings(e) {
     let showing_id = id.split('-')[1]
     let showing_obj = null
     for(showing of JSON.parse(window.localStorage.getItem('scheduled_showings'))) {
-      console.log(showing.id, Number(showing_id))
       if(showing.id === Number(showing_id)) {
         showing_obj = showing
       }
@@ -54,8 +53,7 @@ function display_showings(e) {
     var endpoint = 'ws://' + window.location.host + window.location.pathname
     let socket = new WebSocket(endpoint)
     window.localStorage.setItem('preview_showing_id', showing_id)
-    console.log('the active showing object')
-    console.log(showing_obj)
+
     if(showing_obj) {
       window.localStorage.setItem('active_showing', JSON.stringify(showing_obj))
     }
@@ -183,7 +181,6 @@ function onopen(event) {
   }
 
   let curr_status = JSON.parse(window.localStorage.getItem('active_showing'))
-  console.log(curr_status)
   if(curr_status.status === 'active') {
     $('.statuses').show()
     $('.waiting').hide()
@@ -236,6 +233,14 @@ function onmessage(event) {
   let payload = JSON.parse(text);
 
   let active_showing = JSON.parse(window.localStorage.getItem('active_showing'))
+  console.log(payload)
+  if(payload.comments) {
+    for(comment of payload.comments) {
+      render_comment(comment)
+    }
+    generate_status_dots()
+    $(".panel-body").scrollTop($(".panel-body")[0].scrollHeight);
+  }
 
   if(payload.system && payload.system.message == 'start') {
     $('.statuses').show()
@@ -245,7 +250,6 @@ function onmessage(event) {
     return
   }
 
-  console.log(active_showing)
   if(active_showing.status === 'waiting') {
     $('.statuses').hide()
     $('.waiting').show()
@@ -271,31 +275,28 @@ function onmessage(event) {
   }
   user_statuses[payload.user.showing_uuid] = payload.payload.status
   window.localStorage.setItem('user_statuses', JSON.stringify(user_statuses))
-  background_color = '#5764c6'
-  console.log(payload.payload.status)
-  if(payload.payload.status == 'waiting') {
-    background_color = '#c4c9d3';
-  }
 
-  let $last = $('.panel > .panel-body > .tile').last()
-  let last_showing_uuid = $last.attr('author')
-  if(last_showing_uuid === payload.user.showing_uuid) {
-    $last.find('.tile-content').append( `
-          <div class="tile-subtitle" style="margin-top: 4px;">${payload.payload.text}</div>
-    `);
-  } else {
-    $('.panel > .panel-body').append( `
-      <div class="tile" author="${payload.user.showing_uuid}">
-        <div class="tile-icon">
-          <figure class="avatar" data-initial="${shortname}" style="background-color: ${background_color}"></figure>
-        </div>
-        <div class="tile-content">
-          <p class="tile-title text-bold">${payload.user.display_name}</p>
-          <div class="tile-subtitle">${payload.payload.text}</div>
-        </div>
-      </div>
-    `);
-  }
+  console.log({
+    'text': payload.payload.text,
+    'status': payload.payload.status,
+    'profile_showing_uuid': payload.user.showing_uuid,
+    'profile_display_name': payload.user.display_name,
+    'created_at': null,
+  })
+
+  console.log('rendering')
+  render_comment({
+    'text': payload.payload.text,
+    'status': payload.payload.status,
+    'profile_showing_uuid': payload.user.showing_uuid,
+    'profile_display_name': payload.user.display_name,
+    'created_at': null,
+  })
+
+  console.log('gnereating')
+  generate_status_dots()
+  $(".panel-body").scrollTop($(".panel-body")[0].scrollHeight);
+
 }
 
 $('.account-button').click(function() {
@@ -367,4 +368,87 @@ function hide_modal() {
   me.email = $('.update_email').val();
   me.display_name = $('.update_display_name').val();
   window.localStorage.setItem('me', JSON.stringify(me))
+}
+
+function render_comment(comment_obj) {
+  background_color = '#5764c6'
+  if(!comment_obj.text) {
+    return
+  }
+  if(comment_obj.status == 'waiting') {
+    background_color = '#c4c9d3';
+  } else if(comment_obj.status == 'low active') {
+    background_color = '#fef1e5';
+  } else if(comment_obj.status == 'mid_low active') {
+    background_color = '#fcd7b2';
+  } else if(comment_obj.status == 'mid_high active') {
+    background_color = '#fabd7f';
+  } else if(comment_obj.status == 'high active') {
+    background_color = '#f8a34c';
+  }
+
+  let $last = $('.panel > .panel-body > .tile').last()
+  let last_showing_uuid = $last.attr('author')
+  let last_status = $last.attr('status')
+  if(last_showing_uuid === comment_obj.profile_showing_uuid && last_status !== comment_obj.status) {
+    $('.panel > .panel-body').append( `
+      <div class="tile" author="${comment_obj.profile_showing_uuid}" status="${comment_obj.status}">
+        <div class="tile-icon">
+          <figure class="avatar" data-initial="" style="background-color: ${background_color}; height: 1.4rem; width: 1.4rem; margin-right: 6px; margin-left: 4px; margin-bottom: 6px;"></figure>
+        </div>
+        <div class="tile-content">
+
+          <div class="tile-subtitle" style="margin-top: -10px;">${comment_obj.text}</div>
+        </div>
+      </div>
+    `);
+  } else if(last_showing_uuid === comment_obj.profile_showing_uuid && last_status === comment_obj.status) {
+    $last.find('.tile-content').append( `
+          <div class="tile-subtitle" style="margin-top: 4px;">${comment_obj.text}</div>
+    `);
+  } else {
+    $('.panel > .panel-body').append( `
+      <div class="tile" author="${comment_obj.profile_showing_uuid}" status="${comment_obj.status}">
+        <div class="tile-icon">
+          <figure class="avatar" data-initial="" style="background-color: ${background_color}"></figure>
+        </div>
+        <div class="tile-content">
+          <p class="tile-title text-bold">${comment_obj.profile_display_name}</p>
+          <div class="tile-subtitle">${comment_obj.text}</div>
+        </div>
+      </div>
+    `);
+  }
+}
+
+DOT = `<div style='height: 4px; width: 4px; border-radius: 1px; background-color: #5764c6; float: left; margin-right: 2px;'></div>`
+
+function generate_status_dots() {
+  var map_user_to_status = {}
+  $('.panel > .panel-body').children().each(function( index ) {
+    console.log()
+    map_user_to_status[$(this).attr('author')] = $(this).attr('status')
+  });
+  low_count = 0
+  mid_low_count = 0
+  mid_high_count = 0
+  high_count = 0
+  console.log(map_user_to_status)
+  for(status of Object.values(map_user_to_status)) {
+    console.log(status)
+    if(status ==='low active') {
+      low_count++;
+    } else if(status ==='mid_low active') {
+      mid_low_count++;
+    } else if(status ==='mid_high active') {
+      mid_high_count++;
+    } else if(status ==='high active') {
+      high_count++;
+    }
+  }
+  console.log(low_count, mid_low_count, mid_high_count, high_count)
+  $('.dot-container.low').append(DOT.repeat(low_count))
+  $('.dot-container.mid_low').append(DOT.repeat(mid_low_count))
+  $('.dot-container.mid_high').append(DOT.repeat(mid_high_count))
+  $('.dot-container.high').append(DOT.repeat(high_count))
 }

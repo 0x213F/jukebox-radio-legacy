@@ -2,6 +2,9 @@ import asyncio
 import json
 import uuid
 
+from datetime import datetime
+from datetime import timedelta
+
 from channels.consumer import AsyncConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
@@ -62,14 +65,18 @@ class ShowingConsumer(AsyncConsumer):
                     chatroom,
                     self.channel_name,
                 )
-                showing_uuid = str(uuid.uuid4())
                 await database_sync_to_async(
                         Profile.objects.filter(user=self.scope['user']).update
                     )(
                         active_showing_id=payload['showing_id'],
+                    )
+            if not profile.showing_uuid:
+                showing_uuid = str(uuid.uuid4())
+                await database_sync_to_async(
+                        Profile.objects.filter(user=self.scope['user']).update
+                    )(
                         showing_uuid=showing_uuid,
                     )
-
 
         if payload['status'] not in ['waiting', 'joined'] or payload['text']:
             await self.channel_layer.group_send(
@@ -81,11 +88,38 @@ class ShowingConsumer(AsyncConsumer):
                         'user': {
                             'display_name': self.scope['user'].profile.display_name,
                             'showing_uuid': showing_uuid,
-                        }
+                        },
                     }),
                 }
             )
 
+        if payload['status'] == 'joined':
+            comments = await database_sync_to_async(
+                    Comment.objects.select_related('commenter', 'commenter__profile').filter
+                )(
+                    created_at__gte=datetime.now() - timedelta(minutes=30),
+                    showing_id=payload['showing_id'],
+                )
+            comments_obj = []
+            for comment in comments:
+                comments_obj.insert(0, {
+                    'text': comment.text,
+                    'status': comment.status,
+                    'profile_showing_uuid': comment.commenter.profile.showing_uuid,
+                    'profile_display_name': comment.commenter.profile.display_name,
+                    'created_at': comment.created_at.isoformat(),
+                })
+            await self.send({
+                'type': 'websocket.send',
+                'text': json.dumps({
+                    'payload': payload,
+                    'user': {
+                        'display_name': self.scope['user'].profile.display_name,
+                        'showing_uuid': showing_uuid,
+                    },
+                    'comments': comments_obj,
+                }),
+            })
 
         pass
 

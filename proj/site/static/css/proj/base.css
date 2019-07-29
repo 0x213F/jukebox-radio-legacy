@@ -182,3 +182,25 @@ a:focus {outline:0;}
   margin-left: 14px;
   margin-right: 14px;
 }
+
+.dot-container {
+  display: block;
+  width: 63.5px;
+  /* border-width: 0.25px; */
+  margin-left: 2px;
+  position: relative;
+  float: left;
+  margin-bottom: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.dot-container:first-child {
+
+  margin-left: 2px;
+
+}
+
+.dot-container {
+    margin-right: 2px;
+    min-width: 53px;
+}
