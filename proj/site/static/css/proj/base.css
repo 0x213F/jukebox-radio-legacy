@@ -177,3 +177,8 @@ a:focus {outline:0;}
 .modal.active .modal-container, .modal:target .modal-container {
   max-width: 720px;
 }
+
+.content-anyone, .content-you {
+  margin-left: 14px;
+  margin-right: 14px;
+}

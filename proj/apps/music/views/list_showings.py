@@ -65,4 +65,14 @@ class ListShowingsView(BaseView):
                     }
                 }
             }
+
+        request.user.refresh_from_db()
+
+        response['me'] = {
+            'first_name': request.user.first_name,
+            'last_name': request.user.last_name,
+            'email': request.user.email,
+            'display_name': request.user.profile.display_name,
+        }
+
         return self.http_response(response)

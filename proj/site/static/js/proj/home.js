@@ -1,5 +1,6 @@
 function display_showings(e) {
   window.localStorage.setItem('scheduled_showings', JSON.stringify(e.scheduled_showings))
+  window.localStorage.setItem('me', JSON.stringify(e.me))
 
   ///////////////////////
   // scheduled showings
@@ -264,7 +265,13 @@ function onmessage(event) {
 }
 
 $('.account-button').click(function() {
-  console.log('modal')
+
+  let me = JSON.parse(window.localStorage.getItem('me'));
+  console.log(me)
+  $('.update_first_name').val(me.first_name);
+  $('.update_last_name').val(me.last_name);
+  $('.update_email').val(me.email);
+  $('.update_display_name').val(me.display_name);
   $('#account-modal').addClass('active');
 
   // cancel profile
@@ -297,7 +304,33 @@ $('.account-button').click(function() {
   })
 
   // update profile
-  $('.cancel-profile').click(function() {
+  $('.update-account').click(function() {
     $('#account-modal').removeClass('active');
   })
+
+  // null display name
+  $('.null-display-name').change(function() {
+    console.log('ok@!')
+      if($(this).is(":checked")) {
+          LAST_DISPLAY_NAME = $('.update_display_name').val()
+          console.log(LAST_DISPLAY_NAME)
+          $('.update_display_name').val('');
+          $('.update_display_name').addClass('disabled');
+      } else {
+        $('.update_display_name').val(LAST_DISPLAY_NAME);
+        $('.update_display_name').removeClass('disabled');
+      }
+  });
 })
+
+LAST_DISPLAY_NAME = ''
+
+function hide_modal() {
+  $('#account-modal').removeClass('active');
+  let me = JSON.parse(window.localStorage.getItem('me'));
+  me.first_name = $('.update_first_name').val();
+  me.last_name = $('.update_last_name').val();
+  me.email = $('.update_email').val();
+  me.display_name = $('.update_display_name').val();
+  window.localStorage.setItem('me', JSON.stringify(me))
+}
