@@ -23,10 +23,26 @@ class ListShowingsView(BaseView):
         '''
         TODO docstring
         '''
+        active_showings = (
+            Showing.objects.select_related('album', 'album__artist')
+            .filter(
+                status=Showing.STATUS_ACTIVE,
+            )
+        )
+        active_comments = (
+            Comment.objects
+            .filter(
+                commenter=request.user,
+                showing__in=active_showings,
+            ).distinct('showing')
+        )
+        active_showing_ids = [comment.showing_id for comment in active_comments]
         showings = (
             Showing.objects.select_related('album', 'album__artist')
-            .filter(status=Showing.STATUS_SCHEDULED)
-        )
+            .filter(Q(
+                Q(status=Showing.STATUS_SCHEDULED) | Q(id__in=active_showing_ids)
+            )
+        ))
         response = {'scheduled_showings': []}
         for showing in showings:
             response['scheduled_showings'].append({

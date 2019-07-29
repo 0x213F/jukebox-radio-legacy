@@ -2,6 +2,15 @@ function display_showings(e) {
   window.localStorage.setItem('scheduled_showings', JSON.stringify(e.scheduled_showings))
   window.localStorage.setItem('me', JSON.stringify(e.me))
 
+  var showing_obj = null
+  if(e.active_showing) {
+    for(showing of e.scheduled_showings) {
+      if(showing.id === e.active_showing) {
+        showing_obj = showing
+      }
+    }
+  }
+
   ///////////////////////
   // scheduled showings
 
@@ -11,10 +20,14 @@ function display_showings(e) {
     milliseconds = Date.parse(showing.showtime) - Date.now()
     let showtime = new Date(Date.parse(showing.showtime))
     let showtime_timestring = ''
-    if(Date.now() - showtime > 0) {
+    if(showing.status === 'scheduled' && Date.now() - showtime > 0) {
       showtime_timestring = 'Starting momentarily...'
-    } else {
+    } else if(showing.status === 'scheduled') {
       showtime_timestring = '@ ' + showtime.toLocaleTimeString("en-US", {timeZoneName:'short'})
+    } else if(showing.status === 'active') {
+      showtime_timestring = 'Ongoing'
+    } else {
+
     }
     $div.append( `
       <div id="showing-${showing.id}" class="showing">
@@ -31,9 +44,22 @@ function display_showings(e) {
     // 1: open websocket
     let id = $(this).attr('id')
     let showing_id = id.split('-')[1]
+    let showing_obj = null
+    for(showing of JSON.parse(window.localStorage.getItem('scheduled_showings'))) {
+      console.log(showing.id, Number(showing_id))
+      if(showing.id === Number(showing_id)) {
+        showing_obj = showing
+      }
+    }
     var endpoint = 'ws://' + window.location.host + window.location.pathname
     let socket = new WebSocket(endpoint)
     window.localStorage.setItem('preview_showing_id', showing_id)
+    console.log('the active showing object')
+    console.log(showing_obj)
+    if(showing_obj) {
+      window.localStorage.setItem('active_showing', JSON.stringify(showing_obj))
+    }
+
     socket.onopen = onopen
     socket.onmessage = onmessage
 
@@ -104,6 +130,7 @@ function display_showings(e) {
     $('.input-group > .statuses > .btn').click(function(e) {
       $('.input-group > .statuses > .btn').removeClass('active')
       $(this).addClass('active')
+      $('#chat-input').removeClass('disabled');
       status = this.className.substring(4)
       window.localStorage.setItem('status', status)
       let data = {
@@ -156,11 +183,10 @@ function onopen(event) {
   }
 
   let curr_status = JSON.parse(window.localStorage.getItem('active_showing'))
+  console.log(curr_status)
   if(curr_status.status === 'active') {
-    if(payload.system.message == 'start') {
-      $('.statuses').show()
-      $('.waiting').hide()
-    }
+    $('.statuses').show()
+    $('.waiting').hide()
   } else {
     $('.statuses').hide()
     $('.waiting').show()
@@ -209,15 +235,23 @@ function onmessage(event) {
   let text = event.data
   let payload = JSON.parse(text);
 
-  if(payload.system) {
-    if(payload.system.message == 'start') {
-      $('.statuses').show()
-      $('.waiting').hide()
-    }
-    return;
-  } else {
+  let active_showing = JSON.parse(window.localStorage.getItem('active_showing'))
+
+  if(payload.system && payload.system.message == 'start') {
+    $('.statuses').show()
+    $('.waiting').hide()
+    curr_status.status = 'active'
+    window.localStorage.setItem('active_showing', JSON.stringify(curr_status))
+    return
+  }
+
+  console.log(active_showing)
+  if(active_showing.status === 'waiting') {
     $('.statuses').hide()
     $('.waiting').show()
+  } else if(active_showing.status === 'active') {
+    $('.statuses').show()
+    $('.waiting').hide()
   }
 
   if(!payload.payload.text) {

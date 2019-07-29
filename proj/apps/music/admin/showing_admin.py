@@ -24,7 +24,7 @@ class ShowingForm(forms.ModelForm):
 class ShowingAdmin(admin.ModelAdmin):
     form = ShowingForm
 
-    actions = ['start_show', 'terminate_show']
+    actions = ['start_show', 'complete_show', 'terminate_show']
 
     def save_model(self, request, obj, form, change):
         if not change:
@@ -55,6 +55,31 @@ class ShowingAdmin(admin.ModelAdmin):
                     'text': json.dumps({
                         'system': {
                             'message': 'start',
+                            'sent_at': datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ'),
+                        }
+                    }),
+                }
+            )
+    start_show.short_description = "Start the show"
+
+    def complete_show(self, request, queryset):
+        orig_count = queryset.count()
+        if queryset.filter(status=Showing.STATUS_SCHEDULED).count() != orig_count:
+            return
+        queryset.update(
+            actual_showtime=datetime.now(),
+            status=Showing.STATUS_COMPLETE,
+        )
+        channel_layer = get_channel_layer()
+        for obj in queryset:
+            print(f'showing-{obj.id}')
+            async_to_sync(channel_layer.group_send)(
+                f'showing-{obj.id}',
+                {
+                    'type': 'broadcast',
+                    'text': json.dumps({
+                        'system': {
+                            'message': Showing.STATUS_COMPLETE,
                             'sent_at': datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ'),
                         }
                     }),
