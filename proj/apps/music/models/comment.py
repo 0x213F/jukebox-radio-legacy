@@ -15,14 +15,9 @@ from proj.core.models import BaseModel
 
 class Comment(BaseModel):
 
-    # - - - - - - - -
+    # - - - - - - -
     # config model
-    # - - - - - - - -
-
-    class Meta:
-        abstract = False
-
-    objects = CommentManager.from_queryset(CommentQuerySet)()
+    # - - - - - - -
 
     STATUS_JOINED = 'joined'
     STATUS_WAITING = 'waiting'
@@ -32,6 +27,14 @@ class Comment(BaseModel):
     STATUS_MID_LOW = 'mid_low'
     STATUS_MID_HIGH = 'mid_high'
     STATUS_HIGH = 'high'
+
+    class Meta:
+        abstract = False
+
+    objects = CommentManager.from_queryset(CommentQuerySet)()
+
+    def __str__(self):
+        return f'[{self.commenter_id}] {self.text}'
 
     # - - - -
     # fields

@@ -1,14 +1,6 @@
 
-import chess
-
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
 from django.utils.decorators import method_decorator
-from django.views import View
-from django.http import JsonResponse
-
-from proj.apps.music.models import Comment
-from proj.apps.music.models import Showing
 
 from proj.core.views import BaseView
 

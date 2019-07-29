@@ -1,12 +1,8 @@
 
-from django.contrib.auth.models import User
 from django.contrib.auth import login
-from django.contrib.auth import get_user_model
-from django.shortcuts import render
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_protect
-
-from random_username.generate import generate_username
 
 from proj.apps.users.models import Profile
 

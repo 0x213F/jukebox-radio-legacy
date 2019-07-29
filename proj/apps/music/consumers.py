@@ -17,15 +17,18 @@ from proj.apps.users.models import Profile
 
 class ShowingConsumer(AsyncConsumer):
 
-    # - - - - - - - - -
-    # websocket methods
-    # - - - - - - - - -
+    # - - - -
+    # connect
+    # - - - -
 
     async def websocket_connect(self, event):
-
         await self.send({
             'type': 'websocket.accept',
         })
+
+    # - - - - -
+    # receieve
+    # - - - - -
 
     async def websocket_receive(self, event):
         payload = json.loads(event['text'])
@@ -123,12 +126,19 @@ class ShowingConsumer(AsyncConsumer):
 
         pass
 
-    #
+    # - - - - -
+    # broadcast
+    # - - - - -
+
     async def broadcast(self, event):
         await self.send({
             'type': 'websocket.send',
             'text': event['text'],
         })
+
+    # - - - - - -
+    # disconnect
+    # - - - - - -
 
     async def websocket_disconnect(self, event):
         # await self.channel_layer.group_discard("chat", self.channel_name)
@@ -137,22 +147,3 @@ class ShowingConsumer(AsyncConsumer):
             )(
                 active_showing_id=None,
             )
-
-    # - - - - - - -
-    # route methods
-    # - - - - - - -
-
-    # @database_sync_to_async
-    # def move_piece(self):
-    #     game = ChessGame.objects.active().belongs_to(self.scope['user']).get()
-    #     if not game.is_users_turn(self.scope['user']):
-    #         raise Exception('It is the opponent\'s turn')
-    #     return ChessGame.objects.move_piece(game, data['uci'])
-    #
-    #
-    # @database_sync_to_async
-    # def join_match(self):
-    #     game = ChessGame.objects.active().belongs_to(self.scope['user']).get()
-    #     if not game.is_users_turn(self.scope['user']):
-    #         raise Exception('It is the opponent\'s turn')
-    #     return ChessGame.objects.move_piece(game, data['uci'])

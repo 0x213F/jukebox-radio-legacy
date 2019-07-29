@@ -15,15 +15,18 @@ from proj.core.models import BaseModel
 
 class Track(BaseModel):
 
-    # - - - - - - - -
+    # - - - - - - -
     # config model
-    # - - - - - - - -
+    # - - - - - - -
 
     class Meta:
         abstract = False
         unique_together = ['number', 'album']
 
     objects = TrackManager.from_queryset(TrackQuerySet)()
+
+    def __str__(self):
+        return f'[{self.number}] {self.name}'
 
     # - - - -
     # fields
@@ -40,6 +43,3 @@ class Track(BaseModel):
     )
 
     runtime = models.FloatField()
-
-    def __str__(self):
-        return f'[{self.number}] {self.name}'

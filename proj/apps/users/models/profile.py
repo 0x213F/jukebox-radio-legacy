@@ -7,8 +7,8 @@ from django.conf import settings
 from django.db import models
 from django.forms import fields
 
-# from proj.apps.music.models.managers import ArtistManager
-# from proj.apps.music.models.querysets import ArtistQuerySet
+from .managers import ProfileManager
+from .querysets import ProfileQuerySet
 
 from proj.core.models import BaseModel
 
@@ -22,7 +22,7 @@ class Profile(BaseModel):
     class Meta:
         abstract = False
 
-    # objects = ArtistManager.from_queryset(ArtistQuerySet)()
+    objects = ArtistManager.from_queryset(ArtistQuerySet)()
 
     # - - - -
     # fields
@@ -41,7 +41,5 @@ class Profile(BaseModel):
         null=True,
         blank=True,
     )
-
     display_name = models.CharField(max_length=32, null=True, blank=True)
-
     showing_uuid = models.CharField(max_length=64, null=True, blank=True)

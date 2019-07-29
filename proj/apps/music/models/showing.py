@@ -17,19 +17,22 @@ from proj.core.models import BaseModel
 
 class Showing(BaseModel):
 
-    # - - - - - - - -
+    # - - - - - - -
     # config model
-    # - - - - - - - -
+    # - - - - - - -
+
+    STATUS_SCHEDULED = 'scheduled'
+    STATUS_ACTIVE = 'active'
+    STATUS_COMPLETE = 'complete'
+    STATUS_TERMINATED = 'terminated'
 
     class Meta:
         abstract = False
 
     objects = ShowingManager.from_queryset(ShowingQuerySet)()
 
-    STATUS_SCHEDULED = 'scheduled'
-    STATUS_ACTIVE = 'active'
-    STATUS_COMPLETE = 'complete'
-    STATUS_TERMINATED = 'terminated'
+    def __str__(self):
+        return f'[{self.status.upper()}] {self.album}'
 
     # - - - -
     # fields
@@ -44,10 +47,6 @@ class Showing(BaseModel):
     scheduled_showtime = models.DateTimeField()
     actual_showtime = models.DateTimeField(null=True, blank=False)
 
-    def __str__(self):
-        if self.status == self.STATUS_SCHEDULED:
-            now = datetime.now(tz=timezone.utc)
-            starts_in_minutes = int((self.scheduled_showtime - now).total_seconds() / 60)
-            return f'{self.album} starts in {starts_in_minutes} minutes.'
-        else:
-            return f'[{self.status.upper()}] {self.album}'
+    @property
+    def chat_room(self):
+        return f'showing-{self.id}'

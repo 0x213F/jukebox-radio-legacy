@@ -38,24 +38,24 @@ class ShowingAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
     def start_show(self, request, queryset):
-        orig_count = queryset.count()
-        if queryset.filter(status=Showing.STATUS_SCHEDULED).count() != orig_count:
+        scheduled = queryset.filter(status=Showing.STATUS_SCHEDULED)
+        if queryset.count() != scheduled.count():
             return
         queryset.update(
             actual_showtime=datetime.now(),
             status=Showing.STATUS_ACTIVE,
         )
         channel_layer = get_channel_layer()
-        for obj in queryset:
-            print(f'showing-{obj.id}')
+        for showing in queryset:
+            now = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
             async_to_sync(channel_layer.group_send)(
-                f'showing-{obj.id}',
+                showing.chat_room,
                 {
                     'type': 'broadcast',
                     'text': json.dumps({
                         'system': {
                             'message': 'start',
-                            'sent_at': datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ'),
+                            'sent_at': now,
                         }
                     }),
                 }
@@ -63,24 +63,24 @@ class ShowingAdmin(admin.ModelAdmin):
     start_show.short_description = "Start the show"
 
     def complete_show(self, request, queryset):
-        orig_count = queryset.count()
-        if queryset.filter(status=Showing.STATUS_SCHEDULED).count() != orig_count:
+        already_completed = queryset.filter(status=Showing.STATUS_COMPLETE)
+        if already_completed.exists():
             return
         queryset.update(
             actual_showtime=datetime.now(),
             status=Showing.STATUS_COMPLETE,
         )
         channel_layer = get_channel_layer()
-        for obj in queryset:
-            print(f'showing-{obj.id}')
+        for showing in queryset:
+            now = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
             async_to_sync(channel_layer.group_send)(
-                f'showing-{obj.id}',
+                showing.chat_room,
                 {
                     'type': 'broadcast',
                     'text': json.dumps({
                         'system': {
                             'message': Showing.STATUS_COMPLETE,
-                            'sent_at': datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ'),
+                            'sent_at': now,
                         }
                     }),
                 }
@@ -88,8 +88,26 @@ class ShowingAdmin(admin.ModelAdmin):
     start_show.short_description = "Start the show"
 
     def terminate_show(self, request, queryset):
+        already_terminated = queryset.filter(status=Showing.STATUS_TERMINATED)
+        if already_terminated.exists():
+            return
         queryset.update(
             actual_showtime=datetime.now(),
             status=Showing.STATUS_TERMINATED,
         )
+        channel_layer = get_channel_layer()
+        for showing in queryset:
+            now = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
+            async_to_sync(channel_layer.group_send)(
+                showing.chat_room,
+                {
+                    'type': 'broadcast',
+                    'text': json.dumps({
+                        'system': {
+                            'message': Showing.STATUS_TERMINATED,
+                            'sent_at': now,
+                        }
+                    }),
+                }
+            )
     terminate_show.short_description = "Terminate the show"

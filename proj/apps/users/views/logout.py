@@ -1,9 +1,10 @@
 
 from django.contrib.auth import logout
-from django.shortcuts import render
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_protect
 
 
+@csrf_protect
 def logout_view(request):
 
     # If you press logout you get forgotten.
