@@ -204,3 +204,19 @@ a:focus {outline:0;}
     margin-right: 2px;
     min-width: 53px;
 }
+
+.dot-container.low > div {
+  background-color: #cdddd6;
+}
+
+.dot-container.mid_low > div {
+  background-color: #699985;
+}
+
+.dot-container.mid_high > div {
+  background-color: #37765d;
+}
+
+.dot-container.high > div {
+  background-color: #022215;
+}

@@ -22,7 +22,7 @@ class Profile(BaseModel):
     class Meta:
         abstract = False
 
-    objects = ArtistManager.from_queryset(ArtistQuerySet)()
+    objects = ProfileManager.from_queryset(ProfileQuerySet)()
 
     # - - - -
     # fields
