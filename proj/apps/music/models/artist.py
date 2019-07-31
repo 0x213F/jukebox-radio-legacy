@@ -1,4 +1,5 @@
 
+from django.conf import settings
 from django.db import models
 
 from proj.apps.music.models.managers import ArtistManager
@@ -27,3 +28,11 @@ class Artist(BaseModel):
     # - - - -
 
     name = models.CharField(max_length=128)
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        related_name='artist',
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
+    )

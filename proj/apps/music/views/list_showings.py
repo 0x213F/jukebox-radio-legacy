@@ -1,6 +1,4 @@
 
-import chess
-
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.utils.decorators import method_decorator
@@ -26,7 +24,7 @@ class ListShowingsView(BaseView):
         active_showings = (
             Showing.objects.select_related('album', 'album__artist')
             .filter(
-                status=Showing.STATUS_ACTIVE,
+                status=Showing.STATUS_ACTIVATED,
             )
         )
         active_comments = (

@@ -32,14 +32,11 @@ class Track(BaseModel):
     # fields
     # - - - -
 
-    number = models.PositiveIntegerField()
-
-    name = models.CharField(max_length=128)
-
     album = models.ForeignKey(
         'music.Album',
         related_name='tracks',
         on_delete=models.DO_NOTHING,
     )
-
+    name = models.CharField(max_length=128)
+    number = models.PositiveIntegerField()
     runtime = models.FloatField()

@@ -4,6 +4,6 @@ from proj.core.models.managers import BaseManager
 
 class TrackManager(BaseManager):
     '''
-    Django QuerySet used to query ChessSnapshot objects.
+    Django Manager used to manage Track objects.
     '''
     pass

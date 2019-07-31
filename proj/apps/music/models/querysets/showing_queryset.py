@@ -4,6 +4,6 @@ from proj.core.models.querysets import BaseQuerySet
 
 class ShowingQuerySet(BaseQuerySet):
     '''
-    todo: docstring
+    Django QuerySet used to query Showing objects.
     '''
     pass

@@ -8,19 +8,10 @@ class BaseQuerySet(models.QuerySet):
     Inherits from Django QuerySet.
     '''
 
-    def get_singular(self):
+    def get_by_priority(self, *priority_filters):
         '''
-        Get the singular object from a QuerySet which is expected to only have
-        1 object.
+        Attempt to get an object multiple times with different filters.
         '''
-        count = self.count()
-        if count == 1:
-            return self.first()
-        elif count == 0:
-            raise self.model.DoesNotExist()
-        raise Exception('Multiple objects found.')
-
-    def get_by_priority(self, priority_filters):
         for filter in priority_filters:
             try:
                 return self.get(**filter)

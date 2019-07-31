@@ -15,7 +15,7 @@ from proj.apps.music.models import Comment
 from proj.apps.users.models import Profile
 
 
-class ShowingConsumer(AsyncConsumer):
+class Consumer(AsyncConsumer):
 
     # - - - -
     # connect

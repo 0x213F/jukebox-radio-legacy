@@ -4,6 +4,6 @@ from proj.core.models.querysets import BaseQuerySet
 
 class ArtistQuerySet(BaseQuerySet):
     '''
-    todo: docstring
+    Django QuerySet used to query Artist objects.
     '''
     pass

@@ -4,6 +4,6 @@ from proj.core.models.querysets import BaseQuerySet
 
 class TrackQuerySet(BaseQuerySet):
     '''
-    todo: docstring
+    Django QuerySet used to query Track objects.
     '''
     pass

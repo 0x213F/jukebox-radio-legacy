@@ -4,6 +4,6 @@ from proj.core.models.managers import BaseManager
 
 class ArtistManager(BaseManager):
     '''
-    Django QuerySet used to query ChessSnapshot objects.
+    Django Manager used to manage Artist objects.
     '''
     pass

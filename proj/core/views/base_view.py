@@ -13,7 +13,6 @@ class BaseView(View):
 
     def http_response(self, response):
         if type(response) == dict:
-            print('~~~~~~~~~~~~~~~~~~~~~~~~')
             return JsonResponse(response)
         if type(response) == list:
             return JsonResponse(serialize('json', response), safe=False)

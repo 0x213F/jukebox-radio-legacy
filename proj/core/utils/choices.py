@@ -1,4 +1,0 @@
-
-
-class Choices(object):
-    pass

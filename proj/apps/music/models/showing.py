@@ -22,9 +22,16 @@ class Showing(BaseModel):
     # - - - - - - -
 
     STATUS_SCHEDULED = 'scheduled'
-    STATUS_ACTIVE = 'active'
-    STATUS_COMPLETE = 'complete'
+    STATUS_ACTIVATED = 'activated'
+    STATUS_COMPLETED = 'completed'
     STATUS_TERMINATED = 'terminated'
+
+    STATUS_CHOICES = [
+        (STATUS_SCHEDULED, 'Scheduled'),
+        (STATUS_ACTIVATED, 'Activated'),
+        (STATUS_COMPLETED, 'Completed'),
+        (STATUS_TERMINATED, 'Terminated'),
+    ]
 
     class Meta:
         abstract = False
@@ -44,8 +51,9 @@ class Showing(BaseModel):
         on_delete=models.DO_NOTHING,
     )
     status = models.CharField(editable=False, max_length=128, default=STATUS_SCHEDULED)
-    scheduled_showtime = models.DateTimeField()
+
     actual_showtime = models.DateTimeField(null=True, blank=False)
+    scheduled_showtime = models.DateTimeField()
 
     @property
     def chat_room(self):

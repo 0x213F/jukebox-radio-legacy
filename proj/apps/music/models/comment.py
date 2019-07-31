@@ -20,13 +20,30 @@ class Comment(BaseModel):
     # - - - - - - -
 
     STATUS_JOINED = 'joined'
-    STATUS_WAITING = 'waiting'
+    STATUS_WAITED = 'waited'
     STATUS_LEFT = 'left'
+
+    STATUS_ACTIVATED = 'activated'
+    STATUS_COMPLETED = 'completed'
+    STATUS_TERMINATED = 'terminated'
 
     STATUS_LOW = 'low'
     STATUS_MID_LOW = 'mid_low'
     STATUS_MID_HIGH = 'mid_high'
     STATUS_HIGH = 'high'
+
+    STATUS_CHOICES = [
+        (STATUS_JOINED, 'Joined'),
+        (STATUS_WAITED, 'Waited'),
+        (STATUS_LEFT, 'Left'),
+        (STATUS_ACTIVATED, 'Activated'),
+        (STATUS_COMPLETED, 'Completed'),
+        (STATUS_TERMINATED, 'Terminated'),
+        (STATUS_LOW, ':('),
+        (STATUS_MID_LOW, ':/'),
+        (STATUS_MID_HIGH, ':)'),
+        (STATUS_HIGH, ':D'),
+    ]
 
     class Meta:
         abstract = False
@@ -40,27 +57,22 @@ class Comment(BaseModel):
     # fields
     # - - - -
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(choices=STATUS_CHOICES, max_length=7)
+    text = models.TextField(null=True, blank=True)
+
     commenter = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='comments',
         on_delete=models.DO_NOTHING,
         null=True,
     )
-
-    text = models.TextField(null=True, blank=True)
-
-    status = models.CharField(max_length=128)
-
     showing = models.ForeignKey(
         'music.Showing',
         related_name='comments',
         on_delete=models.DO_NOTHING,
     )
-
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    timestamp = models.FloatField()
-
+    showing_timestamp = models.FloatField()
     track = models.ForeignKey(
         'music.Track',
         related_name='comments',
@@ -68,3 +80,4 @@ class Comment(BaseModel):
         null=True,
         blank=True,
     )
+    track_timestamp = models.FloatField()
