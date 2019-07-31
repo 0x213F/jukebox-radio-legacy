@@ -20,15 +20,14 @@ class Artist(BaseModel):
     objects = ArtistManager.from_queryset(ArtistQuerySet)()
 
     def __str__(self):
-        return self.name
+        return self.full_name
 
 
     # - - - -
     # fields
     # - - - -
 
-    name = models.CharField(max_length=128)
-
+    full_name = models.CharField(max_length=128)
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         related_name='artist',

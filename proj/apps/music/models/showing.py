@@ -1,13 +1,12 @@
 
-import random
 import uuid
 
 from datetime import datetime
 from datetime import timezone
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.forms import fields
 
 from proj.apps.music.models.managers import ShowingManager
 from proj.apps.music.models.querysets import ShowingQuerySet
@@ -50,11 +49,10 @@ class Showing(BaseModel):
         related_name='albums',
         on_delete=models.DO_NOTHING,
     )
-    status = models.CharField(editable=False, max_length=128, default=STATUS_SCHEDULED)
-
-    actual_showtime = models.DateTimeField(null=True, blank=False)
-    scheduled_showtime = models.DateTimeField()
+    showtime_actual = models.DateTimeField(null=True, blank=False)
+    showtime_scheduled = models.DateTimeField()
+    status = models.CharField(max_length=128, default=STATUS_SCHEDULED)
 
     @property
     def chat_room(self):
-        return f'showing-{self.id}'
+        return f'{ContentType.objects.get_for_model(self)}-{self.id}'

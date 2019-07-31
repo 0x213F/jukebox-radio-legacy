@@ -1,10 +1,10 @@
 function display_showings(e) {
-  window.localStorage.setItem('scheduled_showings', JSON.stringify(e.scheduled_showings))
-  window.localStorage.setItem('me', JSON.stringify(e.me))
+  window.localStorage.setItem('showings', JSON.stringify(e.showings))
+  window.localStorage.setItem('me', JSON.stringify(e.user))
 
   var showing_obj = null
   if(e.active_showing) {
-    for(showing of e.scheduled_showings) {
+    for(showing of e.showings) {
       if(showing.id === e.active_showing) {
         showing_obj = showing
       }
@@ -16,7 +16,7 @@ function display_showings(e) {
 
   /* build the UI */
   $div = $('.showings')
-  for(let showing of e.scheduled_showings) {
+  for(let showing of e.showings) {
     milliseconds = Date.parse(showing.showtime) - Date.now()
     let showtime = new Date(Date.parse(showing.showtime))
     let showtime_timestring = ''
@@ -45,7 +45,7 @@ function display_showings(e) {
     let id = $(this).attr('id')
     let showing_id = id.split('-')[1]
     let showing_obj = null
-    for(showing of JSON.parse(window.localStorage.getItem('scheduled_showings'))) {
+    for(showing of JSON.parse(window.localStorage.getItem('showings'))) {
       if(showing.id === Number(showing_id)) {
         showing_obj = showing
       }
@@ -162,11 +162,11 @@ function display_showings(e) {
 }
 
 function onopen(event) {
-  let scheduled_showings = JSON.parse(window.localStorage.getItem('scheduled_showings'))
+  let showings = JSON.parse(window.localStorage.getItem('showings'))
   let showing_id = JSON.parse(window.localStorage.getItem('preview_showing_id'))
 
   var showing_obj = null
-  for(showing of scheduled_showings) {
+  for(showing of showings) {
     if(showing.id === showing_id) {
       showing_obj = showing
     }

@@ -19,7 +19,7 @@ class Album(BaseModel):
     objects = AlbumManager.from_queryset(AlbumQuerySet)()
 
     def __str__(self):
-        return f'[{self.artist}] {self.name}'
+        return f'[{self.artist}] {self.title}'
 
     # - - - - - - - - -
     # fields
@@ -31,5 +31,5 @@ class Album(BaseModel):
         related_name='albums',
         on_delete=models.DO_NOTHING,
     )
-    name = models.CharField(max_length=128)
+    title = models.CharField(max_length=128)
     release_date = models.DateField()
