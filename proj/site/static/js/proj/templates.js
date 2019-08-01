@@ -14,7 +14,7 @@ function generate_showing(showing) {
 
   }
   return `
-    <div class="showing" uuid="${showing.uuid}">
+    <div class="showing-tile" uuid="${showing.uuid}">
       <img src="${showing.album.art}" alt="${showing.album.name}" style="width: calc(100% - 28px); border: rgba(48,55,66,.95) solid 2px; border-radius: 4px; margin: 14px;">
       <span class="label label-rounded label-primary showname">${showing.album.name}</span><br>
       <span class="label label-rounded showtime">${showtime_timestring}</span><br>
