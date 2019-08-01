@@ -83,7 +83,7 @@
 
   <!-- - - - - - --->
   <!--  LOAD PAGE -->
-  <form id="list-showings" class="submit-form" url="../api/music/list_showings/" type="get" submit="onload" onsuccess='display_showings' style="display: none;">
+  <form id="list-showings" class="submit-form" url="../api/music/list_showings/" type="get" submit="onload" onsuccess='list_showings' style="display: none;">
 
     {% csrf_token %}
 
@@ -197,6 +197,8 @@
 {% block basescripts %}
 <!-- <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script> -->
 <script src="{% static '/js/jquery.js' %}"></script>
+<script src="{% static '/js/proj/templates.js' %}"></script>
+<script src="{% static '/js/proj/list_showings.js' %}"></script>
 <script src="{% static '/js/proj/home.js' %}"></script>
 <script src="{% static '/js/proj/main.js' %}"></script>
 <script src="{% static '/js/chess/chess.min.js' %}"></script>

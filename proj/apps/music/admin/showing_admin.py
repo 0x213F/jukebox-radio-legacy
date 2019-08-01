@@ -21,19 +21,19 @@ class ShowingAdmin(admin.ModelAdmin):
         scheduled = queryset.filter(status=Showing.STATUS_SCHEDULED)
         if queryset.count() != scheduled.count():
             return
-        queryset.objects.update(status=Showing.STATUS_ACTIVATED)
+        queryset.update(status=Showing.STATUS_ACTIVATED)
     activate_showing.short_description = "Activate the showing"
 
     def complete_showing(self, request, queryset):
         already_activated = queryset.filter(status=Showing.STATUS_ACTIVE)
         if queryset.count() != already_activated.count():
             return
-        queryset.objects.update(status=Showing.STATUS_COMPLETED)
+        queryset.update(status=Showing.STATUS_COMPLETED)
     complete_showing.short_description = "Start the show"
 
     def terminate_showing(self, request, queryset):
         already_terminated = queryset.filter(status=Showing.STATUS_TERMINATED)
         if already_terminated.exists():
             return
-        queryset.objects.update(status=Showing.STATUS_TERMINATED)
+        queryset.update(status=Showing.STATUS_TERMINATED)
     terminate_showing.short_description = "Terminate the show"

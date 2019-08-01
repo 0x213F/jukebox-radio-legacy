@@ -145,5 +145,5 @@ class Consumer(AsyncConsumer):
         await database_sync_to_async(
                 Profile.objects.filter(user=self.scope['user']).update
             )(
-                active_showing_id=None,
+                active_showing_uuid=None,
             )

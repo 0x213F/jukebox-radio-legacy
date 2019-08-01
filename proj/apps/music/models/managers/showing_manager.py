@@ -16,7 +16,7 @@ class ShowingManager(BaseManager):
 
     def serialize(self, showing):
         return {
-            'id': showing.id,
+            'uuid': showing.uuid,
             'status': showing.status,
             'showtime_actual': showing.showtime_actual,
             'showtime_scheduled': showing.showtime_scheduled,
