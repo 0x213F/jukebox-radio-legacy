@@ -52,7 +52,7 @@ class Showing(BaseModel):
     showtime_actual = models.DateTimeField(null=True, blank=False)
     showtime_scheduled = models.DateTimeField()
     status = models.CharField(max_length=128, default=STATUS_SCHEDULED)
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
 
     @property
     def chat_room(self):
