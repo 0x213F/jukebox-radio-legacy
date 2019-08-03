@@ -27,10 +27,11 @@ class ProfileManager(BaseManager):
             }
         }
 
-    async def leave_showing(self, profile):
-        profile.active_showing_uuid = None
-        profile.display_uuid = None
-        profile.save()
+    async def leave_showing(self, user):
+        Profile.objects.filter(user_id=user.id).update(
+            active_showing_uuid=None,
+            display_uuid=None,
+        )
 
     async def join_showing(self, user, showing):
         from proj.apps.music.models import Ticket

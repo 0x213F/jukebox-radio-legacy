@@ -34,12 +34,6 @@ class Consumer(AsyncConsumer):
     async def websocket_receive(self, event):
         payload = json.loads(event['text'])
         comment, showing = await Comment.objects.create_from_payload_async(self.scope['user'], payload)
-        profile = await database_sync_to_async(Profile.objects.get)(user_id=self.scope['user'].id)
-        if payload['status'] == Comment.STATUS_JOINED:
-            await Profile.objects.join_showing(self.scope['user'], showing)
-        elif payload['status'] == Comment.STATUS_LEFT:
-            await Profile.objects.leave_showing(profile)
-            await self.channel_layer.group_discard(showing.chat_room, self.channel_name)
         await self.channel_layer.group_send(
             showing.chat_room,
             {
@@ -47,14 +41,19 @@ class Consumer(AsyncConsumer):
                 'text': json.dumps({'comments': [Comment.objects.serialize(comment)]}),
             }
         )
-
+        if payload['status'] not in [Comment.STATUS_JOINED, Comment.STATUS_LEFT]:
+            return
         if payload['status'] == Comment.STATUS_JOINED:
+            await Profile.objects.join_showing(self.scope['user'], showing)
             comments = await Comment.objects.list_comments_async(self.scope['user'], showing, payload['most_recent_comment_timestamp'])
             comments = [Comment.objects.serialize(comment) for comment in comments]
             await self.send({
                 'type': 'websocket.send',
                 'text': json.dumps({'comments': comments}),
             })
+        elif payload['status'] == Comment.STATUS_LEFT:
+            await Profile.objects.leave_showing(self.scope['user'])
+            await self.channel_layer.group_discard(showing.chat_room, self.channel_name)
 
     # - - - - -
     # broadcast
