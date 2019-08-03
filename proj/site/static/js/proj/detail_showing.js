@@ -1,32 +1,3 @@
-
-var KEY_SHOWINGS = 'showings'
-var KEY_USER = 'user'
-
-var INTERVAL_WAITING = null
-
-
-function display_list_showings(data) {
-  let showings = data[KEY_SHOWINGS];
-  let user = data[KEY_USER];
-
-  window.localStorage.setItem(KEY_SHOWINGS, JSON.stringify(showings));
-  window.localStorage.setItem(KEY_USER, JSON.stringify(user));
-
-  let $showings_container = $('.showings');
-  for(let showing of showings) {
-    $showings_container.append(generate_showing(showing));
-  }
-  $('.showing-tile').click(display_detail_showing);
-
-  let active_showing_uuid = user.profile.active_showing_uuid
-  if(active_showing_uuid) {
-    $(`[uuid="${active_showing_uuid}"]`).click();
-    return;
-  }
-
-  $("#display-scheduled-showings").show();
-}
-
 function display_detail_showing(data) {
   let uuid = $(this).attr('uuid')
   let showings = JSON.parse(window.localStorage.getItem(KEY_SHOWINGS));
@@ -44,7 +15,7 @@ function display_detail_showing(data) {
   window.localStorage.setItem(KEY_USER, JSON.stringify(user));
 
   if(showing.status === 'scheduled') {
-    INTERVAL_WAITING = setInterval(send_waiting_comment, 30000)
+    INTERVAL_SEND_WAITING_COMMENT = setInterval(send_waiting_comment, 30000)
   }
 
   // 3: define submit msg behavior

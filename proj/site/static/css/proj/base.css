@@ -28,32 +28,6 @@
     border-bottom: 10px;
 }
 
-.showing {
-  transition: background-color 0.3s ease;
-  border-radius: 6px;
-  cursor: pointer;
-  margin: 14px 0px;
-}
-
-.showing:hover, .footer-button:hover {
-  background-color: rgba(48,55,66,.10);
-}
-
-.showtime {
-  background: rgba(48,55,66,.60)!important;
-  margin: 14px;
-  color: #fff;
-  padding: 8px;
-  font-family: "Lucida Console", Monaco, monospace;
-}
-
-.showname {
-  background: rgba(48,55,66,.90)!important;
-  margin-left: 14px;
-  padding: 8px;
-  font-family: "Lucida Console", Monaco, monospace;
-}
-
 .wrapper {
   display: flex;
   align-items: center;

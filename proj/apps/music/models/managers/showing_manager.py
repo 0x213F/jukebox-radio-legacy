@@ -15,11 +15,15 @@ class ShowingManager(BaseManager):
     '''
 
     def serialize(self, showing):
+        showtime_actual_str = (
+            showing.showtime_actual.isoformat() if showing.showtime_actual
+            else None
+        )
         return {
             'uuid': showing.uuid,
             'status': showing.status,
-            'showtime_actual': showing.showtime_actual,
-            'showtime_scheduled': showing.showtime_scheduled,
+            'showtime_actual': showtime_actual_str,
+            'showtime_scheduled': showing.showtime_scheduled.isoformat(),
             'album': {
                 'art': showing.album.art,
                 'title': showing.album.title,
