@@ -52,6 +52,7 @@ function generate_status_dots() {
 }
 
 function render_comment(comment_obj) {
+  console.log(comment_obj)
   background_color = '#5764c6'
   if(!comment_obj.text) {
     $('.panel > .panel-body').append( `

@@ -46,14 +46,13 @@ function display_detail_showing(data) {
 
   // 8: leave chatroom
   $('.leave').click(function() {
-    clearInterval(waiting)
+    clearInterval(INTERVAL_SEND_WAITING_COMMENT)
     // 7: leaving chatroom
 
     let data = {
       'status': 'left',
       'message': null,
-      'showing_id': showing_id,
-      'track_id': null,
+      'showing_uuid': showing.uuid,
       'text': null,
     }
     let msg = JSON.stringify(data);
@@ -79,9 +78,31 @@ function display_detail_showing(data) {
     let data = {
       'status': status,
       'message': null,
-      'showing_id': showing_id,
+      'showing_uuid': showing.uuid,
       'track_id': null,
       'text': null,
+    }
+    let msg = JSON.stringify(data);
+    socket.send(msg)
+  });
+
+  $('.playback > .circle-button').click(function() {
+    let data = {
+      'message': null,
+      'showing_uuid': showing.uuid,
+      'track_id': null,
+      'text': null,
+    }
+    if($(this).hasClass('play')) { // PAUSE
+      data.status = 'pause';
+      $(this).removeClass('play');
+      $(this).addClass('pause');
+    } else if($(this).hasClass('pause')) { // PLAY
+      data.status = 'play';
+      $(this).removeClass('pause');
+      $(this).addClass('play');
+    } else if($(this).hasClass('skip-forward')) { // SKIP FORWARD
+      data.status = 'skip_forward';
     }
     let msg = JSON.stringify(data);
     socket.send(msg)

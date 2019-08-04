@@ -1,0 +1,37 @@
+.playback {
+
+}
+
+.playback > .circle-button {
+  height: 42px;
+  width: 42px;
+  border-radius: 21px;
+  border: 2px solid #5764c6;
+  float: left;
+  margin-right: 14px;
+  cursor: pointer;
+}
+
+.playback > .circle-button.play {
+  background-image: url('../../../static/svg/play.svg');
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.playback > .circle-button.pause {
+  background-image: url('../../../static/svg/pause.svg');
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.playback > .circle-button.skip-forward {
+  background-image: url('../../../static/svg/skip-forward.svg');
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.playback > .track-status {
+  float: left;
+  margin-top: 14px;
+  width: 104px;
+}

@@ -28,6 +28,7 @@ class ProfileManager(BaseManager):
         }
 
     async def leave_showing(self, user):
+        Profile = self.model
         Profile.objects.filter(user_id=user.id).update(
             active_showing_uuid=None,
             display_uuid=None,

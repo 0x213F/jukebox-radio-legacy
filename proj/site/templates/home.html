@@ -7,12 +7,14 @@
 <link rel="stylesheet" href="../static/css/spectre/spectre-icons.min.css">
 <link rel="stylesheet" href="../static/css/proj/base.css">
 <link rel="stylesheet" href="../static/css/proj/detail_showing.css">
+<link rel="stylesheet" href="../static/css/proj/playback.css">
+<link rel="stylesheet" href="../static/css/proj/chat.css">
 {% endblock %}
 
 {% block main %}
 
 <div class="modal" id="account-modal">
-  <a href="#close" class="modal-overlay" aria-label="Close"></a>
+  <a id="model-close" class="modal-overlay" aria-label="Close"></a>
   <div class="modal-container">
 
     <!-- <div class='wrapper'>
@@ -35,7 +37,7 @@
       <li class="tab-item"><a class="badge" href="#tabs" data-badge="99">Private</a></li> -->
       <li class="tab-item tab-anyone active"><a href="javascript:void(0);">Anyone</a></li>
       <!-- <li class="tab-item"><a href="javascript:void(0);">Friends</a></li> -->
-      <li class="tab-item tab-you"><a href="javascript:void(0);">You</a></li>
+      <li class="tab-item tab-you"><a href="javascript:void(0);">Friends</a></li>
     </ul>
 
     <div style="margin: 14px;">
@@ -104,10 +106,12 @@
 
       <div class="column col-12">
         <div class="panel">
-          <div class="panel-header">
-            <div class="panel-title h6">Comments</div>
+          <div class="panel-header playback">
+            <div class="circle-button play-pause play"></div>
+            <div class="circle-button skip-forward"></div>
+            <progress class="progress track-status" value="25" max="100"></progress>
           </div>
-          <div class="panel-body" style='max-height: 600px;'>
+          <div class="panel-body main-chat" style='max-height: 400px;-ms-overflow-style: none; scrollbar-width: none;'>
 
 
           </div>
@@ -205,5 +209,4 @@
 <script src="{% static '/js/proj/account.js' %}"></script>
 <script src="{% static '/js/proj/main.js' %}"></script>
 <script src="{% static '/js/chess/chess.min.js' %}"></script>
-<script src="{% static '/js/proj/consumer.js' %}"></script>
 {% endblock %}

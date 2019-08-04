@@ -36,6 +36,7 @@ class Ticket(BaseModel):
         related_name='tickets',
         on_delete=models.DO_NOTHING,
     )
+    is_admin = models.BooleanField(default=False)
     showing = models.ForeignKey(
         'music.Showing',
         related_name='tickets',

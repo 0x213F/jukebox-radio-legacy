@@ -36,7 +36,9 @@ class Consumer(AsyncConsumer):
         comment, showing = await Comment.objects.create_from_payload_async(self.scope['user'], payload)
         if payload['status'] == Comment.STATUS_JOINED:
             await self.channel_layer.group_add(showing.chat_room, self.channel_name)
-        await self.channel_layer.group_send(
+        if payload['status'] in [Comment.STATUS_PLAY, Comment.STATUS_PAUSE, Comment.STATUS_SKIP_FORWARD]:
+            return  # TODO
+        await self.channel_layer.group_send(  # TODO: put as manager method
             showing.chat_room,
             {
                 'type': 'broadcast',

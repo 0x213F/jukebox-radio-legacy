@@ -1,17 +1,18 @@
 
+LAST_DISPLAY_NAME = ''
+
 
 $('.account-button').click(function() {
-
-  let me = JSON.parse(window.localStorage.getItem('me'));
-  console.log(me)
-  $('.update_first_name').val(me.first_name);
-  $('.update_last_name').val(me.last_name);
-  $('.update_email').val(me.email);
-  $('.update_display_name').val(me.display_name);
+  let user = JSON.parse(window.localStorage.getItem('user'));
+  $('.update_first_name').val(user.first_name);
+  $('.update_last_name').val(user.last_name);
+  $('.update_email').val(user.email);
+  $('.update_display_name').val(user.display_name);
+  $('.tab-anyone > a').click();
   $('#account-modal').addClass('active');
 
   // cancel profile
-  $('.cancel-profile').click(function() {
+  $('.cancel-profile, #model-close').click(function() {
     $('#account-modal').removeClass('active');
   })
 
@@ -27,7 +28,7 @@ $('.account-button').click(function() {
     $('.content-you').hide()
   })
 
-  // you tab
+  // friends tab
   $('.tab-you > a').mousedown(function() {
     $('.tab-you > a').blur()
   })
@@ -46,10 +47,8 @@ $('.account-button').click(function() {
 
   // null display name
   $('.null-display-name').change(function() {
-    console.log('ok@!')
       if($(this).is(":checked")) {
           LAST_DISPLAY_NAME = $('.update_display_name').val()
-          console.log(LAST_DISPLAY_NAME)
           $('.update_display_name').val('');
           $('.update_display_name').addClass('disabled');
           $('.update_display_name').prop('disabled', true);
@@ -63,10 +62,10 @@ $('.account-button').click(function() {
 
 function hide_modal() {
   $('#account-modal').removeClass('active');
-  let me = JSON.parse(window.localStorage.getItem('me'));
-  me.first_name = $('.update_first_name').val();
-  me.last_name = $('.update_last_name').val();
-  me.email = $('.update_email').val();
-  me.display_name = $('.update_display_name').val();
-  window.localStorage.setItem('me', JSON.stringify(me))
+  let user = JSON.parse(window.localStorage.getItem('user'));
+  user.first_name = $('.update_first_name').val();
+  user.last_name = $('.update_last_name').val();
+  user.email = $('.update_email').val();
+  user.display_name = $('.update_display_name').val();
+  window.localStorage.setItem('me', JSON.stringify(user))
 }

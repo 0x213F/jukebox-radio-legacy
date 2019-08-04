@@ -32,6 +32,10 @@ class Comment(BaseModel):
     STATUS_MID_HIGH = 'mid_high'
     STATUS_HIGH = 'high'
 
+    STATUS_PAUSE = 'pause'
+    STATUS_PLAY = 'play'
+    STATUS_SKIP_FORWARD = 'skip_forward'
+
     STATUS_CHOICES = [
         (STATUS_JOINED, 'Joined'),
         (STATUS_WAITED, 'Waited'),
@@ -58,7 +62,7 @@ class Comment(BaseModel):
     # - - - -
 
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(choices=STATUS_CHOICES, max_length=7)
+    status = models.CharField(choices=STATUS_CHOICES, max_length=12)
     text = models.TextField(null=True, blank=True)
 
     commenter = models.ForeignKey(
