@@ -1,4 +1,6 @@
 
+from datetime import datetime
+
 from proj.core.models.managers import BaseManager
 
 
@@ -17,14 +19,15 @@ class CommentManager(BaseManager):
         showing = Showing.objects.get(uuid=payload['showing_uuid'])
         if showing.status == Showing.STATUS_TERMINATED:
             raise RuntimeError('Cannot comment on a terminated showing.')
+        now = datetime.utcnow()
         comment = self.model.objects.create(
             status=payload['status'],
             text=payload['text'],
             commenter_id=user.id,
             showing_id=showing.id,
-            showing_timestamp=0,
+            showing_timestamp=now - showing.showtime_scheduled.replace(tzinfo=None),
             track_id=None,
-            track_timestamp=0,
+            track_timestamp=now - showing.showtime_scheduled.replace(tzinfo=None),  # TODO
         )
         return comment, showing
 
@@ -43,7 +46,7 @@ class CommentManager(BaseManager):
                 }
             },
             'showing_uuid': str(comment.showing.uuid),
-            'showing_timestamp': None,
+            'showing_timestamp': comment.showing_timestamp.total_seconds(),
             'track': None,
             'track_timestamp': None,
         }

@@ -17,7 +17,7 @@ function display_list_showings(data) {
   $('.showing-card').click(display_detail_showing);
 
   let active_showing_uuid = user.profile.active_showing_uuid
-  if(active_showing_uuid) {
+  if(active_showing_uuid && $(`[uuid="${active_showing_uuid}"]`).length) {
     $(`[uuid="${active_showing_uuid}"]`).click();
     return;
   }

@@ -1,10 +1,17 @@
 
+var KEY_COMMENTS = 'comments'
+
 var INTERVAL_SEND_WAITING_COMMENT = null
 function send_waiting_comment() {
+  let showings = JSON.parse(window.localStorage.getItem(KEY_SHOWINGS));
+  let user = JSON.parse(window.localStorage.getItem(KEY_USER));
+  let showing = showings.find(function(obj) {
+    return obj.uuid === user.profile.active_showing_uuid;
+  });
   let data = {
     'status': 'waiting',
     'message': null,
-    'showing_id': showing_id,
+    'showing_uuid': showing.uuid,
     'track_id': null,
     'text': null,
   }
@@ -26,9 +33,17 @@ function onopen(event) {
     $('.waiting').show()
   }
 
+  let cached_comments = JSON.parse(window.localStorage.getItem(KEY_COMMENTS)) || {};
+  let chat_comments = cached_comments[showing.uuid];
+  if(chat_comments) {
+    for(comment of chat_comments) {
+      render_comment(comment);
+    }
+  }
+
 
   countdown_timer = setInterval(function(display) {
-  milliseconds = Date.parse(showing.showtime) - Date.now()
+    milliseconds = Date.parse(showing.showtime) - Date.now()
     if(milliseconds < 0) {
       clearInterval(countdown_timer)
       $('.waiting-countdown').text('00:00:00')
@@ -55,12 +70,23 @@ function onopen(event) {
   $('#current-showing').show();
 
   // 6: initial mark of waiting in chatroom
-  let data = {
-    'status': 'joined',
-    'text': null,
-    'showing_uuid': showing.uuid,
-    'track_uuid': null,
-    'most_recent_comment_timestamp': null,
+  let data = null;
+  if(chat_comments) {
+    data = {
+      'status': 'joined',
+      'text': null,
+      'showing_uuid': showing.uuid,
+      'track_uuid': null,
+      'most_recent_comment_timestamp': chat_comments[chat_comments.length-1].created_at,
+    }
+  } else {
+    data = {
+      'status': 'joined',
+      'text': null,
+      'showing_uuid': showing.uuid,
+      'track_uuid': null,
+      'most_recent_comment_timestamp': null,
+    }
   }
   let msg = JSON.stringify(data);
   window['SOCKET'].send(msg)
@@ -74,15 +100,16 @@ function onmessage(event) {
   let showing = showings.find(function(obj) { return obj.uuid === user.profile.active_showing_uuid; });
 
   if(payload.comments) {
-    let user_statuses = JSON.parse(window.localStorage.getItem('user_statuses'))
-    if(!user_statuses) { user_statuses = {}; }
     for(comment of payload.comments) {
       render_comment(comment);
-      user_statuses[comment.commenter.profile.active_showing_uuid] = comment.status;
     }
     generate_status_dots();
     $(".panel-body").scrollTop($(".panel-body")[0].scrollHeight);
-    window.localStorage.setItem('user_statuses', JSON.stringify(user_statuses))
+    let cached_comments = JSON.parse(window.localStorage.getItem(KEY_COMMENTS)) || {};
+    let chat_comments = cached_comments[showing.uuid];
+    if(chat_comments) {
+      window.localStorage.setItem(KEY_COMMENTS, JSON.stringify(chat_comments.concat(payload.comments)));
+    }
   }
 
   if(payload.source && payload.source.style === 'system') {

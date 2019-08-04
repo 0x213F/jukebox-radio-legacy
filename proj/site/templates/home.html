@@ -33,10 +33,7 @@
     <div style="height:8px; width: 100%"></div>
     <p class="form-input-hint" style="max-width: 244px; margin-left: 14px;margin-right: 14px;">Your account information that is accessible by...</p>
     <ul class="tab tab-block" style="margin-left: 14px; margin-right: 14px;">
-      <!-- <li class="tab-item active"><a class="badge" href="#tabs" data-badge="9">Public Info</a></li>
-      <li class="tab-item"><a class="badge" href="#tabs" data-badge="99">Private</a></li> -->
       <li class="tab-item tab-anyone active"><a href="javascript:void(0);">Anyone</a></li>
-      <!-- <li class="tab-item"><a href="javascript:void(0);">Friends</a></li> -->
       <li class="tab-item tab-you"><a href="javascript:void(0);">Friends</a></li>
     </ul>
 
@@ -112,7 +109,12 @@
             <progress class="progress track-status" value="25" max="100"></progress>
           </div>
           <div class="panel-body main-chat" style='max-height: 400px;-ms-overflow-style: none; scrollbar-width: none;'>
-
+            <div class="tile seen"
+                 style="display: none;"
+                 author="system"
+                 status="base"
+                 timestamp="-Infinity">
+            </div>
 
           </div>
           <div class="panel-footer">

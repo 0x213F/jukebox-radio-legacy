@@ -76,7 +76,7 @@ class Comment(BaseModel):
         related_name='comments',
         on_delete=models.DO_NOTHING,
     )
-    showing_timestamp = models.FloatField()
+    showing_timestamp = models.DurationField()
     track = models.ForeignKey(
         'music.Track',
         related_name='comments',
@@ -84,4 +84,4 @@ class Comment(BaseModel):
         null=True,
         blank=True,
     )
-    track_timestamp = models.FloatField()
+    track_timestamp = models.DurationField()
