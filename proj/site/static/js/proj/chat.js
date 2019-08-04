@@ -69,57 +69,34 @@ function onopen(event) {
 function onmessage(event) {
   let text = event.data
   let payload = JSON.parse(text);
-  console.log(payload)
-
-  let active_showing = JSON.parse(window.localStorage.getItem('active_showing'))
+  let showings = JSON.parse(window.localStorage.getItem(KEY_SHOWINGS));
+  let user = JSON.parse(window.localStorage.getItem(KEY_USER));
+  let showing = showings.find(function(obj) { return obj.uuid === user.profile.active_showing_uuid; });
 
   if(payload.comments) {
+    let user_statuses = JSON.parse(window.localStorage.getItem('user_statuses'))
+    if(!user_statuses) { user_statuses = {}; }
     for(comment of payload.comments) {
-      render_comment(comment)
+      render_comment(comment);
+      user_statuses[comment.commenter.profile.active_showing_uuid] = comment.status;
     }
-    generate_status_dots()
+    generate_status_dots();
     $(".panel-body").scrollTop($(".panel-body")[0].scrollHeight);
+    window.localStorage.setItem('user_statuses', JSON.stringify(user_statuses))
   }
 
-  if(payload.system && payload.system.message == 'start') {
-    $('.statuses').show()
-    $('.waiting').hide()
-    active_showing.status = 'active'
-    window.localStorage.setItem('active_showing', JSON.stringify(active_showing))
+  if(payload.source && payload.source.style === 'system') {
+    $('.statuses').show();
+    $('.waiting').hide();
+    showing.status = 'active';
     return
   }
 
-  if(active_showing.status === 'waiting') {
-    $('.statuses').hide()
-    $('.waiting').show()
-  } else if(active_showing.status === 'active') {
-    $('.statuses').show()
-    $('.waiting').hide()
+  if(showing.status === 'waiting') {
+    $('.statuses').hide();
+    $('.waiting').show();
+  } else if(showing.status === 'active') {
+    $('.statuses').show();
+    $('.waiting').hide();
   }
-
-  let shortname = ''
-  if(payload.user.first_name && payload.user.last_name) {
-    shortname = payload.user.first_name[0] + payload.user.last_name[0];
-  } else {
-    // shortname = 'X'
-  }
-
-  let user_statuses = JSON.parse(window.localStorage.getItem('user_statuses'))
-  if(!user_statuses) {
-    user_statuses = {}
-  }
-  user_statuses[payload.user.showing_uuid] = payload.payload.status
-  window.localStorage.setItem('user_statuses', JSON.stringify(user_statuses))
-
-  render_comment({
-    'text': payload.payload.text,
-    'status': payload.payload.status,
-    'profile_showing_uuid': payload.user.showing_uuid,
-    'profile_display_name': payload.user.display_name,
-    'created_at': null,
-  })
-
-  generate_status_dots()
-  $(".panel-body").scrollTop($(".panel-body")[0].scrollHeight);
-
 }

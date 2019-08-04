@@ -26,19 +26,19 @@ function display_detail_showing(data) {
       return;
     }
     if(($this.attr('id') === 'chat-input' && e.keyCode == 13) || $this.attr('id') === 'chat-submit') {
-      let status = window.localStorage.getItem('status') || 'waiting'
+      let status = window.localStorage.getItem('status') || 'waiting';
       let data = {
         'status': status,
         'message': null,
-        'showing_id': showing_id,
+        'showing_uuid': showing.uuid,
         'track_id': null,
         'text': text,
       }
       let msg = JSON.stringify(data);
       socket.send(msg)
       $('#chat-input').val('')
-      clearInterval(waiting)
-      waiting = setInterval(poll_waiting_status, 29000)
+      clearInterval(INTERVAL_SEND_WAITING_COMMENT)
+      INTERVAL_SEND_WAITING_COMMENT = setInterval(send_waiting_comment, 30000)
     }
   }
   $('#chat-input').on('keyup', submit);

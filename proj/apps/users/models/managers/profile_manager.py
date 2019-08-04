@@ -36,9 +36,10 @@ class ProfileManager(BaseManager):
     async def join_showing(self, user, showing):
         from proj.apps.music.models import Ticket
         from proj.apps.users.models import Profile
+        from proj.apps.music.models import Showing
         Ticket.objects.get_or_create(
-            holder=user,
-            showing=showing,
+            holder_id=user.id,
+            showing_id=showing.id,
             defaults={
                 'timestamp_last_active': datetime.utcnow(),
                 'display_name': user.profile.display_name or 'default name',

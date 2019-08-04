@@ -13,5 +13,5 @@ class CommentQuerySet(BaseQuerySet):
         qs = qs.filter(showing_id=showing.id)
         if most_recent_comment_timestamp:
             qs = qs.filter(created_at__gte=most_recent_comment_timestamp)
-        qs = qs.order_by('-created_at')
+        qs = qs.order_by('created_at')
         return qs[:100]

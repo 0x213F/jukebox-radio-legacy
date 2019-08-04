@@ -34,6 +34,8 @@ class Consumer(AsyncConsumer):
     async def websocket_receive(self, event):
         payload = json.loads(event['text'])
         comment, showing = await Comment.objects.create_from_payload_async(self.scope['user'], payload)
+        if payload['status'] == Comment.STATUS_JOINED:
+            await self.channel_layer.group_add(showing.chat_room, self.channel_name)
         await self.channel_layer.group_send(
             showing.chat_room,
             {
