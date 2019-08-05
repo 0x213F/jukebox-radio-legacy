@@ -33,7 +33,7 @@ class Consumer(AsyncConsumer):
 
     async def websocket_receive(self, event):
         payload = json.loads(event['text'])
-        comment, showing = await Comment.objects.create_from_payload_async(self.scope['user'], payload)
+        comment, showing, ticket = await Comment.objects.create_from_payload_async(self.scope['user'], payload)
         if payload['status'] == Comment.STATUS_JOINED:
             await self.channel_layer.group_add(showing.chat_room, self.channel_name)
         if payload['status'] in [Comment.STATUS_PLAY, Comment.STATUS_PAUSE, Comment.STATUS_SKIP_FORWARD]:
@@ -46,7 +46,7 @@ class Consumer(AsyncConsumer):
             showing.chat_room,
             {
                 'type': 'broadcast',
-                'text': json.dumps({'comments': [Comment.objects.serialize(comment)]}),
+                'text': json.dumps({'comments': [Comment.objects.serialize(comment, ticket)]}),
             }
         )
         if payload['status'] not in [Comment.STATUS_JOINED, Comment.STATUS_LEFT]:
@@ -54,7 +54,7 @@ class Consumer(AsyncConsumer):
         if payload['status'] == Comment.STATUS_JOINED:
             await Profile.objects.join_showing(self.scope['user'], showing)
             comments = await Comment.objects.list_comments_async(self.scope['user'], showing, payload['most_recent_comment_timestamp'])
-            comments = [Comment.objects.serialize(comment) for comment in comments]
+            comments = [Comment.objects.serialize(comment, ticket) for comment in comments]
             await self.send({
                 'type': 'websocket.send',
                 'text': json.dumps({'comments': comments}),

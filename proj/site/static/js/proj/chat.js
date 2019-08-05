@@ -25,7 +25,7 @@ function onopen(event) {
   let showing = showings.find(function(obj) {
     return obj.uuid === user.profile.active_showing_uuid;
   });
-  if(showing.status === 'active') {
+  if(showing.status === 'activated') {
     $('.statuses').show()
     $('.waiting').hide()
   } else {

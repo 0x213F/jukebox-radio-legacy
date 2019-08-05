@@ -4,18 +4,20 @@ function generate_showing(showing) {
   milliseconds = Date.parse(showing.showtime_scheduled) - Date.now()
   let showtime = new Date(showing.showtime_scheduled)
   let showtime_timestring = ''
+  let background_color = ''
   if(showing.status === 'scheduled' && Date.now() - showtime > 0) {
     showtime_timestring = 'Starting momentarily...'
   } else if(showing.status === 'scheduled') {
     showtime_timestring = '@ ' + showtime.toLocaleTimeString("en-US", {timeZoneName:'short'})
-  } else if(showing.status === 'active') {
+  } else if(showing.status === 'activated') {
     showtime_timestring = 'Ongoing'
+    background_color = ` style="background-color: #ffb700!important;"`
   }
   return `
     <div class="showing-card" uuid="${showing.uuid}">
       <img class="showing-album-art" src="${showing.album.art}" alt="${showing.album.title}">
-      <span class="showing-album-title label label-rounded">${showing.album.title}</span>
-      <span class="showing-showtime-scheduled label label-rounded">${showtime_timestring}</span>
+      <span class="showing-album-title label label-rounded">${showing.album.title}</span><br>
+      <span class="showing-showtime-scheduled label label-rounded"${background_color}>${showtime_timestring}</span>
     </div>
   `
 }
@@ -125,7 +127,7 @@ function render_comment(comment_obj) {
              author="${comment_obj.commenter.profile.display_uuid}"
              status="${comment_obj.status}"
              timestamp="${comment_obj.showing_timestamp}">
-             <figure class="avatar" data-initial="" style="background-color: ${background_color}; height: 1.4rem; width: 1.4rem; margin-right: 6px; margin-left: 4px; margin-bottom: 6px;"></figure>
+             <div class="commenter-img" style="background-color: ${background_color};"></div>
              <div class="comment-text">${comment_obj.text}</div>
         </div>`;
     }
@@ -147,7 +149,7 @@ function render_comment(comment_obj) {
                author="${comment_obj.commenter.profile.display_uuid}"
                status="${comment_obj.status}"
                timestamp="${comment_obj.showing_timestamp}">
-               <figure class="avatar" data-initial="" style="background-color: ${background_color}; height: 1.4rem; width: 1.4rem; margin-right: 6px; margin-left: 4px; margin-bottom: 6px;"></figure>
+               <div class="commenter-img" style="background-color: ${background_color};"></div>
                <div class="comment-author">${comment_obj.commenter.profile.display_name}</div>
                <div class="comment-text">${comment_obj.text}</div>
           </div>`;
@@ -159,7 +161,7 @@ function render_comment(comment_obj) {
              author="${comment_obj.commenter.profile.display_uuid}"
              status="${comment_obj.status}"
              timestamp="${comment_obj.showing_timestamp}">
-             <figure class="avatar" data-initial="" style="background-color: ${background_color}; height: 1.4rem; width: 1.4rem; margin-right: 6px; margin-left: 4px; margin-bottom: 6px;"></figure>
+             <div class="commenter-img" style="background-color: ${background_color};"></div>
              <div class="comment-author">${comment_obj.commenter.profile.display_name}</div>
              <div class="comment-text">${comment_obj.text}</div>
         </div>`;

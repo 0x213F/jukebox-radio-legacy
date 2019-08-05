@@ -1,5 +1,5 @@
-function display_detail_showing(data) {
-  let uuid = $(this).attr('uuid')
+function display_detail_showing() {
+  let uuid = $(this).attr('uuid');
   let showings = JSON.parse(window.localStorage.getItem(KEY_SHOWINGS));
   let user = JSON.parse(window.localStorage.getItem(KEY_USER));
   let showing = showings.find(function(obj) {
@@ -39,7 +39,6 @@ function display_detail_showing(data) {
         'track_id': null,
         'text': text,
       }
-      console.log(data)
       let msg = JSON.stringify(data);
       window['SOCKET'].send(msg)
       $('#chat-input').val('')
