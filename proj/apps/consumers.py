@@ -36,8 +36,8 @@ class Consumer(AsyncConsumer):
         comment, showing, ticket = await Comment.objects.create_from_payload_async(self.scope['user'], payload)
         if payload['status'] == Comment.STATUS_JOINED:
             await self.channel_layer.group_add(showing.chat_room, self.channel_name)
-        if payload['status'] in [Comment.STATUS_PLAY, Comment.STATUS_PAUSE, Comment.STATUS_SKIP_FORWARD]:
-            return  # TODO
+        if payload['status'] in [Comment.STATUS_SKIP_FORWARD, Comment.STATUS_PLAY, Comment.STATUS_PAUSE]:
+            pass  # TODO spotify integration
         if payload['status'] == Comment.STATUS_LEFT:
             await Profile.objects.leave_showing(self.scope['user'])
             await self.channel_layer.group_discard(showing.chat_room, self.channel_name)

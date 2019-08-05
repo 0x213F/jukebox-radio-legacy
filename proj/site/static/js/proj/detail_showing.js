@@ -107,11 +107,11 @@ function display_detail_showing() {
       'text': null,
     }
     if($(this).hasClass('play')) { // PAUSE
-      data.status = 'pause';
+      data.status = 'play';
       $(this).removeClass('play');
       $(this).addClass('pause');
     } else if($(this).hasClass('pause')) { // PLAY
-      data.status = 'play';
+      data.status = 'pause';
       $(this).removeClass('pause');
       $(this).addClass('play');
     } else if($(this).hasClass('skip-forward')) { // SKIP FORWARD
