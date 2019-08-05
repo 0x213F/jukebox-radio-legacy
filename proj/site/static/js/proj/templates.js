@@ -61,7 +61,6 @@ function render_comment(comment_obj) {
     }
   }
   let html = undefined;
-  console.log(comment_obj)
   if(!comment_obj.text) {
     html = `
       <div class="tile"

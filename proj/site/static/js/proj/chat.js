@@ -16,7 +16,7 @@ function send_waiting_comment() {
     'text': null,
   }
   let msg = JSON.stringify(data);
-  socket.send(msg)
+    window['SOCKET'].send(msg)
 }
 
 function onopen(event) {

@@ -38,6 +38,10 @@ class Consumer(AsyncConsumer):
             await self.channel_layer.group_add(showing.chat_room, self.channel_name)
         if payload['status'] in [Comment.STATUS_PLAY, Comment.STATUS_PAUSE, Comment.STATUS_SKIP_FORWARD]:
             return  # TODO
+        if payload['status'] == Comment.STATUS_LEFT:
+            await Profile.objects.leave_showing(self.scope['user'])
+            await self.channel_layer.group_discard(showing.chat_room, self.channel_name)
+            return
         await self.channel_layer.group_send(  # TODO: put as manager method
             showing.chat_room,
             {
@@ -55,9 +59,6 @@ class Consumer(AsyncConsumer):
                 'type': 'websocket.send',
                 'text': json.dumps({'comments': comments}),
             })
-        elif payload['status'] == Comment.STATUS_LEFT:
-            await Profile.objects.leave_showing(self.scope['user'])
-            await self.channel_layer.group_discard(showing.chat_room, self.channel_name)
 
     # - - - - -
     # broadcast

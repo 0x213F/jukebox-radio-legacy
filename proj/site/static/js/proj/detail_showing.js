@@ -7,9 +7,9 @@ function display_detail_showing(data) {
   });
 
   var endpoint = 'ws://' + window.location.host + window.location.pathname
-  let socket = new WebSocket(endpoint)
-  socket.onopen = onopen
-  socket.onmessage = onmessage
+  window['SOCKET'] = new WebSocket(endpoint)
+  window['SOCKET'].onopen = onopen
+  window['SOCKET'].onmessage = onmessage
 
   user.profile.active_showing_uuid = uuid;
   window.localStorage.setItem(KEY_USER, JSON.stringify(user));
@@ -20,6 +20,11 @@ function display_detail_showing(data) {
 
   // 3: define submit msg behavior
   function submit(e) {
+    let showings = JSON.parse(window.localStorage.getItem(KEY_SHOWINGS));
+    let user = JSON.parse(window.localStorage.getItem(KEY_USER));
+    let showing = showings.find(function(obj) {
+      return obj.uuid === user.profile.active_showing_uuid;
+    });
     let $this = $(this);
     let text = $('#chat-input').val()
     if(!text) {
@@ -34,8 +39,9 @@ function display_detail_showing(data) {
         'track_id': null,
         'text': text,
       }
+      console.log(data)
       let msg = JSON.stringify(data);
-      socket.send(msg)
+      window['SOCKET'].send(msg)
       $('#chat-input').val('')
       clearInterval(INTERVAL_SEND_WAITING_COMMENT)
       INTERVAL_SEND_WAITING_COMMENT = setInterval(send_waiting_comment, 30000)
@@ -45,7 +51,7 @@ function display_detail_showing(data) {
   $('#chat-submit').on('click', submit);
 
   // 8: leave chatroom
-  $('.leave').click(function() {
+  $('.leave.leave-button').click(function() {
     clearInterval(INTERVAL_SEND_WAITING_COMMENT)
     // 7: leaving chatroom
 
@@ -56,14 +62,22 @@ function display_detail_showing(data) {
       'text': null,
     }
     let msg = JSON.stringify(data);
-    socket.send(msg)
+    window['SOCKET'].send(msg)
     setTimeout(function() {
-      socket.close();
-    }, 50);
+      window['SOCKET'].close();
+    }, 10);
     $('#current-showing').hide();
     $('#display-scheduled-showings').show();
     $('#account').show();
     $('.panel > .panel-body').empty();
+    $('.panel > .panel-body').append(`
+      <div class="tile seen"
+           style="display: none;"
+           author="system"
+           status="base"
+           timestamp="-Infinity">
+      </div>
+    `);
   })
 
   // A: setup status buttons
@@ -83,7 +97,7 @@ function display_detail_showing(data) {
       'text': null,
     }
     let msg = JSON.stringify(data);
-    socket.send(msg)
+    window['SOCKET'].send(msg)
   });
 
   $('.playback > .circle-button').click(function() {
@@ -105,10 +119,7 @@ function display_detail_showing(data) {
       data.status = 'skip_forward';
     }
     let msg = JSON.stringify(data);
-    socket.send(msg)
+    window['SOCKET'].send(msg)
   });
-
-  // 5: bind to window
-  window['SOCKET'] = socket
 
 }
