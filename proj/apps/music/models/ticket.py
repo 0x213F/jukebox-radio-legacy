@@ -45,3 +45,4 @@ class Ticket(BaseModel):
     timestamp_join = models.DateTimeField(auto_now_add=True)
     timestamp_last_active = models.DateTimeField(auto_now_add=True)
     display_name = models.CharField(max_length=32, editable=False)
+    display_uuid = models.UUIDField(default=uuid.uuid4, editable=False)

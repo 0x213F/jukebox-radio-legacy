@@ -27,7 +27,7 @@ DOT = `<div style='height: 6px; width: 6px; border-radius: 2px; float: left; mar
 function generate_status_dots() {
   var map_user_to_status = {}
   $('.panel > .panel-body').children().each(function( index ) {
-    map_user_to_status[$(this).attr('author')] = $(this).attr('status')
+    map_user_to_status[$(this).attr('author')] = $(this).attr('status');
   });
   low_count = 0
   mid_low_count = 0
@@ -116,7 +116,7 @@ function render_comment(comment_obj) {
                author="${comment_obj.commenter.profile.display_uuid}"
                status="${comment_obj.status}"
                timestamp="${comment_obj.showing_timestamp}">
-               <figure class="avatar" data-initial="" style="background-color: ${background_color}; height: 1.4rem; width: 1.4rem; margin-right: 6px; margin-left: 4px; margin-bottom: 6px;"></figure>
+               <div class="commenter-img" style="background-color: ${background_color};"></div>
                <div class="comment-text">${comment_obj.text}</div>
           </div>`;
       }

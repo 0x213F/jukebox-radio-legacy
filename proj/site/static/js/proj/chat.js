@@ -107,9 +107,12 @@ function onmessage(event) {
     $(".panel-body").scrollTop($(".panel-body")[0].scrollHeight);
     let cached_comments = JSON.parse(window.localStorage.getItem(KEY_COMMENTS)) || {};
     let chat_comments = cached_comments[showing.uuid];
-    if(chat_comments) {
-      window.localStorage.setItem(KEY_COMMENTS, JSON.stringify(chat_comments.concat(payload.comments)));
+    if(!chat_comments) {
+      chat_comments = [];
     }
+    cached_comments[showing.uuid] = chat_comments.concat(payload.comments);
+    console.log(cached_comments)
+    window.localStorage.setItem(KEY_COMMENTS, JSON.stringify(cached_comments));
   }
 
   if(payload.source && payload.source.style === 'system') {

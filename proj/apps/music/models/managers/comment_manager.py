@@ -1,4 +1,6 @@
 
+import uuid
+
 from datetime import datetime
 
 from proj.core.models.managers import BaseManager
@@ -22,6 +24,11 @@ class CommentManager(BaseManager):
         ticket, _ = Ticket.objects.get_or_create(
             holder_id=user.id,
             showing_id=showing.id,
+            defaults={
+                'timestamp_last_active': datetime.utcnow(),
+                'display_name': user.profile.display_name or 'Default Name',
+                'display_uuid': uuid.uuid4(),
+            }
         )
         if showing.status == Showing.STATUS_TERMINATED:
             raise RuntimeError('Cannot comment on a terminated showing.')
@@ -49,7 +56,7 @@ class CommentManager(BaseManager):
             'commenter': {
                 'profile': {
                     'display_name': ticket.display_name,
-                    'display_uuid': str(comment.commenter.profile.display_uuid),
+                    'display_uuid': str(ticket.display_uuid),
                 }
             },
             'showing_uuid': str(comment.showing.uuid),
