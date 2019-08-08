@@ -36,4 +36,5 @@ class ConnectView(BaseView):
         request.user.profile.spotify_access_token = response_json['access_token']
         request.user.profile.spotify_refresh_token = response_json['refresh_token']
         request.user.profile.spotify_scope = response_json['scope']
+        request.user.profile.save()
         return HttpResponseRedirect('/')

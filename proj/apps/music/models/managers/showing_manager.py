@@ -48,6 +48,9 @@ class ShowingManager(BaseManager):
             showing.chat_room,
             {
                 'type': 'broadcast',
+                'spotify': {
+                    'context_uri': showing.album.spotify_uri,
+                },
                 'text': json.dumps({
                     'source': {
                         'type': 'system',

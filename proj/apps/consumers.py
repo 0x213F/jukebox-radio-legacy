@@ -1,5 +1,6 @@
 import asyncio
 import json
+import requests
 import uuid
 
 from datetime import datetime
@@ -69,6 +70,25 @@ class Consumer(AsyncConsumer):
             'type': 'websocket.send',
             'text': event['text'],
         })
+        try:
+            spotify = event['spotify']
+            context_uri = spotify['context_uri']
+            spotify_access_token = self.scope['user'].profile.spotify_access_token
+            print(spotify_access_token)
+            print(context_uri)
+            response = requests.put(
+                'https://api.spotify.com/v1/me/player/play',
+                headers={
+                    'Authorization': f'Bearer {spotify_access_token}',
+                    'Content-Type': 'application/json',
+                },
+                data=json.dumps({
+                    'context_uri': context_uri,
+                })
+            )
+            print(response.content)
+        except KeyError:
+            pass
 
     # - - - - - -
     # disconnect
