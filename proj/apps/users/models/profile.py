@@ -31,3 +31,7 @@ class Profile(BaseModel):
         related_name='profile',
         on_delete=models.DO_NOTHING,
     )
+
+    spotify_access_token = models.CharField(max_length=158, null=True, blank=True)
+    spotify_refresh_token = models.CharField(max_length=134, null=True, blank=True)
+    spotify_scope = models.CharField(max_length=108, null=True, blank=True)
