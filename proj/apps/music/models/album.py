@@ -33,3 +33,4 @@ class Album(BaseModel):
     )
     title = models.CharField(max_length=128)
     release_date = models.DateField()
+    spotify_uri = models.CharField(max_length=36)

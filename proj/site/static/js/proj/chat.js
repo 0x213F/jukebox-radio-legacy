@@ -95,6 +95,7 @@ function onopen(event) {
 function onmessage(event) {
   let text = event.data
   let payload = JSON.parse(text);
+  console.log(payload)
   let showings = JSON.parse(window.localStorage.getItem(KEY_SHOWINGS));
   let user = JSON.parse(window.localStorage.getItem(KEY_USER));
   let showing = showings.find(function(obj) { return obj.uuid === user.profile.active_showing_uuid; });
@@ -111,11 +112,10 @@ function onmessage(event) {
       chat_comments = [];
     }
     cached_comments[showing.uuid] = chat_comments.concat(payload.comments);
-    console.log(cached_comments)
     window.localStorage.setItem(KEY_COMMENTS, JSON.stringify(cached_comments));
   }
 
-  if(payload.source && payload.source.style === 'system') {
+  if(payload.source && payload.source.type === 'system' && payload.data && payload.data.status === 'activated') {
     $('.statuses').show();
     $('.waiting').hide();
     showing.status = 'active';

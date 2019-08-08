@@ -1,4 +1,8 @@
 
+import json
+
+from datetime import datetime
+
 from proj.apps.utils import broadcast_message
 from proj.core.models.managers import BaseManager
 
@@ -33,17 +37,18 @@ class ShowingManager(BaseManager):
             }
         }
 
-    def update(self, *, status=None):
+    def change_status(self, showing, status):
         now = datetime.now()
-        super().update(
-            actual_showtime=now,
-            status=status,
-        )
+        showing.showtime_actual = now
+        showing.status = status
+        showing.save()
         now_str = now.isoformat()
-        for showing in queryset:
-            async_to_sync(channel_layer.group_send)(
-                showing.chat_room,
-                broadcast_message({
+        print('broadcasting!!')
+        async_to_sync(channel_layer.group_send)(
+            showing.chat_room,
+            {
+                'type': 'broadcast',
+                'text': json.dumps({
                     'source': {
                         'type': 'system',
                         'display_name': None,
@@ -54,5 +59,6 @@ class ShowingManager(BaseManager):
                         'status': status,
                         'text': None,
                     }
-                })
-            )
+                }),
+            }
+        )
