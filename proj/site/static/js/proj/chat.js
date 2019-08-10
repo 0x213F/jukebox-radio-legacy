@@ -19,29 +19,35 @@ function send_waiting_comment() {
     window['SOCKET'].send(msg)
 }
 
+// ON OPEN
 function onopen(event) {
+
   let showings = JSON.parse(window.localStorage.getItem(KEY_SHOWINGS));
   let user = JSON.parse(window.localStorage.getItem(KEY_USER));
   let showing = showings.find(function(obj) {
     return obj.uuid === user.profile.active_showing_uuid;
   });
+
+  // display correct bar above chat bar
   if(showing.status === 'activated') {
-    $('.statuses').show()
-    $('.waiting').hide()
+    $('.status.active').show();
+    $('.status.waiting').hide();
   } else {
-    $('.statuses').hide()
-    $('.waiting').show()
+    $('.status.active').hide();
+    $('.status.waiting').show();
   }
 
+  // display cached comments
   let cached_comments = JSON.parse(window.localStorage.getItem(KEY_COMMENTS)) || {};
   let chat_comments = cached_comments[showing.uuid];
+  console.log(chat_comments)
   if(chat_comments) {
-    for(comment of chat_comments) {
-      render_comment(comment);
-    }
+    // for(comment of chat_comments) {
+    //   render_comment(comment);
+    // }
   }
 
-
+  // TODO start the countdown timer
   countdown_timer = setInterval(function(display) {
     milliseconds = Date.parse(showing.showtime) - Date.now()
     if(milliseconds < 0) {
@@ -66,8 +72,8 @@ function onopen(event) {
   }, 15)
 
   $('.list-showings').hide();
-  $('#account').hide();
-  $('#current-showing').show();
+  $('.row.footer').hide();
+  $('.detail-showing').show();
 
   // 6: initial mark of waiting in chatroom
   let data = null;
@@ -95,17 +101,16 @@ function onopen(event) {
 function onmessage(event) {
   let text = event.data
   let payload = JSON.parse(text);
-  console.log(payload)
   let showings = JSON.parse(window.localStorage.getItem(KEY_SHOWINGS));
   let user = JSON.parse(window.localStorage.getItem(KEY_USER));
   let showing = showings.find(function(obj) { return obj.uuid === user.profile.active_showing_uuid; });
-
+  console.log(payload.comments)
   if(payload.comments) {
-    for(comment of payload.comments) {
-      render_comment(comment);
-    }
+    // for(comment of payload.comments) {
+    //   render_comment(comment);
+    // }
     generate_status_dots();
-    $(".panel-body").scrollTop($(".panel-body")[0].scrollHeight);
+    $(".detail-showing > .chat").scrollTop($(".detail-showing > .chat")[0].scrollHeight);
     let cached_comments = JSON.parse(window.localStorage.getItem(KEY_COMMENTS)) || {};
     let chat_comments = cached_comments[showing.uuid];
     if(!chat_comments) {
@@ -116,17 +121,17 @@ function onmessage(event) {
   }
 
   if(payload.source && payload.source.type === 'system' && payload.data && payload.data.status === 'activated') {
-    $('.statuses').show();
-    $('.waiting').hide();
+    $('.status.active').show();
+    $('.status.waiting').hide();
     showing.status = 'active';
     return
   }
 
   if(showing.status === 'waiting') {
-    $('.statuses').hide();
-    $('.waiting').show();
+    $('.status.active').hide();
+    $('.status.waiting').show();
   } else if(showing.status === 'active') {
-    $('.statuses').show();
-    $('.waiting').hide();
+    $('.status.active').show();
+    $('.status.waiting').hide();
   }
 }

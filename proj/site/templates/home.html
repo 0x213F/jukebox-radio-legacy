@@ -41,7 +41,7 @@
     <div class='row'>
       <p>Your account information that is accessible by...</p>
     </div>
-    <div class='row'>
+    <div class='row align-center'>
       <button class="select anyone margin-right">Anyone</button>
       <button class="select friends">Friends</button>
     </div>
@@ -79,7 +79,7 @@
         </div>
       </div>
 
-      <div class="row bottom">
+      <div class="row align-center bottom">
         <button type="submit" form="user-update" class="success ajax-form">Update</button>
       </div>
     </form>
@@ -111,9 +111,9 @@
 
     <!-- - - - - - - - - -->
     <!--  DETAIL SHOWING -->
-    <div id='current-showing' style='display: none;'>
+    <div class='detail-showing' style='display: none;'>
 
-      <div class='row'>
+      <div class='row align-center'>
         <button class="footer-button leave leave-button">
           Leave
         </button>
@@ -124,7 +124,7 @@
         <div class="circle-button skip-forward center-horizontal"></div>
         <!-- <progress class="progress track-status" value="25" max="100"></progress> -->
       </div>
-      <div class="panel-body main-chat" style='max-height: 400px;-ms-overflow-style: none; scrollbar-width: none;'>
+      <div class="chat" style='max-height: 400px;-ms-overflow-style: none; scrollbar-width: none;'>
         <div class="tile seen"
              style="display: none;"
              author="system"
@@ -133,8 +133,8 @@
         </div>
 
       </div>
-      <div class="panel-footer">
-        <div class="input-group">
+      <div class="row flex-wrap controls">
+        <div class="group">
           <div class='dot-container low'>
 
           </div>
@@ -148,8 +148,8 @@
 
           </div>
         </div>
-        <div class='input-group'>
-          <div class="statuses" style="display: none;">
+        <div class="group">
+          <div class="status active" style="display: none;">
             <button class='btn low'>
               <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/white-frowning-face_2639.png">
             </button>
@@ -163,16 +163,11 @@
               <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/grinning-face_1f600.png">
             </button>
           </div>
-          <div class="waiting" style='display: none;'>
-            <span class="label label-rounded label-primary showname waiting-countdown"></span><br>
-          </div> <!--
-          <div class="complete">
-
-          </div> -->
+          <div class="status waiting" style='display: none;'></div>
         </div>
-        <div class="input-group">
-          <input id='chat-input' class="form-input" type="text">
-          <button id='chat-submit' class="btn btn-primary input-group-btn">Send</button>
+        <div class="group chat-input">
+          <input id='chat-input' class="chat-text" type="text">
+          <button id='chat-submit' class="circle-button send"></button>
         </div>
       </div>
 
@@ -180,7 +175,7 @@
     </div>
 
 
-    <div class='row'>
+    <div class='row align-center footer'>
 
       <!-- - - - - -->
       <!-- ACCOUNT -->

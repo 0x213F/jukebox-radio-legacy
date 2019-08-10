@@ -136,7 +136,24 @@ label {
 .row {
   padding: 15px 20px;
   display: flex;
+  font-weight: lighter;
+  position: relative;
+}
+
+.row.align-center {
   align-items: center;
   justify-content: center;
-  font-weight: lighter;
+}
+
+.row.flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.row > .group {
+  width: 300px;
+  margin: auto;
+  float:left;
+  display: block;
+  flex: 0 0 100%;
 }

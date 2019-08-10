@@ -32,3 +32,37 @@
 .tile.seen > .comment-text.left-comment-padding {
   padding-left: 16px;
 }
+
+.chat-text {
+  width: calc(100% - 62px);
+  height: 40px;
+  border: 2px solid #576da7;
+  border-radius: 21px;
+}
+
+.group.chat-input {
+  height: 44px;
+  margin-bottom: 5px;
+}
+
+.group.chat-input > input {
+  padding-left: 12px;
+  padding-right: 46px;
+  font-size: 14px;
+}
+
+
+.group.chat-input > input:focus {
+  background-color: #fafafc;
+  outline: 0;
+}
+
+.circle-button.send {
+  background-image: url('../../../static/svg/send.svg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 50% 50%;
+  top: -39px;
+  position: relative;
+  left: 230px;
+}
