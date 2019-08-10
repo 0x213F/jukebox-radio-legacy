@@ -1,0 +1,24 @@
+
+.modal {
+    top: 0px;
+    background-color: rgba(12, 12, 12, 0.25);
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+
+.modal > .body {
+    background-color: rgba(254, 254, 254, 1.00);
+    width: 270px;
+    height: calc(100% - 74px);
+    margin-top: 35px;
+    margin-bottom: 35px;
+    border-radius: 8px;
+}
+
+.modal > .body > .row {
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

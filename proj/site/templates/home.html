@@ -3,210 +3,202 @@
 {% load static %}
 
 {% block basestyles %}
-<link rel="stylesheet" href="../static/css/spectre/spectre.min.css">
-<link rel="stylesheet" href="../static/css/spectre/spectre-icons.min.css">
+<link href="https://fonts.googleapis.com/css?family=Work+Sans:300,400,700,900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../static/css/proj/base.css">
 <link rel="stylesheet" href="../static/css/proj/detail_showing.css">
 <link rel="stylesheet" href="../static/css/proj/playback.css">
 <link rel="stylesheet" href="../static/css/proj/chat.css">
+<link rel="stylesheet" href="../static/css/proj/modal.css">
 {% endblock %}
-
-<link href="https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap" rel="stylesheet">
 
 {% block main %}
 
-<div class="modal" id="account-modal">
-  <a id="model-close" class="modal-overlay" aria-label="Close"></a>
-  <div class="modal-container">
+<!-- - - - - - --->
+<!--  MODAL - - -->
+<div class="modal hidden">
+  <div class="body center-horizontal center-vertical">
 
-    <!-- <div class='wrapper'>
-      <button class="footer-button cancel">
+    <!-- CANCEL -->
+    <div class='row'>
+      <button class="center-horizontal cancel profile">
         Cancel
       </button>
     </div>
 
-    <div class="footer-delimeter" style='width: calc(100% - 28px); margin-left: 14px;'></div> -->
-    <div class='wrapper'>
-      <button class="footer-button cancel-profile">
-        Cancel
+    <!-- DELIMETER -->
+    <div class="delimeter"></div>
+
+    <!-- SPOTIFY -->
+    <form class="ajax-form row" url="https://accounts.spotify.com/authorize?client_id=890e3c32aaac4e0fa3dd5cfc22835f11&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fconnect%3Fsource%3Dspotify&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state" type="redirect">
+      <button class="center-horizontal spotify success">
+        <input style="margin-right: 6px;" type="checkbox">
+        Spotify
       </button>
+    </form>
+
+    <!-- ACCOUNT SELECTOR-->
+    <div class='row'>
+      <p>Your account information that is accessible by...</p>
     </div>
-    <div class="footer-delimeter" style="width: calc(100% - 28px); margin-left: 14px;"></div>
-    <div style="height:8px; width: 100%"></div>
-    <p class="form-input-hint" style="max-width: 244px; margin-left: 14px;margin-right: 14px;">Your account information that is accessible by...</p>
-    <ul class="tab tab-block" style="margin-left: 14px; margin-right: 14px;">
-      <li class="tab-item tab-anyone active"><a href="javascript:void(0);">Anyone</a></li>
-      <li class="tab-item tab-you"><a href="javascript:void(0);">Friends</a></li>
-    </ul>
-
-    <div style="margin: 14px;">
-
-      <form id="update-account" class="submit-form" url="../api/user/update/" type="post" onsuccess='hide_modal'>
-
-        {% csrf_token %}
-
-        <div class="content-anyone">
-          <div class="form-group">
-            <label class="form-label">Display Name</label>
-            <input class="form-input update_display_name" type="text" name="display_name" placeholder="">
-          </div>
-          <label class="form-checkbox" style='max-width: 216px; padding-right: 0px;'>
-            <input class='null-display-name' type="checkbox"><i class="form-icon"></i> Automatically randomize display name every showing.
-          </label>
-          <div style="height:94px; width: 12px"></div>
-        </div>
-
-        <div class="content-you" style="display: none;">
-          <div class="form-group">
-            <label class="form-label">First Name</label>
-            <input class="form-input update_first_name" type="text" name="first_name" placeholder="">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Last Name</label>
-            <input class="form-input update_last_name" type="text" name="last_name" placeholder="">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <input class="form-input update_email" type="email" name="email" placeholder="">
-          </div>
-        </div>
-
-        <div class="form-group" style="margin-top: 23px; margin-bottom: 20px; margin-right: 15px;">
-          <button type="submit" form="update-account" class="btn btn-primary" style='float:right;'>Update</button>
-        </div>
-        <div style="height:44px; width: 100%; display: block"></div>
-      </form>
-
+    <div class='row'>
+      <button class="select anyone margin-right">Anyone</button>
+      <button class="select friends">Friends</button>
     </div>
+
+    <!-- ACCOUNT FORM -->
+    <form id="user-update" class="ajax-form" url="../api/user/update/" type="post" onsuccess='hide_modal'>
+
+      {% csrf_token %}
+
+      <div class="view anyone">
+        <label class='row small-text noselect'>
+          <input class="margin-right null-display-name" type="checkbox">
+          Automatically randomize display name every showing.
+        </label>
+        <input class="text update_display_name" type="text" name="display_name" placeholder="" maxlength="16" spellcheck="false">
+        <div class="delimeter"></div>
+      </div>
+
+      <div class="view friends hidden">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input class="form-input update_first_name" type="text" name="first_name" placeholder="">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input class="form-input update_last_name" type="text" name="last_name" placeholder="">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input update_email" type="email" name="email" placeholder="">
+        </div>
+      </div>
+
+      <div class="row bottom">
+        <button type="submit" form="user-update" class="success ajax-form">Update</button>
+      </div>
+    </form>
+
   </div>
 </div>
 
-<div class="card-body">
+<div class="main center-horizontal card hidden">
 
-  <!-- - - - - - --->
-  <!--  LOAD PAGE -->
-  <form id="list-showings" class="submit-form" url="../api/music/list_showings/" type="get" submit="onload" onsuccess='display_list_showings' style="display: none;">
+  <div class="body">
 
-    {% csrf_token %}
+    <!-- - - - - - --->
+    <!--  LOAD PAGE -->
+    <form id="list-showings"
+          class="ajax-form hidden"
+          type="get"
+          url="../api/music/list_showings/"
+          submit="onload"
+          onsuccess='display_list_showings'>
 
-  </form>
+      {% csrf_token %}
 
-  <!-- - - - - - - - - --->
-  <!--  CURRENT SHOWING -->
-  <div id='current-showing' style='display: none;'>
-    <div class='wrapper'>
-      <button class="footer-button leave leave-button">
-        Leave
-      </button>
+    </form>
+
+    <!-- - - - - - - - --->
+    <!--  LIST SHOWINGS -->
+    <div id='display-scheduled-showings' style='display: none;'>
+      <div class="form-group showings">
+
+      </div>
     </div>
-    <div class="footer-delimeter"></div>
 
-    <div class='main'>
+    <!-- - - - - - - - - -->
+    <!--  DETAIL SHOWING -->
+    <div id='current-showing' style='display: none;'>
 
-      <div class="column col-12">
-        <div class="panel">
-          <div class="panel-header playback">
-            <div class="circle-button play-pause play"></div>
-            <div class="circle-button skip-forward"></div>
-            <progress class="progress track-status" value="25" max="100"></progress>
-          </div>
-          <div class="panel-body main-chat" style='max-height: 400px;-ms-overflow-style: none; scrollbar-width: none;'>
-            <div class="tile seen"
-                 style="display: none;"
-                 author="system"
-                 status="base"
-                 timestamp="-Infinity">
+      <div class='wrapper'>
+        <button class="footer-button leave leave-button">
+          Leave
+        </button>
+      </div>
+
+      <div class="delimeter"></div>
+
+      <div class='main'>
+
+        <div class="column col-12">
+          <div class="panel">
+            <div class="panel-header playback">
+              <div class="circle-button play-pause play"></div>
+              <div class="circle-button skip-forward"></div>
+              <progress class="progress track-status" value="25" max="100"></progress>
             </div>
-
-          </div>
-          <div class="panel-footer">
-            <div class="input-group">
-              <div class='dot-container low'>
-
+            <div class="panel-body main-chat" style='max-height: 400px;-ms-overflow-style: none; scrollbar-width: none;'>
+              <div class="tile seen"
+                   style="display: none;"
+                   author="system"
+                   status="base"
+                   timestamp="-Infinity">
               </div>
-              <div class='dot-container mid_low'>
 
-              </div>
-              <div class='dot-container mid_high'>
-
-              </div>
-              <div class='dot-container high'>
-
-              </div>
             </div>
-            <div class='input-group'>
-              <div class="statuses" style="display: none;">
-                <button class='btn low'>
-                  <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/white-frowning-face_2639.png">
-                </button>
-                <button class='btn mid_low'>
-                  <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/confused-face_1f615.png">
-                </button>
-                <button class='btn mid_high'>
-                  <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/slightly-smiling-face_1f642.png">
-                </button>
-                <button class='btn high'>
-                  <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/grinning-face_1f600.png">
-                </button>
-              </div>
-              <div class="waiting" style='display: none;'>
-                <span class="label label-rounded label-primary showname waiting-countdown"></span><br>
-              </div> <!--
-              <div class="complete">
+            <div class="panel-footer">
+              <div class="input-group">
+                <div class='dot-container low'>
 
-              </div> -->
-            </div>
-            <div class="input-group">
-              <input id='chat-input' class="form-input" type="text">
-              <button id='chat-submit' class="btn btn-primary input-group-btn">Send</button>
+                </div>
+                <div class='dot-container mid_low'>
+
+                </div>
+                <div class='dot-container mid_high'>
+
+                </div>
+                <div class='dot-container high'>
+
+                </div>
+              </div>
+              <div class='input-group'>
+                <div class="statuses" style="display: none;">
+                  <button class='btn low'>
+                    <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/white-frowning-face_2639.png">
+                  </button>
+                  <button class='btn mid_low'>
+                    <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/confused-face_1f615.png">
+                  </button>
+                  <button class='btn mid_high'>
+                    <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/slightly-smiling-face_1f642.png">
+                  </button>
+                  <button class='btn high'>
+                    <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/grinning-face_1f600.png">
+                  </button>
+                </div>
+                <div class="waiting" style='display: none;'>
+                  <span class="label label-rounded label-primary showname waiting-countdown"></span><br>
+                </div> <!--
+                <div class="complete">
+
+                </div> -->
+              </div>
+              <div class="input-group">
+                <input id='chat-input' class="form-input" type="text">
+                <button id='chat-submit' class="btn btn-primary input-group-btn">Send</button>
+              </div>
             </div>
           </div>
         </div>
+
       </div>
 
     </div>
 
-  </div>
 
-  <!-- - - - - - - - - - -->
-  <!--  DISPLAY SHOWINGS -->
-  <div id='display-scheduled-showings' style='display: none;'>
-    <div class="form-group showings">
-
-    </div>
-  </div>
-
-  <div id='account'>
-    <div class="footer-delimeter"></div>
-    <div class='wrapper'>
-      <button class="footer-button account-button">
+    <div class='row'>
+      <button class="margin-right account open-modal">
         Account
       </button>
+      <form class="ajax-form" url="../api/user/logout/" type="post" redirect="/">
+        <button class="account">
+          Logout
+        </button>
+      </form>
     </div>
   </div>
-
-  <!-- - - - - - -->
-  <!--  SPOTIFY  -->
-  <div class='wrapper'>
-    <button class="footer-button">
-      <a href="https://accounts.spotify.com/authorize?client_id=890e3c32aaac4e0fa3dd5cfc22835f11&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fconnect%3Fsource%3Dspotify&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state">
-      Spotify</a>
-    </button>
-  </div>
-
-  <!-- - - - - - -->
-  <!--  ACCOUNT  -->
-  <form id="logout" class="submit-form" url="../api/user/logout/" type="post" redirect="/">
-
-    {% csrf_token %}
-
-    <div class='wrapper'>
-      <button class="footer-button">
-        Logout
-      </button>
-    </div>
-
-  </form>
+</div>
 
 </div>
 {% endblock %}

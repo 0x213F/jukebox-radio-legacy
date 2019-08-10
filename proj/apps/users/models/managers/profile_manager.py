@@ -24,6 +24,7 @@ class ProfileManager(BaseManager):
                 'active_showing_uuid': user.profile.active_showing_uuid,
                 'display_name': user.profile.display_name,
                 'display_uuid': user.profile.display_uuid,
+                'has_spotify': bool(user.profile.spotify_scope),
             }
         }
 

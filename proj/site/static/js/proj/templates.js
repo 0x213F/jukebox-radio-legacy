@@ -107,7 +107,9 @@ function render_comment(comment_obj) {
                author="${comment_obj.commenter.profile.display_uuid}"
                status="${comment_obj.status}"
                timestamp="${comment_obj.showing_timestamp}">
-               <div class="comment-text">${comment_obj.text}</div>
+            <div class="row">
+              <div class="comment-text left-comment-padding">${comment_obj.text}</div>
+            </div>
           </div>`;
       } else {
         // the current user sent 2 comments in a row with the DIFFERENT statuses
@@ -116,8 +118,10 @@ function render_comment(comment_obj) {
                author="${comment_obj.commenter.profile.display_uuid}"
                status="${comment_obj.status}"
                timestamp="${comment_obj.showing_timestamp}">
-               <div class="commenter-img" style="background-color: ${background_color};"></div>
-               <div class="comment-text">${comment_obj.text}</div>
+            <div class="row">
+              <div class="commenter-img" style="background-color: ${background_color};"></div>
+              <div class="comment-text">${comment_obj.text}</div>
+            </div>
           </div>`;
       }
     } else {
@@ -127,8 +131,13 @@ function render_comment(comment_obj) {
              author="${comment_obj.commenter.profile.display_uuid}"
              status="${comment_obj.status}"
              timestamp="${comment_obj.showing_timestamp}">
-             <div class="commenter-img" style="background-color: ${background_color};"></div>
-             <div class="comment-text">${comment_obj.text}</div>
+          <div class="row">
+            <div class="commenter-img" style="background-color: ${background_color};"></div>
+            <div class="comment-author">${comment_obj.commenter.profile.display_name}</div>
+          </div>
+          <div class="row">
+            <div class="comment-text">${comment_obj.text}</div>
+          </div>
         </div>`;
     }
   } else {
@@ -140,7 +149,11 @@ function render_comment(comment_obj) {
                author="${comment_obj.commenter.profile.display_uuid}"
                status="${comment_obj.status}"
                timestamp="${comment_obj.showing_timestamp}">
-               <div class="comment-text">${comment_obj.text}</div>
+            <div class="row">
+            </div>
+            <div class="row">
+              <div class="comment-text">${comment_obj.text}</div>
+            </div>
           </div>`;
       } else {
         // another user sent 2 comments in a row with DIFFERENT statuses
@@ -149,9 +162,10 @@ function render_comment(comment_obj) {
                author="${comment_obj.commenter.profile.display_uuid}"
                status="${comment_obj.status}"
                timestamp="${comment_obj.showing_timestamp}">
-               <div class="commenter-img" style="background-color: ${background_color};"></div>
-               <div class="comment-author">${comment_obj.commenter.profile.display_name}</div>
-               <div class="comment-text">${comment_obj.text}</div>
+            <div class="row"
+              <div class="commenter-img" style="background-color: ${background_color};"></div>
+              <div class="comment-text">${comment_obj.text}</div>
+            </div>
           </div>`;
       }
     } else {
@@ -161,9 +175,13 @@ function render_comment(comment_obj) {
              author="${comment_obj.commenter.profile.display_uuid}"
              status="${comment_obj.status}"
              timestamp="${comment_obj.showing_timestamp}">
-             <div class="commenter-img" style="background-color: ${background_color};"></div>
-             <div class="comment-author">${comment_obj.commenter.profile.display_name}</div>
-             <div class="comment-text">${comment_obj.text}</div>
+          <div class="row>
+            <div class="commenter-img" style="background-color: ${background_color};"></div>
+            <div class="comment-author">${comment_obj.commenter.profile.display_name}</div>
+          </div>
+          <div class="row">
+            <div class="comment-text">${comment_obj.text}</div>
+          </div>
         </div>`;
     }
   }

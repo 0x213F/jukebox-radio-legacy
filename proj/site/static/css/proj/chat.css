@@ -28,3 +28,7 @@
   float: left;
   width: 100%;
 }
+
+.tile.seen > .comment-text.left-comment-padding {
+  padding-left: 16px;
+}

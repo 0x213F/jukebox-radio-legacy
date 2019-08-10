@@ -4,7 +4,7 @@
 
 <div class="card-body">
 
-  <form id="sign-up" class="submit-form" url="../api/user/create/" type="post" redirect="/">
+  <form id="sign-up" class="ajax-form" url="../api/user/create/" type="post" redirect="/">
 
     {% csrf_token %}
 
@@ -27,7 +27,7 @@
 
     <div class="form-group">
       <button type="submit" form="sign-up" class="btn btn-primary">Sign Up</button>
-      <span class="text-info submit-form-error" style="margin-left: 1.4em; color: red"><span>
+      <span class="text-info ajax-form-error" style="margin-left: 1.4em; color: red"><span>
     </div>
 
   </form>
@@ -36,7 +36,7 @@
   <div class="divider text-center" data-content="OR"></div>
   <br>
 
-  <form id="log-in" class="submit-form" url="../api/user/authenticate/" type="post" redirect="/">
+  <form id="log-in" class="ajax-form" url="../api/user/authenticate/" type="post" redirect="/">
 
     {% csrf_token %}
 
@@ -52,7 +52,7 @@
 
     <div class="form-group">
       <button type="submit" form="log-in" class="btn btn-secondary">Log In</button>
-      <span class="text-info submit-form-error" style="margin-left: 1.4em; color: red"><span>
+      <span class="text-info ajax-form-error" style="margin-left: 1.4em; color: red"><span>
     </div>
 
   </form>

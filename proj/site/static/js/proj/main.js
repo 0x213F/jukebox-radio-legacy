@@ -1,22 +1,25 @@
 
+// global object to hold data for the view
 var VIEW = {}
 
-
-$(".submit-form").submit(function(e) {
+// custom form submission handler
+$(".ajax-form").submit(function(e) {
     e.preventDefault();
     $this = $(this);
-    $error = $this.find(".submit-form-error")
-    redirect = $this.attr("redirect")
-    onsuccess = $this.attr("onsuccess")
+    $error = $this.find(".ajax-form-error");
+    redirect = $this.attr("redirect");
+    onsuccess = $this.attr("onsuccess");
     if($this.attr("type") === "socket") {
-      let data = $(this).serialize()
-      let route = $this.attr("route")
+      let data = $this.serialize()
+      let route = $this.attr("route");
       let payload = {
         'data': data,
         'route': route,
       }
-      let text = JSON.stringify(payload)
-      socket.send(text)
+      let text = JSON.stringify(payload);
+      socket.send(text);
+    } else if($this.attr("type") === "redirect") {
+      window.location.href = $this.attr("url");
     } else {
       $.ajax({
           url: $this.attr("url"),
@@ -33,8 +36,9 @@ $(".submit-form").submit(function(e) {
     }
 });
 
-$(".submit-form").each(function (index, value) {
+// on page load, submit forms that should be submitted "onload"
+$('.ajax-form').each(function (index, value) {
   let $this = $(this)
-  let submit = $this.attr("submit");
+  let submit = $this.attr('submit');
   if(submit && (submit === 'onload')) $this.submit();
 });
