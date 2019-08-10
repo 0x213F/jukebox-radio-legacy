@@ -5,6 +5,7 @@
 {% block basestyles %}
 <link href="https://fonts.googleapis.com/css?family=Work+Sans:300,400,700,900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../static/css/proj/base.css">
+<link rel="stylesheet" href="../static/css/proj/list_showings.css">
 <link rel="stylesheet" href="../static/css/proj/detail_showing.css">
 <link rel="stylesheet" href="../static/css/proj/playback.css">
 <link rel="stylesheet" href="../static/css/proj/chat.css">
@@ -31,7 +32,7 @@
     <!-- SPOTIFY -->
     <form class="ajax-form row" url="https://accounts.spotify.com/authorize?client_id=890e3c32aaac4e0fa3dd5cfc22835f11&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fconnect%3Fsource%3Dspotify&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state" type="redirect">
       <button class="center-horizontal spotify success">
-        <input style="margin-right: 6px;" type="checkbox">
+        <img style="margin-right: 8px; height: 12px; float: left; margin-top: 2px;" src="../static/svg/plus-square.svg">
         Spotify
       </button>
     </form>
@@ -52,8 +53,12 @@
 
       <div class="view anyone">
         <label class='row small-text noselect'>
-          <input class="margin-right null-display-name" type="checkbox">
+          <input style="margin-bottom: 0px;" class="margin-right null-display-name" type="radio" name="display_name_type" value="none">
           Automatically randomize display name every showing.
+        </label>
+        <label class='row small-text noselect' style="padding-top: 0px;">
+          <input class="margin-right null-display-name" type="radio" name="display_name_type" value="custom">
+          Choose a custom display name.
         </label>
         <input class="text update_display_name" type="text" name="display_name" placeholder="" maxlength="16" spellcheck="false">
         <div class="delimeter"></div>
@@ -88,8 +93,7 @@
 
     <!-- - - - - - --->
     <!--  LOAD PAGE -->
-    <form id="list-showings"
-          class="ajax-form hidden"
+    <form class="ajax-form hidden"
           type="get"
           url="../api/music/list_showings/"
           submit="onload"
@@ -101,101 +105,101 @@
 
     <!-- - - - - - - - --->
     <!--  LIST SHOWINGS -->
-    <div id='display-scheduled-showings' style='display: none;'>
-      <div class="form-group showings">
+    <div class="list-showings hidden">
 
-      </div>
     </div>
 
     <!-- - - - - - - - - -->
     <!--  DETAIL SHOWING -->
     <div id='current-showing' style='display: none;'>
 
-      <div class='wrapper'>
+      <div class='row'>
         <button class="footer-button leave leave-button">
           Leave
         </button>
       </div>
 
-      <div class="delimeter"></div>
-
-      <div class='main'>
-
-        <div class="column col-12">
-          <div class="panel">
-            <div class="panel-header playback">
-              <div class="circle-button play-pause play"></div>
-              <div class="circle-button skip-forward"></div>
-              <progress class="progress track-status" value="25" max="100"></progress>
-            </div>
-            <div class="panel-body main-chat" style='max-height: 400px;-ms-overflow-style: none; scrollbar-width: none;'>
-              <div class="tile seen"
-                   style="display: none;"
-                   author="system"
-                   status="base"
-                   timestamp="-Infinity">
-              </div>
-
-            </div>
-            <div class="panel-footer">
-              <div class="input-group">
-                <div class='dot-container low'>
-
-                </div>
-                <div class='dot-container mid_low'>
-
-                </div>
-                <div class='dot-container mid_high'>
-
-                </div>
-                <div class='dot-container high'>
-
-                </div>
-              </div>
-              <div class='input-group'>
-                <div class="statuses" style="display: none;">
-                  <button class='btn low'>
-                    <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/white-frowning-face_2639.png">
-                  </button>
-                  <button class='btn mid_low'>
-                    <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/confused-face_1f615.png">
-                  </button>
-                  <button class='btn mid_high'>
-                    <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/slightly-smiling-face_1f642.png">
-                  </button>
-                  <button class='btn high'>
-                    <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/grinning-face_1f600.png">
-                  </button>
-                </div>
-                <div class="waiting" style='display: none;'>
-                  <span class="label label-rounded label-primary showname waiting-countdown"></span><br>
-                </div> <!--
-                <div class="complete">
-
-                </div> -->
-              </div>
-              <div class="input-group">
-                <input id='chat-input' class="form-input" type="text">
-                <button id='chat-submit' class="btn btn-primary input-group-btn">Send</button>
-              </div>
-            </div>
-          </div>
+      <div class="row playback">
+        <div class="circle-button play-pause play center-horizontal"></div>
+        <div class="circle-button skip-forward center-horizontal"></div>
+        <!-- <progress class="progress track-status" value="25" max="100"></progress> -->
+      </div>
+      <div class="panel-body main-chat" style='max-height: 400px;-ms-overflow-style: none; scrollbar-width: none;'>
+        <div class="tile seen"
+             style="display: none;"
+             author="system"
+             status="base"
+             timestamp="-Infinity">
         </div>
 
       </div>
+      <div class="panel-footer">
+        <div class="input-group">
+          <div class='dot-container low'>
+
+          </div>
+          <div class='dot-container mid_low'>
+
+          </div>
+          <div class='dot-container mid_high'>
+
+          </div>
+          <div class='dot-container high'>
+
+          </div>
+        </div>
+        <div class='input-group'>
+          <div class="statuses" style="display: none;">
+            <button class='btn low'>
+              <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/white-frowning-face_2639.png">
+            </button>
+            <button class='btn mid_low'>
+              <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/confused-face_1f615.png">
+            </button>
+            <button class='btn mid_high'>
+              <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/slightly-smiling-face_1f642.png">
+            </button>
+            <button class='btn high'>
+              <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/grinning-face_1f600.png">
+            </button>
+          </div>
+          <div class="waiting" style='display: none;'>
+            <span class="label label-rounded label-primary showname waiting-countdown"></span><br>
+          </div> <!--
+          <div class="complete">
+
+          </div> -->
+        </div>
+        <div class="input-group">
+          <input id='chat-input' class="form-input" type="text">
+          <button id='chat-submit' class="btn btn-primary input-group-btn">Send</button>
+        </div>
+      </div>
+
 
     </div>
 
 
     <div class='row'>
+
+      <!-- - - - - -->
+      <!-- ACCOUNT -->
       <button class="margin-right account open-modal">
         Account
       </button>
+
+      <!-- - - - --->
+      <!-- LOGOUT -->
       <form class="ajax-form" url="../api/user/logout/" type="post" redirect="/">
+
+        {% csrf_token %}
+
         <button class="account">
           Logout
         </button>
       </form>
+
+
     </div>
   </div>
 </div>
@@ -211,7 +215,7 @@
 <script src="{% static '/js/proj/templates.js' %}"></script>
 <script src="{% static '/js/proj/detail_showing.js' %}"></script>
 <script src="{% static '/js/proj/list_showings.js' %}"></script>
-<script src="{% static '/js/proj/account.js' %}"></script>
+<script src="{% static '/js/proj/modal.js' %}"></script>
 <script src="{% static '/js/proj/main.js' %}"></script>
 <script src="{% static '/js/chess/chess.min.js' %}"></script>
 {% endblock %}

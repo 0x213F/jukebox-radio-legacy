@@ -37,8 +37,12 @@ class Consumer(AsyncConsumer):
         comment, showing, ticket = await Comment.objects.create_from_payload_async(self.scope['user'], payload)
         if payload['status'] == Comment.STATUS_JOINED:
             await self.channel_layer.group_add(showing.chat_room, self.channel_name)
-        if payload['status'] in [Comment.STATUS_SKIP_FORWARD, Comment.STATUS_PLAY, Comment.STATUS_PAUSE]:
-            pass  # TODO spotify integration
+
+        # Spotify
+        spotify = {}
+        if payload['status'] in (Comment.STATUS_PAUSE, Comment.STATUS_PLAY, Comment.STATUS_SKIP_FORWARD):
+            spotify['action'] = payload['status']
+
         if payload['status'] == Comment.STATUS_LEFT:
             await Profile.objects.leave_showing(self.scope['user'])
             await self.channel_layer.group_discard(showing.chat_room, self.channel_name)
@@ -48,6 +52,7 @@ class Consumer(AsyncConsumer):
             {
                 'type': 'broadcast',
                 'text': json.dumps({'comments': [Comment.objects.serialize(comment, ticket)]}),
+                'spotify': spotify,
             }
         )
         if payload['status'] not in [Comment.STATUS_JOINED, Comment.STATUS_LEFT]:
@@ -74,8 +79,6 @@ class Consumer(AsyncConsumer):
             spotify = event['spotify']
             context_uri = spotify['context_uri']
             spotify_access_token = self.scope['user'].profile.spotify_access_token
-            print(spotify_access_token)
-            print(context_uri)
             response = requests.put(
                 'https://api.spotify.com/v1/me/player/play',
                 headers={
@@ -86,10 +89,31 @@ class Consumer(AsyncConsumer):
                     'context_uri': context_uri,
                 })
             )
-            print(response.content)
         except KeyError:
             pass
-
+        try:
+            spotify = event['spotify']
+            action = spotify['action']
+            if action != 'next':
+                spotify_access_token = self.scope['user'].profile.spotify_access_token
+                response = requests.put(
+                    f'https://api.spotify.com/v1/me/player/{action}',
+                    headers={
+                        'Authorization': f'Bearer {spotify_access_token}',
+                        'Content-Type': 'application/json',
+                    },
+                )
+            else:
+                spotify_access_token = self.scope['user'].profile.spotify_access_token
+                response = requests.post(
+                    f'https://api.spotify.com/v1/me/player/{action}',
+                    headers={
+                        'Authorization': f'Bearer {spotify_access_token}',
+                        'Content-Type': 'application/json',
+                    },
+                )
+        except KeyError:
+            pass
     # - - - - - -
     # disconnect
     # - - - - - -

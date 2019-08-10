@@ -10,11 +10,11 @@ function display_list_showings(data) {
   window.localStorage.setItem(KEY_SHOWINGS, JSON.stringify(showings));
   window.localStorage.setItem(KEY_USER, JSON.stringify(user));
 
-  let $showings_container = $('.showings');
+  let $showings_container = $('.list-showings');
   for(let showing of showings) {
     $showings_container.append(generate_showing(showing));
   }
-  $('.showing-card').click(display_detail_showing);
+  $('.showing.card').click(display_detail_showing);
 
   let active_showing_uuid = user.profile.active_showing_uuid
   if(active_showing_uuid && $(`[uuid="${active_showing_uuid}"]`).length) {
@@ -25,5 +25,5 @@ function display_list_showings(data) {
     return;
   }
 
-  $("#display-scheduled-showings").show();
+  $(".list-showings").removeClass('hidden');
 }

@@ -15,6 +15,6 @@ class ShowingQuerySet(BaseQuerySet):
         return (
             self.select_related('album', 'album__artist')
             .filter(
-                status__in=(Showing.STATUS_SCHEDULED, Showing.STATUS_ACTIVATED)
+                status__in=(Showing.STATUS_SCHEDULED, Showing.STATUS_ACTIVATED, Showing.STATUS_COMPLETED)
             )
         )

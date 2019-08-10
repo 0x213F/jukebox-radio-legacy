@@ -5,6 +5,7 @@
     height: 100%;
     width: 100%;
     position: absolute;
+    z-index: 16;
 }
 
 .modal > .body {
@@ -21,4 +22,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+button.select.active {
+    background-color: #cfd5e6;
 }

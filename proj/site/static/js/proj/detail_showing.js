@@ -66,7 +66,7 @@ function display_detail_showing() {
       window['SOCKET'].close();
     }, 10);
     $('#current-showing').hide();
-    $('#display-scheduled-showings').show();
+    $('.list-showings').show();
     $('#account').show();
     $('.panel > .panel-body').empty();
     $('.panel > .panel-body').append(`
@@ -115,7 +115,7 @@ function display_detail_showing() {
       $(this).removeClass('pause');
       $(this).addClass('play');
     } else if($(this).hasClass('skip-forward')) { // SKIP FORWARD
-      data.status = 'skip_forward';
+      data.status = 'next';
     }
     let msg = JSON.stringify(data);
     window['SOCKET'].send(msg)

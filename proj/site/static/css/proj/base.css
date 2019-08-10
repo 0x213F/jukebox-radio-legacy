@@ -44,6 +44,10 @@ button.success-force {
     height: calc(100% - 34px);
 }
 
+.body {
+  width: 100%;
+}
+
 .small-text {
   font-size: 14px;
 }

@@ -3,13 +3,17 @@
 }
 
 .playback > .circle-button {
-  height: 42px;
-  width: 42px;
+  height: 36px;
+  width: 36px;
   border-radius: 21px;
-  border: 2px solid #5764c6;
+  border: 2px solid #576da7;
   float: left;
-  margin-right: 14px;
   cursor: pointer;
+}
+
+.playback > .circle-button:hover {
+  background-color: #e7eaf2;
+  transition: background-color 0.3s ease;
 }
 
 .playback > .circle-button.play {

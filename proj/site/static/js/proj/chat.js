@@ -65,7 +65,7 @@ function onopen(event) {
     $('.waiting-countdown').text(hours + ":" + minutes + ':' + seconds)
   }, 15)
 
-  $('#display-scheduled-showings').hide();
+  $('.list-showings').hide();
   $('#account').hide();
   $('#current-showing').show();
 

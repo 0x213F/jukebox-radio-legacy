@@ -34,7 +34,7 @@ class Comment(BaseModel):
 
     STATUS_PAUSE = 'pause'
     STATUS_PLAY = 'play'
-    STATUS_SKIP_FORWARD = 'skip_forward'
+    STATUS_SKIP_FORWARD = 'next'
 
     STATUS_CHOICES = [
         (STATUS_JOINED, 'Joined'),
