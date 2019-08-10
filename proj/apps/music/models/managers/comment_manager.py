@@ -16,20 +16,25 @@ class CommentManager(BaseManager):
     # TODO: showing_timestamp
     # TODO: track_id
     # TODO: track_timestamp
-    async def create_from_payload_async(self, user, payload):
-        Comment = self.model
+    async def create_from_payload_async(self, user, payload, _cache):
         from proj.apps.music.models import Showing
         from proj.apps.music.models import Ticket
-        showing = Showing.objects.get(uuid=payload['showing_uuid'])
-        ticket, _ = Ticket.objects.get_or_create(
-            holder_id=user.id,
-            showing_id=showing.id,
-            defaults={
-                'timestamp_last_active': datetime.utcnow(),
-                'display_name': user.profile.display_name or 'Default Name',
-                'display_uuid': uuid.uuid4(),
-            }
-        )
+        Comment = self.model
+
+        if not _cache['showing']:
+            _cache['showing'] = (
+                Showing.objects
+                .get(uuid=payload['showing_uuid'])
+            )
+        showing = _cache['showing']
+
+        if not _cache['ticket']:
+            _cache['ticket'] = (
+                Ticket.objects
+                .get(holder_id=user.id, showing_id=showing.id)
+            )
+        ticket = _cache['ticket']
+
         if showing.status == Showing.STATUS_TERMINATED:
             raise RuntimeError('Cannot comment on a terminated showing.')
         now = datetime.utcnow()
@@ -43,7 +48,7 @@ class CommentManager(BaseManager):
             track_id=None,
             track_timestamp=now - showing.showtime_scheduled.replace(tzinfo=None),  # TODO
         )
-        return comment, showing, ticket
+        _cache['comment'] = comment
 
     # TODO: showing_timestamp
     # TODO: track_id

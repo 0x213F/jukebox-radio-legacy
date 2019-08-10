@@ -106,18 +106,25 @@ function onmessage(event) {
   let showing = showings.find(function(obj) { return obj.uuid === user.profile.active_showing_uuid; });
   console.log(payload.comments)
   if(payload.comments) {
-    // for(comment of payload.comments) {
-    //   render_comment(comment);
-    // }
-    generate_status_dots();
-    $(".detail-showing > .chat").scrollTop($(".detail-showing > .chat")[0].scrollHeight);
-    let cached_comments = JSON.parse(window.localStorage.getItem(KEY_COMMENTS)) || {};
-    let chat_comments = cached_comments[showing.uuid];
-    if(!chat_comments) {
-      chat_comments = [];
+    if(payload.comments.length === 1 && payload.comments[0].commenter.profile.display_uuid === user.profile.display_uuid) {
+      // NOTHING
+      console.log('NOTHING!')
+    } else {
+      // for(comment of payload.comments) {
+      //   render_comment(comment);
+      // }
+      generate_status_dots();
+      $(".detail-showing > .chat").scrollTop($(".detail-showing > .chat")[0].scrollHeight);
+      let cached_comments = JSON.parse(window.localStorage.getItem(KEY_COMMENTS)) || {};
+      let chat_comments = cached_comments[showing.uuid];
+      if(!chat_comments) {
+        chat_comments = [];
+      }
+
+      cached_comments[showing.uuid] = chat_comments.concat(payload.comments);
+      console.log(cached_comments[showing.uuid])
+      window.localStorage.setItem(KEY_COMMENTS, JSON.stringify(cached_comments));
     }
-    cached_comments[showing.uuid] = chat_comments.concat(payload.comments);
-    window.localStorage.setItem(KEY_COMMENTS, JSON.stringify(cached_comments));
   }
 
   if(payload.source && payload.source.type === 'system' && payload.data && payload.data.status === 'activated') {

@@ -24,8 +24,7 @@ class Profile(BaseModel):
     # - - - -
 
     active_showing_uuid = models.UUIDField(null=True, blank=True)
-    display_name = models.CharField(max_length=32, null=True, blank=True)
-    display_uuid = models.UUIDField(null=True, blank=True)
+    default_display_name = models.CharField(max_length=32, null=True, blank=True)
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         related_name='profile',

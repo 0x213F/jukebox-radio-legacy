@@ -34,33 +34,58 @@ class Consumer(AsyncConsumer):
 
     async def websocket_receive(self, event):
         payload = json.loads(event['text'])
-        comment, showing, ticket = await Comment.objects.create_from_payload_async(self.scope['user'], payload)
-        if payload['status'] == Comment.STATUS_JOINED:
-            await self.channel_layer.group_add(showing.chat_room, self.channel_name)
+        _user = self.scope['user']
+        _cache = {}
 
-        # Spotify
+        # Join the chat room
+        if payload['status'] == Comment.STATUS_JOINED:
+            await (
+                Profile.objects
+                .join_showing_async(_user, payload, _cache=_cache)
+            )
+            await (
+                self.channel_layer
+                .group_add(_cache['showing'].chat_room, self.channel_name)
+            )
+
+        # Leave the chat room
+        if payload['status'] == Comment.STATUS_LEFT:
+            await Profile.objects.leave_showing_async(_user, cache=_cache)
+            await (
+                self.channel_layer
+                .group_discard(_cache['showing'].chat_room, self.channel_name)
+            )
+
+        # Save the comment to the database
+        await (
+            Comment.objects
+            .create_from_payload_async(_user, payload, _cache=_cache)
+        )
+
+        # Spotify command
         spotify = {}
         if payload['status'] in (Comment.STATUS_PAUSE, Comment.STATUS_PLAY, Comment.STATUS_SKIP_FORWARD):
             spotify['action'] = payload['status']
 
+        # Leave the chat room
         if payload['status'] == Comment.STATUS_LEFT:
-            await Profile.objects.leave_showing(self.scope['user'])
-            await self.channel_layer.group_discard(showing.chat_room, self.channel_name)
-            return
+            await Profile.objects.leave_showing(_user)
+            await self.channel_layer.group_discard(_cache['showing'].chat_room, self.channel_name)
+
+        # Ping the chat room
         await self.channel_layer.group_send(  # TODO: put as manager method
-            showing.chat_room,
+            _cache['showing'].chat_room,
             {
                 'type': 'broadcast',
-                'text': json.dumps({'comments': [Comment.objects.serialize(comment, ticket)]}),
+                'text': json.dumps({'comments': [Comment.objects.serialize(_cache['comment'], _cache['ticket'])]}),
                 'spotify': spotify,
             }
         )
-        if payload['status'] not in [Comment.STATUS_JOINED, Comment.STATUS_LEFT]:
-            return
+
+        # Join the chat room
         if payload['status'] == Comment.STATUS_JOINED:
-            await Profile.objects.join_showing(self.scope['user'], showing)
-            comments = await Comment.objects.list_comments_async(self.scope['user'], showing, payload['most_recent_comment_timestamp'])
-            comments = [Comment.objects.serialize(comment, ticket) for comment in comments]
+            comments = await Comment.objects.list_comments_async(_user, _cache['showing'], payload['most_recent_comment_timestamp'])
+            comments = [Comment.objects.serialize(_cache['comment'], _cache['ticket']) for comment in comments]
             await self.send({
                 'type': 'websocket.send',
                 'text': json.dumps({'comments': comments}),
