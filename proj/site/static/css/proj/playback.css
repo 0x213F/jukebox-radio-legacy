@@ -2,14 +2,14 @@
 
 }
 
-.playback > .circle-button {
+/* .playback > .circle-button {
   height: 36px;
   width: 36px;
   border-radius: 21px;
   border: 2px solid #576da7;
   float: left;
   cursor: pointer;
-}
+} */
 
 .circle-button {
   height: 34px;
@@ -17,7 +17,7 @@
   border-radius: 21px;
   border: 2px solid #576da7;
   float: left;
-  cursor: pointer;
+  cursor: pointer;margin-right: 0px;
 }
 
 .playback > .circle-button:hover {
@@ -28,11 +28,26 @@
 .playback > .circle-button.play {
   background-image: url('../../../static/svg/play.svg');
   background-repeat: no-repeat;
+  background-size: 19px 19px;
   background-position: center center;
+}
+
+.skip-forward {
+  margin-left: 20px;
+  height: 32px;
+  width: 32px;
+  float: right;
+}
+
+.play-pause {
+  float: right;
+  height: 32px;
+  width: 32px;
 }
 
 .playback > .circle-button.pause {
   background-image: url('../../../static/svg/pause.svg');
+  background-size: 19px 19px;
   background-repeat: no-repeat;
   background-position: center center;
 }
@@ -40,6 +55,7 @@
 .playback > .circle-button.skip-forward {
   background-image: url('../../../static/svg/skip-forward.svg');
   background-repeat: no-repeat;
+  background-size: 19px 19px;
   background-position: center center;
 }
 

@@ -21,14 +21,14 @@ class CommentManager(BaseManager):
         from proj.apps.music.models import Ticket
         Comment = self.model
 
-        if not _cache['showing']:
+        if 'showing' not in _cache:
             _cache['showing'] = (
                 Showing.objects
                 .get(uuid=payload['showing_uuid'])
             )
         showing = _cache['showing']
 
-        if not _cache['ticket']:
+        if 'ticket' not in _cache:
             _cache['ticket'] = (
                 Ticket.objects
                 .get(holder_id=user.id, showing_id=showing.id)

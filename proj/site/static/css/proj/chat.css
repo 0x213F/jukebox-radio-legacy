@@ -1,6 +1,12 @@
 
-.main-chat::-webkit-scrollbar {
+.chat::-webkit-scrollbar {
     display: none;  // Safari and Chrome
+}
+
+.chat {
+  max-height: 400px;-ms-overflow-style: none; scrollbar-width: none;
+  overflow-y: scroll;
+  border-top: 2px #e7eaf2 solid;
 }
 
 
@@ -65,4 +71,38 @@
   top: -39px;
   position: relative;
   left: 230px;
+}
+
+.tile > .group {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.commenter-img {
+  float: left;
+  margin-left: 25px;
+  margin-right: 8px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  width: 6px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+.comment-author {
+  line-height: 24px;
+  font-size: 16px;
+  float: left;
+  padding-top: 4px;
+  margin-bottom: 8px;
+}
+
+.comment-text {
+  margin-left: 40px;
+  padding: 8px;
+  border-radius: 8px;
+  border-top-left-radius: 0px;
+  background-color: #e7eaf2;
+  max-width: 234px;
+  margin-bottom: 4px;
 }

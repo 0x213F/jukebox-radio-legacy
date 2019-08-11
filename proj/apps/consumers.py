@@ -43,14 +43,10 @@ class Consumer(AsyncConsumer):
                 Profile.objects
                 .join_showing_async(_user, payload, _cache=_cache)
             )
-            await (
-                self.channel_layer
-                .group_add(_cache['showing'].chat_room, self.channel_name)
-            )
 
         # Leave the chat room
         if payload['status'] == Comment.STATUS_LEFT:
-            await Profile.objects.leave_showing_async(_user, cache=_cache)
+            await Profile.objects.leave_showing_async(_user)
             await (
                 self.channel_layer
                 .group_discard(_cache['showing'].chat_room, self.channel_name)
@@ -84,6 +80,10 @@ class Consumer(AsyncConsumer):
 
         # Join the chat room
         if payload['status'] == Comment.STATUS_JOINED:
+            await (
+                self.channel_layer
+                .group_add(_cache['showing'].chat_room, self.channel_name)
+            )
             comments = await Comment.objects.list_comments_async(_user, _cache['showing'], payload['most_recent_comment_timestamp'])
             comments = [Comment.objects.serialize(_cache['comment'], _cache['ticket']) for comment in comments]
             await self.send({

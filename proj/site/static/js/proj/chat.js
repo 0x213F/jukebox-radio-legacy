@@ -40,36 +40,35 @@ function onopen(event) {
   // display cached comments
   let cached_comments = JSON.parse(window.localStorage.getItem(KEY_COMMENTS)) || {};
   let chat_comments = cached_comments[showing.uuid];
-  console.log(chat_comments)
   if(chat_comments) {
-    // for(comment of chat_comments) {
-    //   render_comment(comment);
-    // }
+    for(comment of chat_comments) {
+      render_comment(comment);
+    }
   }
 
   // TODO start the countdown timer
-  countdown_timer = setInterval(function(display) {
-    milliseconds = Date.parse(showing.showtime) - Date.now()
-    if(milliseconds < 0) {
-      clearInterval(countdown_timer)
-      $('.waiting-countdown').text('00:00:00')
-      return
-    }
-    seconds = Math.floor(milliseconds / 1000) % 60
-    minutes = Math.floor(milliseconds / 1000 / 60) % 60
-    if(minutes < 9) {
-      minutes = '0' + minutes
-    }
-    if(seconds < 9) {
-      seconds = '0' + seconds
-    }
-    hours = Math.floor(milliseconds / 1000 / 60 / 60)
-    if(hours < 9) {
-      hours = '0' + hours
-    }
-    let showtime = new Date(Date.parse(showing.showtime))
-    $('.waiting-countdown').text(hours + ":" + minutes + ':' + seconds)
-  }, 15)
+  // countdown_timer = setInterval(function(display) {
+  //   milliseconds = Date.parse(showing.showtime) - Date.now()
+  //   if(milliseconds < 0) {
+  //     clearInterval(countdown_timer)
+  //     $('.waiting-countdown').text('00:00:00')
+  //     return
+  //   }
+  //   seconds = Math.floor(milliseconds / 1000) % 60
+  //   minutes = Math.floor(milliseconds / 1000 / 60) % 60
+  //   if(minutes < 9) {
+  //     minutes = '0' + minutes
+  //   }
+  //   if(seconds < 9) {
+  //     seconds = '0' + seconds
+  //   }
+  //   hours = Math.floor(milliseconds / 1000 / 60 / 60)
+  //   if(hours < 9) {
+  //     hours = '0' + hours
+  //   }
+  //   let showtime = new Date(Date.parse(showing.showtime))
+  //   $('.waiting-countdown').text(hours + ":" + minutes + ':' + seconds)
+  // }, 15)
 
   $('.list-showings').hide();
   $('.row.footer').hide();
@@ -94,6 +93,7 @@ function onopen(event) {
       'most_recent_comment_timestamp': null,
     }
   }
+  console.log(data)
   let msg = JSON.stringify(data);
   window['SOCKET'].send(msg)
 }
@@ -110,9 +110,9 @@ function onmessage(event) {
       // NOTHING
       console.log('NOTHING!')
     } else {
-      // for(comment of payload.comments) {
-      //   render_comment(comment);
-      // }
+      for(comment of payload.comments) {
+        render_comment(comment);
+      }
       generate_status_dots();
       $(".detail-showing > .chat").scrollTop($(".detail-showing > .chat")[0].scrollHeight);
       let cached_comments = JSON.parse(window.localStorage.getItem(KEY_COMMENTS)) || {};
