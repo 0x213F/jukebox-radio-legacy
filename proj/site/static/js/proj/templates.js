@@ -102,7 +102,7 @@ function render_comment(comment_obj) {
   }
   let last_visible_commenter = $last_visible_comment.attr('author')
   let last_visible_status = $last_visible_comment.attr('status')
-  if(comment_obj.commenter.profile.display_uuid === user.profile.active_showing.display_uuid) {
+  if(user.profile.active_showing && comment_obj.commenter.profile.display_uuid === user.profile.active_showing.display_uuid) {
     if(last_visible_commenter === user.profile.active_showing.display_uuid) {
       if(last_visible_status === comment_obj.status) {
         // the current user sent 2 comments in a row with the SAME status
@@ -172,7 +172,6 @@ function render_comment(comment_obj) {
       }
     } else {
       // another user sents a comment
-      // console.log('ME!')
       html = `
         <div class="tile seen"
              author="${comment_obj.commenter.profile.display_uuid}"

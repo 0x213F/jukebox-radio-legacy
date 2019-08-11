@@ -4,7 +4,7 @@
 }
 
 .chat {
-  max-height: 400px;-ms-overflow-style: none; scrollbar-width: none;
+  max-height: calc(100vh - 212px);-ms-overflow-style: none; scrollbar-width: none;
   overflow-y: scroll;
   border-top: 2px #e7eaf2 solid;
 }
@@ -82,8 +82,8 @@
   float: left;
   margin-left: 25px;
   margin-right: 8px;
-  margin-top: 2px;
   margin-bottom: 2px;
+  margin-top: 10px;
   width: 6px;
   height: 24px;
   border-radius: 4px;
@@ -93,8 +93,8 @@
   line-height: 24px;
   font-size: 16px;
   float: left;
-  padding-top: 4px;
   margin-bottom: 8px;
+  margin-top: 10px;
 }
 
 .comment-text {
@@ -105,4 +105,38 @@
   background-color: #e7eaf2;
   max-width: 234px;
   margin-bottom: 4px;
+}
+
+.status.waiting {
+  text-align: center;
+  margin-bottom: 15px;
+  font-family: 'Major Mono Display', monospace;
+}
+
+.status.active > .btn {
+  width: 45px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 20px 20px;
+  height: 30px;
+  margin-left: 13px;
+  margin-bottom: 8px;
+  border: 2px solid #576da7;
+}
+
+.status.active > .btn:first-child {
+  margin-left: 18px;
+}
+
+.status.active > .btn.low {
+  background-image: url('https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/white-frowning-face_2639.png');
+}
+.status.active > .btn.mid_low {
+  background-image: url('https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/confused-face_1f615.png');
+}
+.status.active > .btn.mid_high {
+  background-image: url('https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/slightly-smiling-face_1f642.png');
+}
+.status.active > .btn.high {
+  background-image: url('https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/grinning-face_1f600.png');
 }

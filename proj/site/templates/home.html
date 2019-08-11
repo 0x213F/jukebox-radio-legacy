@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block basestyles %}
-<link href="https://fonts.googleapis.com/css?family=Work+Sans:300,400,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Major+Mono+Display|Work+Sans:300,400,700,900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../static/css/proj/base.css">
 <link rel="stylesheet" href="../static/css/proj/list_showings.css">
 <link rel="stylesheet" href="../static/css/proj/detail_showing.css">
@@ -145,21 +145,17 @@
           </div>
         </div>
         <div class="group">
-          <div class="status active" style="display: none;">
+          <div class="status active hidden">
             <button class='btn low'>
-              <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/white-frowning-face_2639.png">
             </button>
             <button class='btn mid_low'>
-              <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/confused-face_1f615.png">
             </button>
             <button class='btn mid_high'>
-              <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/slightly-smiling-face_1f642.png">
             </button>
             <button class='btn high'>
-              <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/214/grinning-face_1f600.png">
             </button>
           </div>
-          <div class="status waiting" style='display: none;'></div>
+          <div class="status waiting hidden"></div>
         </div>
         <div class="group chat-input">
           <input id='chat-input' class="chat-text" type="text">
