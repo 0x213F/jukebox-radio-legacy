@@ -28,6 +28,7 @@ function display_detail_showing() {
     let $this = $(this);
     let text = $('#chat-input').val()
     if(!text) {
+      $('#chat-input').focus();
       return;
     }
     if(($this.attr('id') === 'chat-input' && e.keyCode == 13) || $this.attr('id') === 'chat-submit') {

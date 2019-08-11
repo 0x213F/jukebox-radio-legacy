@@ -26,6 +26,11 @@ function generate_showing(showing) {
   `
 }
 
+// SAVE
+// https://feathericons.com/?query=el
+// https://www.color-hex.com/color/0f2f82
+// https://www.color-hex.com/color/2f820f
+// https://www.color-hex.com/color/820f2f
 
 DOT = `<div style='height: 6px; width: 6px; border-radius: 2px; float: left; margin-right: 2px;'></div>`
 function generate_status_dots() {
@@ -60,6 +65,7 @@ function generate_status_dots() {
   let status = map_user_to_status[user.profile.active_showing.display_uuid];
   console.log(user.profile.active_showing.display_uuid)
   console.log(map_user_to_status)
+  $(`.btn`).removeClass('active');
   if(status) {
       $(`.btn.${status}`).addClass('active');
   }

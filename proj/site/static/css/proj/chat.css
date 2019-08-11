@@ -7,6 +7,8 @@
   max-height: calc(100vh - 249.99px);-ms-overflow-style: none; scrollbar-width: none;
   overflow-y: scroll;
   border-top: 2px #e7eaf2 solid;
+  border-bottom: 2px #e7eaf2 solid;
+  padding-bottom: 4px;
 }
 
 
