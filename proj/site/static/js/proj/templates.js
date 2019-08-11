@@ -30,14 +30,18 @@ function generate_showing(showing) {
 DOT = `<div style='height: 6px; width: 6px; border-radius: 2px; float: left; margin-right: 2px;'></div>`
 function generate_status_dots() {
   var map_user_to_status = {}
-  $('.panel > .panel-body').children().each(function( index ) {
-    map_user_to_status[$(this).attr('author')] = $(this).attr('status');
+  $('.detail-showing > .chat').children().each(function( index ) {
+    if($(this).attr('status') === 'joined') {
+
+    } else {
+        map_user_to_status[$(this).attr('author')] = $(this).attr('status');
+    }
   });
   low_count = 0
   mid_low_count = 0
   mid_high_count = 0
   high_count = 0
-  for(status of Object.values(map_user_to_status)) {
+  for(let status of Object.values(map_user_to_status)) {
     if(status ==='low') {
       low_count++;
     } else if(status ==='mid_low') {
@@ -52,6 +56,13 @@ function generate_status_dots() {
   $('.dot-container.mid_low').empty().append(DOT.repeat(mid_low_count))
   $('.dot-container.mid_high').empty().append(DOT.repeat(mid_high_count))
   $('.dot-container.high').empty().append(DOT.repeat(high_count))
+  let user = JSON.parse(window.localStorage.getItem(KEY_USER));
+  let status = map_user_to_status[user.profile.active_showing.display_uuid];
+  console.log(user.profile.active_showing.display_uuid)
+  console.log(map_user_to_status)
+  if(status) {
+      $(`.btn.${status}`).addClass('active');
+  }
 }
 
 function render_comment(comment_obj) {
@@ -81,15 +92,15 @@ function render_comment(comment_obj) {
 
   let background_color = undefined;
   if(comment_obj.status == 'waiting') {
-    background_color = '#c4c9d3';
-  } else if(comment_obj.status == 'low') {
     background_color = '#cdddd6';
+  } else if(comment_obj.status == 'low') {
+    background_color = '#b46f82';
   } else if(comment_obj.status == 'mid_low') {
-    background_color = '#699985';
+    background_color = '#d9b7c0';
   } else if(comment_obj.status == 'mid_high') {
-    background_color = '#37765d';
+    background_color = '#c0d9b7';
   } else if(comment_obj.status == 'high') {
-    background_color = '#022215';
+    background_color = '#82b46f';
   }
 
   let $last_visible_comment = $last_comment;
@@ -112,7 +123,7 @@ function render_comment(comment_obj) {
                status="${comment_obj.status}"
                timestamp="${comment_obj.showing_timestamp}">
             <div class="group">
-              <div class="comment-text chat-margin-left">${comment_obj.text}</div>
+              <div class="comment-text">${comment_obj.text}</div>
             </div>
           </div>`;
       } else {
@@ -124,14 +135,14 @@ function render_comment(comment_obj) {
                timestamp="${comment_obj.showing_timestamp}">
             <div class="group">
               <div class="commenter-img" style="background-color: ${background_color};"></div>
-              <div class="comment-text">${comment_obj.text}</div>
+              <div class="comment-text chat-margin-left">${comment_obj.text}</div>
             </div>
           </div>`;
       }
     } else {
       // the current user sents a comment
       html = `
-        <div class="tile seen"
+        <div class="tile seen full"
              author="${comment_obj.commenter.profile.display_uuid}"
              status="${comment_obj.status}"
              timestamp="${comment_obj.showing_timestamp}">
@@ -140,7 +151,7 @@ function render_comment(comment_obj) {
             <div class="comment-author">${comment_obj.commenter.profile.display_name}</div>
           </div>
           <div class="group">
-            <div class="comment-text chat-margin-left">${comment_obj.text}</div>
+            <div class="comment-text">${comment_obj.text}</div>
           </div>
         </div>`;
     }
@@ -154,7 +165,7 @@ function render_comment(comment_obj) {
                status="${comment_obj.status}"
                timestamp="${comment_obj.showing_timestamp}">
             <div class="group">
-              <div class="comment-text chat-margin-left">${comment_obj.text}</div>
+              <div class="comment-text">${comment_obj.text}</div>
             </div>
           </div>`;
       } else {
@@ -166,14 +177,14 @@ function render_comment(comment_obj) {
                timestamp="${comment_obj.showing_timestamp}">
             <div class="group">
               <div class="commenter-img" style="background-color: ${background_color};"></div>
-              <div class="comment-text">${comment_obj.text}</div>
+              <div class="comment-text chat-margin-left">${comment_obj.text}</div>
             </div>
           </div>`;
       }
     } else {
       // another user sents a comment
       html = `
-        <div class="tile seen"
+        <div class="tile seen full"
              author="${comment_obj.commenter.profile.display_uuid}"
              status="${comment_obj.status}"
              timestamp="${comment_obj.showing_timestamp}">
@@ -182,7 +193,7 @@ function render_comment(comment_obj) {
             <div class="comment-author">${comment_obj.commenter.profile.display_name}</div>
           </div>
           <div class="group">
-            <div class="comment-text chat-margin-left">${comment_obj.text}</div>
+            <div class="comment-text">${comment_obj.text}</div>
           </div>
         </div>`;
     }

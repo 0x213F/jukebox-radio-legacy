@@ -41,7 +41,8 @@ function display_detail_showing() {
       }
       let msg = JSON.stringify(data);
       window['SOCKET'].send(msg)
-      $('#chat-input').val('')
+      $('#chat-input').val('');
+      $('#chat-input').focus();
       clearInterval(INTERVAL_SEND_WAITING_COMMENT)
       INTERVAL_SEND_WAITING_COMMENT = setInterval(send_waiting_comment, 30000)
     }
@@ -65,13 +66,12 @@ function display_detail_showing() {
     setTimeout(function() {
       window['SOCKET'].close();
     }, 10);
-    $('#current-showing').hide();
+    $('.detail-showing').hide();
     $('.list-showings').show();
-    $('#account').show();
-    $('.panel > .panel-body').empty();
-    $('.panel > .panel-body').append(`
-      <div class="tile seen"
-           style="display: none;"
+    $('.footer').show();
+    $('.chat').empty();
+    $('.chat').append(`
+      <div class="tile seen hidden"
            author="system"
            status="base"
            timestamp="-Infinity">
@@ -80,8 +80,9 @@ function display_detail_showing() {
   })
 
   // A: setup status buttons
-  $('.input-group > .statuses > .btn').click(function(e) {
-    $('.input-group > .statuses > .btn').removeClass('active')
+  $('.group > .status.active > .btn').click(function(e) {
+    console.log('bns')
+    $('.group > .status.active > .btn').removeClass('active')
     $(this).addClass('active')
     $('#chat-input').removeClass('disabled');
     $('#chat-input').prop('disabled', false);
@@ -97,6 +98,7 @@ function display_detail_showing() {
     }
     let msg = JSON.stringify(data);
     window['SOCKET'].send(msg)
+    $('#chat-input').focus();
   });
 
   $('.playback > .circle-button').click(function() {
@@ -118,7 +120,8 @@ function display_detail_showing() {
       data.status = 'next';
     }
     let msg = JSON.stringify(data);
-    window['SOCKET'].send(msg)
+    window['SOCKET'].send(msg);
+    $('#chat-input').focus();
   });
 
 }
