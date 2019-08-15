@@ -137,3 +137,37 @@ function onmessage(event) {
     $('.status.waiting').hide();
   }
 }
+
+var shiftPressed = false;
+$(window).keydown(function(evt) {
+  if (evt.which == 16) { // shift
+    shiftPressed = true;
+  } else if(evt.which == 39) { // right arrow
+    var $el = $('.group > .status.active > .btn.active');
+    // $el.removeClass('active');
+    if($el.hasClass('low')) {
+      $('.group > .status > .btn.mid_low').click();
+    } else if($el.hasClass('mid_low')) {
+      $('.group > .status > .btn.mid_high').click();
+    } else if($el.hasClass('mid_high')) {
+      $('.group > .status > .btn.high').click();
+    } else if($el.hasClass('high')) {
+      $('.group > .status > .btn.low').click();
+    }
+  } else if(evt.which == 37) { // left arrow
+    var $el = $('.group > .status.active > .btn.active');
+    if($el.hasClass('low')) {
+      $('.group > .status > .btn.high').click();
+    } else if($el.hasClass('mid_low')) {
+      $('.group > .status > .btn.low').click();
+    } else if($el.hasClass('mid_high')) {
+      $('.group > .status > .btn.mid_low').click();
+    } else if($el.hasClass('high')) {
+      $('.group > .status > .btn.mid_high').click();
+    }
+  }
+}).keyup(function(evt) {
+  if (evt.which == 16) { // shift
+    shiftPressed = false;
+  }
+});

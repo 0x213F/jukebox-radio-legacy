@@ -63,8 +63,6 @@ function generate_status_dots() {
   $('.dot-container.high').empty().append(DOT.repeat(high_count))
   let user = JSON.parse(window.localStorage.getItem(KEY_USER));
   let status = map_user_to_status[user.profile.active_showing.display_uuid];
-  console.log(user.profile.active_showing.display_uuid)
-  console.log(map_user_to_status)
   $(`.btn`).removeClass('active');
   if(status) {
       $(`.btn.${status}`).addClass('active');
@@ -124,7 +122,7 @@ function render_comment(comment_obj) {
       if(last_visible_status === comment_obj.status) {
         // the current user sent 2 comments in a row with the SAME status
         html = `
-          <div class="tile seen"
+          <div class="tile me seen"
                author="${comment_obj.commenter.profile.display_uuid}"
                status="${comment_obj.status}"
                timestamp="${comment_obj.showing_timestamp}">
@@ -135,26 +133,26 @@ function render_comment(comment_obj) {
       } else {
         // the current user sent 2 comments in a row with the DIFFERENT statuses
         html = `
-          <div class="tile seen"
+          <div class="tile me seen"
                author="${comment_obj.commenter.profile.display_uuid}"
                status="${comment_obj.status}"
                timestamp="${comment_obj.showing_timestamp}">
             <div class="group">
-              <div class="commenter-img" style="background-color: ${background_color};"></div>
               <div class="comment-text chat-margin-left">${comment_obj.text}</div>
+              <div class="commenter-img" style="background-color: ${background_color};"></div>
             </div>
           </div>`;
       }
     } else {
       // the current user sents a comment
       html = `
-        <div class="tile seen full"
+        <div class="tile me seen full"
              author="${comment_obj.commenter.profile.display_uuid}"
              status="${comment_obj.status}"
              timestamp="${comment_obj.showing_timestamp}">
           <div class="group">
-            <div class="commenter-img" style="background-color: ${background_color};"></div>
             <div class="comment-author">${comment_obj.commenter.profile.display_name}</div>
+            <div class="commenter-img" style="background-color: ${background_color};"></div>
           </div>
           <div class="group">
             <div class="comment-text">${comment_obj.text}</div>
@@ -166,7 +164,7 @@ function render_comment(comment_obj) {
       if(last_visible_status === comment_obj.status) {
         // another user sent 2 comments in a row with the SAME status
         html = `
-          <div class="tile seen"
+          <div class="tile other seen"
                author="${comment_obj.commenter.profile.display_uuid}"
                status="${comment_obj.status}"
                timestamp="${comment_obj.showing_timestamp}">
@@ -177,7 +175,7 @@ function render_comment(comment_obj) {
       } else {
         // another user sent 2 comments in a row with DIFFERENT statuses
         html = `
-          <div class="tile seen"
+          <div class="tile other seen"
                author="${comment_obj.commenter.profile.display_uuid}"
                status="${comment_obj.status}"
                timestamp="${comment_obj.showing_timestamp}">
@@ -190,7 +188,7 @@ function render_comment(comment_obj) {
     } else {
       // another user sents a comment
       html = `
-        <div class="tile seen full"
+        <div class="tile other seen full"
              author="${comment_obj.commenter.profile.display_uuid}"
              status="${comment_obj.status}"
              timestamp="${comment_obj.showing_timestamp}">

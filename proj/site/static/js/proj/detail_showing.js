@@ -82,7 +82,6 @@ function display_detail_showing() {
 
   // A: setup status buttons
   $('.group > .status.active > .btn').click(function(e) {
-    console.log('bns')
     $('.group > .status.active > .btn').removeClass('active')
     $(this).addClass('active')
     $('#chat-input').removeClass('disabled');
