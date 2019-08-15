@@ -39,4 +39,5 @@ class Track(BaseModel):
     )
     name = models.CharField(max_length=128)
     number = models.PositiveIntegerField()
-    runtime = models.FloatField()
+    runtime = models.DurationField()
+    spotify_uri = models.CharField(max_length=36)

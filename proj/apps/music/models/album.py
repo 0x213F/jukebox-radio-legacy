@@ -31,6 +31,7 @@ class Album(BaseModel):
         related_name='albums',
         on_delete=models.DO_NOTHING,
     )
+    sides = models.ManyToManyField('music.Side', blank=True)
     title = models.CharField(max_length=128)
     release_date = models.DateField()
     spotify_uri = models.CharField(max_length=36)
