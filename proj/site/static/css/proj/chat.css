@@ -6,7 +6,7 @@
 }
 
 .chat {
-  height: calc(100vh - 237px);-ms-overflow-style: none; scrollbar-width: none;
+  height: calc(100vh - 243.99px);-ms-overflow-style: none; scrollbar-width: none;
   overflow-y: scroll;
   border-top: 2px #e7eaf2 solid;
   border-bottom: 2px #e7eaf2 solid;
@@ -214,7 +214,7 @@
 }
 
 .chat-margin-left {
-  margin-left: 0px;
+  margin-left: 0px!important;
 }
 
 .tile.seen.full {

@@ -140,10 +140,12 @@ function onmessage(event) {
 
 var shiftPressed = false;
 $(window).keydown(function(evt) {
+  console.log(evt.which)
   if (evt.which == 16) { // shift
     shiftPressed = true;
-  } else if(evt.which == 39) { // right arrow
+  } else if(evt.which == 39 && shiftPressed) { // right arrow
     var $el = $('.group > .status.active > .btn.active');
+    evt.preventDefault()
     // $el.removeClass('active');
     if($el.hasClass('low')) {
       $('.group > .status > .btn.mid_low').click();
@@ -154,8 +156,9 @@ $(window).keydown(function(evt) {
     } else if($el.hasClass('high')) {
       $('.group > .status > .btn.low').click();
     }
-  } else if(evt.which == 37) { // left arrow
+  } else if(evt.which == 37 && shiftPressed) { // left arrow
     var $el = $('.group > .status.active > .btn.active');
+    evt.preventDefault()
     if($el.hasClass('low')) {
       $('.group > .status > .btn.high').click();
     } else if($el.hasClass('mid_low')) {
@@ -167,6 +170,7 @@ $(window).keydown(function(evt) {
     }
   }
 }).keyup(function(evt) {
+  console.log(evt.which)
   if (evt.which == 16) { // shift
     shiftPressed = false;
   }

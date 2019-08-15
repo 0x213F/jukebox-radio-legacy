@@ -138,7 +138,7 @@ function render_comment(comment_obj) {
                status="${comment_obj.status}"
                timestamp="${comment_obj.showing_timestamp}">
             <div class="group">
-              <div class="comment-text chat-margin-left">${comment_obj.text}</div>
+              <div class="comment-text chat-margin-left" style="margin-left: auto!important;">${comment_obj.text}</div>
               <div class="commenter-img" style="background-color: ${background_color};"></div>
             </div>
           </div>`;
