@@ -29,6 +29,7 @@ ALLOWED_HOSTS = [
 	SERVER_IP,
 	'localhost',
 	'127.0.0.1',
+	'165.22.167.254',
 ]
 
 
