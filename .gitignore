@@ -8,3 +8,6 @@ bin/
 # compiled
 *.pyc
 __pycache__/
+
+# config
+proj/secrets.py
