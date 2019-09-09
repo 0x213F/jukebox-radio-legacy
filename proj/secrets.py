@@ -1,8 +1,13 @@
-SERVER_IP = '0.0.0.0'
+SERVER_IP = '157.245.173.147'
 
-DB_NAME = 'chess'
-DB_USER = 'dev'
-DB_PASSWORD = 'password'
+DB_HOST_URL = 'private-db-postgresql-sfo2-61001-do-user-6189280-0.db.ondigitalocean.com'
+DB_HOST_PORT = 25060
+DB_NAME = 'musicappdb'
+DB_USER = 'musicappadmin'
+DB_PASSWORD = 'mt50jzyf8caelqo8'
+
+REDIS_HOST_URL = 'private-db-redis-sfo2-11683-do-user-6189280-0.db.ondigitalocean.com'
+REDIS_HOST_PORT = 25061
 
 SPOTIFY_CLIENT_ID = ''
 SPOITFY_CLIENT_SECRET = ''
