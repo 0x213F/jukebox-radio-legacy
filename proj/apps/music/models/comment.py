@@ -39,10 +39,11 @@ class Comment(BaseModel):
     STATUS_PREV = 'prev'
 
     STATUS_TEXT_CHOICES = [
-        (STATUS_PLAY, 'Played'),
-        (STATUS_PAUSE, 'Paused'),
-        (STATUS_NEXT, 'Skipped'),
-        (STATUS_PREV, 'Backtracked'),
+        (STATUS_LOW, ':('),
+        (STATUS_MID_LOW, ':/'),
+        (STATUS_NEUTRAL, ':|'),
+        (STATUS_MID_HIGH, ':)'),
+        (STATUS_HIGH, ':D'),
     ]
 
     STATUS_PLAYER_CHOICES = [
@@ -65,6 +66,11 @@ class Comment(BaseModel):
         (STATUS_NEUTRAL, ':|'),
         (STATUS_MID_HIGH, ':)'),
         (STATUS_HIGH, ':D'),
+        (STATUS_PLAY, 'Played'),
+        (STATUS_PAUSE, 'Paused'),
+        (STATUS_NEUTRAL, 'Neutral'),
+        (STATUS_NEXT, 'Skipped'),
+        (STATUS_PREV, 'Backtracked'),
     ]
 
     class Meta:
