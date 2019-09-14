@@ -32,9 +32,17 @@ class Comment(BaseModel):
     STATUS_MID_HIGH = 'mid_high'
     STATUS_HIGH = 'high'
 
-    STATUS_PAUSE = 'pause'
     STATUS_PLAY = 'play'
-    STATUS_SKIP_FORWARD = 'next'
+    STATUS_PAUSE = 'pause'
+    STATUS_NEXT = 'next'
+    STATUS_PREV = 'prev'
+
+    STATUS_PLAYER_CHOICES = [
+        (STATUS_PLAY, 'Played'),
+        (STATUS_PAUSE, 'Paused'),
+        (STATUS_NEXT, 'Skipped'),
+        (STATUS_PREV, 'Backtracked'),
+    ]
 
     STATUS_CHOICES = [
         (STATUS_JOINED, 'Joined'),

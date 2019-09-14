@@ -12,6 +12,14 @@ class CommentManager(BaseManager):
     Django Manager used to manage Comment objects.
     '''
 
+    def validate_create_comment_request(self, user, payload):
+        Comment = self.model
+        return Comment.RESULT_TRUE
+
+    async def validate_create_comment_request_async(self, user, payload):
+        Comment = self.model
+        return Comment.RESULT_TRUE
+
     # TODO: get showing from cache (clean up on terminate showing)
     # TODO: showing_timestamp
     # TODO: track_id

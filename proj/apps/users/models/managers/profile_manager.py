@@ -1,4 +1,5 @@
 
+import json
 import uuid
 
 from datetime import datetime
@@ -41,23 +42,36 @@ class ProfileManager(BaseManager):
             active_showing_uuid=None,
         )
 
-    async def join_showing_async(self, user, payload, *, _cache=None):
+
+
+    async def join_showing_async(self, user, showing_uuid, *, _cache=None):
         from proj.apps.music.models import Showing
         from proj.apps.music.models import Ticket
 
-        showing = Showing.objects.get(uuid=payload['showing_uuid'])
-        _cache['showing'] = showing
+        _cache = self._get_or_fetch_from_cache(
+            _cache,
+            'showing',
+            fetch_func=Showing.objects.get,
+            fetch_kwargs={'uuid': showing_uuid}
+        )
+        showing = _cache['showing']
 
         user.profile.active_showing_uuid = showing.uuid
         user.profile.save()
 
-        ticket, _ = Ticket.objects.get_or_create(
-            holder=user,
-            showing=showing,
-            defaults={
-                'timestamp_last_active': datetime.utcnow(),
-                'display_name': user.profile.default_display_name or 'Default',
-                'display_uuid': uuid.uuid4(),
+        _cache = self._get_or_fetch_from_cache(
+            _cache,
+            'ticket',
+            fetch_func=Ticket.objects.get_or_create,
+            fetch_kwargs={
+                'holder': user,
+                'showing': showing,
+                'defaults': {
+                    'timestamp_last_active': datetime.utcnow(),
+                    'display_name': user.profile.default_display_name or 'Default',
+                    'display_uuid': uuid.uuid4(),
+                }
             }
         )
-        _cache['ticket'] = ticket
+
+        return _cache

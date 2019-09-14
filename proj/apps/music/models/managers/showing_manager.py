@@ -43,7 +43,6 @@ class ShowingManager(BaseManager):
         showing.status = status
         showing.save()
         now_str = now.isoformat()
-        print('broadcasting!!')
         async_to_sync(channel_layer.group_send)(
             showing.chat_room,
             {
