@@ -62,7 +62,7 @@ function generate_status_dots() {
   $('.dot-container.mid_high').empty().append(DOT.repeat(mid_high_count))
   $('.dot-container.high').empty().append(DOT.repeat(high_count))
   let user = JSON.parse(window.localStorage.getItem(KEY_USER));
-  let status = map_user_to_status[user.profile.active_showing.display_uuid];
+  let status = map_user_to_status[user.profile.showings[0].display_uuid];
   $(`.btn`).removeClass('active');
   if(status) {
       $(`.btn.${status}`).addClass('active');

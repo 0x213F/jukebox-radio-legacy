@@ -5,9 +5,7 @@ from django.apps import apps
 from django.core.serializers import serialize
 from django.db import models
 
-
-def noop(*args, **kwargs):
-    pass
+from proj.core.fns.etc import noop
 
 
 class BaseManager(models.Manager):
@@ -33,9 +31,14 @@ class BaseManager(models.Manager):
             except Exception:
                 pass
             cache[key] = result
-            print(cache)
 
         return cache
+
+    def _set_cache(self, cache, key, value):
+        '''
+        Given a key and cache object, set the value in cache for the key.
+        '''
+        cache[key] = value
 
     def response(self, results):
         '''

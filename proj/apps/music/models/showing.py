@@ -20,6 +20,8 @@ class Showing(BaseModel):
     # config model
     # - - - - - - -
 
+    USER_TIMEOUT_IN_SECONDS = 30
+
     STATUS_SCHEDULED = 'scheduled'
     STATUS_ACTIVATED = 'activated'
     STATUS_COMPLETED = 'completed'

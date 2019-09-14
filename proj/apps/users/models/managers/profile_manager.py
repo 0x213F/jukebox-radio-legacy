@@ -17,13 +17,28 @@ class ProfileManager(BaseManager):
     '''
 
     def serialize_user(self, user, active_ticket=None):
+        '''
+        Serialize the user fields along with:
+
+        - It's profile.
+        - List of active showings (just 1 for now).
+        '''
         other_profile_fields = {}
         if active_ticket:
-            other_profile_fields['active_showing'] = {
-                'uuid': user.profile.active_showing_uuid,
-                'display_name': active_ticket.display_name,
-                'display_uuid': active_ticket.display_uuid,
-            }
+            other_profile_fields['showings'] = [
+                {
+                    'showing_is_administrator': active_ticket.is_administrator,
+                    'showing_uuid': user.profile.active_showing_uuid,
+                    'display_name': active_ticket.display_name,
+                    'display_uuid': active_ticket.display_uuid,
+                }
+            ]
+
+        scopes = {
+            'spotify': bool(user.profile.spotify_scope),
+            'apple_music': False,
+            'file_system': False,
+        }
 
         return {
             'first_name': user.first_name,
@@ -31,12 +46,15 @@ class ProfileManager(BaseManager):
             'email': user.email,
             'profile': {
                 'display_name': user.profile.default_display_name,
-                'has_spotify': bool(user.profile.spotify_scope),
+                'scopes': scopes,
                 **other_profile_fields
             },
         }
 
     async def leave_showing_async(self, user):
+        '''
+        - Update the user's active showing on their profile.
+        '''
         Profile = self.model
         Profile.objects.filter(user_id=user.id).update(
             active_showing_uuid=None,
@@ -45,6 +63,12 @@ class ProfileManager(BaseManager):
 
 
     async def join_showing_async(self, user, showing_uuid, *, _cache=None):
+        '''
+        After getting the active showing by UUID:
+
+        - Update the user's active showing on their profile.
+        - Create or create a ticket record for the user.
+        '''
         from proj.apps.music.models import Showing
         from proj.apps.music.models import Ticket
 

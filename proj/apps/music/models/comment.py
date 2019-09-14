@@ -29,6 +29,7 @@ class Comment(BaseModel):
 
     STATUS_LOW = 'low'
     STATUS_MID_LOW = 'mid_low'
+    STATUS_NEUTRAL = 'neutral'
     STATUS_MID_HIGH = 'mid_high'
     STATUS_HIGH = 'high'
 
@@ -37,9 +38,17 @@ class Comment(BaseModel):
     STATUS_NEXT = 'next'
     STATUS_PREV = 'prev'
 
+    STATUS_TEXT_CHOICES = [
+        (STATUS_PLAY, 'Played'),
+        (STATUS_PAUSE, 'Paused'),
+        (STATUS_NEXT, 'Skipped'),
+        (STATUS_PREV, 'Backtracked'),
+    ]
+
     STATUS_PLAYER_CHOICES = [
         (STATUS_PLAY, 'Played'),
         (STATUS_PAUSE, 'Paused'),
+        (STATUS_NEUTRAL, 'Neutral'),
         (STATUS_NEXT, 'Skipped'),
         (STATUS_PREV, 'Backtracked'),
     ]
@@ -53,6 +62,7 @@ class Comment(BaseModel):
         (STATUS_TERMINATED, 'Terminated'),
         (STATUS_LOW, ':('),
         (STATUS_MID_LOW, ':/'),
+        (STATUS_NEUTRAL, ':|'),
         (STATUS_MID_HIGH, ':)'),
         (STATUS_HIGH, ':D'),
     ]
@@ -84,7 +94,7 @@ class Comment(BaseModel):
         related_name='comments',
         on_delete=models.DO_NOTHING,
     )
-    showing_timestamp = models.DurationField()
+    showing_timestamp = models.DurationField()  # TODO rename to showing_duration
     track = models.ForeignKey(
         'music.Track',
         related_name='comments',
@@ -92,4 +102,4 @@ class Comment(BaseModel):
         null=True,
         blank=True,
     )
-    track_timestamp = models.DurationField()
+    track_timestamp = models.DurationField()  # TODO rename to track_duration
