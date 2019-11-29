@@ -15,9 +15,10 @@ function display_list_showings(data) {
   }
   $('.showing.card').click(display_detail_showing);
 
-  if(user.profile.active_showing) {
-    let active_showing_uuid = user.profile.active_showing.uuid
-    if(active_showing_uuid && $(`[uuid="${active_showing_uuid}"]`).length) {
+  let active_showing_uuid = user.profile.active_showing_uuid
+  if(active_showing_uuid) {
+    let $active_showing = $(`[uuid="${active_showing_uuid}"]`)
+    if($active_showing.length) {
       $(`[uuid="${active_showing_uuid}"]`).click();
       return;
     }

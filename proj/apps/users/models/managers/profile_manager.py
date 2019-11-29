@@ -23,21 +23,10 @@ class ProfileManager(BaseManager):
         - It's profile.
         - List of active showings (just 1 for now).
         '''
-        other_profile_fields = {}
-        if active_ticket:
-            other_profile_fields['showings'] = [
-                {
-                    'showing_is_administrator': active_ticket.is_administrator,
-                    'showing_uuid': user.profile.active_showing_uuid,
-                    'display_name': active_ticket.display_name,
-                    'display_uuid': active_ticket.display_uuid,
-                }
-            ]
+        active_ticket = active_ticket or {}
 
         scopes = {
             'spotify': bool(user.profile.spotify_scope),
-            'apple_music': False,
-            'file_system': False,
         }
 
         return {
@@ -45,9 +34,9 @@ class ProfileManager(BaseManager):
             'last_name': user.last_name,
             'email': user.email,
             'profile': {
-                'display_name': user.profile.default_display_name,
+                'display_name': getattr(active_ticket, 'display_name', None),
                 'scopes': scopes,
-                **other_profile_fields
+                'active_showing_uuid': user.profile.active_showing_uuid,
             },
         }
 

@@ -1,23 +1,6 @@
 
 var KEY_COMMENTS = 'comments'
 
-var INTERVAL_SEND_WAITING_COMMENT = null
-function send_waiting_comment() {
-  let showings = JSON.parse(window.localStorage.getItem(KEY_SHOWINGS));
-  let user = JSON.parse(window.localStorage.getItem(KEY_USER));
-  let showing = showings.find(function(obj) {
-    return obj.uuid === user.profile.active_showing_uuid;
-  });
-  let data = {
-    'status': 'waiting',
-    'message': null,
-    'showing_uuid': showing.uuid,
-    'track_id': null,
-    'text': null,
-  }
-  let msg = JSON.stringify(data);
-    window['SOCKET'].send(msg)
-}
 
 // ON OPEN
 function onopen(event) {

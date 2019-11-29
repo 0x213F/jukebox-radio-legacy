@@ -50,6 +50,7 @@ class Showing(BaseModel):
         'music.Album',
         related_name='albums',
         on_delete=models.DO_NOTHING,
+        null=True, blank=False,
     )
     showtime_actual = models.DateTimeField(null=True, blank=False)
     showtime_scheduled = models.DateTimeField()

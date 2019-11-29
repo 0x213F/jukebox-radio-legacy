@@ -2,7 +2,7 @@
 from proj.core.models.querysets import BaseQuerySet
 
 
-class SideQuerySet(BaseQuerySet):
+class RecordQuerySet(BaseQuerySet):
     '''
     Django QuerySet used to query Side objects.
     '''

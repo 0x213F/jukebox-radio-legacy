@@ -8,7 +8,7 @@ from proj.apps.music.models import Showing
 class ShowingForm(forms.ModelForm):
     class Meta:
         model = Showing
-        fields = ('album', 'showtime_scheduled')
+        fields = ('showtime_scheduled', )
 
 
 @admin.register(Showing)
@@ -19,7 +19,6 @@ class ShowingAdmin(admin.ModelAdmin):
 
     def activate_showing(self, request, queryset):
         scheduled = queryset.filter(status=Showing.STATUS_SCHEDULED)
-        print(queryset.count(), scheduled.count())
         if queryset.count() != scheduled.count():
             return
         for showing in queryset:

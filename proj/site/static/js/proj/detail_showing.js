@@ -14,10 +14,6 @@ function display_detail_showing() {
   user.profile.active_showing_uuid = uuid;
   window.localStorage.setItem(KEY_USER, JSON.stringify(user));
 
-  if(showing.status === 'scheduled') {
-    INTERVAL_SEND_WAITING_COMMENT = setInterval(send_waiting_comment, 30000)
-  }
-
   // 3: define submit msg behavior
   function submit(e) {
     let showings = JSON.parse(window.localStorage.getItem(KEY_SHOWINGS));
@@ -43,8 +39,6 @@ function display_detail_showing() {
       window['SOCKET'].send(msg)
       $('#chat-input').val('');
       $('#chat-input').focus();
-      clearInterval(INTERVAL_SEND_WAITING_COMMENT)
-      INTERVAL_SEND_WAITING_COMMENT = setInterval(send_waiting_comment, 30000)
     }
   }
   $('#chat-input').on('keyup', submit);
@@ -52,7 +46,6 @@ function display_detail_showing() {
 
   // 8: leave chatroom
   $('.leave.leave-button').click(function() {
-    clearInterval(INTERVAL_SEND_WAITING_COMMENT)
     // 7: leaving chatroom
 
     let data = {

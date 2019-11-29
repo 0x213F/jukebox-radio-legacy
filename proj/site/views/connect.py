@@ -20,9 +20,6 @@ class ConnectView(BaseView):
 
         response = requests.post(
             'https://accounts.spotify.com/api/token',
-            # headers={
-            #     'Authorization': 'Basic *<base64 encoded 890e3c32aaac4e0fa3dd5cfc22835f11:ce1072297bb0469e9adf1820c38616fa>*'
-            # },
             data={
                 'grant_type': 'authorization_code',
                 'code': code,
@@ -32,7 +29,6 @@ class ConnectView(BaseView):
             }
         )
         response_json = response.json()
-        print(response_json)
         request.user.profile.spotify_access_token = response_json['access_token']
         request.user.profile.spotify_refresh_token = response_json['refresh_token']
         request.user.profile.spotify_scope = response_json['scope']

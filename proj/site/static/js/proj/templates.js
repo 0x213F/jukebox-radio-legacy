@@ -17,13 +17,23 @@ function generate_showing(showing) {
     showtime_timestring = 'Completed'
     background_color = ` style="background-color: #8e2643!important;"`
   }
-  return `
-    <div class="showing card" uuid="${showing.uuid}">
-      <span class="showing-album-title label label-rounded">${showing.album.title}</span><br>
-      <img class="showing-album-art" src="${showing.album.art}" alt="${showing.album.title}">
-      <span class="showing-showtime-scheduled label label-rounded"${background_color}>${showtime_timestring}</span>
-    </div>
-  `
+  if(showing.album) {
+    return `
+      <div class="showing card" uuid="${showing.uuid}">
+        <span class="showing-album-title label label-rounded">${showing.album.title}</span><br>
+        <img class="showing-album-art" src="${showing.album.art}" alt="${showing.album.title}">
+        <span class="showing-showtime-scheduled label label-rounded"${background_color}>${showtime_timestring}</span>
+      </div>
+    `
+  } else {
+    return `
+      <div class="showing card" uuid="${showing.uuid}">
+        <span class="showing-album-title label label-rounded">SHOWING</span><br>
+        <img class="showing-album-art" src="" alt="ART">
+        <span class="showing-showtime-scheduled label label-rounded"${background_color}>${showtime_timestring}</span>
+      </div>
+    `
+  }
 }
 
 // SAVE

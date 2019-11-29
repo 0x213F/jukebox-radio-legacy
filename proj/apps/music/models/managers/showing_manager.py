@@ -23,18 +23,22 @@ class ShowingManager(BaseManager):
             showing.showtime_actual.isoformat() if showing.showtime_actual
             else None
         )
-        return {
-            'uuid': showing.uuid,
-            'status': showing.status,
-            'showtime_actual': showtime_actual_str,
-            'showtime_scheduled': showing.showtime_scheduled.isoformat(),
-            'album': {
+        try:
+            album = {
                 'art': showing.album.art,
                 'title': showing.album.title,
                 'artist': {
                     'full_name': showing.album.artist.full_name,
                 }
             }
+        except:
+            album = None
+        return {
+            'uuid': showing.uuid,
+            'status': showing.status,
+            'showtime_actual': showtime_actual_str,
+            'showtime_scheduled': showing.showtime_scheduled.isoformat(),
+            'album': album
         }
 
     def change_status(self, showing, status):
@@ -47,9 +51,6 @@ class ShowingManager(BaseManager):
             showing.chat_room,
             {
                 'type': 'broadcast',
-                'spotify': {
-                    'context_uri': showing.album.spotify_uri,
-                },
                 'text': json.dumps({
                     'source': {
                         'type': 'system',

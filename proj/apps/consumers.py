@@ -53,7 +53,6 @@ class Consumer(AsyncConsumer):
             comments = await Comment.objects.list_comments_async(
                 _cache['showing'], payload['most_recent_comment_timestamp']
             )
-            print(comments)
             comments = [
                 Comment.objects.serialize(comment)
                 for comment in comments
@@ -153,24 +152,12 @@ class Consumer(AsyncConsumer):
             'text': event['text'],
         })
 
-        action = json.loads(event['text'])['comments'][0]['status']
-        is_change_player_action = action in Comment.STATUS_PLAYER_CHOICES
-        if not is_change_player_action:
-            return
-
         user_spotify_access_token = (
             self.scope['user']
             .profile.spotify_access_token
         )
-
-        if action == 'play_track':
-            Track.objects.play_track(action, user_spotify_access_token)
-        elif action == 'pause_track':
-            Track.objects.pause_track(action, user_spotify_access_token)
-        elif action == 'next_track':
-            Track.objects.next_track(action, user_spotify_access_token)
-        elif action == 'prev_track':
-            Track.objects.prev_track(action, user_spotify_access_token)
+        if bool(event['tracks']) and bool(user_spotify_access_token):
+            print('SPIN THAT DISK')
 
 
     # - - - - - -
