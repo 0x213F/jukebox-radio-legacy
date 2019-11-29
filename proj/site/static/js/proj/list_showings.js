@@ -4,13 +4,13 @@ var KEY_USER = 'user'
 
 
 function display_list_showings(data) {
-  let showings = data[KEY_SHOWINGS];
+  let list_showings = data[KEY_SHOWINGS];
   let user = data[KEY_USER];
-  window.localStorage.setItem(KEY_SHOWINGS, JSON.stringify(showings));
+  window.localStorage.setItem(KEY_SHOWINGS, JSON.stringify(list_showings));
   window.localStorage.setItem(KEY_USER, JSON.stringify(user));
 
   let $showings_container = $('.list-showings');
-  for(let showing of showings) {
+  for(let showing of list_showings) {
     $showings_container.append(generate_showing(showing));
   }
   $('.showing.card').click(display_detail_showing);

@@ -60,7 +60,7 @@ class ProfileManager(BaseManager):
         '''
         from proj.apps.music.models import Showing
         from proj.apps.music.models import Ticket
-
+        print(f'SHOWING_UUID: {showing_uuid}')
         _cache = self._get_or_fetch_from_cache(
             _cache,
             'showing',

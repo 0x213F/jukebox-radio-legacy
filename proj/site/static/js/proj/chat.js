@@ -77,6 +77,42 @@ function onopen(event) {
   }
   let msg = JSON.stringify(data);
   window['SOCKET'].send(msg)
+
+  // 3: define submit msg behavior
+  function submit(e) {
+    let $submit = $(this);
+    let $input = $('#chat-input')
+    let submit_id = $submit.attr('id')
+    let text = $input.val()
+
+    if(!text) {
+      $('#chat-input').focus();
+      return;
+    }
+
+    let is_input = submit_id === 'chat-input'
+    let is_submit = submit_id === 'chat-submit'
+    let is_enter_key = e.keyCode == 13
+    if(!(is_input && is_enter_key) && !is_submit) {
+      return;
+    }
+
+    let status = window.localStorage.getItem('status') || 'waiting';
+
+    let data = {
+      'status': status,
+      'showing_uuid': user.profile.active_showing_uuid,
+      'track_id': null,
+      'text': text,
+    }
+    let msg = JSON.stringify(data);
+    window['SOCKET'].send(msg)
+    $('#chat-input').val('');
+    $('#chat-input').focus();
+  }
+  $('#chat-input').on('keyup', submit);
+  $('#chat-submit').on('click', submit);
+
 }
 
 function onmessage(event) {
