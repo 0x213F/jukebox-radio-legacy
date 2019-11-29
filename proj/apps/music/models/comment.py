@@ -95,6 +95,11 @@ class Comment(BaseModel):
         on_delete=models.DO_NOTHING,
         null=True,
     )
+    commenter_ticket = models.ForeignKey(
+        'music.Ticket',
+        related_name='commenter_tickets',
+        on_delete=models.DO_NOTHING,
+    )
     showing = models.ForeignKey(
         'music.Showing',
         related_name='comments',

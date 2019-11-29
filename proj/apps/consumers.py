@@ -39,6 +39,8 @@ class Consumer(AsyncConsumer):
         _user = self.scope['user']
         _cache = {}
 
+        print(payload)
+
         # Validate request payload.
         is_valid, _cache = await (
             Comment.objects
@@ -51,8 +53,9 @@ class Consumer(AsyncConsumer):
             comments = await Comment.objects.list_comments_async(
                 _cache['showing'], payload['most_recent_comment_timestamp']
             )
+            print(comments)
             comments = [
-                Comment.objects.serialize(_cache['comment'], _cache['ticket'])
+                Comment.objects.serialize(comment)
                 for comment in comments
             ]
             await self.send({
@@ -105,7 +108,7 @@ class Consumer(AsyncConsumer):
                 'text': json.dumps({
                     'comments': [
                         Comment.objects
-                        .serialize(_cache['comment'], _cache['ticket'])
+                        .serialize(_cache['comment'])
                     ]
                 }),
             }
@@ -119,7 +122,7 @@ class Consumer(AsyncConsumer):
                 'text': json.dumps({
                     'comments': [
                         Comment.objects
-                        .serialize(_cache['comment'], _cache['ticket'])
+                        .serialize(_cache['comment'])
                     ]
                 }),
             })
@@ -132,7 +135,7 @@ class Consumer(AsyncConsumer):
             )
             comments = [
                 # TODO: comments should be serialized with correct ticket
-                Comment.objects.serialize(_cache['comment'], _cache['ticket'])
+                Comment.objects.serialize(comment)
                 for comment in comments
             ]
             await self.send({

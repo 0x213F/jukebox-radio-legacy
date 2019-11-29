@@ -14,7 +14,10 @@ class CommentQuerySet(BaseQuerySet):
         List 100 most recent comments in a showing.
         '''
         Comment = self.model
-        qs = Comment.objects.select_related('commenter', 'commenter__profile')
+        qs = Comment.objects.select_related(
+            'commenter', 'commenter__profile',
+            'commenter_ticket',
+        )
         qs = qs.filter(showing_id=showing.id)
         if most_recent_comment_timestamp:
             qs = qs.filter(created_at__gt=most_recent_comment_timestamp)

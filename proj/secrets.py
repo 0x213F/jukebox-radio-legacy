@@ -1,11 +1,11 @@
 SERVER_IP = '157.245.173.147'
 SERVER_URL = 'jukeboxrad.io'
 
-DB_HOST_URL = 'db-postgresql-sfo2-61001-do-user-6189280-0.db.ondigitalocean.com'
-DB_HOST_PORT = 25060
-DB_NAME = 'musicappdb'
-DB_USER = 'musicappadmin'
-DB_PASSWORD = 'mt50jzyf8caelqo8'
+DB_HOST_URL = 'localhost'
+DB_HOST_PORT = ''
+DB_NAME = 'chess'
+DB_USER = 'dev'
+DB_PASSWORD = 'password'
 
 REDIS_HOST_URL = 'localhost'
 REDIS_HOST_PORT = 6379

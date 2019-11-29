@@ -35,7 +35,6 @@ function display_detail_showing() {
       let status = window.localStorage.getItem('status') || 'waiting';
       let data = {
         'status': status,
-        'message': null,
         'showing_uuid': showing.uuid,
         'track_id': null,
         'text': text,
@@ -58,7 +57,6 @@ function display_detail_showing() {
 
     let data = {
       'status': 'left',
-      'message': null,
       'showing_uuid': showing.uuid,
       'text': null,
     }
@@ -91,7 +89,6 @@ function display_detail_showing() {
     window.localStorage.setItem('status', status)
     let data = {
       'status': status,
-      'message': null,
       'showing_uuid': showing.uuid,
       'track_id': null,
       'text': null,
@@ -103,7 +100,6 @@ function display_detail_showing() {
 
   $('.playback > .circle-button').click(function() {
     let data = {
-      'message': null,
       'showing_uuid': showing.uuid,
       'track_id': null,
       'text': null,

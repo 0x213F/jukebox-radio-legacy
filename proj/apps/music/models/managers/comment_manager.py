@@ -98,21 +98,22 @@ class CommentManager(BaseManager):
             showing_timestamp=now - showing.showtime_scheduled.replace(tzinfo=None),
             track_id=None,  # TODO
             track_timestamp=now - showing.showtime_scheduled.replace(tzinfo=None),  # TODO
+            commenter_ticket=ticket,
         )
         self._set_cache(_cache, 'comment', comment)
 
         return _cache
 
     # TODO: track_id
-    def serialize(self, comment, ticket):
+    def serialize(self, comment):
         return {
             'created_at': comment.created_at.isoformat(),
             'status': comment.status,
             'text': comment.text,
             'commenter': {
                 'profile': {
-                    'display_name': ticket.display_name,
-                    'display_uuid': str(ticket.display_uuid),
+                    'display_name': comment.commenter_ticket.display_name,
+                    'display_uuid': str(comment.commenter_ticket.display_uuid),
                 }
             },
             'showing_uuid': str(comment.showing.uuid),
