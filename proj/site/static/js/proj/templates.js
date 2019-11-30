@@ -87,7 +87,7 @@ function render_comment(comment_obj) {
 
   while(true) {
     last_timestamp = Number($last_comment.attr('timestamp'));
-    if(last_timestamp < comment_obj.showing_timestamp) {
+    if(last_timestamp < comment_obj.showing_timestamp || '-Infinity' == $last_comment.attr('timestamp')) {
       break;
     } else {
       $last_comment = $last_comment.prev();

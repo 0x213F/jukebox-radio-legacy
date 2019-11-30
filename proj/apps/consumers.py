@@ -88,42 +88,55 @@ class Consumer(AsyncConsumer):
             return
 
         # get the actual progress in ms
-        user_spotify_access_token = _user.profile.spotify_access_token
-        response = requests.get(
-            'https://api.spotify.com/v1/me/player/currently-playing',
-            headers={
-                'Authorization': f'Bearer {user_spotify_access_token}',
-                'Content-Type': 'application/json',
-            },
-        )
-        response_json = response.json()
+        try:
+            user_spotify_access_token = _user.profile.spotify_access_token
+            response = requests.get(
+                'https://api.spotify.com/v1/me/player/currently-playing',
+                headers={
+                    'Authorization': f'Bearer {user_spotify_access_token}',
+                    'Content-Type': 'application/json',
+                },
+            )
+            response_json = response.json()
 
-        expected_ms = (
-            (
-                now_playing.created_at.replace(tzinfo=None) - now
-            ).total_seconds() * 1000
-        )
-        spotify_ms = response_json['progress_ms']
-        spotify_uri = response_json['item']['uri']
-        spotify_is_playing = response_json['is_playing']
+            expected_ms = (
+                (
+                    now_playing.created_at.replace(tzinfo=None) - now
+                ).total_seconds() * 1000
+            )
+            spotify_ms = response_json['progress_ms']
+            spotify_uri = response_json['item']['uri']
+            spotify_is_playing = response_json['is_playing']
 
-        track_is_already_playing = (
-            spotify_is_playing and
-            spotify_uri == now_playing.track.spotify_uri and
-            abs(expected_ms + spotify_ms) < 5000
-        )
+            track_is_already_playing = (
+                spotify_is_playing and
+                spotify_uri == now_playing.track.spotify_uri and
+                abs(expected_ms + spotify_ms) < 5000
+            )
 
-        if track_is_already_playing:
-            # if within N second(s), leave be
-            return
-        else:
-            return
+            print(track_is_already_playing)
+            if track_is_already_playing:
+                # if within N second(s), leave be
+                return
+        except Exception:
+            pass
+
+        # get other tracks to play in future
+        record = now_playing.track.record
+        uris = list(
+            record.tracks.all().order_by('value')
+            .values_list('spotify_uri', flat=True)
+        )
+        while(uris):
+            if uris[0] == now_playing.track.spotify_uri:
+                break
+            uris = uris[1:]
 
         await self.play_tracks(
             user_spotify_access_token,
             {
                 'action': 'play',
-                'data': {'position_ms': 1000},
+                'data': {'uris': uris, 'position_ms': -expected_ms},
             }
         )
 
