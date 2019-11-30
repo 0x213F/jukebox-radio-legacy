@@ -1,5 +1,5 @@
 
-import datetime
+from datetime import datetime
 import random
 import uuid
 
@@ -13,26 +13,30 @@ from proj.apps.music.models.querysets import CommentQuerySet
 from proj.core.models import BaseModel
 
 
-class Comment(BaseModel):
+class Comment(BaseModel):  # TODO Message
 
     # - - - - - - -
     # config model
     # - - - - - - -
 
-    STATUS_JOINED = 'joined'
-    STATUS_WAITED = 'waited'
-    STATUS_LEFT = 'left'
-
+    # Showing status change (StatusMessage)
     STATUS_ACTIVATED = 'activated'
     STATUS_COMPLETED = 'completed'
     STATUS_TERMINATED = 'terminated'
 
+    # User status change (StatusMessage)
+    STATUS_JOINED = 'joined'
+    STATUS_WAITED = 'waited'  # TODO remove
+    STATUS_LEFT = 'left'
+
+    # User comment posted (CommentMessage)
     STATUS_LOW = 'low'
     STATUS_MID_LOW = 'mid_low'
     STATUS_NEUTRAL = 'neutral'
     STATUS_MID_HIGH = 'mid_high'
     STATUS_HIGH = 'high'
 
+    # Playback change (PlaybackMessage)
     STATUS_PLAY = 'play'
     STATUS_PAUSE = 'pause'
     STATUS_NEXT = 'next'
@@ -85,7 +89,7 @@ class Comment(BaseModel):
     # fields
     # - - - -
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=datetime.now, blank=True)
     status = models.CharField(choices=STATUS_CHOICES, max_length=12)
     text = models.TextField(null=True, blank=True)
 
@@ -105,7 +109,6 @@ class Comment(BaseModel):
         related_name='comments',
         on_delete=models.DO_NOTHING,
     )
-    showing_timestamp = models.DurationField()  # TODO rename to showing_duration
     track = models.ForeignKey(
         'music.Track',
         related_name='comments',
@@ -113,4 +116,3 @@ class Comment(BaseModel):
         null=True,
         blank=True,
     )
-    track_timestamp = models.DurationField()  # TODO rename to track_duration

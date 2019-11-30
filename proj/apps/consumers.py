@@ -70,6 +70,63 @@ class Consumer(AsyncConsumer):
             }
         )
 
+        # get the now playing target progress in ms
+        now = datetime.now()
+        try:
+            now_playing = (
+                Comment
+                .objects
+                .filter(
+                    created_at__lte=now,
+                    showing__uuid=active_showing_uuid,
+                    status=Comment.STATUS_PLAY,
+                )
+                .order_by('-created_at')
+                .first()
+            )
+        except Exception as e:
+            return
+
+        # get the actual progress in ms
+        user_spotify_access_token = _user.profile.spotify_access_token
+        response = requests.get(
+            'https://api.spotify.com/v1/me/player/currently-playing',
+            headers={
+                'Authorization': f'Bearer {user_spotify_access_token}',
+                'Content-Type': 'application/json',
+            },
+        )
+        response_json = response.json()
+
+        expected_ms = (
+            (
+                now_playing.created_at.replace(tzinfo=None) - now
+            ).total_seconds() * 1000
+        )
+        spotify_ms = response_json['progress_ms']
+        spotify_uri = response_json['item']['uri']
+        spotify_is_playing = response_json['is_playing']
+
+        track_is_already_playing = (
+            spotify_is_playing and
+            spotify_uri == now_playing.track.spotify_uri and
+            abs(expected_ms + spotify_ms) < 5000
+        )
+
+        if track_is_already_playing:
+            # if within N second(s), leave be
+            return
+        else:
+            return
+
+        await self.play_tracks(
+            user_spotify_access_token,
+            {
+                'action': 'play',
+                'data': {'position_ms': 1000},
+            }
+        )
+
     # - - - - -
     # receieve
     # - - - - -
@@ -78,8 +135,6 @@ class Consumer(AsyncConsumer):
         payload = json.loads(event['text'])
         _user = self.scope['user']
         _cache = {}
-
-        print(payload)
 
         # Validate request payload.
         is_valid, _cache = await (
@@ -160,7 +215,6 @@ class Consumer(AsyncConsumer):
         )
         try:
             if bool(event['playback']) and bool(user_spotify_access_token):
-                print('PLAY TRACKS')
                 await self.play_tracks(user_spotify_access_token, event['playback'])
         except:
             pass

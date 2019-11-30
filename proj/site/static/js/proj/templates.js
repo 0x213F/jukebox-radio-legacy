@@ -44,6 +44,7 @@ function generate_showing(showing) {
 
 DOT = `<div style='height: 6px; width: 6px; border-radius: 2px; float: left; margin-right: 2px;'></div>`
 function generate_status_dots() {
+  return;
   var map_user_to_status = {}
   $('.detail-showing > .chat').children().each(function( index ) {
     if($(this).attr('status') === 'joined') {

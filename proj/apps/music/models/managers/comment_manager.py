@@ -95,9 +95,7 @@ class CommentManager(BaseManager):
             text=payload['text'],
             commenter_id=user.id,
             showing_id=showing.id,
-            showing_timestamp=now - showing.showtime_scheduled.replace(tzinfo=None),
             track_id=None,  # TODO
-            track_timestamp=now - showing.showtime_scheduled.replace(tzinfo=None),  # TODO
             commenter_ticket=ticket,
         )
         self._set_cache(_cache, 'comment', comment)
@@ -117,7 +115,5 @@ class CommentManager(BaseManager):
                 }
             },
             'showing_uuid': str(comment.showing.uuid),
-            'showing_timestamp': comment.showing_timestamp.total_seconds(),
             'track': None,
-            'track_timestamp': comment.showing_timestamp.total_seconds(),
         }

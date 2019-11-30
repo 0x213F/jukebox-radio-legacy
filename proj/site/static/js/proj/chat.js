@@ -113,6 +113,50 @@ function onopen(event) {
   $('#chat-input').on('keyup', submit);
   $('#chat-submit').on('click', submit);
 
+  // 8: leave chatroom
+  $('.leave.leave-button').click(function() {
+    // 7: leaving chatroom
+
+    let data = {
+      'status': 'left',
+      'showing_uuid': user.profile.active_showing_uuid,
+      'text': null,
+    }
+    let msg = JSON.stringify(data);
+    window['SOCKET'].close();
+    $('.detail-showing').hide();
+    $('.list-showings').show();
+    $('.footer').show();
+    $('.chat').empty();
+    $('.chat').append(`
+      <div class="tile seen hidden"
+           author="system"
+           status="base"
+           timestamp="-Infinity">
+      </div>
+    `);
+  })
+
+  // A: setup status buttons
+  $('.group > .status.active > .btn').click(function(e) {
+    $('.group > .status.active > .btn').removeClass('active')
+    $(this).addClass('active')
+    $('#chat-input').removeClass('disabled');
+    $('#chat-input').prop('disabled', false);
+    status = this.className.substring(4)
+    status = status.slice(0, -7);
+    window.localStorage.setItem('status', status)
+    let data = {
+      'status': status,
+      'showing_uuid': user.profile.active_showing_uuid,
+      'track_id': null,
+      'text': null,
+    }
+    let msg = JSON.stringify(data);
+    window['SOCKET'].send(msg)
+    $('#chat-input').focus();
+  });
+
 }
 
 function onmessage(event) {

@@ -10,7 +10,7 @@ from proj.apps.music.models import Record
 class RecordForm(forms.ModelForm):
     class Meta:
         model = Record
-        fields = ('showing', 'tracks',)
+        fields = ('showing', 'value')
 
 
 @admin.register(Record)

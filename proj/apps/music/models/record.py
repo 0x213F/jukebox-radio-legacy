@@ -16,6 +16,7 @@ class Record(BaseModel):
 
     class Meta:
         abstract = False
+        unique_together = ['showing', 'value']
 
     objects = RecordManager.from_queryset(RecordQuerySet)()
 
@@ -25,8 +26,10 @@ class Record(BaseModel):
         except:
             played_at = '<None>'
         return (
-            f'played_at: {played_at}, '
-            f'is_playing: {self.is_playing}'
+            f'<record id="{self.id}" '
+            f'value="{self.value}" '
+            f'played_at="{played_at}" '
+            f'is_playing="{self.is_playing}">"'
         )
 
     # - - - - - - - - -
@@ -37,10 +40,10 @@ class Record(BaseModel):
 
     is_playing = models.BooleanField(default=False)
 
+    value = models.PositiveIntegerField()
+
     showing = models.ForeignKey(
         'music.Showing',
         related_name='records',
         on_delete=models.DO_NOTHING,
     )
-
-    tracks = JSONField()
