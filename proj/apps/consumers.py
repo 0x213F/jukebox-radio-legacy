@@ -131,7 +131,6 @@ class Consumer(AsyncConsumer):
 
             record_is_over = False  # abs(spotify_ms + expected_ms) > 5000
 
-            print('ffff', track_is_already_playing, record_is_over)
             if track_is_already_playing or record_is_over:
                 # if within N second(s), leave be
                 return
@@ -234,7 +233,6 @@ class Consumer(AsyncConsumer):
     async def broadcast(self, event):
         '''
         '''
-        print('broadcast@@@')
         await self.send({
             'type': 'websocket.send',
             'text': event['text'],
@@ -253,7 +251,6 @@ class Consumer(AsyncConsumer):
     async def play_tracks(self, sat, playback):
         action = playback['action']
         data = json.dumps(playback['data']) or {}
-        print(data)
         response = requests.put(
             f'https://api.spotify.com/v1/me/player/{action}',
             data=data,

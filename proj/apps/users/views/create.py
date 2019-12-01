@@ -31,5 +31,4 @@ def create_view(request):
         login(request, user)
         return HttpResponse(status=201)
     except Exception as e:
-        print(e)
         return HttpResponse(status=400)

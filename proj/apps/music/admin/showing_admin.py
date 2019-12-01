@@ -4,6 +4,8 @@ from datetime import datetime
 from django import forms
 from django.contrib import admin
 from django.contrib import messages
+from django import urls
+from django.utils.html import format_html
 
 from proj.apps.music.models import Record
 from proj.apps.music.models import Showing
@@ -56,13 +58,22 @@ class ShowingAdmin(admin.ModelAdmin):
             )
             self.readonly_fields = ('title',)
         elif obj.status == Showing.STATUS_ACTIVATED:
-            self.fields = (
-                'title',
-                'current_record',
-                'time_left',
-                'record_terminates_at',
-            )
-            self.readonly_fields = ('title', 'time_left', 'record_terminates_at',)
+            if obj.time_left_on_current_record:
+                self.fields = (
+                    'title',
+                    'link_to_record',
+                    'time_left',
+                    'record_terminates_at',
+                )
+                self.readonly_fields = ('title', 'link_to_record', 'time_left', 'record_terminates_at',)
+            else:
+                self.fields = (
+                    'title',
+                    'current_record',
+                    'time_left',
+                    'record_terminates_at',
+                )
+                self.readonly_fields = ('title', 'link_to_record', 'time_left', 'record_terminates_at',)
         elif obj.status == Showing.STATUS_TERMINATED:
             fields = (
                 'title',
@@ -81,13 +92,15 @@ class ShowingAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         return qs.order_by('id')
 
+    def link_to_record(self, showing):
+        record = showing.current_record
+        record_link = urls.reverse(
+            'admin:music_record_change', args=[record.id]
+        )
+        return format_html(f'<button><a href="{record_link}">{record.name}</a></button>')
+
     def time_left(self, showing):
-        now = datetime.now()
-        dt = showing.record_terminates_at.replace(tzinfo=None)
-        if not dt or now >= dt:
-            return 'Not Playing'
-        else:
-            return dt - now
+        return showing.time_left_on_current_record
 
     # - - - - -
     # actions
@@ -137,17 +150,17 @@ class ShowingAdmin(admin.ModelAdmin):
     idle_selected_showing.short_description = 'Idle selected showing'
 
     def terminate_selected_showing(self, request, queryset):
-        already_terminated = (
+        now = datetime.now()
+        selection = (
             queryset.filter(
-                status__in=(
-                    Showing.STATUS_TERMINATED,
-                )
+                status__in=(Showing.STATUS_ACTIVATED, Showing.STATUS_IDLE),
+                record_terminates_at__lt=now,
             )
         )
-        if already_terminated.exists():
+        if queryset.count() != selection.count():
             self.message_user(
                 request,
-                'Make sure all showings are not currently terminated.',
+                'One or more of the selected showings are currently playing.',
                 level=messages.ERROR,
             )
             return
@@ -177,8 +190,6 @@ class ShowingAdmin(admin.ModelAdmin):
             pass
 
         current_record = form.cleaned_data['current_record']
-
-        print(showing.current_record)
 
         super().save_model(request, showing, form, change)
 

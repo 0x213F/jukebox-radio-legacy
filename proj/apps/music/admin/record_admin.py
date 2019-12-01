@@ -46,10 +46,6 @@ class RecordAdmin(admin.ModelAdmin):
             del actions['delete_selected']
         return actions
 
-    # inlines = [
-    #     TrackInline,
-    # ]
-
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
             self.fields = (
@@ -98,59 +94,3 @@ class RecordAdmin(admin.ModelAdmin):
         )
 
         return format_html(track_str)
-
-    # - - - - -
-    # actions
-    # - - - - -
-
-    # actions = ['spin', 'stop', 'play', 'pause']
-    #
-    # def spin(self, request, queryset):
-    #     return render(request,
-    #         'admin/spin_intermediate.html',
-    #         context={},
-    #     )
-    #     self.message_user(
-    #         request,
-    #         'Spin is in beta.',
-    #         level=messages.WARNING,
-    #     )
-    #     for record in queryset:
-    #         Record.objects.spin(record)
-    #
-    #     return render(
-    #         request,
-    #         'admin/spin_intermediate.html',
-    #         context={'records': queryset},
-    #     )
-    # spin.short_description = "Spin Record"
-    #
-    # def stop(self, request, queryset):
-    #     self.message_user(
-    #         request,
-    #         'Stop is in beta.',
-    #         level=messages.WARNING,
-    #     )
-    #     for record in queryset:
-    #         Record.objects.stop(record)
-    # stop.short_description = "Stop Record"
-    #
-    # def play(self, request, queryset):
-    #     self.message_user(
-    #         request,
-    #         'Play is in beta.',
-    #         level=messages.WARNING,
-    #     )
-    #     for record in queryset:
-    #         Record.objects.play(record)
-    # play.short_description = "[ -- --- PLAY --- -- ]"
-    #
-    # def pause(self, request, queryset):
-    #     self.message_user(
-    #         request,
-    #         'Pause is in beta.',
-    #         level=messages.WARNING,
-    #     )
-    #     for record in queryset:
-    #         Record.objects.pause(record)
-    # pause.short_description = "[ -- -- PAUSE -- -- ]"

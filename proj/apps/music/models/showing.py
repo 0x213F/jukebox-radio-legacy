@@ -67,3 +67,12 @@ class Showing(BaseModel):
     @property
     def chat_room(self):
         return f'{ContentType.objects.get_for_model(self)}-{self.id}'
+
+    @property
+    def time_left_on_current_record(self):
+        now = datetime.now()
+        dt = self.record_terminates_at.replace(tzinfo=None)
+        if not dt or now >= dt:
+            return None
+        else:
+            return dt - now
