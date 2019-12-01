@@ -104,16 +104,19 @@ class CommentManager(BaseManager):
 
     # TODO: track_id
     def serialize(self, comment):
-        return {
-            'created_at': comment.created_at.isoformat(),
-            'status': comment.status,
-            'text': comment.text,
-            'commenter': {
+        commenter = None
+        if comment.commenter and comment.commenter_ticket:
+            commenter = {
                 'profile': {
                     'display_name': comment.commenter_ticket.display_name,
                     'display_uuid': str(comment.commenter_ticket.display_uuid),
                 }
             },
+        return {
+            'created_at': comment.created_at.isoformat(),
+            'status': comment.status,
+            'text': comment.text,
+            'commenter': commenter,
             'showing_uuid': str(comment.showing.uuid),
             'track': None,
         }

@@ -24,13 +24,13 @@ class Showing(BaseModel):
 
     STATUS_SCHEDULED = 'scheduled'
     STATUS_ACTIVATED = 'activated'
-    STATUS_COMPLETED = 'completed'
+    STATUS_IDLE = 'idle'
     STATUS_TERMINATED = 'terminated'
 
     STATUS_CHOICES = [
         (STATUS_SCHEDULED, 'Scheduled'),
         (STATUS_ACTIVATED, 'Activated'),
-        (STATUS_COMPLETED, 'Completed'),
+        (STATUS_IDLE, 'idle'),
         (STATUS_TERMINATED, 'Terminated'),
     ]
 
@@ -40,22 +40,29 @@ class Showing(BaseModel):
     objects = ShowingManager.from_queryset(ShowingQuerySet)()
 
     def __str__(self):
-        return f'[{self.status.upper()}] {self.album}'
+        return self.title
 
     # - - - -
     # fields
     # - - - -
 
-    album = models.ForeignKey(
-        'music.Album',
-        related_name='albums',
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+
+    title = models.CharField(max_length=128)  # name
+
+    current_record = models.ForeignKey(
+        'music.Record',
+        related_name='now_playing_at_showings',
         on_delete=models.DO_NOTHING,
         null=True, blank=False,
     )
+
     showtime_actual = models.DateTimeField(null=True, blank=False)
     showtime_scheduled = models.DateTimeField()
-    status = models.CharField(max_length=128, default=STATUS_SCHEDULED)
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+
+    record_terminates_at = models.DateTimeField(null=True, blank=False)
+
+    status = models.CharField(max_length=128, default=STATUS_IDLE)
 
     @property
     def chat_room(self):

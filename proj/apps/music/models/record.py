@@ -16,34 +16,18 @@ class Record(BaseModel):
 
     class Meta:
         abstract = False
-        unique_together = ['showing', 'value']
 
     objects = RecordManager.from_queryset(RecordQuerySet)()
 
     def __str__(self):
-        try:
-            played_at = self.played_at.isoformat()
-        except:
-            played_at = '<None>'
-        return (
-            f'<record id="{self.id}" '
-            f'value="{self.value}" '
-            f'played_at="{played_at}" '
-            f'is_playing="{self.is_playing}">"'
-        )
+        return self.name
 
     # - - - - - - - - -
     # fields
     # - - - - - - - - -
 
-    played_at = models.DateTimeField(null=True, blank=False)
+    name = models.CharField(max_length=128)
 
     is_playing = models.BooleanField(default=False)
 
-    value = models.PositiveIntegerField()
-
-    showing = models.ForeignKey(
-        'music.Showing',
-        related_name='records',
-        on_delete=models.DO_NOTHING,
-    )
+    tracks = models.ManyToManyField('music.Track', through='music.TrackListing')

@@ -21,25 +21,16 @@ class Track(BaseModel):
 
     class Meta:
         abstract = False
-        unique_together = ['record', 'value', 'spotify_uri']
 
     objects = TrackManager.from_queryset(TrackQuerySet)()
 
     def __str__(self):
-        return f'[{self.record.id}:{self.value}] {self.spotify_name} {self.spotify_duration_ms}'
+        return f'<track id="{self.id}">'
 
     # - - - -
     # fields
     # - - - -
 
-    record = models.ForeignKey(
-        'music.Record',
-        related_name='tracks',
-        on_delete=models.DO_NOTHING,
-    )
-
-    value = models.PositiveIntegerField()
-
-    spotify_uri = models.CharField(max_length=36)
+    spotify_uri = models.CharField(max_length=36)  # TODO make unique
     spotify_name = models.CharField(max_length=64)
     spotify_duration_ms = models.PositiveIntegerField()

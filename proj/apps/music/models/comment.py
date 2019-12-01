@@ -21,7 +21,7 @@ class Comment(BaseModel):  # TODO Message
 
     # Showing status change (StatusMessage)
     STATUS_ACTIVATED = 'activated'
-    STATUS_COMPLETED = 'completed'
+    STATUS_IDLE = 'idle'
     STATUS_TERMINATED = 'terminated'
 
     # User status change (StatusMessage)
@@ -37,6 +37,9 @@ class Comment(BaseModel):  # TODO Message
     STATUS_HIGH = 'high'
 
     # Playback change (PlaybackMessage)
+    STATUS_SPIN = 'spin'
+    STATUS_STOP = 'stop'
+    STATUS_START = 'start'
     STATUS_PLAY = 'play'
     STATUS_PAUSE = 'pause'
     STATUS_NEXT = 'next'
@@ -51,6 +54,9 @@ class Comment(BaseModel):  # TODO Message
     ]
 
     STATUS_PLAYER_CHOICES = [
+        (STATUS_SPIN, 'Spinning'),
+        (STATUS_STOP, 'Stopped'),
+        (STATUS_START, 'Started'),
         (STATUS_PLAY, 'Played'),
         (STATUS_PAUSE, 'Paused'),
         (STATUS_NEUTRAL, 'Neutral'),
@@ -63,13 +69,16 @@ class Comment(BaseModel):  # TODO Message
         (STATUS_WAITED, 'Waited'),
         (STATUS_LEFT, 'Left'),
         (STATUS_ACTIVATED, 'Activated'),
-        (STATUS_COMPLETED, 'Completed'),
+        (STATUS_IDLE, 'Idle'),
         (STATUS_TERMINATED, 'Terminated'),
         (STATUS_LOW, ':('),
         (STATUS_MID_LOW, ':/'),
         (STATUS_NEUTRAL, ':|'),
         (STATUS_MID_HIGH, ':)'),
         (STATUS_HIGH, ':D'),
+        (STATUS_SPIN, 'Spinning'),
+        (STATUS_STOP, 'Stopped'),
+        (STATUS_START, 'Started'),
         (STATUS_PLAY, 'Played'),
         (STATUS_PAUSE, 'Paused'),
         (STATUS_NEUTRAL, 'Neutral'),
@@ -103,6 +112,7 @@ class Comment(BaseModel):  # TODO Message
         'music.Ticket',
         related_name='commenter_tickets',
         on_delete=models.DO_NOTHING,
+        null=True,
     )
     showing = models.ForeignKey(
         'music.Showing',

@@ -34,6 +34,7 @@ INSTALLED_APPS = [
 	'proj.apps.music',
 	'proj.apps.users',
 	'channels',
+	'django_admin_listfilter_dropdown',
 ]
 
 CHANNEL_LAYERS = {

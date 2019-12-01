@@ -70,6 +70,19 @@ class Consumer(AsyncConsumer):
             }
         )
 
+        try:
+            showing = (
+                Showing
+                .objects
+                .get(
+                    uuid=active_showing_uuid,
+                    status=Showing.STATUS_ACTIVATED,
+                    current_record__isnull=False,
+                )
+            )
+        except:
+            return
+
         # get the now playing target progress in ms
         now = datetime.now()
         try:
@@ -79,13 +92,15 @@ class Consumer(AsyncConsumer):
                 .filter(
                     created_at__lte=now,
                     showing__uuid=active_showing_uuid,
-                    status=Comment.STATUS_PLAY,
+                    status=Comment.STATUS_START,
                 )
                 .order_by('-created_at')
                 .first()
             )
         except Exception as e:
             return
+
+        assert now_playing
 
         # get the actual progress in ms
         try:
@@ -114,18 +129,20 @@ class Consumer(AsyncConsumer):
                 abs(expected_ms + spotify_ms) < 5000
             )
 
-            print(track_is_already_playing)
-            if track_is_already_playing:
+            record_is_over = False  # abs(spotify_ms + expected_ms) > 5000
+
+            print('ffff', track_is_already_playing, record_is_over)
+            if track_is_already_playing or record_is_over:
                 # if within N second(s), leave be
                 return
         except Exception:
             pass
 
         # get other tracks to play in future
-        record = now_playing.track.record
+        record = showing.current_record
         uris = list(
-            record.tracks.all().order_by('value')
-            .values_list('spotify_uri', flat=True)
+            record.tracks_through.all().order_by('number')
+            .values_list('track__spotify_uri', flat=True)
         )
         while(uris):
             if uris[0] == now_playing.track.spotify_uri:
@@ -217,6 +234,7 @@ class Consumer(AsyncConsumer):
     async def broadcast(self, event):
         '''
         '''
+        print('broadcast@@@')
         await self.send({
             'type': 'websocket.send',
             'text': event['text'],
@@ -235,6 +253,7 @@ class Consumer(AsyncConsumer):
     async def play_tracks(self, sat, playback):
         action = playback['action']
         data = json.dumps(playback['data']) or {}
+        print(data)
         response = requests.put(
             f'https://api.spotify.com/v1/me/player/{action}',
             data=data,
@@ -243,7 +262,8 @@ class Consumer(AsyncConsumer):
                 'Content-Type': 'application/json',
             },
         )
-        pass
+        print(response)
+        print(response.json())
 
 
     # - - - - - -
