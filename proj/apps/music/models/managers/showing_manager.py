@@ -40,6 +40,7 @@ class ShowingManager(BaseManager):
     def serialize(self, showing):
         return {
             'uuid': showing.uuid,
+            'name': showing.title,
             'status': showing.status,
             'showtime_scheduled': showing.showtime_scheduled.isoformat(),
         }

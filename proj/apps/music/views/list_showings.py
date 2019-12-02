@@ -16,7 +16,7 @@ class ListShowingsView(BaseView):
         '''
         List all of the showing objects that a user can access.
         '''
-        showings = Showing.objects.list_showings(request.user)
+        showings = Showing.objects.list_showings(request.user).order_by('id')
 
         active_ticket = None
         active_showing_uuid = request.user.profile.active_showing_uuid

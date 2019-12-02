@@ -5,35 +5,20 @@ function generate_showing(showing) {
   let showtime = new Date(showing.showtime_scheduled)
   let showtime_timestring = ''
   let background_color = ''
-  if(showing.status === 'scheduled' && Date.now() - showtime > 0) {
-    showtime_timestring = 'Starting Now'
-  } else if(showing.status === 'scheduled') {
-    showtime_timestring = showtime.toLocaleTimeString("en-US", {timeZoneName:'short', hour: '2-digit', minute:'2-digit'})
+  if(showing.status === 'idle') {
+    showtime_timestring = 'Idle'
     background_color = ` style="background-color: #cd9fab!important;"`
   } else if(showing.status === 'activated') {
-    showtime_timestring = 'Ongoing'
+    showtime_timestring = 'Active'
     background_color = ` style="background-color: #b46f82!important;"`
-  } else if(showing.status === 'completed') {
-    showtime_timestring = 'Completed'
-    background_color = ` style="background-color: #8e2643!important;"`
   }
-  if(showing.album) {
-    return `
-      <div class="showing card" uuid="${showing.uuid}">
-        <span class="showing-album-title label label-rounded">${showing.album.title}</span><br>
-        <img class="showing-album-art" src="${showing.album.art}" alt="${showing.album.title}">
-        <span class="showing-showtime-scheduled label label-rounded"${background_color}>${showtime_timestring}</span>
-      </div>
-    `
-  } else {
-    return `
-      <div class="showing card" uuid="${showing.uuid}">
-        <span class="showing-album-title label label-rounded">SHOWING</span><br>
-        <img class="showing-album-art" src="" alt="ART">
-        <span class="showing-showtime-scheduled label label-rounded"${background_color}>${showtime_timestring}</span>
-      </div>
-    `
-  }
+  console.log(showing)
+  return `
+    <div class="showing card" uuid="${showing.uuid}">
+      <span class="showing-album-title label label-rounded">${showing.name}</span><br>
+      <span class="showing-showtime-scheduled label label-rounded"${background_color}>${showtime_timestring}</span>
+    </div>
+  `
 }
 
 // SAVE
