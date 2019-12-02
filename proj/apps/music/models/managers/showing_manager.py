@@ -93,8 +93,6 @@ class ShowingManager(BaseManager):
         from proj.apps.music.models import Ticket
         from proj.apps.music.models import Comment
 
-        assert showing.current_record == record
-
         now = datetime.now()
         now_str = now.isoformat()
 
@@ -112,6 +110,7 @@ class ShowingManager(BaseManager):
             )
             track_timestamp += timedelta(milliseconds=track.spotify_duration_ms)
 
+        showing.current_record = record
         showing.record_terminates_at = track_timestamp
         showing.save()
 
@@ -122,6 +121,7 @@ class ShowingManager(BaseManager):
             commenter=None,
             showing=showing,
             track=None,
+            record=record,
             commenter_ticket=None,
         )
 

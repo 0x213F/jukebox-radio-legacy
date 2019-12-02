@@ -10,6 +10,7 @@ from django.utils.html import format_html
 
 from proj.apps.music.admin.inline import TrackInline
 from proj.apps.music.forms import RecordForm
+from proj.apps.music.models import Comment
 from proj.apps.music.models import Record
 from proj.apps.music.models import TrackListing
 from proj.apps.music.models import Track
@@ -80,6 +81,9 @@ class RecordAdmin(admin.ModelAdmin):
                 f'<button><a href="{track_link}">{track.spotify_name}</a></button>'
                 '<div style="height: 0.25rem;"></div>'
             )
+
+        if Comment.objects.filter(record=record).exists():
+            return format_html(track_str)
 
         if track_listings:
             track_str += '<div style="height: 0.75rem;"></div>'

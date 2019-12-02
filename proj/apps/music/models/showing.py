@@ -70,8 +70,12 @@ class Showing(BaseModel):
 
     @property
     def time_left_on_current_record(self):
+        dt = self.record_terminates_at
+        if not dt:
+            return None
+
         now = datetime.now()
-        dt = self.record_terminates_at.replace(tzinfo=None)
+        dt = dt.replace(tzinfo=None)
         if not dt or now >= dt:
             return None
         else:

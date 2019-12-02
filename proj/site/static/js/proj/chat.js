@@ -1,85 +1,71 @@
 
-var KEY_COMMENTS = 'comments'
+let KEY_COMMENTS = 'comments'
+var KEY_SHOWINGS = 'showings'
+var KEY_USER = 'user'
+
+let CLASS_HIDDEN = 'hidden'
+
+let STATUS_ACTIVATED = 'activated'
+
+let $activated_tray = $('.status.active');
+let $idle_tray = $('.status.waiting');
 
 
 // ON OPEN
 function onopen(event) {
-
   let showings = JSON.parse(window.localStorage.getItem(KEY_SHOWINGS));
   let user = JSON.parse(window.localStorage.getItem(KEY_USER));
+
   let showing = showings.find(function(obj) {
     return obj.uuid === user.profile.active_showing_uuid;
   });
 
   // display correct bar above chat bar
-  if(showing.status === 'activated') {
-    $('.status.active').removeClass('hidden');
-    $('.status.waiting').addClass('hidden');
+  if(showing.status === STATUS_ACTIVATED) {
+    $activated_tray.removeClass(CLASS_HIDDEN);
+    $idle_tray.addClass(CLASS_HIDDEN);
   } else {
-    $('.status.active').addClass('hidden');
-    $('.status.waiting').removeClass('hidden');
+    $activated_tray.addClass(CLASS_HIDDEN);
+    $idle_tray.removeClass(CLASS_HIDDEN);
   }
 
+
+  // post base comment
+  // reset chatroom
+  let $chat = $('.detail-showing > .chat')
+  $chat.empty();
+  $chat.append(
+    `<div class="tile base hidden"
+         author="system"
+         status="base"
+         timestamp="-Infinity">
+    </div>`
+  )
+
+  // default set status button
+  $('.btn.mid_high').addClass('active');
+
   // display cached comments
-  let cached_comments = JSON.parse(window.localStorage.getItem(KEY_COMMENTS)) || {};
-  let chat_comments = cached_comments[showing.uuid];
+  let comments_cache = (
+    JSON.parse(window.localStorage.getItem(KEY_COMMENTS)) ||
+    {}
+  );
+  let chat_comments = comments_cache[showing.uuid];
   if(chat_comments) {
-    for(comment of chat_comments) {
+    for(comment_id in chat_comments) {
+      let comment = chat_comments[comment_id]
       render_comment(comment);
     }
   }
 
-  countdown_timer = setInterval(function(display) {
-    milliseconds = Date.parse(showing.showtime_scheduled) - Date.now()
-    if(milliseconds < 0) {
-      clearInterval(countdown_timer)
-      $('.status.waiting').text('00:00:00')
-      return
-    }
-    seconds = Math.floor(milliseconds / 1000) % 60
-    minutes = Math.floor(milliseconds / 1000 / 60) % 60
-    if(minutes <= 9) {
-      minutes = '0' + minutes
-    }
-    if(seconds <= 9) {
-      seconds = '0' + seconds
-    }
-    hours = Math.floor(milliseconds / 1000 / 60 / 60)
-    if(hours <= 9) {
-      hours = '0' + hours
-    }
-    let showtime = new Date(Date.parse(showing.showtime))
-    $('.status.waiting').text(hours + ":" + minutes + ':' + seconds)
-  }, 15)
+  $chat.scrollTop($chat[0].scrollHeight);
 
   $('.list-showings').hide();
   $('.row.footer').hide();
   $('.detail-showing').show();
 
-  // 6: initial mark of waiting in chatroom
-  let data = null;
-  if(chat_comments) {
-    data = {
-      'status': 'joined',
-      'text': null,
-      'showing_uuid': showing.uuid,
-      'track_uuid': null,
-      'most_recent_comment_timestamp': chat_comments[chat_comments.length-1].created_at,
-    }
-  } else {
-    data = {
-      'status': 'joined',
-      'text': null,
-      'showing_uuid': showing.uuid,
-      'track_uuid': null,
-      'most_recent_comment_timestamp': null,
-    }
-  }
-  let msg = JSON.stringify(data);
-  window['SOCKET'].send(msg)
-
-  // 3: define submit msg behavior
-  function submit(e) {
+  // submit comment
+  function submit_text(e) {
     let $submit = $(this);
     let $input = $('#chat-input')
     let submit_id = $submit.attr('id')
@@ -110,13 +96,11 @@ function onopen(event) {
     $('#chat-input').val('');
     $('#chat-input').focus();
   }
-  $('#chat-input').on('keyup', submit);
-  $('#chat-submit').on('click', submit);
+  $('#chat-input').on('keyup', submit_text);
+  $('#chat-submit').on('click', submit_text);
 
-  // 8: leave chatroom
-  $('.leave.leave-button').click(function() {
-    // 7: leaving chatroom
-
+  // leave chatroom
+  function disconnect(e) {
     let data = {
       'status': 'left',
       'showing_uuid': user.profile.active_showing_uuid,
@@ -124,21 +108,16 @@ function onopen(event) {
     }
     let msg = JSON.stringify(data);
     window['SOCKET'].close();
+
+    // change view
     $('.detail-showing').hide();
     $('.list-showings').show();
     $('.footer').show();
-    $('.chat').empty();
-    $('.chat').append(`
-      <div class="tile seen hidden"
-           author="system"
-           status="base"
-           timestamp="-Infinity">
-      </div>
-    `);
-  })
+  }
+  $('.leave.leave-button').click(disconnect)
 
   // A: setup status buttons
-  $('.group > .status.active > .btn').click(function(e) {
+  function submit_status(e) {
     $('.group > .status.active > .btn').removeClass('active')
     $(this).addClass('active')
     $('#chat-input').removeClass('disabled');
@@ -153,9 +132,11 @@ function onopen(event) {
       'text': null,
     }
     let msg = JSON.stringify(data);
+    console.log(msg)
     window['SOCKET'].send(msg)
     $('#chat-input').focus();
-  });
+  }
+  $('.group > .status.active > .btn').click(submit_status);
 
 }
 
@@ -165,51 +146,49 @@ function onmessage(event) {
   let showings = JSON.parse(window.localStorage.getItem(KEY_SHOWINGS));
   let user = JSON.parse(window.localStorage.getItem(KEY_USER));
   let showing = showings.find(function(obj) { return obj.uuid === user.profile.active_showing_uuid; });
-  if(payload.comments) {
-    if(payload.comments.length === 1 && payload.comments[0].commenter.profile.display_uuid === user.profile.display_uuid) {
-      // NOTHING
-    } else {
-      for(comment of payload.comments) {
-        render_comment(comment);
-      }
-      generate_status_dots();
-      $(".detail-showing > .chat").scrollTop($(".detail-showing > .chat")[0].scrollHeight);
-      let cached_comments = JSON.parse(window.localStorage.getItem(KEY_COMMENTS)) || {};
-      let chat_comments = cached_comments[showing.uuid];
-      if(!chat_comments) {
-        chat_comments = [];
-      }
 
-      cached_comments[showing.uuid] = chat_comments.concat(payload.comments);
-      window.localStorage.setItem(KEY_COMMENTS, JSON.stringify(cached_comments));
+  let comments_cache = (
+    JSON.parse(window.localStorage.getItem(KEY_COMMENTS)) ||
+    {}
+  );
+  window.localStorage.setItem(KEY_COMMENTS, JSON.stringify(comments_cache));
+  if(payload.data.comments) {
+    if(!(showing.uuid in comments_cache)) {
+      comments_cache[showing.uuid] = {};
     }
+    for(comment of payload.data.comments) {
+      render_comment(comment);
+      comments_cache[showing.uuid][comment.id] = comment
+    }
+    $(".detail-showing > .chat").scrollTop($(".detail-showing > .chat")[0].scrollHeight);
   }
+  console.log(payload)
+  window.localStorage.setItem(KEY_COMMENTS, JSON.stringify(comments_cache));
 
-  if(payload.source && payload.source.type === 'system' && payload.data && payload.data.status === 'activated') {
-    $('.status.active').show();
-    $('.status.waiting').hide();
-    showing.status = 'active';
-    return
-  }
+  let status = payload.data.status;
+  let IDLE = 'idle'
+  let TERMINATED = 'terminated'
 
-  if(showing.status === 'waiting') {
-    $('.status.active').hide();
-    $('.status.waiting').show();
-  } else if(showing.status === 'active') {
-    $('.status.active').show();
-    $('.status.waiting').hide();
+  if(status !== TERMINATED) {
+    $activated_tray.show();
+    $idle_tray.hide();
+    showing.status = status;
+  } else {
+    showing.status = TERMINATED;
+    $('.footer-button.leave.leave-button').click();
   }
 }
 
+/* - - - - - - - - - - */
+/* keyboard shortcuts  */
+
 var shiftPressed = false;
 $(window).keydown(function(evt) {
-  console.log(evt.which)
   if (evt.which == 16) { // shift
     shiftPressed = true;
   } else if(evt.which == 39 && shiftPressed) { // right arrow
     var $el = $('.group > .status.active > .btn.active');
     evt.preventDefault()
-    // $el.removeClass('active');
     if($el.hasClass('low')) {
       $('.group > .status > .btn.mid_low').click();
     } else if($el.hasClass('mid_low')) {
@@ -233,7 +212,6 @@ $(window).keydown(function(evt) {
     }
   }
 }).keyup(function(evt) {
-  console.log(evt.which)
   if (evt.which == 16) { // shift
     shiftPressed = false;
   }

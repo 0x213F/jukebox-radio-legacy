@@ -34,7 +34,8 @@ class ProfileManager(BaseManager):
             'last_name': user.last_name,
             'email': user.email,
             'profile': {
-                'display_name': getattr(active_ticket, 'display_name', None),
+                'active_showing_ticket_holder_name': getattr(active_ticket, 'holder_name', None),
+                'active_showing_ticket_holder_uuic': getattr(active_ticket, 'holder_uuid', None),
                 'scopes': scopes,
                 'active_showing_uuid': user.profile.active_showing_uuid,
             },
@@ -81,8 +82,8 @@ class ProfileManager(BaseManager):
                 'showing': showing,
                 'defaults': {
                     'timestamp_last_active': datetime.utcnow(),
-                    'display_name': user.profile.default_display_name or 'Default',
-                    'display_uuid': uuid.uuid4(),
+                    'holder_name': user.profile.default_display_name or 'Default',
+                    'holder_uuid': uuid.uuid4(),
                 }
             }
         )

@@ -57,19 +57,24 @@ class Consumer(AsyncConsumer):
             .create_from_payload_async(_user, payload, _cache=_cache)
         )
 
+        # tell the chatroom that the user has joined
         await self.channel_layer.group_send(  # TODO: put as manager method
             _cache['showing'].chat_room,
             {
                 'type': 'broadcast',
                 'text': json.dumps({
-                    'comments': [
-                        Comment.objects
-                        .serialize(_cache['comment'])
-                    ]
+                    'data': {
+                        'comments': [
+                            Comment.objects
+                            .serialize(_cache['comment'])
+                        ],
+                    }
                 }),
             }
         )
 
+        # get active record, if it exists
+        now = datetime.now()
         try:
             showing = (
                 Showing
@@ -78,13 +83,13 @@ class Consumer(AsyncConsumer):
                     uuid=active_showing_uuid,
                     status=Showing.STATUS_ACTIVATED,
                     current_record__isnull=False,
+                    record_terminates_at__gt=(now + timedelta(seconds=5)),
                 )
             )
         except:
             return
 
         # get the now playing target progress in ms
-        now = datetime.now()
         try:
             now_playing = (
                 Comment
@@ -183,7 +188,7 @@ class Consumer(AsyncConsumer):
             ]
             await self.send({
                 'type': 'websocket.send',
-                'text': json.dumps({'comments': comments}),
+                'text': json.dumps({'data': {'comments': comments}}),
             })
             return
 
@@ -204,10 +209,12 @@ class Consumer(AsyncConsumer):
             {
                 'type': 'broadcast',
                 'text': json.dumps({
-                    'comments': [
-                        Comment.objects
-                        .serialize(_cache['comment'])
-                    ]
+                    'data': {
+                        'comments': [
+                            Comment.objects
+                            .serialize(_cache['comment'])
+                        ],
+                    }
                 }),
             }
         )

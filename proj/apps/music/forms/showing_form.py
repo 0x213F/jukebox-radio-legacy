@@ -7,7 +7,7 @@ from proj.apps.music.models import Showing
 
 class ShowingForm(forms.ModelForm):
 
-    current_record = forms.ModelChoiceField(
+    next_record = forms.ModelChoiceField(
         queryset=Record.objects.all(),
         required=False,
     )
@@ -17,5 +17,5 @@ class ShowingForm(forms.ModelForm):
         fields = (
             'title',
             'showtime_scheduled',
-            'current_record',
+            'next_record',
         )

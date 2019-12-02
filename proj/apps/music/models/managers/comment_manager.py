@@ -82,13 +82,7 @@ class CommentManager(BaseManager):
         )
         ticket = _cache['ticket']
 
-        if (
-            showing.status == 'scheduled' and
-            payload['status'] not in Comment.STATUS_TEXT_CHOICES
-        ):
-            status = payload['status']
-        else:
-            status = 'waiting'
+        status = payload['status']
 
         comment = Comment.objects.create(
             status=status,
@@ -105,18 +99,17 @@ class CommentManager(BaseManager):
     # TODO: track_id
     def serialize(self, comment):
         commenter = None
-        if comment.commenter and comment.commenter_ticket:
-            commenter = {
-                'profile': {
-                    'display_name': comment.commenter_ticket.display_name,
-                    'display_uuid': str(comment.commenter_ticket.display_uuid),
-                }
-            },
-        return {
+        comment_obj = {
+            'id': comment.id,
             'created_at': comment.created_at.isoformat(),
             'status': comment.status,
             'text': comment.text,
-            'commenter': commenter,
             'showing_uuid': str(comment.showing.uuid),
             'track': None,
         }
+        if comment.commenter and comment.commenter_ticket:
+            comment_obj['commenter'] = {
+                'ticket_holder_name': comment.commenter_ticket.holder_name,
+                'ticket_holder_uuid': str(comment.commenter_ticket.holder_uuid),
+            }
+        return comment_obj
