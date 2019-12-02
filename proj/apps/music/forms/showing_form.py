@@ -16,6 +16,5 @@ class ShowingForm(forms.ModelForm):
         model = Showing
         fields = (
             'title',
-            'showtime_scheduled',
             'next_record',
         )

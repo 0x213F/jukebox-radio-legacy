@@ -84,12 +84,29 @@ class CommentManager(BaseManager):
 
         status = payload['status']
 
+        track = None
+        try:
+            now_playing = (
+                Comment
+                .objects
+                .filter(
+                    created_at__lte=now,
+                    showing=showing,
+                    status=Comment.STATUS_START,
+                )
+                .order_by('-created_at')
+                .first()
+            )
+            track = now_playing.track
+        except:
+            pass
+
         comment = Comment.objects.create(
             status=status,
             text=payload['text'],
             commenter_id=user.id,
             showing_id=showing.id,
-            track_id=None,  # TODO
+            track=track,  # TODO
             commenter_ticket=ticket,
         )
         self._set_cache(_cache, 'comment', comment)

@@ -34,6 +34,7 @@ class TrackAdmin(admin.ModelAdmin):
         'records',
         'spotify_uri',
         'track_length',
+        'comments',
     )
 
     readonly_fields = (
@@ -68,6 +69,16 @@ class TrackAdmin(admin.ModelAdmin):
     def name(self, track):
         return track.spotify_name
 
+    def comments(self, track):
+        track_link = urls.reverse('admin:music_comment_changelist')
+        return format_html(
+            f'<button>'
+            f'<a href="{track_link}?track__id__exact={track.id}">'
+            f'🔗 Comments'
+            '</a>'
+            '</button>'
+        )
+
     def records(self, track):
         track_listings = (
             TrackListing
@@ -83,7 +94,7 @@ class TrackAdmin(admin.ModelAdmin):
                 'admin:music_record_change', args=[record.id]
             )
             records_str += (
-                f'<button><a href="{record_link}">{record.name}</a></button>'
+                f'<button><a href="{record_link}">🔗 {record.name}</a></button>'
                 '<div style="height: 0.25rem;"></div>'
             )
 

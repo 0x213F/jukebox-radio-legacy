@@ -38,7 +38,7 @@ class ShowingAdmin(admin.ModelAdmin):
         'tracks',
         'time_left',
         'status',
-        'uuid',
+        'comments',
     )
 
     def get_actions(self, request):
@@ -51,13 +51,11 @@ class ShowingAdmin(admin.ModelAdmin):
         if not obj:
             self.fields = (
                 'title',
-                'showtime_scheduled',
             )
             self.readonly_fields = ('',)
         elif obj.status == Showing.STATUS_IDLE:
             self.fields = (
                 'title',
-                'showtime_scheduled',
             )
             self.readonly_fields = ('title',)
         elif obj.status == Showing.STATUS_ACTIVATED:
@@ -81,8 +79,8 @@ class ShowingAdmin(admin.ModelAdmin):
         elif obj.status == Showing.STATUS_TERMINATED:
             fields = (
                 'title',
-                'showtime_scheduled',
                 'current_record',
+                'comments',
             )
             self.fields = fields
             self.readonly_fields = fields
@@ -114,7 +112,7 @@ class ShowingAdmin(admin.ModelAdmin):
             'admin:music_record_change', args=[record.id]
         )
         return format_html(
-            f'<button><a href="{track_link}">{record.name}</a></button>'
+            f'<button><a href="{track_link}">🔗 {record.name}</a></button>'
             '<div style="height: 0.25rem;"></div>'
         )
 
@@ -151,16 +149,27 @@ class ShowingAdmin(admin.ModelAdmin):
             )
             if track.id == now_track.id:
                 track_str += (
-                    f'<button><a href="{track_link}" style="font-style: oblique;">{track.spotify_name}</a></button>'
+                    f'<button><a href="{track_link}" style="font-style: oblique;">🔗 {track.spotify_name}</a></button>'
                     '<div style="height: 0.25rem;"></div>'
                 )
             else:
                 track_str += (
-                    f'<button><a href="{track_link}">{track.spotify_name}</a></button>'
+                    f'<button><a href="{track_link}">🔗 {track.spotify_name}</a></button>'
                     '<div style="height: 0.25rem;"></div>'
                 )
 
         return format_html(track_str)
+
+    def comments(self, showing):
+        record = showing.current_record
+        record_link = urls.reverse('admin:music_comment_changelist')
+        return format_html(
+            f'<button>'
+            f'<a href="{record_link}?showing__id__exact={showing.id}">'
+            f'🔗 Comments'
+            '</a>'
+            '</button>'
+        )
 
     # - - - - -
     # actions

@@ -36,6 +36,7 @@ class CommentAdmin(admin.ModelAdmin):
 
     list_filter = (
         # for related fields
+        ('commenter', RelatedDropdownFilter),
         ('showing', RelatedDropdownFilter),
         ('track', RelatedDropdownFilter),
         ('status', DropdownFilter),

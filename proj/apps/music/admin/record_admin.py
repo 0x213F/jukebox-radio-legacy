@@ -82,7 +82,7 @@ class RecordAdmin(admin.ModelAdmin):
                 'admin:music_track_change', args=[track.id]
             )
             track_str += (
-                f'<button><a href="{track_link}">{track.spotify_name}</a></button>'
+                f'<button><a href="{track_link}">🔗 {track.spotify_name}</a></button>'
                 '<div style="height: 0.25rem;"></div>'
             )
 
@@ -97,7 +97,7 @@ class RecordAdmin(admin.ModelAdmin):
         )
         track_str += (
             '<button style="font-weight: 800">'
-            f'    <a href="{track_link}">Add Track</a>'
+            f'    <a href="{track_link}">🔗 Add Track</a>'
             '</button>'
         )
 

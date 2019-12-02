@@ -1,8 +1,7 @@
 
 
 function generate_showing(showing) {
-  milliseconds = Date.parse(showing.showtime_scheduled) - Date.now()
-  let showtime = new Date(showing.showtime_scheduled)
+
   let showtime_timestring = ''
   let background_color = ''
   if(showing.status === 'idle') {

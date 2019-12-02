@@ -58,7 +58,6 @@ class Showing(BaseModel):
     )
 
     showtime_actual = models.DateTimeField(null=True, blank=False)
-    showtime_scheduled = models.DateTimeField()
 
     record_terminates_at = models.DateTimeField(null=True, blank=False)
 
