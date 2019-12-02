@@ -23,4 +23,8 @@ class RecordManager(BaseManager):
     '''
     Django Manager used to manage Record objects.
     '''
-    pass
+
+    def can_add_track(self, record, track_duration_ms):
+        new_duration_ms = record.duration_ms + track_duration_ms
+        max_duration_ms = 25 * 60 * 1000
+        return new_duration_ms <= max_duration_ms

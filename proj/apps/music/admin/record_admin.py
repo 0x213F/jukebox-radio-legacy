@@ -1,6 +1,7 @@
 
-from datetime import datetime
 import requests
+from datetime import datetime
+from datetime import timedelta
 
 from django import forms
 from django import urls
@@ -34,11 +35,13 @@ class RecordAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'display_tracks',
+        'duration',
         'is_playing',
     )
 
     readonly_fields = (
         'display_tracks',
+        'duration',
     )
 
     def get_actions(self, request):
@@ -56,6 +59,7 @@ class RecordAdmin(admin.ModelAdmin):
             self.fields = (
                 'name',
                 'display_tracks',
+                'duration',
             )
         return super().get_form(request, obj, **kwargs)
 
@@ -98,3 +102,6 @@ class RecordAdmin(admin.ModelAdmin):
         )
 
         return format_html(track_str)
+
+    def duration(self, record):
+        return timedelta(seconds=(record.duration_ms / 1000))

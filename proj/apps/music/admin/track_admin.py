@@ -3,7 +3,9 @@ from datetime import datetime
 import requests
 
 from django import urls
+from django.apps import apps
 from django.contrib import admin
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.utils.html import format_html
 
@@ -101,6 +103,8 @@ class TrackAdmin(admin.ModelAdmin):
         '''
         Cache data from Spotify API.
         '''
+        Record = apps.get_model('music.Record')
+
         record = form.cleaned_data['record']
         spotify_uri = form.cleaned_data['spotify_uri']
 
@@ -108,6 +112,13 @@ class TrackAdmin(admin.ModelAdmin):
             track_that_already_exists = Track.objects.get(spotify_uri=spotify_uri)
             if track_that_already_exists:
                 track = track_that_already_exists
+                if not Record.objects.can_add_track(record, track.spotify_duration_ms):
+                    self.message_user(
+                        request,
+                        'Track cannot fit on the selected record.',
+                        level=messages.ERROR,
+                    )
+                    return
                 number = (
                     TrackListing.objects.filter(record=record, track=track).count()
                     + 1
@@ -139,10 +150,20 @@ class TrackAdmin(admin.ModelAdmin):
         )
         response_json = response.json()
 
+        spotify_duration_ms = response_json['duration_ms']
+        track.spotify_duration_ms = spotify_duration_ms
+
+        if not Record.objects.can_add_track(record, spotify_duration_ms):
+            self.message_user(
+                request,
+                'Track cannot fit on the selected record.',
+                level=messages.ERROR,
+            )
+            return
+
         track.spotify_name = response_json['name'][:32]
         if len(response_json['name']) > 32:
             track.spotify_name += '...'
-        track.spotify_duration_ms = response_json['duration_ms']
 
         super().save_model(request, track, form, change)
 

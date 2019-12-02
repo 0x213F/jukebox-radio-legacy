@@ -43,6 +43,7 @@ function onopen(event) {
   )
 
   // default set status button
+  $('.btn.active').removeClass('active');
   $('.btn.mid_high').addClass('active');
 
   // display cached comments
