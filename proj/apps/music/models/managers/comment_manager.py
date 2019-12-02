@@ -96,20 +96,16 @@ class CommentManager(BaseManager):
 
         return _cache
 
-    # TODO: track_id
     def serialize(self, comment):
-        commenter = None
-        comment_obj = {
+        Showing = apps.get_model('music.Showing')
+        Ticket = apps.get_model('music.Ticket')
+        Track = apps.get_model('music.Track')
+        return {
             'id': comment.id,
             'created_at': comment.created_at.isoformat(),
             'status': comment.status,
             'text': comment.text,
-            'showing_uuid': str(comment.showing.uuid),
-            'track': None,
+            'showing': Showing.objects.serialize(comment.showing),
+            'track': Track.objects.serialize(comment.track),
+            'ticket': Ticket.objects.serialize(comment.commenter_ticket),
         }
-        if comment.commenter and comment.commenter_ticket:
-            comment_obj['commenter'] = {
-                'ticket_holder_name': comment.commenter_ticket.holder_name,
-                'ticket_holder_uuid': str(comment.commenter_ticket.holder_uuid),
-            }
-        return comment_obj

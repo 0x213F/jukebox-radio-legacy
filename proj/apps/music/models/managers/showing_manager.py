@@ -38,11 +38,12 @@ class ShowingManager(BaseManager):
     '''
 
     def serialize(self, showing):
+        if not showing:
+            return None
         return {
-            'uuid': showing.uuid,
+            'uuid': str(showing.uuid),
             'name': showing.title,
             'status': showing.status,
-            'showtime_scheduled': showing.showtime_scheduled.isoformat(),
         }
 
     def change_status(self, showing, status):

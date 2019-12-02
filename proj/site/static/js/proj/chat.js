@@ -6,6 +6,7 @@ var KEY_USER = 'user'
 let CLASS_HIDDEN = 'hidden'
 
 let STATUS_ACTIVATED = 'activated'
+let STATUS_JOINED = 'joined'
 
 let $activated_tray = $('.status.active');
 let $idle_tray = $('.status.waiting');
@@ -55,7 +56,7 @@ function onopen(event) {
   if(chat_comments) {
     for(comment_id in chat_comments) {
       let comment = chat_comments[comment_id]
-      render_comment(comment);
+      // render_comment(comment);
     }
   }
 
@@ -84,7 +85,17 @@ function onopen(event) {
       return;
     }
 
-    let status = window.localStorage.getItem('status') || 'waiting';
+    var status = window.localStorage.getItem('status') || 'waiting';
+    var $el = $('.group > .status.active > .btn.active');
+    if($el.hasClass('low')) {
+      status = 'low';
+    } else if($el.hasClass('mid_low')) {
+      status = 'mid_low';
+    } else if($el.hasClass('mid_high')) {
+      status = 'mid_high';
+    } else if($el.hasClass('high')) {
+      status = 'high';
+    }
 
     let data = {
       'status': status,
@@ -163,7 +174,6 @@ function onmessage(event) {
     }
     $(".detail-showing > .chat").scrollTop($(".detail-showing > .chat")[0].scrollHeight);
   }
-  console.log(payload)
   window.localStorage.setItem(KEY_COMMENTS, JSON.stringify(comments_cache));
 
   let status = payload.data.status;
@@ -177,6 +187,12 @@ function onmessage(event) {
   } else {
     showing.status = TERMINATED;
     $('.footer-button.leave.leave-button').click();
+  }
+
+  let ticket = payload.data.ticket;
+  if(ticket) {
+    user.profile.active_showing_ticket = ticket
+    window.localStorage.setItem(KEY_USER, JSON.stringify(user));
   }
 }
 

@@ -4,6 +4,7 @@ import uuid
 
 from datetime import datetime
 
+from django.apps import apps
 from django.db.models import Case
 from django.db.models import Value
 from django.db.models import When
@@ -16,13 +17,16 @@ class ProfileManager(BaseManager):
     Django Manager used to query Profile objects.
     '''
 
-    def serialize_user(self, user, active_ticket=None):
+    def serialize_user(self, user, active_ticket=None, active_showing=None):
         '''
         Serialize the user fields along with:
 
         - It's profile.
-        - List of active showings (just 1 for now).
+        - List of active showings.
         '''
+        Ticket = apps.get_model('music.Ticket')
+        Showing = apps.get_model('music.Showing')
+
         active_ticket = active_ticket or {}
 
         scopes = {
@@ -34,9 +38,9 @@ class ProfileManager(BaseManager):
             'last_name': user.last_name,
             'email': user.email,
             'profile': {
-                'active_showing_ticket_holder_name': getattr(active_ticket, 'holder_name', None),
-                'active_showing_ticket_holder_uuic': getattr(active_ticket, 'holder_uuid', None),
+                'active_showing_ticket': Ticket.objects.serialize(active_ticket),
                 'scopes': scopes,
+                'active_showing': Showing.objects.serialize(active_showing),
                 'active_showing_uuid': user.profile.active_showing_uuid,
             },
         }

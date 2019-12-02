@@ -13,6 +13,7 @@ from django.contrib.auth import get_user_model
 from django.core.serializers import serialize
 
 
+from proj.apps.music.models import Ticket
 from proj.apps.music.models import Comment
 from proj.apps.users.models import Profile
 from proj.apps.music.models import Showing
@@ -46,6 +47,26 @@ class Consumer(AsyncConsumer):
             'type': 'websocket.accept',
         })
 
+        # Ticket
+        ticket, created = Ticket.objects.get_or_create(
+            holder=_user,
+            showing=_cache['showing'],
+            defaults={
+                'timestamp_last_active': datetime.utcnow(),
+                'holder_name': _user.profile.default_display_name or 'Default',
+                'holder_uuid': uuid.uuid4(),
+            }
+        )
+
+        await self.send({
+            'type': 'websocket.send',
+            'text': json.dumps({
+                'data': {
+                    'ticket': Ticket.objects.serialize(ticket),
+                }
+            }),
+        })
+
         # Create record of comment.
         payload = {
             'showing_uuid': active_showing_uuid,
@@ -65,8 +86,7 @@ class Consumer(AsyncConsumer):
                 'text': json.dumps({
                     'data': {
                         'comments': [
-                            Comment.objects
-                            .serialize(_cache['comment'])
+                            Comment.objects.serialize(_cache['comment']),
                         ],
                     }
                 }),
@@ -306,10 +326,12 @@ class Consumer(AsyncConsumer):
             {
                 'type': 'broadcast',
                 'text': json.dumps({
-                    'comments': [
-                        Comment.objects
-                        .serialize(_cache['comment'])
-                    ]
+                    'data': {
+                        'comments': [
+                            Comment.objects
+                            .serialize(_cache['comment'])
+                        ]
+                    }
                 }),
             }
         )
