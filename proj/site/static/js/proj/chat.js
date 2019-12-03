@@ -191,6 +191,7 @@ function onmessage(event) {
 
   let ticket = payload.data.ticket;
   if(ticket) {
+    console.log(ticket)
     user.profile.active_showing_ticket = ticket
     window.localStorage.setItem(KEY_USER, JSON.stringify(user));
   }

@@ -5,6 +5,8 @@ from datetime import datetime
 
 from django.apps import apps
 
+from channels.db import database_sync_to_async
+
 from proj.core.models.managers import BaseManager
 from proj.core.fns import results
 
@@ -23,7 +25,7 @@ class CommentManager(BaseManager):
         Showing = apps.get_model('music.Showing')
         Comment = self.model
 
-        _cache = self._get_or_fetch_from_cache(
+        _cache = await self._get_or_fetch_from_cache(
             _cache,
             'showing',
             fetch_func=Showing.objects.get,
@@ -32,7 +34,7 @@ class CommentManager(BaseManager):
         showing = _cache['showing']
 
         try:
-            comment = Comment.objects.latest_comment(user, showing)
+            comment = await database_sync_to_async(Comment.objects.latest_comment)(user, showing)
             if (
                 (comment.status == Comment.STATUS_LEFT) and
                 (payload['status'] != Comment.STATUS_JOINED)
@@ -63,7 +65,7 @@ class CommentManager(BaseManager):
 
         now = datetime.utcnow()
 
-        _cache = self._get_or_fetch_from_cache(
+        _cache = await self._get_or_fetch_from_cache(
             _cache,
             'showing',
             fetch_func=Showing.objects.get,
@@ -74,7 +76,7 @@ class CommentManager(BaseManager):
         if showing.status == Showing.STATUS_TERMINATED:
             raise RuntimeError('Cannot comment on a terminated showing.')
 
-        _cache = self._get_or_fetch_from_cache(
+        _cache = await self._get_or_fetch_from_cache(
             _cache,
             'ticket',
             fetch_func=Ticket.objects.get,
@@ -101,7 +103,7 @@ class CommentManager(BaseManager):
         except:
             pass
 
-        comment = Comment.objects.create(
+        comment = await database_sync_to_async(Comment.objects.create)(
             status=status,
             text=payload['text'],
             commenter_id=user.id,
@@ -113,7 +115,7 @@ class CommentManager(BaseManager):
 
         return _cache
 
-    def serialize(self, comment):
+    def serialize(self, comment, ticket=None):
         Showing = apps.get_model('music.Showing')
         Ticket = apps.get_model('music.Ticket')
         Track = apps.get_model('music.Track')
@@ -122,7 +124,7 @@ class CommentManager(BaseManager):
             'created_at': comment.created_at.isoformat(),
             'status': comment.status,
             'text': comment.text,
-            'showing': Showing.objects.serialize(comment.showing),
-            'track': Track.objects.serialize(comment.track),
-            'ticket': Ticket.objects.serialize(comment.commenter_ticket),
+            'showing': comment.showing_id,  # Showing.objects.serialize(comment.showing),
+            'track': comment.track_id,  # Track.objects.serialize(comment.track),
+            'ticket': Ticket.objects.serialize(ticket),  # Ticket.objects.serialize(comment.commenter_ticket),
         }

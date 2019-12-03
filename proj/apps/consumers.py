@@ -37,6 +37,7 @@ class Consumer(AsyncConsumer):
         _cache = await Profile.objects.join_showing_async(
                 _user, active_showing_uuid, _cache=_cache,
         )
+        _user_profile = _cache['profile']
 
         await (
             self.channel_layer
@@ -48,15 +49,19 @@ class Consumer(AsyncConsumer):
         })
 
         # Ticket
-        ticket, created = Ticket.objects.get_or_create(
-            holder=_user,
-            showing=_cache['showing'],
-            defaults={
-                'timestamp_last_active': datetime.utcnow(),
-                'holder_name': _user.profile.default_display_name or 'Default',
-                'holder_uuid': uuid.uuid4(),
-            }
-        )
+        try:
+            ticket = await database_sync_to_async(Ticket.objects.get)(
+                holder=_user,
+                showing=_cache['showing'],
+            )
+        except Ticket.DoesNotExist:
+            ticket, _ = database_sync_to_async(Ticket.objects.create)(
+                holder=_user,
+                showing=_cache['showing'],
+                timestamp_last_active=datetime.utcnow(),
+                holder_name=_user_profile.default_display_name or 'Default',
+                holder_uuid=str(uuid.uuid4()),
+            )
 
         await self.send({
             'type': 'websocket.send',
@@ -86,7 +91,7 @@ class Consumer(AsyncConsumer):
                 'text': json.dumps({
                     'data': {
                         'comments': [
-                            Comment.objects.serialize(_cache['comment']),
+                            Comment.objects.serialize(_cache['comment'], ticket=ticket),
                         ],
                     }
                 }),
@@ -129,7 +134,7 @@ class Consumer(AsyncConsumer):
 
         # get the actual progress in ms
         try:
-            user_spotify_access_token = _user.profile.spotify_access_token
+            user_spotify_access_token = _user_profile.spotify_access_token
             response = requests.get(
                 'https://api.spotify.com/v1/me/player/currently-playing',
                 headers={
@@ -218,12 +223,14 @@ class Consumer(AsyncConsumer):
             .create_from_payload_async(_user, payload, _cache=_cache)
         )
 
-        _cache = _get_or_fetch_from_cache(
-            _cache,
-            'showing',
-            fetch_func=Showing.objects.get,
-            fetch_kwargs={'uuid': payload['showing_uuid']}
+        showing = await database_sync_to_async(Showing.objects.get)(uuid=payload['showing_uuid'])
+        _cache['showing'] = showing
+
+        ticket = await database_sync_to_async(Ticket.objects.get)(
+            holder=_user,
+            showing=_cache['showing'],
         )
+
         await self.channel_layer.group_send(  # TODO: put as manager method
             _cache['showing'].chat_room,
             {
@@ -232,7 +239,7 @@ class Consumer(AsyncConsumer):
                     'data': {
                         'comments': [
                             Comment.objects
-                            .serialize(_cache['comment'])
+                            .serialize(_cache['comment'], ticket=ticket)
                         ],
                     }
                 }),
@@ -260,15 +267,16 @@ class Consumer(AsyncConsumer):
     async def broadcast(self, event):
         '''
         '''
+        _user = self.scope['user']
+
         await self.send({
             'type': 'websocket.send',
             'text': event['text'],
         })
 
-        user_spotify_access_token = (
-            self.scope['user']
-            .profile.spotify_access_token
-        )
+        _profile = await database_sync_to_async(Profile.objects.get)(user=_user)
+
+        user_spotify_access_token = _profile.spotify_access_token
         try:
             if bool(event['playback']) and bool(user_spotify_access_token):
                 await self.play_tracks(user_spotify_access_token, event['playback'])
@@ -299,12 +307,9 @@ class Consumer(AsyncConsumer):
         _user = self.scope['user']
         await Profile.objects.leave_showing_async(_user)
         active_showing_uuid = self.scope['query_string'][5:].decode('utf-8')
-        _cache = _get_or_fetch_from_cache(
-            _cache,
-            'showing',
-            fetch_func=Showing.objects.get,
-            fetch_kwargs={'uuid': active_showing_uuid}
-        )
+        showing = await database_sync_to_async(Showing.objects.get)(uuid=active_showing_uuid)
+        _cache['showing'] = showing
+
         await (
             self.channel_layer
             .group_discard(_cache['showing'].chat_room, self.channel_name)

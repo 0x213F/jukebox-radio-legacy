@@ -1,6 +1,7 @@
 
 import json
 
+from channels.db import database_sync_to_async
 from django.apps import apps
 from django.core.serializers import serialize
 from django.db import models
@@ -13,7 +14,7 @@ class BaseManager(models.Manager):
     Inherits from Django Manager.
     '''
 
-    def _get_or_fetch_from_cache(
+    async def _get_or_fetch_from_cache(
         self, cache, key, *,
         fetch_func=noop, fetch_args=(), fetch_kwargs={}
     ):
@@ -25,7 +26,7 @@ class BaseManager(models.Manager):
         if key in cache:
             result = cache[key]
         else:
-            result = fetch_func(*fetch_args, **fetch_kwargs)
+            result = await database_sync_to_async(fetch_func)(*fetch_args, **fetch_kwargs)
             try:
                 result = result[0]
             except Exception:

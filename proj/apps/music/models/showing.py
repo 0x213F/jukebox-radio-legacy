@@ -65,7 +65,11 @@ class Showing(BaseModel):
 
     @property
     def chat_room(self):
-        return f'{ContentType.objects.get_for_model(self)}-{self.id}'
+        # TODO need a more graceful way of doing this with async. for now a
+        # constant is fine
+        # foo = ContentType.objects.get_for_model(self)
+        foo = 1
+        return f'{foo}-{self.id}'
 
     @property
     def time_left_on_current_record(self):

@@ -4,6 +4,8 @@ import uuid
 
 from datetime import datetime
 
+from channels.db import database_sync_to_async
+
 from django.apps import apps
 from django.db.models import Case
 from django.db.models import Value
@@ -50,9 +52,9 @@ class ProfileManager(BaseManager):
         - Update the user's active showing on their profile.
         '''
         Profile = self.model
-        Profile.objects.filter(user_id=user.id).update(
-            active_showing_uuid=None,
-        )
+        profile = await database_sync_to_async(Profile.objects.get)(user_id=user.id)
+        profile.active_showing_uuid = None
+        await database_sync_to_async(profile.save)()
 
 
 
@@ -66,7 +68,9 @@ class ProfileManager(BaseManager):
         from proj.apps.music.models import Showing
         from proj.apps.music.models import Ticket
 
-        _cache = self._get_or_fetch_from_cache(
+        Profile = apps.get_model('users.Profile')
+
+        _cache = await self._get_or_fetch_from_cache(
             _cache,
             'showing',
             fetch_func=Showing.objects.get,
@@ -74,10 +78,18 @@ class ProfileManager(BaseManager):
         )
         showing = _cache['showing']
 
-        user.profile.active_showing_uuid = showing.uuid
-        user.profile.save()
+        _cache = await self._get_or_fetch_from_cache(
+            _cache,
+            'profile',
+            fetch_func=Profile.objects.get,
+            fetch_kwargs={'user': user}
+        )
 
-        _cache = self._get_or_fetch_from_cache(
+        profile = _cache['profile']
+        profile.active_showing_uuid = showing.uuid
+        await database_sync_to_async(profile.save)()
+
+        _cache = await self._get_or_fetch_from_cache(
             _cache,
             'ticket',
             fetch_func=Ticket.objects.get_or_create,
@@ -86,7 +98,7 @@ class ProfileManager(BaseManager):
                 'showing': showing,
                 'defaults': {
                     'timestamp_last_active': datetime.utcnow(),
-                    'holder_name': user.profile.default_display_name or 'Default',
+                    'holder_name': profile.default_display_name or 'Default',
                     'holder_uuid': uuid.uuid4(),
                 }
             }
