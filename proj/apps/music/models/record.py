@@ -5,6 +5,8 @@ from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.apps import apps
 
+from channels.db import database_sync_to_async
+
 from proj.apps.music.models.managers import RecordManager
 from proj.apps.music.models.querysets import RecordQuerySet
 
@@ -46,3 +48,14 @@ class Record(BaseModel):
             .values_list('track__spotify_duration_ms', flat=True)
         )
         return sum(track_durations_ms)
+
+    @property
+    async def spotify_uris(self):
+        ret_val = await database_sync_to_async(
+            record
+            .tracks_through
+            .order_by('number')
+            .values_list
+        )('track__spotify_uri', flat=True)
+        print(ret_val)
+        return ret_val

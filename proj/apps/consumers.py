@@ -101,33 +101,34 @@ class Consumer(AsyncConsumer):
         # get active record, if it exists
         now = datetime.now()
         try:
-            showing = (
-                Showing
-                .objects
-                .get(
-                    uuid=active_showing_uuid,
-                    status=Showing.STATUS_ACTIVATED,
-                    current_record__isnull=False,
-                    record_terminates_at__gt=(now + timedelta(seconds=5)),
-                )
+            showing = await database_sync_to_async(Showing.objects.select_related('current_record').get)(
+                uuid=active_showing_uuid,
+                status=Showing.STATUS_ACTIVATED,
+                current_record__isnull=False,
+                record_terminates_at__gt=(now + timedelta(seconds=5)),
             )
-        except:
+        except Exception as e:
+            print(1111)
+            print(e)
             return
 
         # get the now playing target progress in ms
         try:
-            now_playing = (
+            now_playing = await database_sync_to_async(
                 Comment
                 .objects
+                .select_related('track')
                 .filter(
                     created_at__lte=now,
                     showing__uuid=active_showing_uuid,
                     status=Comment.STATUS_START,
                 )
                 .order_by('-created_at')
-                .first()
-            )
+                .first
+            )()
+
         except Exception as e:
+            print(e)
             return
 
         assert now_playing
@@ -169,10 +170,16 @@ class Consumer(AsyncConsumer):
 
         # get other tracks to play in future
         record = showing.current_record
-        uris = list(
-            record.tracks_through.all().order_by('number')
-            .values_list('track__spotify_uri', flat=True)
-        )
+        uris = await database_sync_to_async(
+            record
+            .tracks_through
+            .order_by
+        )('number')
+
+        uris = await database_sync_to_async(
+            uris.values_list
+        )('track__spotify_uri', flat=True)
+        uris = await database_sync_to_async(list)(uris)
         while(uris):
             if uris[0] == now_playing.track.spotify_uri:
                 break
@@ -294,8 +301,6 @@ class Consumer(AsyncConsumer):
                 'Content-Type': 'application/json',
             },
         )
-        print(response)
-        print(response.json())
 
 
     # - - - - - -
