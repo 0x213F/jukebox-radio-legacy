@@ -156,7 +156,6 @@ class ShowingManager(BaseManager):
         )
 
         for ticket in Ticket.objects.filter(is_subscribed=True, showing=showing):
-            print('ticket: ', ticket.commenter)
 
             most_recent_join = Comment.objects.filter(
                 status=Comment.STATUS_JOINED,
@@ -170,7 +169,7 @@ class ShowingManager(BaseManager):
                 showing=showing,
             ).order_by('-created_at').first()
 
-            if most_recent_leave.created_at > most_recent_join.created_at:
+            if most_recent_join.created_at > most_recent_leave.created_at:
                 print('USER IS IN CHAT AND SUBSCRIBED')
                 continue
 
