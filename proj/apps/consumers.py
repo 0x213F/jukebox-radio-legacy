@@ -133,6 +133,12 @@ class Consumer(AsyncConsumer):
 
         assert now_playing
 
+        expected_ms = (
+            (
+                now_playing.created_at.replace(tzinfo=None) - now
+            ).total_seconds() * 1000
+        )
+
         # get the actual progress in ms
         try:
             user_spotify_access_token = _user_profile.spotify_access_token
@@ -143,8 +149,11 @@ class Consumer(AsyncConsumer):
                     'Content-Type': 'application/json',
                 },
             )
+            print(response)
+            print(response.text)
+            print(response.content)
             response_json = response.json()
-
+            print(response_json)
             expected_ms = (
                 (
                     now_playing.created_at.replace(tzinfo=None) - now
@@ -161,11 +170,12 @@ class Consumer(AsyncConsumer):
             )
 
             record_is_over = False  # abs(spotify_ms + expected_ms) > 5000
-
+            print(track_is_already_playing, record_is_over)
             if track_is_already_playing or record_is_over:
                 # if within N second(s), leave be
                 return
-        except Exception:
+        except Exception as e:
+            print(e)
             pass
 
         # get other tracks to play in future
@@ -184,7 +194,7 @@ class Consumer(AsyncConsumer):
             if uris[0] == now_playing.track.spotify_uri:
                 break
             uris = uris[1:]
-
+        print(uris, expected_ms)
         await self.play_tracks(
             user_spotify_access_token,
             {

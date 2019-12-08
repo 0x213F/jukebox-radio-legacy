@@ -23,7 +23,7 @@ class ConnectView(BaseView):
             data={
                 'grant_type': 'authorization_code',
                 'code': code,
-                'redirect_uri': 'http://localhost:8000/connect?source=spotify',
+                'redirect_uri': 'http://138.197.220.117:8000/connect?source=spotify',
                 'client_id': '890e3c32aaac4e0fa3dd5cfc22835f11',
                 'client_secret': 'ce1072297bb0469e9adf1820c38616fa',
             }

@@ -1,4 +1,4 @@
-SERVER_IP = '157.245.173.147'
+SERVER_IP = '138.197.220.117'
 SERVER_URL = 'jukeboxrad.io'
 
 DB_HOST_URL = 'localhost'
