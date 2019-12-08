@@ -157,8 +157,10 @@ class Consumer(AsyncConsumer):
                 # if within N second(s), leave be
                 return
         except Exception as e:
+            print('undocumented spotify error')
             print(e)
-            pass
+            print('returning')
+            return
 
         # get other tracks to play in future
         record = showing.current_record
