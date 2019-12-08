@@ -111,7 +111,7 @@ class CommentManager(BaseManager):
             commenter=user,
             showing=showing,
             track=track,  # TODO
-            track_timestamp=now - now_playing.created_at,
+            track_timestamp=now - now_playing.created_at.replace(tzinfo=None),
             commenter_ticket=ticket,
         )
         self._set_cache(_cache, 'comment', comment)
