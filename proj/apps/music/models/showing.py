@@ -53,7 +53,7 @@ class Showing(BaseModel):
     current_record = models.ForeignKey(
         'music.Record',
         related_name='now_playing_at_showings',
-        on_delete=models.DO_NOTHING,
+        on_delete=models.SET_NULL,
         null=True, blank=False,
     )
 

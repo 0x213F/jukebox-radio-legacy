@@ -36,7 +36,6 @@ class RecordAdmin(admin.ModelAdmin):
         'name',
         'display_tracks',
         'duration',
-        'is_playing',
     )
 
     readonly_fields = (

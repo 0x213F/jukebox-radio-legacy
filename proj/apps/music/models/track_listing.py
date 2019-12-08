@@ -41,7 +41,7 @@ class TrackListing(BaseModel):
     record = models.ForeignKey(
         'music.Record',
         related_name='tracks_through',
-        on_delete=models.DO_NOTHING,
+        on_delete=models.CASCADE,
     )
 
     number = models.PositiveIntegerField()

@@ -117,7 +117,7 @@ class Comment(BaseModel):  # TODO Message
     record = models.ForeignKey(
         'music.Record',
         related_name='spins',
-        on_delete=models.DO_NOTHING,
+        on_delete=models.SET_NULL,
         null=True,
     )
     showing = models.ForeignKey(

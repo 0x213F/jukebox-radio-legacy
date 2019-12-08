@@ -1,9 +1,10 @@
 
+from datetime import datetime
 from datetime import timedelta
 
+from django.apps import apps
 from django.contrib.postgres.fields import JSONField
 from django.db import models
-from django.apps import apps
 
 from channels.db import database_sync_to_async
 
@@ -26,6 +27,20 @@ class Record(BaseModel):
 
     def __str__(self):
         return self.name
+
+    def delete(self):
+        Record = apps.get_model('music.Record')
+    
+        now = datetime.now()
+        ongoing_showing = (
+            self
+            .now_playing_at_showings
+            .filter(record_terminates_at__gte=now)
+        )
+        if ongoing_showing.exists():
+            raise Exception('Cannot delete, record is in active showing.')
+
+        return super().delete()
 
     # - - - - - - - - -
     # fields

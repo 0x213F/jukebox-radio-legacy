@@ -113,12 +113,51 @@
     <div class='detail-showing' style='display: none;'>
 
       <div class="row playback align-center">
+
+        <!-- - - - --->
+        <!-- LEAVE -->
         <button class="footer-button leave leave-button">
           Leave
         </button>
-        <!-- <div class="circle-button play-pause pause center-horizontal"></div>
-        <div class="circle-button skip-forward center-horizontal"></div> -->
-        <!-- <progress class="progress track-status" value="25" max="100"></progress> -->
+
+        <!-- - - - --->
+        <!-- TOGGLE SUBSCRIPTION -->
+        <form class="ajax-form" url="../api/music/showing_subscription/" type="post">
+
+          {% csrf_token %}
+
+          <div class="hidden">
+            <input id="subscription-uuid-sub" type="text" name="showing_uuid">
+          </div>
+
+          <div class="hidden">
+            <input id="subscription-status" type="text" name="status" value='subscribe'>
+          </div>
+
+          <button id="subscription-button" class="footer-button leave leave-button">
+            On
+          </button>
+        </form>
+
+        <!-- - - - --->
+        <!-- TOGGLE SUBSCRIPTION -->
+        <form class="ajax-form" url="../api/music/showing_subscription/" type="post">
+
+          {% csrf_token %}
+
+          <div class="hidden">
+            <input id="subscription-uuid-unsub" type="text" name="showing_uuid">
+          </div>
+
+          <div class="hidden">
+            <input id="subscription-status" type="text" name="status" value='unsubscribe'>
+          </div>
+
+          <button id="subscription-button" class="footer-button leave leave-button">
+            Off
+          </button>
+        </form>
+
       </div>
       <div class="chat">
         <!-- CHAT -->

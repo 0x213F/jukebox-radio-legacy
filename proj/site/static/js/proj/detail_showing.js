@@ -9,5 +9,9 @@ function display_detail_showing() {
 
   let user = JSON.parse(window.localStorage.getItem(KEY_USER));
   user.profile.active_showing_uuid = uuid;
+
+  $("#subscription-uuid-sub").val(uuid)
+  $("#subscription-uuid-unsub").val(uuid)
+
   window.localStorage.setItem(KEY_USER, JSON.stringify(user));
 }

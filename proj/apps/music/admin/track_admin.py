@@ -66,6 +66,9 @@ class TrackAdmin(admin.ModelAdmin):
             )
         return super().get_form(request, obj, **kwargs)
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
     def name(self, track):
         return track.spotify_name
 
@@ -143,13 +146,7 @@ class TrackAdmin(admin.ModelAdmin):
         except Exception:
             pass
 
-        spotify_access_token = (
-            User
-            .objects
-            .get(email__iexact='josh@schultheiss.io')
-            .profile
-            .spotify_access_token
-        )
+        spotify_access_token = self.user.profile.spotify_access_token
         spotify_id =  track.spotify_uri[14:]
 
         response = requests.get(
