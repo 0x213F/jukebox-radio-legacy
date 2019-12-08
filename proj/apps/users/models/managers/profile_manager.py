@@ -46,6 +46,7 @@ class ProfileManager(BaseManager):
                 'scopes': scopes,
                 'active_showing': Showing.objects.serialize(active_showing),
                 'active_showing_uuid': user.profile.active_showing_uuid,
+                'default_name': user.profile.default_display_name,
             },
         }
 
