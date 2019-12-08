@@ -87,6 +87,8 @@ class CommentManager(BaseManager):
         status = payload['status']
 
         cmt = None
+        track = None
+        track_timestamp = None
         try:
             cmt = await database_sync_to_async(
                 Comment
@@ -100,18 +102,19 @@ class CommentManager(BaseManager):
                 .order_by('-created_at')
                 .first
             )()
-
+            track = cmt.track
+            track_timestamp = now - cmt.created_at.replace(tzinfo=None)
         except Exception as e:
-            print('unexpected error!!')
-            print(e)
+            pass
+
 
         comment = await database_sync_to_async(Comment.objects.create)(
             status=status,
             text=payload['text'],
             commenter=user,
             showing=showing,
-            track=cmt.track,  # TODO
-            track_timestamp=now - cmt.created_at.replace(tzinfo=None),
+            track=track,  # TODO
+            track_timestamp=track_timestamp,
             commenter_ticket=ticket,
         )
         self._set_cache(_cache, 'comment', comment)
