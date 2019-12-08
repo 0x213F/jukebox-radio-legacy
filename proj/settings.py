@@ -15,10 +15,10 @@ SECRET_KEY = '(&t)o93xlj#71p_m@u#4iymmi*+xcopurz1=209mgrt#&(p2wn'
 DEBUG = True
 
 ALLOWED_HOSTS = [
+	SERVER_IP,
 	'localhost',
 	'127.0.0.1',
-	SERVER_IP,
-        SERVER_URL,
+    SERVER_URL,
 ]
 
 
