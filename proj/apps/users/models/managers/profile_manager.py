@@ -6,6 +6,8 @@ from datetime import datetime
 
 from channels.db import database_sync_to_async
 
+from random_username.generate import generate_username
+
 from django.apps import apps
 from django.db.models import Case
 from django.db.models import Value
@@ -98,7 +100,7 @@ class ProfileManager(BaseManager):
                 'showing': showing,
                 'defaults': {
                     'timestamp_last_active': datetime.utcnow(),
-                    'holder_name': profile.default_display_name or 'Default',
+                    'holder_name': profile.default_display_name or generate_username(1)[0],
                     'holder_uuid': uuid.uuid4(),
                 }
             }

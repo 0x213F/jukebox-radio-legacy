@@ -38,6 +38,7 @@ class Consumer(AsyncConsumer):
                 _user, active_showing_uuid, _cache=_cache,
         )
         _user_profile = _cache['profile']
+        ticket = _cache['ticket']
 
         await (
             self.channel_layer
@@ -47,21 +48,6 @@ class Consumer(AsyncConsumer):
         await self.send({
             'type': 'websocket.accept',
         })
-
-        # Ticket
-        try:
-            ticket = await database_sync_to_async(Ticket.objects.get)(
-                holder=_user,
-                showing=_cache['showing'],
-            )
-        except Ticket.DoesNotExist:
-            ticket, _ = database_sync_to_async(Ticket.objects.create)(
-                holder=_user,
-                showing=_cache['showing'],
-                timestamp_last_active=datetime.utcnow(),
-                holder_name=_user_profile.default_display_name or 'Default',
-                holder_uuid=str(uuid.uuid4()),
-            )
 
         await self.send({
             'type': 'websocket.send',
@@ -73,15 +59,16 @@ class Consumer(AsyncConsumer):
         })
 
         # Create record of comment.
-        payload = {
+        join_payload = {
             'showing_uuid': active_showing_uuid,
             'status': Comment.STATUS_JOINED,
             'text': None,
         }
         _cache = await (
             Comment.objects
-            .create_from_payload_async(_user, payload, _cache=_cache)
+            .create_from_payload_async(_user, join_payload, _cache=_cache)
         )
+        comment = _cache['comment']
 
         # tell the chatroom that the user has joined
         await self.channel_layer.group_send(  # TODO: put as manager method
