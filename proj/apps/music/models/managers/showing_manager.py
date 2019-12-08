@@ -169,7 +169,7 @@ class ShowingManager(BaseManager):
                 showing=showing,
             ).order_by('-created_at').first()
 
-            if most_recent_join.created_at > most_recent_leave.created_at:
+            if (most_recent_join.created_at and not most_recent_leave) or (most_recent_join.created_at > most_recent_leave.created_at):
                 print('USER IS IN CHAT AND SUBSCRIBED')
                 continue
 
