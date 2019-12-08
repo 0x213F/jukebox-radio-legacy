@@ -132,3 +132,4 @@ class Comment(BaseModel):  # TODO Message
         null=True,
         blank=True,
     )
+    track_timestamp = models.DurationField(null=True, blank=True)

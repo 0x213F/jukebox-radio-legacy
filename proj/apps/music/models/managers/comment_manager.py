@@ -88,20 +88,22 @@ class CommentManager(BaseManager):
 
         track = None
         try:
-            now_playing = (
+            now_playing = await database_sync_to_async(
                 Comment
                 .objects
+                .select_related('track')
                 .filter(
                     created_at__lte=now,
                     showing=showing,
                     status=Comment.STATUS_START,
                 )
                 .order_by('-created_at')
-                .first()
-            )
-            track = now_playing.track
-        except:
-            pass
+                .first
+            )()
+
+        except Exception as e:
+            print('unexpected error!!')
+            print(e)
 
         comment = await database_sync_to_async(Comment.objects.create)(
             status=status,
