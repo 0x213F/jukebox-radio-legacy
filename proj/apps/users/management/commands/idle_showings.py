@@ -12,6 +12,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         Showing = apps.get_model('music.Showing')
 
+        now = datetime.now()
+
         showings_to_idle = (
             Showing
             .objects
