@@ -155,6 +155,19 @@ class ShowingManager(BaseManager):
             }
         )
 
+        for ticket in Ticket.objects.filter(is_subscribed):
+            user = ticket.holder
+            action = 'play'
+            data = json.dumps({'uris': uris})
+            response = requests.put(
+                f'https://api.spotify.com/v1/me/player/{action}',
+                data=data,
+                headers={
+                    'Authorization': f'Bearer {sat}',
+                    'Content-Type': 'application/json',
+                },
+            )
+
     def play(self, record):
         '''
         Play the record sitting in a paused state.

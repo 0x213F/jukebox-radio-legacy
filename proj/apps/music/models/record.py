@@ -30,7 +30,7 @@ class Record(BaseModel):
 
     def delete(self):
         Record = apps.get_model('music.Record')
-    
+
         now = datetime.now()
         ongoing_showing = (
             self
@@ -72,5 +72,4 @@ class Record(BaseModel):
             .order_by('number')
             .values_list
         )('track__spotify_uri', flat=True)
-        print(ret_val)
         return ret_val

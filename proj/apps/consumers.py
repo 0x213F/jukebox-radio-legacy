@@ -85,6 +85,8 @@ class Consumer(AsyncConsumer):
             }
         )
 
+        print('success connecting!')
+
         # get active record, if it exists
         now = datetime.now()
         try:
@@ -95,8 +97,8 @@ class Consumer(AsyncConsumer):
                 record_terminates_at__gt=(now + timedelta(seconds=5)),
             )
         except Exception as e:
-            print(1111)
-            print(e)
+            print('no active record')
+            print('returning')
             return
 
         # get the now playing target progress in ms
@@ -115,8 +117,9 @@ class Consumer(AsyncConsumer):
             )()
 
         except Exception as e:
-            print(e)
-            return
+            print('no active track')
+            print('WARNING: this edge case should not be hit.')
+            print('returning')
 
         assert now_playing
 
@@ -136,16 +139,9 @@ class Consumer(AsyncConsumer):
                     'Content-Type': 'application/json',
                 },
             )
-            print(response)
-            print(response.text)
-            print(response.content)
+
             response_json = response.json()
-            print(response_json)
-            expected_ms = (
-                (
-                    now_playing.created_at.replace(tzinfo=None) - now
-                ).total_seconds() * 1000
-            )
+
             spotify_ms = response_json['progress_ms']
             spotify_uri = response_json['item']['uri']
             spotify_is_playing = response_json['is_playing']
@@ -157,7 +153,6 @@ class Consumer(AsyncConsumer):
             )
 
             record_is_over = False  # abs(spotify_ms + expected_ms) > 5000
-            print(track_is_already_playing, record_is_over)
             if track_is_already_playing or record_is_over:
                 # if within N second(s), leave be
                 return
@@ -181,7 +176,7 @@ class Consumer(AsyncConsumer):
             if uris[0] == now_playing.track.spotify_uri:
                 break
             uris = uris[1:]
-        print(uris, expected_ms)
+
         await self.play_tracks(
             user_spotify_access_token,
             {
