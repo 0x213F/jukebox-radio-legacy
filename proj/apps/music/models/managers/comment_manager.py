@@ -108,8 +108,8 @@ class CommentManager(BaseManager):
         comment = await database_sync_to_async(Comment.objects.create)(
             status=status,
             text=payload['text'],
-            commenter_id=user.id,
-            showing_id=showing.id,
+            commenter=user,
+            showing=showing,
             track=track,  # TODO
             commenter_ticket=ticket,
         )
