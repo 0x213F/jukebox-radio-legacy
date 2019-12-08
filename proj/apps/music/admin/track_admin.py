@@ -113,7 +113,7 @@ class TrackAdmin(admin.ModelAdmin):
     # save
     # - - -
 
-    def save_model(self, v, track, form, change):
+    def save_model(self, request, track, form, change):
         '''
         Cache data from Spotify API.
         '''
