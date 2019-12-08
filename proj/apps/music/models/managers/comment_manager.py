@@ -105,6 +105,7 @@ class CommentManager(BaseManager):
             print('unexpected error!!')
             print(e)
 
+        print(track, now - now_playing.created_at.replace(tzinfo=None))
         comment = await database_sync_to_async(Comment.objects.create)(
             status=status,
             text=payload['text'],

@@ -30,6 +30,7 @@ class CommentAdmin(admin.ModelAdmin):
         'status',
         'text',
         'track',
+        'track_timestamp',
         'showing',
         'created_at',
     )
