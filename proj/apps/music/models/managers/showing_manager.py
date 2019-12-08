@@ -165,7 +165,6 @@ class ShowingManager(BaseManager):
             try:
                 assert most_recent_join.showing == showing
             except Exception:
-                print('in a different showing')
                 continue
 
             most_recent_leave = Comment.objects.filter(
