@@ -160,8 +160,13 @@ class ShowingManager(BaseManager):
             most_recent_join = Comment.objects.filter(
                 status=Comment.STATUS_JOINED,
                 commenter=ticket.holder,
-                showing=showing,
             ).order_by('-created_at').first()
+
+            try:
+                assert most_recent_join.showing == showing
+            except Exception:
+                print('in a different showing')
+                continue
 
             most_recent_leave = Comment.objects.filter(
                 status=Comment.STATUS_LEFT,
