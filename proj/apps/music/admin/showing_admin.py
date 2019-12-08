@@ -7,6 +7,10 @@ from django.contrib import messages
 from django import urls
 from django.utils.html import format_html
 
+from django_admin_listfilter_dropdown.filters import (
+    DropdownFilter, ChoiceDropdownFilter, RelatedDropdownFilter
+)
+
 from proj.apps.music.models import Comment
 from proj.apps.music.models import Record
 from proj.apps.music.models import Showing
@@ -39,6 +43,11 @@ class ShowingAdmin(admin.ModelAdmin):
         'time_left',
         'status',
         'comments',
+    )
+
+    list_filter = (
+        # for related fields
+        ('status', DropdownFilter),
     )
 
     def get_actions(self, request):
