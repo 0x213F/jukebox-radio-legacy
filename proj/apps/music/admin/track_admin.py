@@ -113,7 +113,7 @@ class TrackAdmin(admin.ModelAdmin):
     # save
     # - - -
 
-    def save_model(self, request, track, form, change):
+    def save_model(self, v, track, form, change):
         '''
         Cache data from Spotify API.
         '''
@@ -146,7 +146,7 @@ class TrackAdmin(admin.ModelAdmin):
         except Exception:
             pass
 
-        spotify_access_token = self.user.profile.spotify_access_token
+        spotify_access_token = request.user.profile.spotify_access_token
         spotify_id =  track.spotify_uri[14:]
 
         response = requests.get(
