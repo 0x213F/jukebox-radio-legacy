@@ -86,9 +86,9 @@ class CommentManager(BaseManager):
 
         status = payload['status']
 
-        track = None
+        cmt = None
         try:
-            now_playing = await database_sync_to_async(
+            cmt = await database_sync_to_async(
                 Comment
                 .objects
                 .select_related('track')
@@ -105,13 +105,13 @@ class CommentManager(BaseManager):
             print('unexpected error!!')
             print(e)
 
-        print(track, now - now_playing.created_at.replace(tzinfo=None))
+        print(cmt.track, now - cmt.track.created_at.replace(tzinfo=None))
         comment = await database_sync_to_async(Comment.objects.create)(
             status=status,
             text=payload['text'],
             commenter=user,
             showing=showing,
-            track=track,  # TODO
+            track=cmt.track,  # TODO
             track_timestamp=now - now_playing.created_at.replace(tzinfo=None),
             commenter_ticket=ticket,
         )
