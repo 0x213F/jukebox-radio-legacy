@@ -155,7 +155,7 @@ class ShowingManager(BaseManager):
             }
         )
 
-        for ticket in Ticket.objects.filter(is_subscribed):
+        for ticket in Ticket.objects.filter(is_subscribed=True):
             user = ticket.holder
             action = 'play'
             data = json.dumps({'uris': uris})
