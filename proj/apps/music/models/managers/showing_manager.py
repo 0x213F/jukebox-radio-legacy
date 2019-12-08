@@ -156,6 +156,7 @@ class ShowingManager(BaseManager):
         )
 
         for ticket in Ticket.objects.filter(is_subscribed=True, showing=showing):
+            print('ticket: ': ticket.commenter)
 
             most_recent_join = Comment.objects.filter(
                 status=Comment.STATUS_JOINED,
