@@ -105,14 +105,13 @@ class CommentManager(BaseManager):
             print('unexpected error!!')
             print(e)
 
-        print(cmt.track, now - cmt.track.created_at.replace(tzinfo=None))
         comment = await database_sync_to_async(Comment.objects.create)(
             status=status,
             text=payload['text'],
             commenter=user,
             showing=showing,
             track=cmt.track,  # TODO
-            track_timestamp=now - now_playing.created_at.replace(tzinfo=None),
+            track_timestamp=now - cmt.created_at.replace(tzinfo=None),
             commenter_ticket=ticket,
         )
         self._set_cache(_cache, 'comment', comment)
