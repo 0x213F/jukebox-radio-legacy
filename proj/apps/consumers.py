@@ -179,6 +179,9 @@ class Consumer(AsyncConsumer):
                 break
             uris = uris[1:]
 
+        if not uris:
+            return
+
         await self.play_tracks(
             user_spotify_access_token,
             {

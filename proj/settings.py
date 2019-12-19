@@ -54,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'rollbar.contrib.django.middleware.RollbarNotifierMiddleware',
 ]
 
 ROOT_URLCONF = 'proj.urls'
@@ -135,3 +136,11 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     f'{BASE_DIR}/proj/site/static/',
 ]
+
+ROLLBAR = {
+    'access_token': '2275330c0ef340d6b5c38b2c37930a8a',
+    'environment': 'development' if DEBUG else 'production',
+    'root': BASE_DIR,
+}
+import rollbar
+rollbar.init(**ROLLBAR)

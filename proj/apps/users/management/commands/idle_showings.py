@@ -22,4 +22,4 @@ class Command(BaseCommand):
                 record_terminates_at__lt=now - timedelta(minutes=5),
             )
         )
-        showings_to_idle.update(status=Showing.STATUS_IDLE)
+        showings_to_idle.update(status=Showing.STATUS_IDLE, current_record=None)
