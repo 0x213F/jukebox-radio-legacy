@@ -8,18 +8,31 @@ from django.contrib import admin
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.utils.html import format_html
+from django.conf.urls import url
+from django.shortcuts import redirect
 
 from proj.apps.music.forms import TrackForm
 from proj.apps.music.models import TrackListing
 from proj.apps.music.models import Track
+from proj.apps.music.backends import Spotify
+from proj.apps.users.models import Profile
 
 
 @admin.register(Track)
 class TrackAdmin(admin.ModelAdmin):
 
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [
+            url(r'^link-spotify/$', self.link_spotify, name="link_spotify")
+        ]
+        return my_urls + urls
+
     # - - - - -
     # display
     # - - - - -
+
+    change_list_template = 'admin/track_change_list.html'
 
     form = TrackForm
 
@@ -188,3 +201,8 @@ class TrackAdmin(admin.ModelAdmin):
             track=track,
             number=number,
         )
+
+    def link_spotify(self, request):
+        Profile.objects.get_or_create(user=request.user)
+        spotify_authorization_uri = Spotify.get_spotify_authorization_uri(request, 'admin')
+        return redirect(spotify_authorization_uri)
