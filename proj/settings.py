@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'encrypted_model_fields',
 	'proj.apps.music',
 	'proj.apps.users',
 	'channels',
@@ -136,6 +137,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     f'{BASE_DIR}/proj/site/static/',
 ]
+
+
+DATABASE_ENCRYPTION_KEY = 'wL-8K4RlFSlmcMaHiSKsGiudPljrVkK_v11wq-Y9-vE='.encode("utf-8")
 
 
 import sentry_sdk
