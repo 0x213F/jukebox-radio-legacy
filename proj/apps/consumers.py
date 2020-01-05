@@ -1,16 +1,18 @@
 import asyncio
+from cryptography.fernet import Fernet
+from datetime import datetime
+from datetime import timedelta
 import json
 import requests
 import uuid
-from urllib.parse import urlparse
 
-from datetime import datetime
-from datetime import timedelta
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.core.serializers import serialize
 
 from channels.consumer import AsyncConsumer
 from channels.db import database_sync_to_async
-from django.contrib.auth import get_user_model
-from django.core.serializers import serialize
+from urllib.parse import urlparse
 
 
 from proj.apps.music.models import Ticket
@@ -32,6 +34,8 @@ class Consumer(AsyncConsumer):
         '''
         _cache = {}
         _user = self.scope['user']
+
+        cipher_suite = Fernet(settings.DATABASE_ENCRYPTION_KEY)
 
         active_stream_uuid = self.scope['query_string'][5:].decode('utf-8')
         _cache = await Profile.objects.join_stream_async(
@@ -131,7 +135,7 @@ class Consumer(AsyncConsumer):
 
         # get the actual progress in ms
         try:
-            user_spotify_access_token = _user_profile.spotify_access_token
+            user_spotify_access_token = cipher_suite.decrypt(_user_profile.spotify_access_token.encode('utf-8')).decode("utf-8")
             response = requests.get(
                 'https://api.spotify.com/v1/me/player/currently-playing',
                 headers={
@@ -277,7 +281,8 @@ class Consumer(AsyncConsumer):
 
         _profile = await database_sync_to_async(Profile.objects.get)(user=_user)
 
-        user_spotify_access_token = _profile.spotify_access_token
+        cipher_suite = Fernet(settings.DATABASE_ENCRYPTION_KEY)
+        user_spotify_access_token = cipher_suite.decrypt(_profile.spotify_access_token.encode('utf-8')).decode("utf-8")
         try:
             if bool(event['playback']) and bool(user_spotify_access_token):
                 await self.play_tracks(user_spotify_access_token, event['playback'])

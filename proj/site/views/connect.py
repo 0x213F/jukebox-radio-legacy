@@ -1,7 +1,9 @@
 
+from cryptography.fernet import Fernet
 import requests
 
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.contrib.sites.shortcuts import get_current_site
@@ -32,8 +34,13 @@ class ConnectView(BaseView):
             }
         )
         response_json = response.json()
-        request.user.profile.spotify_access_token = response_json['access_token']
-        request.user.profile.spotify_refresh_token = response_json['refresh_token']
+
+        cipher_suite = Fernet(settings.DATABASE_ENCRYPTION_KEY)
+        cipher_spotify_access_token = cipher_suite.encrypt(response_json['access_token'].encode('utf-8'))
+        cipher_spotify_refresh_token = cipher_suite.encrypt(response_json['refresh_token'].encode('utf-8'))
+
+        request.user.profile.spotify_access_token = cipher_spotify_access_token.decode('utf-8')
+        request.user.profile.spotify_refresh_token = cipher_spotify_refresh_token.decode('utf-8')
         request.user.profile.spotify_scope = response_json['scope']
         request.user.profile.save()
 

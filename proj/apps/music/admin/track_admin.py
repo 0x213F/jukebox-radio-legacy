@@ -1,7 +1,9 @@
 
+from cryptography.fernet import Fernet
 from datetime import datetime
 import requests
 
+from django.conf import settings
 from django import urls
 from django.apps import apps
 from django.contrib import admin
@@ -159,7 +161,8 @@ class TrackAdmin(admin.ModelAdmin):
         except Exception:
             pass
 
-        spotify_access_token = request.user.profile.spotify_access_token
+        cipher_suite = Fernet(settings.DATABASE_ENCRYPTION_KEY)
+        spotify_access_token = cipher_suite.decrypt(request.user.profile.spotify_access_token.encode('utf-8')).decode("utf-8")
         spotify_id =  track.spotify_uri[14:]
 
         response = requests.get(
