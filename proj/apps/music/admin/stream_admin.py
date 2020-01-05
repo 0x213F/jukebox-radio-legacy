@@ -66,7 +66,7 @@ class StreamAdmin(admin.ModelAdmin):
             self.fields = (
                 'title',
             )
-            self.readonly_fields = ('title',)
+            self.readonly_fields = ('',)
         elif obj.status == Stream.STATUS_ACTIVATED:
             if obj.time_left_on_current_record:
                 self.fields = (
@@ -76,7 +76,7 @@ class StreamAdmin(admin.ModelAdmin):
                     'time_left',
                     'record_terminates_at',
                 )
-                self.readonly_fields = ('title', 'link_to_record', 'tracks', 'time_left', 'record_terminates_at',)
+                self.readonly_fields = ('link_to_record', 'tracks', 'time_left', 'record_terminates_at',)
             else:
                 self.fields = (
                     'title',
@@ -84,7 +84,7 @@ class StreamAdmin(admin.ModelAdmin):
                     'time_left',
                     'record_terminates_at',
                 )
-                self.readonly_fields = ('title', 'link_to_record', 'time_left', 'record_terminates_at',)
+                self.readonly_fields = ('link_to_record', 'time_left', 'record_terminates_at',)
         elif obj.status == Stream.STATUS_TERMINATED:
             fields = (
                 'title',
@@ -92,7 +92,7 @@ class StreamAdmin(admin.ModelAdmin):
                 'comments',
             )
             self.fields = fields
-            self.readonly_fields = fields
+            self.readonly_fields = ('',)
         return super().get_form(request, obj, **kwargs)
 
     # inlines = [
