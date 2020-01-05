@@ -149,7 +149,7 @@ class TrackAdmin(admin.ModelAdmin):
                     )
                     return
                 number = (
-                    TrackListing.objects.filter(record=record, track=track).count()
+                    TrackListing.objects.filter(record=record).count()
                     + 1
                 )
                 TrackListing.objects.create(
@@ -195,7 +195,7 @@ class TrackAdmin(admin.ModelAdmin):
             return
 
         number = (
-            TrackListing.objects.filter(record=record, track=track).count()
+            TrackListing.objects.filter(record=record).count()
             + 1
         )
 

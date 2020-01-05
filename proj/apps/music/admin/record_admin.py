@@ -93,8 +93,12 @@ class RecordAdmin(admin.ModelAdmin):
             track_link = urls.reverse(
                 'admin:music_track_change', args=[track.id]
             )
+            track_listing_link = urls.reverse(
+                'admin:music_tracklisting_delete', args=[tl.id]
+            )
             track_str += (
                 f'<button><a href="{track_link}">🔗 {track.spotify_name}</a></button>'
+                f'<button><a href="{track_listing_link}">🗑</a></button>'
                 '<div style="height: 0.25rem;"></div>'
             )
 
