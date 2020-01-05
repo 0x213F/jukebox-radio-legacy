@@ -23,13 +23,11 @@ class Stream(BaseModel):
     STATUS_SCHEDULED = 'scheduled'
     STATUS_ACTIVATED = 'activated'
     STATUS_IDLE = 'idle'
-    STATUS_TERMINATED = 'terminated'
 
     STATUS_CHOICES = [
         (STATUS_SCHEDULED, 'Scheduled'),
         (STATUS_ACTIVATED, 'Activated'),
         (STATUS_IDLE, 'idle'),
-        (STATUS_TERMINATED, 'Terminated'),
     ]
 
     class Meta:

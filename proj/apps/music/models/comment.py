@@ -16,7 +16,6 @@ from proj.core.models import BaseModel
 class StatusMessage:
     STREAM_ACTIVATED = 'stream_activated'
     STREAM_IDLE = 'stream_idle'
-    STREAM_TERMINATED = 'stream_terminated'
     USER_JOINED = 'user_joined'
     USER_LEFT = 'user_left'
 
@@ -44,7 +43,6 @@ class Comment(BaseModel):  # TODO Message
     # Stream status change (StatusMessage)
     STATUS_ACTIVATED = 'activated'
     STATUS_IDLE = 'idle'
-    STATUS_TERMINATED = 'terminated'
 
     # User status change (StatusMessage)
     STATUS_JOINED = 'joined'
@@ -92,7 +90,6 @@ class Comment(BaseModel):  # TODO Message
         (STATUS_LEFT, 'Left'),
         (STATUS_ACTIVATED, 'Activated'),
         (STATUS_IDLE, 'Idle'),
-        (STATUS_TERMINATED, 'Terminated'),
         (STATUS_LOW, ':('),
         (STATUS_MID_LOW, ':/'),
         (STATUS_NEUTRAL, ':|'),
