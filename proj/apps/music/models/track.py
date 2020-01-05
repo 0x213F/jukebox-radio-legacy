@@ -25,7 +25,7 @@ class Track(BaseModel):
     objects = TrackManager.from_queryset(TrackQuerySet)()
 
     def __str__(self):
-        return f'<track id="{self.id}">'
+        return self.spotify_name
 
     # - - - -
     # fields
