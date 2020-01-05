@@ -1,8 +1,10 @@
 
+from cryptography.fernet import Fernet
 import requests
 import sys
 
 from django.apps import apps
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
 
@@ -19,16 +21,22 @@ class Command(BaseCommand):
         )
 
         for profile in profiles_to_refresh:
+            cipher_suite = Fernet(settings.DATABASE_ENCRYPTION_KEY)
+            spotify_refresh_token = cipher_suite.decrypt(profile.spotify_refresh_token.encode('utf-8')).decode("utf-8")
+
             response = requests.post(
                 'https://accounts.spotify.com/api/token',
                 data={
                     'grant_type': 'refresh_token',
-                    'refresh_token': profile.spotify_refresh_token,
+                    'refresh_token': spotify_refresh_token,
                     'client_id': '890e3c32aaac4e0fa3dd5cfc22835f11',
                     'client_secret': 'ce1072297bb0469e9adf1820c38616fa',
                 }
             )
             response_json = response.json()
-            profile.spotify_access_token = response_json['access_token']
+
+            cipher_spotify_access_token = cipher_suite.encrypt(response_json['access_token'].encode('utf-8'))
+
+            profile.spotify_access_token = cipher_spotify_access_token.decode('utf-8')
             profile.spotify_scope = response_json['scope']
             profile.save()
