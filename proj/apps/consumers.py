@@ -163,16 +163,13 @@ class Consumer(AsyncConsumer):
             return
 
         # get other tracks to play in future
-        record = stream.current_record
-        uris = await database_sync_to_async(
-            record
+        uris = (
+            stream
+            .current_record
             .tracks_through
-            .order_by
-        )('number')
-
-        uris = await database_sync_to_async(
-            uris.values_list
-        )('track__spotify_uri', flat=True)
+            .order_by('number')
+            .values_list('track__spotify_uri', flat=True)
+        )
         uris = await database_sync_to_async(list)(uris)
         while(uris):
             if uris[0] == now_playing.track.spotify_uri:

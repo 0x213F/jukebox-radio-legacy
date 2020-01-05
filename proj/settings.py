@@ -137,10 +137,15 @@ STATICFILES_DIRS = [
     f'{BASE_DIR}/proj/site/static/',
 ]
 
-ROLLBAR = {
-    'access_token': '2275330c0ef340d6b5c38b2c37930a8a',
-    'environment': 'development' if DEBUG else 'production',
-    'root': BASE_DIR,
-}
-import rollbar
-rollbar.init(**ROLLBAR)
+
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+sentry_sdk.init(
+    dsn="https://799457e098f64288b8e1be59be59465d@sentry.io/1871862",
+    integrations=[DjangoIntegration()],
+
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True
+)
