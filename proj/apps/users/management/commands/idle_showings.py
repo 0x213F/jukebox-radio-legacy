@@ -20,6 +20,7 @@ class Command(BaseCommand):
             .filter(
                 status=Stream.STATUS_ACTIVATED,
                 record_terminates_at__lt=now - timedelta(minutes=5),
+                last_status_change_at__gt=now - timedelta(minutes=5),
             )
         )
         streams_to_idle.update(status=Stream.STATUS_IDLE, current_record=None)

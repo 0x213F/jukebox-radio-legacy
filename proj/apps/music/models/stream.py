@@ -53,6 +53,7 @@ class Stream(BaseModel):
 
     showtime_actual = models.DateTimeField(null=True, blank=False)
 
+    last_status_change_at = models.DateTimeField(null=True, blank=True)
     record_terminates_at = models.DateTimeField(null=True, blank=False)
 
     status = models.CharField(max_length=128, default=STATUS_IDLE)

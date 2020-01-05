@@ -58,6 +58,7 @@ class StreamManager(BaseManager):
         now_str = now.isoformat()
 
         stream.status = status
+        stream.last_status_change_at = datetime.now()
         stream.save()
 
         Comment.objects.create(
