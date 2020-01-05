@@ -75,9 +75,6 @@ class CommentManager(BaseManager):
         )
         stream = _cache['stream']
 
-        if stream.status == Stream.STATUS_TERMINATED:
-            raise RuntimeError('Cannot comment on a terminated stream.')
-
         _cache = await _get_or_fetch_from_cache(
             _cache,
             'ticket',

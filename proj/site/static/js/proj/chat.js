@@ -178,16 +178,10 @@ function onmessage(event) {
 
   let status = payload.data.status;
   let IDLE = 'idle'
-  let TERMINATED = 'terminated'
 
-  if(status !== TERMINATED) {
-    $activated_tray.show();
-    $idle_tray.hide();
-    stream.status = status;
-  } else {
-    stream.status = TERMINATED;
-    $('.footer-button.leave.leave-button').click();
-  }
+  $activated_tray.show();
+  $idle_tray.hide();
+  stream.status = status;
 
   let ticket = payload.data.ticket;
   if(ticket) {

@@ -50,12 +50,6 @@ class StreamAdmin(admin.ModelAdmin):
         ('status', DropdownFilter),
     )
 
-    def get_actions(self, request):
-        actions = super().get_actions(request)
-        if 'delete_selected' in actions:
-            del actions['delete_selected']
-        return actions
-
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
             self.fields = (
@@ -85,14 +79,6 @@ class StreamAdmin(admin.ModelAdmin):
                     'record_terminates_at',
                 )
                 self.readonly_fields = ('title', 'link_to_record', 'time_left', 'record_terminates_at',)
-        elif obj.status == Stream.STATUS_TERMINATED:
-            fields = (
-                'title',
-                'current_record',
-                'comments',
-            )
-            self.fields = fields
-            self.readonly_fields = fields
         return super().get_form(request, obj, **kwargs)
 
     # inlines = [
@@ -187,7 +173,6 @@ class StreamAdmin(admin.ModelAdmin):
     actions = [
         'activate_selected_stream',
         'idle_selected_stream',
-        'terminate_selected_stream',
     ]
 
     def activate_selected_stream(self, request, queryset):
@@ -214,7 +199,7 @@ class StreamAdmin(admin.ModelAdmin):
     def idle_selected_stream(self, request, queryset):
         scheduled = (
             queryset
-            .filter(status__in=(Stream.STATUS_ACTIVATED, Stream.STATUS_TERMINATED))
+            .filter(status__in=(Stream.STATUS_ACTIVATED))
         )
         if queryset.count() != scheduled.count():
             self.message_user(
@@ -226,24 +211,6 @@ class StreamAdmin(admin.ModelAdmin):
         for stream in queryset:
             Stream.objects.change_status(stream, Stream.STATUS_IDLE)
     idle_selected_stream.short_description = 'Idle selected stream'
-
-    def terminate_selected_stream(self, request, queryset):
-        now = datetime.now()
-        selection = (
-            queryset.filter(
-                status__in=(Stream.STATUS_ACTIVATED, Stream.STATUS_IDLE),
-                record_terminates_at__lt=now,
-            )
-        )
-        if queryset.count() != selection.count():
-            self.message_user(
-                request,
-                'One or more of the selected streams are currently playing.',
-                level=messages.ERROR,
-            )
-            return
-        queryset.update(status=Stream.STATUS_TERMINATED)
-    terminate_selected_stream.short_description = 'Terminate selected stream'
 
     # - - -
     # save
