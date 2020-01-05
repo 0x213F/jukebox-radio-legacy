@@ -195,7 +195,6 @@ class StreamAdmin(admin.ModelAdmin):
             queryset
             .filter(
                 status__in=(
-                    Stream.STATUS_SCHEDULED,
                     Stream.STATUS_IDLE,
                 )
             )
