@@ -16,9 +16,7 @@ class StreamQuerySet(BaseQuerySet):
             self
             .filter(
                 status__in=(
-                    Stream.STATUS_SCHEDULED,
                     Stream.STATUS_ACTIVATED,
-                    Stream.STATUS_IDLE,
                 )
             )
         )
