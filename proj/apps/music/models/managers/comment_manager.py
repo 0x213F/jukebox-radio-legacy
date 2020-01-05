@@ -9,6 +9,8 @@ from channels.db import database_sync_to_async
 
 from proj.core.models.managers import BaseManager
 from proj.core.fns import results
+from proj.core.resources.cache import _set_cache
+from proj.core.resources.cache import _get_or_fetch_from_cache
 
 
 class CommentManager(BaseManager):
@@ -22,24 +24,24 @@ class CommentManager(BaseManager):
         '''
         Validate a user's channels payload to create a comment.
         '''
-        Showing = apps.get_model('music.Showing')
+        Stream = apps.get_model('music.Stream')
         Comment = self.model
 
-        _cache = await self._get_or_fetch_from_cache(
+        _cache = await _get_or_fetch_from_cache(
             _cache,
-            'showing',
-            fetch_func=Showing.objects.get,
-            fetch_kwargs={'uuid': payload['showing_uuid']}
+            'stream',
+            fetch_func=Stream.objects.get,
+            fetch_kwargs={'uuid': payload['stream_uuid']}
         )
-        showing = _cache['showing']
+        stream = _cache['stream']
 
         try:
-            comment = await database_sync_to_async(Comment.objects.latest_comment)(user, showing)
+            comment = await database_sync_to_async(Comment.objects.latest_comment)(user, stream)
             if (
                 (comment.status == Comment.STATUS_LEFT) and
                 (payload['status'] != Comment.STATUS_JOINED)
             ):
-                # Can only join after leaving a showing.
+                # Can only join after leaving a stream.
                 return results.RESULT_FAILED_VALIDATION, _cache
             elif (
                 (comment.status != Comment.STATUS_LEFT) and
@@ -59,28 +61,28 @@ class CommentManager(BaseManager):
         '''
         Create a comment from a user's channels payload.
         '''
-        from proj.apps.music.models import Showing
+        from proj.apps.music.models import Stream
         from proj.apps.music.models import Ticket
         Comment = self.model
 
         now = datetime.utcnow()
 
-        _cache = await self._get_or_fetch_from_cache(
+        _cache = await _get_or_fetch_from_cache(
             _cache,
-            'showing',
-            fetch_func=Showing.objects.get,
-            fetch_kwargs={'uuid': payload['showing_uuid']}
+            'stream',
+            fetch_func=Stream.objects.get,
+            fetch_kwargs={'uuid': payload['stream_uuid']}
         )
-        showing = _cache['showing']
+        stream = _cache['stream']
 
-        if showing.status == Showing.STATUS_TERMINATED:
-            raise RuntimeError('Cannot comment on a terminated showing.')
+        if stream.status == Stream.STATUS_TERMINATED:
+            raise RuntimeError('Cannot comment on a terminated stream.')
 
-        _cache = await self._get_or_fetch_from_cache(
+        _cache = await _get_or_fetch_from_cache(
             _cache,
             'ticket',
             fetch_func=Ticket.objects.get,
-            fetch_kwargs={'holder_id': user.id, 'showing_id': showing.id}
+            fetch_kwargs={'holder_id': user.id, 'stream_id': stream.id}
         )
         ticket = _cache['ticket']
 
@@ -96,7 +98,7 @@ class CommentManager(BaseManager):
                 .select_related('track')
                 .filter(
                     created_at__lte=now,
-                    showing=showing,
+                    stream=stream,
                     status=Comment.STATUS_START,
                 )
                 .order_by('-created_at')
@@ -112,17 +114,17 @@ class CommentManager(BaseManager):
             status=status,
             text=payload['text'],
             commenter=user,
-            showing=showing,
+            stream=stream,
             track=track,  # TODO
             track_timestamp=track_timestamp,
             commenter_ticket=ticket,
         )
-        self._set_cache(_cache, 'comment', comment)
+        _set_cache(_cache, 'comment', comment)
 
         return _cache
 
     def serialize(self, comment, ticket=None):
-        Showing = apps.get_model('music.Showing')
+        Stream = apps.get_model('music.Stream')
         Ticket = apps.get_model('music.Ticket')
         Track = apps.get_model('music.Track')
         return {
@@ -130,7 +132,7 @@ class CommentManager(BaseManager):
             'created_at': comment.created_at.isoformat(),
             'status': comment.status,
             'text': comment.text,
-            'showing': comment.showing_id,  # Showing.objects.serialize(comment.showing),
+            'stream': comment.stream_id,  # Stream.objects.serialize(comment.stream),
             'track': comment.track_id,  # Track.objects.serialize(comment.track),
             'ticket': Ticket.objects.serialize(ticket),  # Ticket.objects.serialize(comment.commenter_ticket),
         }

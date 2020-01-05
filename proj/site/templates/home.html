@@ -5,8 +5,8 @@
 {% block basestyles %}
 <link href="https://fonts.googleapis.com/css?family=Major+Mono+Display|Work+Sans:300,400,700,900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../static/css/proj/base.css">
-<link rel="stylesheet" href="../static/css/proj/list_showings.css">
-<link rel="stylesheet" href="../static/css/proj/detail_showing.css">
+<link rel="stylesheet" href="../static/css/proj/list_streams.css">
+<link rel="stylesheet" href="../static/css/proj/detail_stream.css">
 <link rel="stylesheet" href="../static/css/proj/chat.css">
 <link rel="stylesheet" href="../static/css/proj/modal.css">
 {% endblock %}
@@ -53,7 +53,7 @@
       <div class="view anyone">
         <label class='row small-text noselect'>
           <input style="margin-bottom: 0px;" class="margin-right null-display-name" type="radio" name="display_name_type" value="none">
-          Automatically randomize display name every showing.
+          Automatically randomize display name every stream.
         </label>
         <label class='row small-text noselect' style="padding-top: 0px;">
           <input class="margin-right null-display-name" type="radio" name="display_name_type" value="custom">
@@ -94,9 +94,9 @@
     <!--  LOAD PAGE -->
     <form class="ajax-form hidden"
           type="get"
-          url="../api/music/list_showings/"
+          url="../api/music/list_streams/"
           submit="onload"
-          onsuccess='display_list_showings'>
+          onsuccess='display_list_streams'>
 
       {% csrf_token %}
 
@@ -104,13 +104,13 @@
 
     <!-- - - - - - - - --->
     <!--  LIST SHOWINGS -->
-    <div class="list-showings hidden">
+    <div class="list-streams hidden">
 
     </div>
 
     <!-- - - - - - - - - -->
     <!--  DETAIL SHOWING -->
-    <div class='detail-showing' style='display: none;'>
+    <div class='detail-stream' style='display: none;'>
 
       <div class="row playback align-center">
 
@@ -122,12 +122,12 @@
 
         <!-- - - - --->
         <!-- TOGGLE SUBSCRIPTION -->
-        <form class="ajax-form" url="../api/music/showing_subscription/" type="post">
+        <form class="ajax-form" url="../api/music/stream_subscription/" type="post">
 
           {% csrf_token %}
 
           <div class="hidden">
-            <input id="subscription-uuid-sub" type="text" name="showing_uuid">
+            <input id="subscription-uuid-sub" type="text" name="stream_uuid">
           </div>
 
           <div class="hidden">
@@ -141,12 +141,12 @@
 
         <!-- - - - --->
         <!-- TOGGLE SUBSCRIPTION -->
-        <form class="ajax-form" url="../api/music/showing_subscription/" type="post">
+        <form class="ajax-form" url="../api/music/stream_subscription/" type="post">
 
           {% csrf_token %}
 
           <div class="hidden">
-            <input id="subscription-uuid-unsub" type="text" name="showing_uuid">
+            <input id="subscription-uuid-unsub" type="text" name="stream_uuid">
           </div>
 
           <div class="hidden">
@@ -219,8 +219,8 @@
 <script src="{% static '/js/jquery.js' %}"></script>
 <script src="{% static '/js/proj/chat.js' %}"></script>
 <script src="{% static '/js/proj/templates.js' %}"></script>
-<script src="{% static '/js/proj/detail_showing.js' %}"></script>
-<script src="{% static '/js/proj/list_showings.js' %}"></script>
+<script src="{% static '/js/proj/detail_stream.js' %}"></script>
+<script src="{% static '/js/proj/list_streams.js' %}"></script>
 <script src="{% static '/js/proj/modal.js' %}"></script>
 <script src="{% static '/js/proj/main.js' %}"></script>
 <script src="{% static '/js/chess/chess.min.js' %}"></script>

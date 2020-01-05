@@ -7,19 +7,19 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    help = 'Idle showings'
+    help = 'Idle streams'
 
     def handle(self, *args, **options):
-        Showing = apps.get_model('music.Showing')
+        Stream = apps.get_model('music.Stream')
 
         now = datetime.now()
 
-        showings_to_idle = (
-            Showing
+        streams_to_idle = (
+            Stream
             .objects
             .filter(
-                status=Showing.STATUS_ACTIVATED,
+                status=Stream.STATUS_ACTIVATED,
                 record_terminates_at__lt=now - timedelta(minutes=5),
             )
         )
-        showings_to_idle.update(status=Showing.STATUS_IDLE, current_record=None)
+        streams_to_idle.update(status=Stream.STATUS_IDLE, current_record=None)

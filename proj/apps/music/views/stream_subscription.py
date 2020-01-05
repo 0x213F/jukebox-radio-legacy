@@ -7,7 +7,7 @@ from django.apps import apps
 from proj.core.views import BaseView
 from proj.apps.music.models import Comment
 from proj.apps.music.models import Ticket
-from proj.apps.music.models import Showing
+from proj.apps.music.models import Stream
 from proj.apps.users.models import Profile
 
 
@@ -16,7 +16,7 @@ UNSUBSCRIBED = 'unsubscribed'
 
 
 @method_decorator(login_required, name='dispatch')
-class ShowingSubscriptionView(BaseView):
+class StreamSubscriptionView(BaseView):
 
     def post(self, request, **kwargs):
         '''
@@ -24,10 +24,10 @@ class ShowingSubscriptionView(BaseView):
         '''
         Ticket = apps.get_model('music.Ticket')
 
-        showing_uuid = request.POST.get('showing_uuid', None)
+        stream_uuid = request.POST.get('stream_uuid', None)
         status = request.POST.get('status', None)
 
-        ticket = Ticket.objects.get(holder=request.user, showing__uuid=showing_uuid)
+        ticket = Ticket.objects.get(holder=request.user, stream__uuid=stream_uuid)
 
         if status == SUBSCRIBED:
             ticket.is_subscribed = True

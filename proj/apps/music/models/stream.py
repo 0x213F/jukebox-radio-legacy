@@ -8,19 +8,17 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
-from proj.apps.music.models.managers import ShowingManager
-from proj.apps.music.models.querysets import ShowingQuerySet
+from proj.apps.music.models.managers import StreamManager
+from proj.apps.music.models.querysets import StreamQuerySet
 
 from proj.core.models import BaseModel
 
 
-class Showing(BaseModel):
+class Stream(BaseModel):
 
     # - - - - - - -
     # config model
     # - - - - - - -
-
-    USER_TIMEOUT_IN_SECONDS = 30
 
     STATUS_SCHEDULED = 'scheduled'
     STATUS_ACTIVATED = 'activated'
@@ -37,7 +35,7 @@ class Showing(BaseModel):
     class Meta:
         abstract = False
 
-    objects = ShowingManager.from_queryset(ShowingQuerySet)()
+    objects = StreamManager.from_queryset(StreamQuerySet)()
 
     def __str__(self):
         return self.title
@@ -52,7 +50,7 @@ class Showing(BaseModel):
 
     current_record = models.ForeignKey(
         'music.Record',
-        related_name='now_playing_at_showings',
+        related_name='now_playing_at_streams',
         on_delete=models.SET_NULL,
         null=True, blank=False,
     )

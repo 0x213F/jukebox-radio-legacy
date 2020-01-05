@@ -25,7 +25,7 @@ class Ticket(BaseModel):
     objects = TicketManager.from_queryset(TicketQuerySet)()
 
     def __str__(self):
-        return f'User ({self.holder_id}) @ {self.showing}'
+        return f'User ({self.holder_id}) @ {self.stream}'
 
     # - - - -
     # fields
@@ -38,8 +38,8 @@ class Ticket(BaseModel):
     )
     is_administrator = models.BooleanField(default=False)
     is_subscribed = models.BooleanField(default=False)
-    showing = models.ForeignKey(
-        'music.Showing',
+    stream = models.ForeignKey(
+        'music.Stream',
         related_name='tickets',
         on_delete=models.DO_NOTHING,
     )

@@ -1,21 +1,21 @@
 
 
-function generate_showing(showing) {
+function generate_stream(stream) {
 
   let showtime_timestring = ''
   let background_color = ''
-  if(showing.status === 'idle') {
+  if(stream.status === 'idle') {
     showtime_timestring = 'Idle'
     background_color = ` style="background-color: #cd9fab!important;"`
-  } else if(showing.status === 'activated') {
+  } else if(stream.status === 'activated') {
     showtime_timestring = 'Active'
     background_color = ` style="background-color: #b46f82!important;"`
   }
-  console.log(showing)
+  console.log(stream)
   return `
-    <div class="showing card" uuid="${showing.uuid}">
-      <span class="showing-album-title label label-rounded">${showing.name}</span><br>
-      <span class="showing-showtime-scheduled label label-rounded"${background_color}>${showtime_timestring}</span>
+    <div class="stream card" uuid="${stream.uuid}">
+      <span class="stream-album-title label label-rounded">${stream.name}</span><br>
+      <span class="stream-showtime-scheduled label label-rounded"${background_color}>${showtime_timestring}</span>
     </div>
   `
 }
@@ -28,12 +28,12 @@ function generate_showing(showing) {
 
 function render_comment(comment_obj) {
   let user = JSON.parse(window.localStorage.getItem(KEY_USER));
-  let $last_comment = $('.detail-showing > .chat > .tile').last();
-  let $last_visible_comment = $('.detail-showing > .chat > .tile.visible').last();
+  let $last_comment = $('.detail-stream > .chat > .tile').last();
+  let $last_visible_comment = $('.detail-stream > .chat > .tile.visible').last();
 
   console.log(comment_obj)
   var ticket_holder_name = comment_obj.ticket.holder_uuid
-  let is_current_user = user.profile.active_showing_ticket.holder_uuid === ticket_holder_name
+  let is_current_user = user.profile.active_stream_ticket.holder_uuid === ticket_holder_name
 
   var group0 = `
     <div class="group">
@@ -106,7 +106,7 @@ function render_comment(comment_obj) {
 //
   // while(true) {
   //   last_timestamp = Number($last_comment.attr('timestamp'));
-  //   if(last_timestamp < comment_obj.showing_timestamp || '-Infinity' == $last_comment.attr('timestamp')) {
+  //   if(last_timestamp < comment_obj.stream_timestamp || '-Infinity' == $last_comment.attr('timestamp')) {
   //     break;
   //   } else {
   //     $last_comment = $last_comment.prev();
@@ -122,7 +122,7 @@ function render_comment(comment_obj) {
 //       <div class="tile hidden"
 //            author="${display_uuid}"
 //            status="${comment_obj.status}"
-//            timestamp="${comment_obj.showing_timestamp}">
+//            timestamp="${comment_obj.stream_timestamp}">
 //       </div>`;
 //       $last_comment.after(html);
 //       return;
@@ -151,15 +151,15 @@ function render_comment(comment_obj) {
 //   }
 //   let last_visible_commenter = $last_visible_comment.attr('author')
 //   let last_visible_status = $last_visible_comment.attr('status')
-//   if(user.profile.active_showing && comment_obj.commenter.profile.display_uuid === user.profile.active_showing.display_uuid) {
-//     if(last_visible_commenter === user.profile.active_showing.display_uuid) {
+//   if(user.profile.active_stream && comment_obj.commenter.profile.display_uuid === user.profile.active_stream.display_uuid) {
+//     if(last_visible_commenter === user.profile.active_stream.display_uuid) {
 //       if(last_visible_status === comment_obj.status) {
 //         // the current user sent 2 comments in a row with the SAME status
 //         html = `
 //           <div class="tile me seen"
 //                author="${comment_obj.commenter.profile.display_uuid}"
 //                status="${comment_obj.status}"
-//                timestamp="${comment_obj.showing_timestamp}">
+//                timestamp="${comment_obj.stream_timestamp}">
 //             <div class="group">
 //               <div class="comment-text">${comment_obj.text}</div>
 //             </div>
@@ -170,7 +170,7 @@ function render_comment(comment_obj) {
 //           <div class="tile me seen"
 //                author="${comment_obj.commenter.profile.display_uuid}"
 //                status="${comment_obj.status}"
-//                timestamp="${comment_obj.showing_timestamp}">
+//                timestamp="${comment_obj.stream_timestamp}">
 //             <div class="group">
 //               <div class="comment-text chat-margin-left" style="margin-left: auto!important;">${comment_obj.text}</div>
 //               <div class="commenter-img" style="background-color: ${background_color};"></div>
@@ -183,7 +183,7 @@ function render_comment(comment_obj) {
 //         <div class="tile me seen full"
 //              author="${comment_obj.commenter.profile.display_uuid}"
 //              status="${comment_obj.status}"
-//              timestamp="${comment_obj.showing_timestamp}">
+//              timestamp="${comment_obj.stream_timestamp}">
 //           <div class="group">
 //             <div class="comment-author">${comment_obj.commenter.profile.display_name}</div>
 //             <div class="commenter-img" style="background-color: ${background_color};"></div>
@@ -201,7 +201,7 @@ function render_comment(comment_obj) {
 //           <div class="tile other seen"
 //                author="${comment_obj.commenter.profile.display_uuid}"
 //                status="${comment_obj.status}"
-//                timestamp="${comment_obj.showing_timestamp}">
+//                timestamp="${comment_obj.stream_timestamp}">
 //             <div class="group">
 //               <div class="comment-text">${comment_obj.text}</div>
 //             </div>
@@ -212,7 +212,7 @@ function render_comment(comment_obj) {
 //           <div class="tile other seen"
 //                author="${comment_obj.commenter.profile.display_uuid}"
 //                status="${comment_obj.status}"
-//                timestamp="${comment_obj.showing_timestamp}">
+//                timestamp="${comment_obj.stream_timestamp}">
 //             <div class="group">
 //               <div class="commenter-img" style="background-color: ${background_color};"></div>
 //               <div class="comment-text chat-margin-left">${comment_obj.text}</div>
@@ -225,7 +225,7 @@ function render_comment(comment_obj) {
 //         <div class="tile other seen full"
 //              author="${comment_obj.commenter.profile.display_uuid}"
 //              status="${comment_obj.status}"
-//              timestamp="${comment_obj.showing_timestamp}">
+//              timestamp="${comment_obj.stream_timestamp}">
 //           <div class="group">
 //             <div class="commenter-img" style="background-color: ${background_color};"></div>
 //             <div class="comment-author">${comment_obj.commenter.profile.display_name}</div>

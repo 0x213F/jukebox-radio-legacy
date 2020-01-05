@@ -1,6 +1,6 @@
-function display_detail_showing() {
-  let $showing = $(this);
-  let uuid = $showing.attr('uuid');
+function display_detail_stream() {
+  let $stream = $(this);
+  let uuid = $stream.attr('uuid');
 
   var endpoint = 'ws://' + window.location.host + window.location.pathname + `?uuid=${uuid}`
   window['SOCKET'] = new WebSocket(endpoint)
@@ -8,7 +8,7 @@ function display_detail_showing() {
   window['SOCKET'].onmessage = onmessage
 
   let user = JSON.parse(window.localStorage.getItem(KEY_USER));
-  user.profile.active_showing_uuid = uuid;
+  user.profile.active_stream_uuid = uuid;
 
   $("#subscription-uuid-sub").val(uuid)
   $("#subscription-uuid-unsub").val(uuid)

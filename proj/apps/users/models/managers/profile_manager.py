@@ -14,6 +14,7 @@ from django.db.models import Value
 from django.db.models import When
 
 from proj.core.models.managers import BaseManager
+from proj.core.resources.cache import _get_or_fetch_from_cache
 
 
 class ProfileManager(BaseManager):
@@ -21,15 +22,15 @@ class ProfileManager(BaseManager):
     Django Manager used to query Profile objects.
     '''
 
-    def serialize_user(self, user, active_ticket=None, active_showing=None):
+    def serialize_user(self, user, active_ticket=None, active_stream=None):
         '''
         Serialize the user fields along with:
 
         - It's profile.
-        - List of active showings.
+        - List of active streams.
         '''
         Ticket = apps.get_model('music.Ticket')
-        Showing = apps.get_model('music.Showing')
+        Stream = apps.get_model('music.Stream')
 
         active_ticket = active_ticket or {}
 
@@ -42,46 +43,46 @@ class ProfileManager(BaseManager):
             'last_name': user.last_name,
             'email': user.email,
             'profile': {
-                'active_showing_ticket': Ticket.objects.serialize(active_ticket),
+                'active_stream_ticket': Ticket.objects.serialize(active_ticket),
                 'scopes': scopes,
-                'active_showing': Showing.objects.serialize(active_showing),
-                'active_showing_uuid': user.profile.active_showing_uuid,
+                'active_stream': Stream.objects.serialize(active_stream),
+                'active_stream_uuid': user.profile.active_stream_uuid,
                 'default_name': user.profile.default_display_name,
             },
         }
 
-    async def leave_showing_async(self, user):
+    async def leave_stream_async(self, user):
         '''
-        - Update the user's active showing on their profile.
+        - Update the user's active stream on their profile.
         '''
         Profile = self.model
         profile = await database_sync_to_async(Profile.objects.get)(user_id=user.id)
-        profile.active_showing_uuid = None
+        profile.active_stream_uuid = None
         await database_sync_to_async(profile.save)()
 
 
 
-    async def join_showing_async(self, user, showing_uuid, *, _cache=None):
+    async def join_stream_async(self, user, stream_uuid, *, _cache=None):
         '''
-        After getting the active showing by UUID:
+        After getting the active stream by UUID:
 
-        - Update the user's active showing on their profile.
+        - Update the user's active stream on their profile.
         - Create or create a ticket record for the user.
         '''
-        from proj.apps.music.models import Showing
+        from proj.apps.music.models import Stream
         from proj.apps.music.models import Ticket
 
         Profile = apps.get_model('users.Profile')
 
-        _cache = await self._get_or_fetch_from_cache(
+        _cache = await _get_or_fetch_from_cache(
             _cache,
-            'showing',
-            fetch_func=Showing.objects.get,
-            fetch_kwargs={'uuid': showing_uuid}
+            'stream',
+            fetch_func=Stream.objects.get,
+            fetch_kwargs={'uuid': stream_uuid}
         )
-        showing = _cache['showing']
+        stream = _cache['stream']
 
-        _cache = await self._get_or_fetch_from_cache(
+        _cache = await _get_or_fetch_from_cache(
             _cache,
             'profile',
             fetch_func=Profile.objects.get,
@@ -89,16 +90,16 @@ class ProfileManager(BaseManager):
         )
 
         profile = _cache['profile']
-        profile.active_showing_uuid = showing.uuid
+        profile.active_stream_uuid = stream.uuid
         await database_sync_to_async(profile.save)()
 
-        _cache = await self._get_or_fetch_from_cache(
+        _cache = await _get_or_fetch_from_cache(
             _cache,
             'ticket',
             fetch_func=Ticket.objects.get_or_create,
             fetch_kwargs={
                 'holder': user,
-                'showing': showing,
+                'stream': stream,
                 'defaults': {
                     'timestamp_last_active': datetime.utcnow(),
                     'holder_name': profile.default_display_name or generate_username(1)[0],

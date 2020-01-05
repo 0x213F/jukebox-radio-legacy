@@ -31,14 +31,14 @@ class CommentAdmin(admin.ModelAdmin):
         'text',
         'track',
         'track_timestamp',
-        'showing',
+        'stream',
         'created_at',
     )
 
     list_filter = (
         # for related fields
         ('commenter', RelatedDropdownFilter),
-        ('showing', RelatedDropdownFilter),
+        ('stream', RelatedDropdownFilter),
         ('track', RelatedDropdownFilter),
         ('status', DropdownFilter),
     )

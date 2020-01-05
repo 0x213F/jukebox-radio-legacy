@@ -2,10 +2,10 @@
 from django import forms
 
 from proj.apps.music.models import Record
-from proj.apps.music.models import Showing
+from proj.apps.music.models import Stream
 
 
-class ShowingForm(forms.ModelForm):
+class StreamForm(forms.ModelForm):
 
     next_record = forms.ModelChoiceField(
         queryset=Record.objects.all(),
@@ -13,7 +13,7 @@ class ShowingForm(forms.ModelForm):
     )
 
     class Meta:
-        model = Showing
+        model = Stream
         fields = (
             'title',
             'next_record',

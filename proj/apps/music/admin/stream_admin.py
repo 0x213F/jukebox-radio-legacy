@@ -13,21 +13,21 @@ from django_admin_listfilter_dropdown.filters import (
 
 from proj.apps.music.models import Comment
 from proj.apps.music.models import Record
-from proj.apps.music.models import Showing
+from proj.apps.music.models import Stream
 from proj.apps.music.models import TrackListing
 
 from proj.apps.music.admin.inline import RecordInline
-from proj.apps.music.forms import ShowingForm
+from proj.apps.music.forms import StreamForm
 
 
-@admin.register(Showing)
-class ShowingAdmin(admin.ModelAdmin):
+@admin.register(Stream)
+class StreamAdmin(admin.ModelAdmin):
 
     # - - - - -
     # display
     # - - - - -
 
-    form = ShowingForm
+    form = StreamForm
 
     search_fields = (
         'id',
@@ -62,12 +62,12 @@ class ShowingAdmin(admin.ModelAdmin):
                 'title',
             )
             self.readonly_fields = ('',)
-        elif obj.status == Showing.STATUS_IDLE:
+        elif obj.status == Stream.STATUS_IDLE:
             self.fields = (
                 'title',
             )
             self.readonly_fields = ('title',)
-        elif obj.status == Showing.STATUS_ACTIVATED:
+        elif obj.status == Stream.STATUS_ACTIVATED:
             if obj.time_left_on_current_record:
                 self.fields = (
                     'title',
@@ -85,7 +85,7 @@ class ShowingAdmin(admin.ModelAdmin):
                     'record_terminates_at',
                 )
                 self.readonly_fields = ('title', 'link_to_record', 'time_left', 'record_terminates_at',)
-        elif obj.status == Showing.STATUS_TERMINATED:
+        elif obj.status == Stream.STATUS_TERMINATED:
             fields = (
                 'title',
                 'current_record',
@@ -103,18 +103,18 @@ class ShowingAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         return qs.order_by('id')
 
-    def link_to_record(self, showing):
-        record = showing.current_record
+    def link_to_record(self, stream):
+        record = stream.current_record
         record_link = urls.reverse(
             'admin:music_record_change', args=[record.id]
         )
         return format_html(f'<button><a href="{record_link}">{record.name}</a></button>')
 
-    def time_left(self, showing):
-        return showing.time_left_on_current_record
+    def time_left(self, stream):
+        return stream.time_left_on_current_record
 
-    def record(self, showing):
-        record = showing.current_record
+    def record(self, stream):
+        record = stream.current_record
         if not record:
             return None
         track_link = urls.reverse(
@@ -125,11 +125,11 @@ class ShowingAdmin(admin.ModelAdmin):
             '<div style="height: 0.25rem;"></div>'
         )
 
-    def tracks(self, showing):
-        if not showing.time_left_on_current_record:
+    def tracks(self, stream):
+        if not stream.time_left_on_current_record:
             return None
         now = datetime.now()
-        record = showing.current_record
+        record = stream.current_record
         track_listings = (
             TrackListing
             .objects
@@ -142,7 +142,7 @@ class ShowingAdmin(admin.ModelAdmin):
             .objects
             .filter(
                 created_at__lte=now,
-                showing=showing,
+                stream=stream,
                 status=Comment.STATUS_START,
             )
             .order_by('-created_at')
@@ -169,12 +169,12 @@ class ShowingAdmin(admin.ModelAdmin):
 
         return format_html(track_str)
 
-    def comments(self, showing):
-        record = showing.current_record
+    def comments(self, stream):
+        record = stream.current_record
         record_link = urls.reverse('admin:music_comment_changelist')
         return format_html(
             f'<button>'
-            f'<a href="{record_link}?showing__id__exact={showing.id}">'
+            f'<a href="{record_link}?stream__id__exact={stream.id}">'
             f'🔗 Comments'
             '</a>'
             '</button>'
@@ -185,93 +185,93 @@ class ShowingAdmin(admin.ModelAdmin):
     # - - - - -
 
     actions = [
-        'activate_selected_showing',
-        'idle_selected_showing',
-        'terminate_selected_showing',
+        'activate_selected_stream',
+        'idle_selected_stream',
+        'terminate_selected_stream',
     ]
 
-    def activate_selected_showing(self, request, queryset):
+    def activate_selected_stream(self, request, queryset):
         scheduled = (
             queryset
             .filter(
                 status__in=(
-                    Showing.STATUS_SCHEDULED,
-                    Showing.STATUS_IDLE,
+                    Stream.STATUS_SCHEDULED,
+                    Stream.STATUS_IDLE,
                 )
             )
         )
         if queryset.count() != scheduled.count():
             self.message_user(
                 request,
-                'Make sure all showings are scheduled.',
+                'Make sure all streams are scheduled.',
                 level=messages.ERROR,
             )
             return
-        for showing in queryset:
-            Showing.objects.change_status(showing, Showing.STATUS_ACTIVATED)
-    activate_selected_showing.short_description = 'Activate selected showing'
+        for stream in queryset:
+            Stream.objects.change_status(stream, Stream.STATUS_ACTIVATED)
+    activate_selected_stream.short_description = 'Activate selected stream'
 
-    def idle_selected_showing(self, request, queryset):
+    def idle_selected_stream(self, request, queryset):
         scheduled = (
             queryset
-            .filter(status__in=(Showing.STATUS_ACTIVATED, Showing.STATUS_TERMINATED))
+            .filter(status__in=(Stream.STATUS_ACTIVATED, Stream.STATUS_TERMINATED))
         )
         if queryset.count() != scheduled.count():
             self.message_user(
                 request,
-                'Make sure all showings are activated.',
+                'Make sure all streams are activated.',
                 level=messages.ERROR,
             )
             return
-        for showing in queryset:
-            Showing.objects.change_status(showing, Showing.STATUS_IDLE)
-    idle_selected_showing.short_description = 'Idle selected showing'
+        for stream in queryset:
+            Stream.objects.change_status(stream, Stream.STATUS_IDLE)
+    idle_selected_stream.short_description = 'Idle selected stream'
 
-    def terminate_selected_showing(self, request, queryset):
+    def terminate_selected_stream(self, request, queryset):
         now = datetime.now()
         selection = (
             queryset.filter(
-                status__in=(Showing.STATUS_ACTIVATED, Showing.STATUS_IDLE),
+                status__in=(Stream.STATUS_ACTIVATED, Stream.STATUS_IDLE),
                 record_terminates_at__lt=now,
             )
         )
         if queryset.count() != selection.count():
             self.message_user(
                 request,
-                'One or more of the selected showings are currently playing.',
+                'One or more of the selected streams are currently playing.',
                 level=messages.ERROR,
             )
             return
-        queryset.update(status=Showing.STATUS_TERMINATED)
-    terminate_selected_showing.short_description = 'Terminate selected showing'
+        queryset.update(status=Stream.STATUS_TERMINATED)
+    terminate_selected_stream.short_description = 'Terminate selected stream'
 
     # - - -
     # save
     # - - -
 
-    def save_model(self, request, showing, form, change):
+    def save_model(self, request, stream, form, change):
         '''
         Cache data from Spotify API.
         '''
         now = datetime.now()
         try:
-            pre_save_showing = Showing.objects.get(id=showing.id)
-            if pre_save_showing.current_record and pre_save_showing.record_terminates_at:
-                if now < pre_save_showing.record_terminates_at.replace(tzinfo=None):
+            pre_save_stream = Stream.objects.get(id=stream.id)
+            if pre_save_stream.current_record and pre_save_stream.record_terminates_at:
+                if now < pre_save_stream.record_terminates_at.replace(tzinfo=None):
                     self.message_user(
                         request,
                         'The record cannot be changed since one is still playing.',
                         level=messages.ERROR,
                     )
                     return
-        except Showing.DoesNotExist:
+        except Stream.DoesNotExist:
             pass
 
         next_record = form.cleaned_data['next_record']
 
-        super().save_model(request, showing, form, change)
+        super().save_model(request, stream, form, change)
 
         if not next_record:
             return
 
-        Showing.objects.spin(next_record, showing)
+        Stream.objects.spin(next_record, stream)

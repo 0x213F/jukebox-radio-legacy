@@ -1,11 +1,11 @@
 
 from django.urls import path
 
-from .views import ListShowingsView
-from .views import ShowingSubscriptionView
+from .views import ListStreamsView
+from .views import StreamSubscriptionView
 
 
 urlpatterns = [
-        path('list_showings/', ListShowingsView.as_view()),
-        path('showing_subscription/', ShowingSubscriptionView.as_view()),
+        path('list_streams/', ListStreamsView.as_view()),
+        path('stream_subscription/', StreamSubscriptionView.as_view()),
 ]

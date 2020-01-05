@@ -1,13 +1,13 @@
 
-.list_showings {
+.list_streams {
 
 }
 
-.list_showings > .showing.card {
+.list_streams > .stream.card {
 
 }
 
-.showing.card {
+.stream.card {
   transition: background-color 0.3s ease;
   border-radius: 6px;
   cursor: pointer;
@@ -15,11 +15,11 @@
   position: relative;
 }
 
-.showing.card:hover {
+.stream.card:hover {
   background-color: rgba(48,55,66,.10);
 }
 
-.showing.card > .showing-album-art {
+.stream.card > .stream-album-art {
   width: 106px;
   height: 106px;
   border: rgba(48,55,66,.10) solid 2px;
@@ -30,7 +30,7 @@
   margin-top: 67px;
 }
 
-.showing.card > .showing-album-title {
+.stream.card > .stream-album-title {
   background: rgba(48,55,66,.90)!important;
   margin-left: 14px;
   padding: 8px;
@@ -43,7 +43,7 @@
   height: auto;
 }
 
-.showing.card > .showing-showtime-scheduled {
+.stream.card > .stream-showtime-scheduled {
   width: 110px;
   text-align: center;
   background: rgba(48,55,66,.60)!important;

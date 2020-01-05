@@ -1,6 +1,6 @@
 
 let KEY_COMMENTS = 'comments'
-var KEY_SHOWINGS = 'showings'
+var KEY_SHOWINGS = 'streams'
 var KEY_USER = 'user'
 
 let CLASS_HIDDEN = 'hidden'
@@ -14,15 +14,15 @@ let $idle_tray = $('.status.waiting');
 
 // ON OPEN
 function onopen(event) {
-  let showings = JSON.parse(window.localStorage.getItem(KEY_SHOWINGS));
+  let streams = JSON.parse(window.localStorage.getItem(KEY_SHOWINGS));
   let user = JSON.parse(window.localStorage.getItem(KEY_USER));
 
-  let showing = showings.find(function(obj) {
-    return obj.uuid === user.profile.active_showing_uuid;
+  let stream = streams.find(function(obj) {
+    return obj.uuid === user.profile.active_stream_uuid;
   });
 
   // display correct bar above chat bar
-  if(showing.status === STATUS_ACTIVATED) {
+  if(stream.status === STATUS_ACTIVATED) {
     $activated_tray.removeClass(CLASS_HIDDEN);
     $idle_tray.addClass(CLASS_HIDDEN);
   } else {
@@ -33,7 +33,7 @@ function onopen(event) {
 
   // post base comment
   // reset chatroom
-  let $chat = $('.detail-showing > .chat')
+  let $chat = $('.detail-stream > .chat')
   $chat.empty();
   $chat.append(
     `<div class="tile base hidden"
@@ -52,7 +52,7 @@ function onopen(event) {
     JSON.parse(window.localStorage.getItem(KEY_COMMENTS)) ||
     {}
   );
-  let chat_comments = comments_cache[showing.uuid];
+  let chat_comments = comments_cache[stream.uuid];
   if(chat_comments) {
     for(comment_id in chat_comments) {
       let comment = chat_comments[comment_id]
@@ -62,9 +62,9 @@ function onopen(event) {
 
   $chat.scrollTop($chat[0].scrollHeight);
 
-  $('.list-showings').hide();
+  $('.list-streams').hide();
   $('.row.footer').hide();
-  $('.detail-showing').show();
+  $('.detail-stream').show();
 
   // submit comment
   function submit_text(e) {
@@ -99,7 +99,7 @@ function onopen(event) {
 
     let data = {
       'status': status,
-      'showing_uuid': user.profile.active_showing_uuid,
+      'stream_uuid': user.profile.active_stream_uuid,
       'track_id': null,
       'text': text,
     }
@@ -115,15 +115,15 @@ function onopen(event) {
   function disconnect(e) {
     let data = {
       'status': 'left',
-      'showing_uuid': user.profile.active_showing_uuid,
+      'stream_uuid': user.profile.active_stream_uuid,
       'text': null,
     }
     let msg = JSON.stringify(data);
     window['SOCKET'].close();
 
     // change view
-    $('.detail-showing').hide();
-    $('.list-showings').show();
+    $('.detail-stream').hide();
+    $('.list-streams').show();
     $('.footer').show();
   }
   $('.leave.leave-button').click(disconnect)
@@ -139,7 +139,7 @@ function onopen(event) {
     window.localStorage.setItem('status', status)
     let data = {
       'status': status,
-      'showing_uuid': user.profile.active_showing_uuid,
+      'stream_uuid': user.profile.active_stream_uuid,
       'track_id': null,
       'text': null,
     }
@@ -155,9 +155,9 @@ function onopen(event) {
 function onmessage(event) {
   let text = event.data
   let payload = JSON.parse(text);
-  let showings = JSON.parse(window.localStorage.getItem(KEY_SHOWINGS));
+  let streams = JSON.parse(window.localStorage.getItem(KEY_SHOWINGS));
   let user = JSON.parse(window.localStorage.getItem(KEY_USER));
-  let showing = showings.find(function(obj) { return obj.uuid === user.profile.active_showing_uuid; });
+  let stream = streams.find(function(obj) { return obj.uuid === user.profile.active_stream_uuid; });
 
   let comments_cache = (
     JSON.parse(window.localStorage.getItem(KEY_COMMENTS)) ||
@@ -165,14 +165,14 @@ function onmessage(event) {
   );
   window.localStorage.setItem(KEY_COMMENTS, JSON.stringify(comments_cache));
   if(payload.data.comments) {
-    if(!(showing.uuid in comments_cache)) {
-      comments_cache[showing.uuid] = {};
+    if(!(stream.uuid in comments_cache)) {
+      comments_cache[stream.uuid] = {};
     }
     for(comment of payload.data.comments) {
       render_comment(comment);
-      comments_cache[showing.uuid][comment.id] = comment
+      comments_cache[stream.uuid][comment.id] = comment
     }
-    $(".detail-showing > .chat").scrollTop($(".detail-showing > .chat")[0].scrollHeight);
+    $(".detail-stream > .chat").scrollTop($(".detail-stream > .chat")[0].scrollHeight);
   }
   window.localStorage.setItem(KEY_COMMENTS, JSON.stringify(comments_cache));
 
@@ -183,16 +183,16 @@ function onmessage(event) {
   if(status !== TERMINATED) {
     $activated_tray.show();
     $idle_tray.hide();
-    showing.status = status;
+    stream.status = status;
   } else {
-    showing.status = TERMINATED;
+    stream.status = TERMINATED;
     $('.footer-button.leave.leave-button').click();
   }
 
   let ticket = payload.data.ticket;
   if(ticket) {
     console.log(ticket)
-    user.profile.active_showing_ticket = ticket
+    user.profile.active_stream_ticket = ticket
     window.localStorage.setItem(KEY_USER, JSON.stringify(user));
   }
 }

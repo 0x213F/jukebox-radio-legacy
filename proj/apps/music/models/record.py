@@ -32,13 +32,13 @@ class Record(BaseModel):
         Record = apps.get_model('music.Record')
 
         now = datetime.now()
-        ongoing_showing = (
+        ongoing_stream = (
             self
-            .now_playing_at_showings
+            .now_playing_at_streams
             .filter(record_terminates_at__gte=now)
         )
-        if ongoing_showing.exists():
-            raise Exception('Cannot delete, record is in active showing.')
+        if ongoing_stream.exists():
+            raise Exception('Cannot delete, record is in active stream.')
 
         return super().delete()
 

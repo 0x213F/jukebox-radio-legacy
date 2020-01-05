@@ -32,45 +32,45 @@ from channels.layers import get_channel_layer
 channel_layer = get_channel_layer()
 
 
-class ShowingManager(BaseManager):
+class StreamManager(BaseManager):
     '''
-    Django Manager used to manage Showing objects.
+    Django Manager used to manage Stream objects.
     '''
 
-    def serialize(self, showing):
-        if not showing:
+    def serialize(self, stream):
+        if not stream:
             return None
         return {
-            'uuid': str(showing.uuid),
-            'name': showing.title,
-            'status': showing.status,
+            'uuid': str(stream.uuid),
+            'name': stream.title,
+            'status': stream.status,
         }
 
-    def change_status(self, showing, status):
+    def change_status(self, stream, status):
         '''
         '''
         Comment = apps.get_model('music.Comment')
         Record = apps.get_model('music.Record')
-        Showing = apps.get_model('music.Showing')
+        Stream = apps.get_model('music.Stream')
         Track = apps.get_model('music.Track')
 
         now = datetime.now()
         now_str = now.isoformat()
 
-        showing.status = status
-        showing.save()
+        stream.status = status
+        stream.save()
 
         Comment.objects.create(
             status=status,
             text=None,
             commenter=None,
-            showing=showing,
+            stream=stream,
             track=None,
             commenter_ticket=None,
         )
 
         async_to_sync(channel_layer.group_send)(
-            showing.chat_room,
+            stream.chat_room,
             {
                 'type': 'broadcast',
                 'text': json.dumps({
@@ -88,7 +88,7 @@ class ShowingManager(BaseManager):
             }
         )
 
-    def spin(self, record, showing):
+    def spin(self, record, stream):
         '''
         Spin the record.
         '''
@@ -106,22 +106,22 @@ class ShowingManager(BaseManager):
                 status=Comment.STATUS_START,
                 text=None,
                 commenter=None,
-                showing=showing,
+                stream=stream,
                 track=track,
                 commenter_ticket=None,
             )
             track_timestamp += timedelta(milliseconds=track.spotify_duration_ms)
 
-        showing.current_record = record
-        showing.record_terminates_at = track_timestamp
-        showing.save()
+        stream.current_record = record
+        stream.record_terminates_at = track_timestamp
+        stream.save()
 
         Comment.objects.create(
             created_at=now,
             status=Comment.STATUS_SPIN,
             text=None,
             commenter=None,
-            showing=showing,
+            stream=stream,
             track=None,
             record=record,
             commenter_ticket=None,
@@ -133,7 +133,7 @@ class ShowingManager(BaseManager):
         )
 
         async_to_sync(channel_layer.group_send)(
-            showing.chat_room,
+            stream.chat_room,
             {
                 'type': 'broadcast',
                 'playback': {
@@ -155,7 +155,7 @@ class ShowingManager(BaseManager):
             }
         )
 
-        for ticket in Ticket.objects.filter(is_subscribed=True, showing=showing):
+        for ticket in Ticket.objects.filter(is_subscribed=True, stream=stream):
 
             most_recent_join = Comment.objects.filter(
                 status=Comment.STATUS_JOINED,
@@ -163,14 +163,14 @@ class ShowingManager(BaseManager):
             ).order_by('-created_at').first()
 
             try:
-                assert most_recent_join.showing == showing
+                assert most_recent_join.stream == stream
             except Exception:
                 continue
 
             most_recent_leave = Comment.objects.filter(
                 status=Comment.STATUS_LEFT,
                 commenter=ticket.holder,
-                showing=showing,
+                stream=stream,
             ).order_by('-created_at').first()
 
             if (most_recent_join.created_at and not most_recent_leave) or (most_recent_join.created_at > most_recent_leave.created_at):
@@ -204,13 +204,13 @@ class ShowingManager(BaseManager):
             status=Comment.STATUS_PLAY,
             text=None,
             commenter=master_user,
-            showing=showing,
+            stream=stream,
             track=None,
             commenter_ticket=active_ticket,
         )
 
         async_to_sync(channel_layer.group_send)(
-            record.showing.chat_room,
+            record.stream.chat_room,
             {
                 'type': 'broadcast',
                 'playback': {
@@ -246,13 +246,13 @@ class ShowingManager(BaseManager):
             status=Comment.STATUS_PAUSE,
             text=None,
             commenter=master_user,
-            showing=showing,
+            stream=stream,
             track=None,
             commenter_ticket=active_ticket,
         )
 
         async_to_sync(channel_layer.group_send)(
-            record.showing.chat_room,
+            record.stream.chat_room,
             {
                 'type': 'broadcast',
                 'playback': {
@@ -274,7 +274,7 @@ class ShowingManager(BaseManager):
             }
         )
 
-    def stop(self, record, showing):
+    def stop(self, record, stream):
         '''
         Stop the record currently spinning.
         '''
@@ -284,7 +284,7 @@ class ShowingManager(BaseManager):
             status=Comment.STATUS_STOP,
             text=None,
             commenter=master_user,
-            showing=showing,
+            stream=stream,
             track=None,
             commenter_ticket=active_ticket,
         )
@@ -294,7 +294,7 @@ class ShowingManager(BaseManager):
             status=Comment.STATUS_START,
             text=None,
             commenter=None,
-            showing=showing,
+            stream=stream,
             track=None,
             commenter_ticket=None,
         ).delete()

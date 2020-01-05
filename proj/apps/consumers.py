@@ -16,7 +16,7 @@ from django.core.serializers import serialize
 from proj.apps.music.models import Ticket
 from proj.apps.music.models import Comment
 from proj.apps.users.models import Profile
-from proj.apps.music.models import Showing
+from proj.apps.music.models import Stream
 from proj.core.resources.cache import _get_or_fetch_from_cache
 from proj.core.fns import results
 
@@ -33,16 +33,16 @@ class Consumer(AsyncConsumer):
         _cache = {}
         _user = self.scope['user']
 
-        active_showing_uuid = self.scope['query_string'][5:].decode('utf-8')
-        _cache = await Profile.objects.join_showing_async(
-                _user, active_showing_uuid, _cache=_cache,
+        active_stream_uuid = self.scope['query_string'][5:].decode('utf-8')
+        _cache = await Profile.objects.join_stream_async(
+                _user, active_stream_uuid, _cache=_cache,
         )
         _user_profile = _cache['profile']
         ticket = _cache['ticket']
 
         await (
             self.channel_layer
-            .group_add(_cache['showing'].chat_room, self.channel_name)
+            .group_add(_cache['stream'].chat_room, self.channel_name)
         )
 
         await self.send({
@@ -60,7 +60,7 @@ class Consumer(AsyncConsumer):
 
         # Create record of comment.
         join_payload = {
-            'showing_uuid': active_showing_uuid,
+            'stream_uuid': active_stream_uuid,
             'status': Comment.STATUS_JOINED,
             'text': None,
         }
@@ -72,7 +72,7 @@ class Consumer(AsyncConsumer):
 
         # tell the chatroom that the user has joined
         await self.channel_layer.group_send(  # TODO: put as manager method
-            _cache['showing'].chat_room,
+            _cache['stream'].chat_room,
             {
                 'type': 'broadcast',
                 'text': json.dumps({
@@ -90,9 +90,9 @@ class Consumer(AsyncConsumer):
         # get active record, if it exists
         now = datetime.now()
         try:
-            showing = await database_sync_to_async(Showing.objects.select_related('current_record').get)(
-                uuid=active_showing_uuid,
-                status=Showing.STATUS_ACTIVATED,
+            stream = await database_sync_to_async(Stream.objects.select_related('current_record').get)(
+                uuid=active_stream_uuid,
+                status=Stream.STATUS_ACTIVATED,
                 current_record__isnull=False,
                 record_terminates_at__gt=(now + timedelta(seconds=5)),
             )
@@ -109,7 +109,7 @@ class Consumer(AsyncConsumer):
                 .select_related('track')
                 .filter(
                     created_at__lte=now,
-                    showing__uuid=active_showing_uuid,
+                    stream__uuid=active_stream_uuid,
                     status=Comment.STATUS_START,
                 )
                 .order_by('-created_at')
@@ -163,7 +163,7 @@ class Consumer(AsyncConsumer):
             return
 
         # get other tracks to play in future
-        record = showing.current_record
+        record = stream.current_record
         uris = await database_sync_to_async(
             record
             .tracks_through
@@ -209,7 +209,7 @@ class Consumer(AsyncConsumer):
         elif is_valid == results.RESULT_PERFORM_SIDE_EFFECT_ONLY:
             # Display initial chat content.
             comments = await Comment.objects.list_comments_async(
-                _cache['showing'], payload['most_recent_comment_timestamp']
+                _cache['stream'], payload['most_recent_comment_timestamp']
             )
             comments = [
                 Comment.objects.serialize(comment)
@@ -227,16 +227,16 @@ class Consumer(AsyncConsumer):
             .create_from_payload_async(_user, payload, _cache=_cache)
         )
 
-        showing = await database_sync_to_async(Showing.objects.get)(uuid=payload['showing_uuid'])
-        _cache['showing'] = showing
+        stream = await database_sync_to_async(Stream.objects.get)(uuid=payload['stream_uuid'])
+        _cache['stream'] = stream
 
         ticket = await database_sync_to_async(Ticket.objects.get)(
             holder=_user,
-            showing=_cache['showing'],
+            stream=_cache['stream'],
         )
 
         await self.channel_layer.group_send(  # TODO: put as manager method
-            _cache['showing'].chat_room,
+            _cache['stream'].chat_room,
             {
                 'type': 'broadcast',
                 'text': json.dumps({
@@ -307,19 +307,19 @@ class Consumer(AsyncConsumer):
     async def websocket_disconnect(self, event):
         _cache = {}
         _user = self.scope['user']
-        await Profile.objects.leave_showing_async(_user)
-        active_showing_uuid = self.scope['query_string'][5:].decode('utf-8')
-        showing = await database_sync_to_async(Showing.objects.get)(uuid=active_showing_uuid)
-        _cache['showing'] = showing
+        await Profile.objects.leave_stream_async(_user)
+        active_stream_uuid = self.scope['query_string'][5:].decode('utf-8')
+        stream = await database_sync_to_async(Stream.objects.get)(uuid=active_stream_uuid)
+        _cache['stream'] = stream
 
         await (
             self.channel_layer
-            .group_discard(_cache['showing'].chat_room, self.channel_name)
+            .group_discard(_cache['stream'].chat_room, self.channel_name)
         )
 
         # Create record of comment.
         payload = {
-            'showing_uuid': active_showing_uuid,
+            'stream_uuid': active_stream_uuid,
             'status': Comment.STATUS_LEFT,
             'text': None,
         }
@@ -329,7 +329,7 @@ class Consumer(AsyncConsumer):
         )
 
         await self.channel_layer.group_send(  # TODO: put as manager method
-            _cache['showing'].chat_room,
+            _cache['stream'].chat_room,
             {
                 'type': 'broadcast',
                 'text': json.dumps({

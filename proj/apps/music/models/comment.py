@@ -13,13 +13,35 @@ from proj.apps.music.models.querysets import CommentQuerySet
 from proj.core.models import BaseModel
 
 
+class StatusMessage:
+    STREAM_ACTIVATED = 'stream_activated'
+    STREAM_IDLE = 'stream_idle'
+    STREAM_TERMINATED = 'stream_terminated'
+    USER_JOINED = 'user_joined'
+    USER_LEFT = 'user_left'
+
+
+class CommentMessage:
+    EMOTE_LOW = 'emote_low'
+    EMOTE_MID_LOW = 'emote_mid_low'
+    EMOTE_NEUTRAL = 'emote_neutral'
+    EMOTE_MID_HIGH = 'emote_mid_high'
+    EMOTE_HIGH = 'emote_high'
+
+
+class StreamMessage:
+    STREAM_SPIN = 'spin'
+    STREAM_PAUSE = 'pause'
+    STREAM_PLAY = 'play'
+
+
 class Comment(BaseModel):  # TODO Message
 
     # - - - - - - -
     # config model
     # - - - - - - -
 
-    # Showing status change (StatusMessage)
+    # Stream status change (StatusMessage)
     STATUS_ACTIVATED = 'activated'
     STATUS_IDLE = 'idle'
     STATUS_TERMINATED = 'terminated'
@@ -120,8 +142,8 @@ class Comment(BaseModel):  # TODO Message
         on_delete=models.SET_NULL,
         null=True,
     )
-    showing = models.ForeignKey(
-        'music.Showing',
+    stream = models.ForeignKey(
+        'music.Stream',
         related_name='comments',
         on_delete=models.DO_NOTHING,
     )

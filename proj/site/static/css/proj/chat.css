@@ -1,11 +1,11 @@
 
 /* CHAT CONTAINER */
 
-.detail-showing > .chat::-webkit-scrollbar {
+.detail-stream > .chat::-webkit-scrollbar {
     display: none;  // Safari and Chrome
 }
 
-.detail-showing > .chat {
+.detail-stream > .chat {
   height: calc(100vh - 243.99px);-ms-overflow-style: none; scrollbar-width: none;
   overflow-y: scroll;
   border-top: 2px #e7eaf2 solid;
@@ -16,25 +16,25 @@
 
 /* CHAT BUBBLES */
 
-.detail-showing > .chat > .tile > .group {
+.detail-stream > .chat > .tile > .group {
   padding-top: 4px;
   padding-bottom: 4px;
   margin-left: 16px;
 }
 
-.detail-showing > .chat > .tile > .group > .commenter-ticket-holder-name {
+.detail-stream > .chat > .tile > .group > .commenter-ticket-holder-name {
   font-weight: 600;
 }
 
-.detail-showing > .chat > .tile > .group > .comment-text {
+.detail-stream > .chat > .tile > .group > .comment-text {
   padding: 8px;
   background-color: #e7eaf2;
   max-width: calc(100% - 32px);
   border-radius: 8px;
 }
 
-.detail-showing > .chat > .tile.other_user > .group > .commenter-ticket-holder-name,
-.detail-showing > .chat > .tile.other_user > .group > .comment-text {
+.detail-stream > .chat > .tile.other_user > .group > .commenter-ticket-holder-name,
+.detail-stream > .chat > .tile.other_user > .group > .comment-text {
   margin-left: auto;
   margin-right: 16px;
 }
