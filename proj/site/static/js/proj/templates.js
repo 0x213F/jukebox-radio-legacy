@@ -11,7 +11,6 @@ function generate_stream(stream) {
     showtime_timestring = 'Active'
     background_color = ` style="background-color: #b46f82!important;"`
   }
-  console.log(stream)
   return `
     <div class="stream card" uuid="${stream.uuid}">
       <span class="stream-album-title label label-rounded">${stream.name}</span><br>
