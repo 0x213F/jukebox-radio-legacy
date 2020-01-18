@@ -20,6 +20,7 @@ class SpinRecordView(BaseView):
         """
         Record = apps.get_model("music.Record")
         Stream = apps.get_model("music.Stream")
+        Ticket = apps.get_model("music.Ticket")
 
         record_id = request.POST.get("record_id", None)
         stream_uuid = request.POST.get("stream_uuid", None)
@@ -29,6 +30,13 @@ class SpinRecordView(BaseView):
 
         if stream.status != Stream.STATUS_ACTIVATED:
             raise Exception('The stream is not active')
+
+        # make sure the user has admin privileges!
+        Ticket.objects.get(
+            holder=request.user,
+            stream=stream,
+            is_administrator=True,
+        )
 
         record_on_table = stream.current_record and stream.record_terminates_at
         if record_on_table:
