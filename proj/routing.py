@@ -1,4 +1,3 @@
-
 from django.conf.urls import url
 
 from channels.auth import AuthMiddlewareStack
@@ -10,14 +9,10 @@ from channels.security.websocket import OriginValidator
 from proj.apps.consumers import Consumer
 
 
-application = ProtocolTypeRouter({
-    'websocket': AllowedHostsOriginValidator(
-        AuthMiddlewareStack(
-            URLRouter(
-                [
-                    url('', Consumer)
-                ]
-            )
+application = ProtocolTypeRouter(
+    {
+        "websocket": AllowedHostsOriginValidator(
+            AuthMiddlewareStack(URLRouter([url("", Consumer)]))
         )
-    )
-})
+    }
+)

@@ -1,4 +1,3 @@
-
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.http import HttpResponse
@@ -13,8 +12,8 @@ def authenticate_view(request):
     if request.user.is_authenticated:
         return HttpResponse(status=403)
 
-    username = request.POST.get('username', None)
-    password = request.POST.get('password', None)
+    username = request.POST.get("username", None)
+    password = request.POST.get("password", None)
     user = authenticate(request, username=username, password=password)
 
     if user is None:

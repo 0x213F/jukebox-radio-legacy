@@ -1,4 +1,3 @@
-
 from cryptography.fernet import Fernet
 from datetime import datetime
 import requests
@@ -22,7 +21,6 @@ from proj.apps.users.models import Profile
 
 @admin.register(TrackListing)
 class TrackListingAdmin(admin.ModelAdmin):
-
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.order_by('record_id', 'number')
+        return qs.order_by("record_id", "number")

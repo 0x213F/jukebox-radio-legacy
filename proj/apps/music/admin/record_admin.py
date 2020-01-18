@@ -1,4 +1,3 @@
-
 import requests
 from datetime import datetime
 from datetime import timedelta
@@ -21,92 +20,79 @@ from proj.apps.music.backends import Spotify
 from proj.apps.users.models import Profile
 
 
-
 @admin.register(Record)
 class RecordAdmin(admin.ModelAdmin):
-
     def get_urls(self):
         urls = super().get_urls()
-        my_urls = [
-            url(r'^link-spotify/$', self.link_spotify, name="link_spotify")
-        ]
+        my_urls = [url(r"^link-spotify/$", self.link_spotify, name="link_spotify")]
         return my_urls + urls
 
     # - - - - -
     # display
     # - - - - -
 
-    change_list_template = 'admin/track_change_list.html'
+    change_list_template = "admin/track_change_list.html"
 
     form = RecordForm
 
     search_fields = (
-        'id',
-        'name__icontains',
+        "id",
+        "name__icontains",
     )
 
     list_display = (
-        'name',
-        'display_tracks',
-        'duration',
+        "name",
+        "display_tracks",
+        "duration",
     )
 
     readonly_fields = (
-        'display_tracks',
-        'duration',
+        "display_tracks",
+        "duration",
     )
 
     def get_actions(self, request):
         actions = super().get_actions(request)
-        if 'delete_selected' in actions:
-            del actions['delete_selected']
+        if "delete_selected" in actions:
+            del actions["delete_selected"]
         return actions
 
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
-            self.fields = (
-                'name',
-            )
+            self.fields = ("name",)
         else:
             self.fields = (
-                'name',
-                'display_tracks',
-                'duration',
+                "name",
+                "display_tracks",
+                "duration",
             )
         return super().get_form(request, obj, **kwargs)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.order_by('id')
+        return qs.order_by("id")
 
     def display_tracks(self, record):
-        track_listings = (
-            TrackListing
-            .objects
-            .filter(record=record)
-            .order_by('number')
-        )
+        track_listings = TrackListing.objects.filter(record=record).order_by("number")
 
         # if the record has already been played once, do not allow it to be
         # editable.
         not_is_editable = Comment.objects.filter(record=record).exists()
 
-        track_str = ''
+        track_str = ""
         for tl in track_listings:
             track = tl.track
-            track_link = urls.reverse(
-                'admin:music_track_change', args=[track.id]
-            )
+            track_link = urls.reverse("admin:music_track_change", args=[track.id])
             track_listing_link = urls.reverse(
-                'admin:music_tracklisting_delete', args=[tl.id]
+                "admin:music_tracklisting_delete", args=[tl.id]
             )
-            track_str += f'<button><a href="{track_link}">🔗 {track.spotify_name}</a></button>'
+            track_str += (
+                f'<button><a href="{track_link}">🔗 {track.spotify_name}</a></button>'
+            )
 
             # is editable
             if not not_is_editable:
-                track_str += (
-                    f'<button><a href="{track_listing_link}">🗑</a></button>'
-                )
+                track_str += f'<button><a href="{track_listing_link}">🗑</a></button>'
 
             track_str += '<div style="height: 0.25rem;"></div>'
 
@@ -115,14 +101,11 @@ class RecordAdmin(admin.ModelAdmin):
 
         if track_listings:
             track_str += '<div style="height: 0.75rem;"></div>'
-        track_link = (
-            urls.reverse('admin:music_track_add') +
-            f'?record={record.id}'
-        )
+        track_link = urls.reverse("admin:music_track_add") + f"?record={record.id}"
         track_str += (
             '<button style="font-weight: 800">'
             f'    <a href="{track_link}">🔗 Add Track</a>'
-            '</button>'
+            "</button>"
         )
 
         return format_html(track_str)
@@ -132,5 +115,7 @@ class RecordAdmin(admin.ModelAdmin):
 
     def link_spotify(self, request):
         Profile.objects.get_or_create(user=request.user)
-        spotify_authorization_uri = Spotify.get_spotify_authorization_uri(request, 'admin')
+        spotify_authorization_uri = Spotify.get_spotify_authorization_uri(
+            request, "admin"
+        )
         return redirect(spotify_authorization_uri)

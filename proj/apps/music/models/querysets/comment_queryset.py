@@ -1,38 +1,33 @@
-
 from proj.core.models.querysets import BaseQuerySet
 
 
 class CommentQuerySet(BaseQuerySet):
-    '''
+    """
     Django QuerySet used to query Comment objects.
-    '''
+    """
 
-    async def list_comments_async(
-        self, stream, most_recent_comment_timestamp
-    ):
-        '''
+    async def list_comments_async(self, stream, most_recent_comment_timestamp):
+        """
         List 100 most recent comments in a stream.
-        '''
+        """
         Comment = self.model
         qs = Comment.objects.select_related(
-            'commenter', 'commenter__profile',
-            'commenter_ticket',
+            "commenter", "commenter__profile", "commenter_ticket",
         )
         qs = qs.filter(stream_id=stream.id)
         if most_recent_comment_timestamp:
             qs = qs.filter(created_at__gt=most_recent_comment_timestamp)
-        qs = qs.order_by('created_at')
+        qs = qs.order_by("created_at")
         return qs[:100]
 
     def latest_comment(self, user, stream):
-        '''
+        """
         Get a user's latest comment in a stream.
-        '''
+        """
         Comment = self.model
 
         latest_comment = (
-            self.filter(stream_id=stream.id).order_by('-created_at')
-            .first()
+            self.filter(stream_id=stream.id).order_by("-created_at").first()
         )
 
         if not latest_comment:

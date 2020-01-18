@@ -1,4 +1,3 @@
-
 from datetime import datetime
 import random
 import uuid
@@ -14,24 +13,24 @@ from proj.core.models import BaseModel
 
 
 class StatusMessage:
-    STREAM_ACTIVATED = 'stream_activated'
-    STREAM_IDLE = 'stream_idle'
-    USER_JOINED = 'user_joined'
-    USER_LEFT = 'user_left'
+    STREAM_ACTIVATED = "stream_activated"
+    STREAM_IDLE = "stream_idle"
+    USER_JOINED = "user_joined"
+    USER_LEFT = "user_left"
 
 
 class CommentMessage:
-    EMOTE_LOW = 'emote_low'
-    EMOTE_MID_LOW = 'emote_mid_low'
-    EMOTE_NEUTRAL = 'emote_neutral'
-    EMOTE_MID_HIGH = 'emote_mid_high'
-    EMOTE_HIGH = 'emote_high'
+    EMOTE_LOW = "emote_low"
+    EMOTE_MID_LOW = "emote_mid_low"
+    EMOTE_NEUTRAL = "emote_neutral"
+    EMOTE_MID_HIGH = "emote_mid_high"
+    EMOTE_HIGH = "emote_high"
 
 
 class StreamMessage:
-    STREAM_SPIN = 'spin'
-    STREAM_PAUSE = 'pause'
-    STREAM_PLAY = 'play'
+    STREAM_SPIN = "spin"
+    STREAM_PAUSE = "pause"
+    STREAM_PLAY = "play"
 
 
 class Comment(BaseModel):  # TODO Message
@@ -41,68 +40,68 @@ class Comment(BaseModel):  # TODO Message
     # - - - - - - -
 
     # Stream status change (StatusMessage)
-    STATUS_ACTIVATED = 'activated'
-    STATUS_IDLE = 'idle'
+    STATUS_ACTIVATED = "activated"
+    STATUS_IDLE = "idle"
 
     # User status change (StatusMessage)
-    STATUS_JOINED = 'joined'
-    STATUS_WAITED = 'waited'  # TODO remove
-    STATUS_LEFT = 'left'
+    STATUS_JOINED = "joined"
+    STATUS_WAITED = "waited"  # TODO remove
+    STATUS_LEFT = "left"
 
     # User comment posted (CommentMessage)
-    STATUS_LOW = 'low'
-    STATUS_MID_LOW = 'mid_low'
-    STATUS_NEUTRAL = 'neutral'
-    STATUS_MID_HIGH = 'mid_high'
-    STATUS_HIGH = 'high'
+    STATUS_LOW = "low"
+    STATUS_MID_LOW = "mid_low"
+    STATUS_NEUTRAL = "neutral"
+    STATUS_MID_HIGH = "mid_high"
+    STATUS_HIGH = "high"
 
     # Playback change (PlaybackMessage)
-    STATUS_SPIN = 'spin'
-    STATUS_STOP = 'stop'
-    STATUS_START = 'start'
-    STATUS_PLAY = 'play'
-    STATUS_PAUSE = 'pause'
-    STATUS_NEXT = 'next'
-    STATUS_PREV = 'prev'
+    STATUS_SPIN = "spin"
+    STATUS_STOP = "stop"
+    STATUS_START = "start"
+    STATUS_PLAY = "play"
+    STATUS_PAUSE = "pause"
+    STATUS_NEXT = "next"
+    STATUS_PREV = "prev"
 
     STATUS_TEXT_CHOICES = [
-        (STATUS_LOW, ':('),
-        (STATUS_MID_LOW, ':/'),
-        (STATUS_NEUTRAL, ':|'),
-        (STATUS_MID_HIGH, ':)'),
-        (STATUS_HIGH, ':D'),
+        (STATUS_LOW, ":("),
+        (STATUS_MID_LOW, ":/"),
+        (STATUS_NEUTRAL, ":|"),
+        (STATUS_MID_HIGH, ":)"),
+        (STATUS_HIGH, ":D"),
     ]
 
     STATUS_PLAYER_CHOICES = [
-        (STATUS_SPIN, 'Spinning'),
-        (STATUS_STOP, 'Stopped'),
-        (STATUS_START, 'Started'),
-        (STATUS_PLAY, 'Played'),
-        (STATUS_PAUSE, 'Paused'),
-        (STATUS_NEUTRAL, 'Neutral'),
-        (STATUS_NEXT, 'Skipped'),
-        (STATUS_PREV, 'Backtracked'),
+        (STATUS_SPIN, "Spinning"),
+        (STATUS_STOP, "Stopped"),
+        (STATUS_START, "Started"),
+        (STATUS_PLAY, "Played"),
+        (STATUS_PAUSE, "Paused"),
+        (STATUS_NEUTRAL, "Neutral"),
+        (STATUS_NEXT, "Skipped"),
+        (STATUS_PREV, "Backtracked"),
     ]
 
     STATUS_CHOICES = [
-        (STATUS_JOINED, 'Joined'),
-        (STATUS_WAITED, 'Waited'),
-        (STATUS_LEFT, 'Left'),
-        (STATUS_ACTIVATED, 'Activated'),
-        (STATUS_IDLE, 'Idle'),
-        (STATUS_LOW, ':('),
-        (STATUS_MID_LOW, ':/'),
-        (STATUS_NEUTRAL, ':|'),
-        (STATUS_MID_HIGH, ':)'),
-        (STATUS_HIGH, ':D'),
-        (STATUS_SPIN, 'Spinning'),
-        (STATUS_STOP, 'Stopped'),
-        (STATUS_START, 'Started'),
-        (STATUS_PLAY, 'Played'),
-        (STATUS_PAUSE, 'Paused'),
-        (STATUS_NEUTRAL, 'Neutral'),
-        (STATUS_NEXT, 'Skipped'),
-        (STATUS_PREV, 'Backtracked'),
+        (STATUS_JOINED, "Joined"),
+        (STATUS_WAITED, "Waited"),
+        (STATUS_LEFT, "Left"),
+        (STATUS_ACTIVATED, "Activated"),
+        (STATUS_IDLE, "Idle"),
+        (STATUS_LOW, ":("),
+        (STATUS_MID_LOW, ":/"),
+        (STATUS_NEUTRAL, ":|"),
+        (STATUS_MID_HIGH, ":)"),
+        (STATUS_HIGH, ":D"),
+        (STATUS_SPIN, "Spinning"),
+        (STATUS_STOP, "Stopped"),
+        (STATUS_START, "Started"),
+        (STATUS_PLAY, "Played"),
+        (STATUS_PAUSE, "Paused"),
+        (STATUS_NEUTRAL, "Neutral"),
+        (STATUS_NEXT, "Skipped"),
+        (STATUS_PREV, "Backtracked"),
     ]
 
     class Meta:
@@ -111,7 +110,7 @@ class Comment(BaseModel):  # TODO Message
     objects = CommentManager.from_queryset(CommentQuerySet)()
 
     def __str__(self):
-        return f'[{self.commenter_id}] {self.text}'
+        return f"[{self.commenter_id}] {self.text}"
 
     # - - - -
     # fields
@@ -123,30 +122,25 @@ class Comment(BaseModel):  # TODO Message
 
     commenter = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='comments',
+        related_name="comments",
         on_delete=models.DO_NOTHING,
         null=True,
     )
     commenter_ticket = models.ForeignKey(
-        'music.Ticket',
-        related_name='commenter_tickets',
+        "music.Ticket",
+        related_name="commenter_tickets",
         on_delete=models.DO_NOTHING,
         null=True,
     )
     record = models.ForeignKey(
-        'music.Record',
-        related_name='spins',
-        on_delete=models.SET_NULL,
-        null=True,
+        "music.Record", related_name="spins", on_delete=models.SET_NULL, null=True,
     )
     stream = models.ForeignKey(
-        'music.Stream',
-        related_name='comments',
-        on_delete=models.DO_NOTHING,
+        "music.Stream", related_name="comments", on_delete=models.DO_NOTHING,
     )
     track = models.ForeignKey(
-        'music.Track',
-        related_name='comments',
+        "music.Track",
+        related_name="comments",
         on_delete=models.DO_NOTHING,
         null=True,
         blank=True,

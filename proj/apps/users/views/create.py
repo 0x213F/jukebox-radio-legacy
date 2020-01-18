@@ -1,4 +1,3 @@
-
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.http import HttpResponse
@@ -15,11 +14,10 @@ def create_view(request):
     if request.user.is_authenticated:
         return HttpResponse(status=403)
 
-
     # form validation
     # - - - - - - - -
-    email = request.POST.get('email', None)
-    password = request.POST.get('password', None)
+    email = request.POST.get("email", None)
+    password = request.POST.get("password", None)
     if not email or not password:
         return HttpResponse(status=400)
 

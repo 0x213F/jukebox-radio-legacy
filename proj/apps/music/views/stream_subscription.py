@@ -1,4 +1,3 @@
-
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
@@ -11,21 +10,20 @@ from proj.apps.music.models import Stream
 from proj.apps.users.models import Profile
 
 
-SUBSCRIBED = 'subscribed'
-UNSUBSCRIBED = 'unsubscribed'
+SUBSCRIBED = "subscribed"
+UNSUBSCRIBED = "unsubscribed"
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class StreamSubscriptionView(BaseView):
-
     def post(self, request, **kwargs):
-        '''
+        """
         Update the user's account information.
-        '''
-        Ticket = apps.get_model('music.Ticket')
+        """
+        Ticket = apps.get_model("music.Ticket")
 
-        stream_uuid = request.POST.get('stream_uuid', None)
-        status = request.POST.get('status', None)
+        stream_uuid = request.POST.get("stream_uuid", None)
+        status = request.POST.get("status", None)
 
         ticket = Ticket.objects.get(holder=request.user, stream__uuid=stream_uuid)
 

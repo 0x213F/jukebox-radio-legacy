@@ -15,19 +15,44 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Profile',
+            name="Profile",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted_at', models.DateTimeField(blank=True, null=True)),
-                ('active_stream_uuid', models.UUIDField(blank=True, null=True)),
-                ('default_display_name', models.CharField(blank=True, max_length=32, null=True)),
-                ('spotify_access_token', models.CharField(blank=True, max_length=500, null=True)),
-                ('spotify_refresh_token', models.CharField(blank=True, max_length=500, null=True)),
-                ('spotify_scope', models.CharField(blank=True, max_length=500, null=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.DO_NOTHING, related_name='profile', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted_at", models.DateTimeField(blank=True, null=True)),
+                ("active_stream_uuid", models.UUIDField(blank=True, null=True)),
+                (
+                    "default_display_name",
+                    models.CharField(blank=True, max_length=32, null=True),
+                ),
+                (
+                    "spotify_access_token",
+                    models.CharField(blank=True, max_length=500, null=True),
+                ),
+                (
+                    "spotify_refresh_token",
+                    models.CharField(blank=True, max_length=500, null=True),
+                ),
+                (
+                    "spotify_scope",
+                    models.CharField(blank=True, max_length=500, null=True),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        related_name="profile",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False,},
         ),
     ]
