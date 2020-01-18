@@ -87,6 +87,10 @@ class RecordAdmin(admin.ModelAdmin):
             .order_by('number')
         )
 
+        # if the record has already been played once, do not allow it to be
+        # editable.
+        not_is_editable = Comment.objects.filter(record=record).exists()
+
         track_str = ''
         for tl in track_listings:
             track = tl.track
@@ -96,13 +100,17 @@ class RecordAdmin(admin.ModelAdmin):
             track_listing_link = urls.reverse(
                 'admin:music_tracklisting_delete', args=[tl.id]
             )
-            track_str += (
-                f'<button><a href="{track_link}">🔗 {track.spotify_name}</a></button>'
-                f'<button><a href="{track_listing_link}">🗑</a></button>'
-                '<div style="height: 0.25rem;"></div>'
-            )
+            track_str += f'<button><a href="{track_link}">🔗 {track.spotify_name}</a></button>'
 
-        if Comment.objects.filter(record=record).exists():
+            # is editable
+            if not not_is_editable:
+                track_str += (
+                    f'<button><a href="{track_listing_link}">🗑</a></button>'
+                )
+
+            track_str += '<div style="height: 0.25rem;"></div>'
+
+        if not_is_editable:
             return format_html(track_str)
 
         if track_listings:
