@@ -9,9 +9,21 @@
 <link rel="stylesheet" href="../static/css/proj/detail_stream.css">
 <link rel="stylesheet" href="../static/css/proj/chat.css">
 <link rel="stylesheet" href="../static/css/proj/modal.css">
+
+<script src="{% static '/js/jquery.js' %}"></script>
 {% endblock %}
 
 {% block main %}
+
+<div id="csrf-token" class="hidden">
+  {% csrf_token %}
+</div>
+
+<script>
+
+var CSRF_TOKEN = $('#csrf-token').children().first().val();
+
+</script>
 
 <!-- - - - - - --->
 <!--  MODAL - - -->
@@ -47,8 +59,6 @@
 
     <!-- ACCOUNT FORM -->
     <form id="user-update" class="ajax-form" url="../api/user/update/" type="post" onsuccess='hide_modal'>
-
-      {% csrf_token %}
 
       <div class="view anyone">
         <label class='row small-text noselect'>
@@ -98,7 +108,15 @@
           submit="onload"
           onsuccess='display_list_streams'>
 
-      {% csrf_token %}
+    </form>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - -->
+    <!--  LOAD PAGE (LIST BROADCASTING SHOWINGS) -->
+    <form class="ajax-form hidden"
+          type="get"
+          url="../api/music/list_broadcasting_streams/"
+          submit="onload"
+          onsuccess='display_list_broadcasting_streams'>
 
     </form>
 
@@ -124,6 +142,46 @@
     <!--  LIST BROADCASTING SHOWINGS -->
     <div class="list-broadcasting-streams hidden">
       <h2>Broadcasting</h2>
+
+      <!-- - - - --->
+      <!-- SEARCH RECORDS -->
+      <br>
+      <form class="ajax-form" url="../api/music/list_records/" type="get" style="border: 1px solid black; padding: 2px;" onsuccess='display_records'>
+
+        <div class="form-group">
+          <label class="form-label">Search bar:</label>
+          <input class="form-input" type="text" name="query" placeholder="" style="border: 1px solid black;">
+        </div>
+
+        <button class="footer-button">
+          List records
+        </button>
+
+        <div id='records-list'>
+
+        </div>
+
+      </form>
+
+      <!-- - - - --->
+      <!-- CREATE STREAM -->
+      <br>
+      <form class="ajax-form" url="../api/music/create_stream/" type="post" style="border: 1px solid black; padding: 2px;" onsuccess='refresh_page'>
+
+        <div class="form-group">
+          <label class="form-label">Stream name</label>
+          <input class="form-input" type="text" name="name" placeholder="" style="border: 1px solid black;">
+        </div>
+
+        <button id="subscription-button" class="footer-button">
+          Create Stream
+        </button>
+      </form>
+
+    <!-- - - - - - - - - - - - - - - -->
+    <!--  LIST BROADCASTING SHOWINGS -->
+    <div class="list-broadcasting-streams hidden">
+      <h2>Broadcasting</h2>
     </div>
 
     <!-- - - - - - - - - -->
@@ -142,8 +200,6 @@
         <!-- TOGGLE SUBSCRIPTION -->
         <form class="ajax-form" url="../api/music/stream_subscription/" type="post">
 
-          {% csrf_token %}
-
           <div class="hidden">
             <input id="subscription-uuid-sub" type="text" name="stream_uuid">
           </div>
@@ -161,7 +217,6 @@
         <!-- TOGGLE SUBSCRIPTION -->
         <form class="ajax-form" url="../api/music/stream_subscription/" type="post">
 
-          {% csrf_token %}
 
           <div class="hidden">
             <input id="subscription-uuid-unsub" type="text" name="stream_uuid">
@@ -216,8 +271,6 @@
       <!-- LOGOUT -->
       <form class="ajax-form" url="../api/user/logout/" type="post" redirect="/">
 
-        {% csrf_token %}
-
         <button class="account">
           Logout
         </button>
@@ -234,7 +287,6 @@
 
 {% block basescripts %}
 <!-- <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script> -->
-<script src="{% static '/js/jquery.js' %}"></script>
 <script src="{% static '/js/proj/chat.js' %}"></script>
 <script src="{% static '/js/proj/templates.js' %}"></script>
 <script src="{% static '/js/proj/detail_stream.js' %}"></script>

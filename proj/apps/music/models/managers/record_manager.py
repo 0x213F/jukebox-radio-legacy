@@ -28,3 +28,9 @@ class RecordManager(BaseManager):
         new_duration_ms = record.duration_ms + track_duration_ms
         max_duration_ms = 25 * 60 * 1000
         return new_duration_ms <= max_duration_ms
+
+    def serialize(self, record):
+        return {
+            "id": record.id,
+            "name": record.name,
+        }

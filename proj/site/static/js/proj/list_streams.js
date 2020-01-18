@@ -30,13 +30,16 @@ function display_list_streams(data) {
 
 
 function display_list_broadcasting_streams(data) {
-  console.log('see me!!!')
   let list_streams = data[KEY_SHOWINGS];
-
   let $streams_container = $('.list-broadcasting-streams');
   for(let stream of list_streams) {
-    $streams_container.append(generate_stream(stream));
+    $streams_container.append(generate_broadcasting_stream(stream));
   }
-
+  setup_ajax_forms();
   $(".list-broadcasting-streams").removeClass('hidden');
+}
+
+
+function refresh_page(data) {
+  location.reload();
 }
