@@ -1,4 +1,3 @@
-
 from django.contrib.auth import logout
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_protect

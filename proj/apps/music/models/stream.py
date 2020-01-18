@@ -1,4 +1,3 @@
-
 import uuid
 
 from datetime import datetime
@@ -20,12 +19,12 @@ class Stream(BaseModel):
     # config model
     # - - - - - - -
 
-    STATUS_ACTIVATED = 'activated'
-    STATUS_IDLE = 'idle'
+    STATUS_ACTIVATED = "activated"
+    STATUS_IDLE = "idle"
 
     STATUS_CHOICES = [
-        (STATUS_ACTIVATED, 'Activated'),
-        (STATUS_IDLE, 'idle'),
+        (STATUS_ACTIVATED, "Activated"),
+        (STATUS_IDLE, "idle"),
     ]
 
     class Meta:
@@ -45,10 +44,11 @@ class Stream(BaseModel):
     title = models.CharField(max_length=128)  # name
 
     current_record = models.ForeignKey(
-        'music.Record',
-        related_name='now_playing_at_streams',
+        "music.Record",
+        related_name="now_playing_at_streams",
         on_delete=models.SET_NULL,
-        null=True, blank=False,
+        null=True,
+        blank=False,
     )
 
     showtime_actual = models.DateTimeField(null=True, blank=False)
@@ -64,7 +64,7 @@ class Stream(BaseModel):
         # constant is fine
         # foo = ContentType.objects.get_for_model(self)
         foo = 1
-        return f'{foo}-{self.id}'
+        return f"{foo}-{self.id}"
 
     @property
     def time_left_on_current_record(self):

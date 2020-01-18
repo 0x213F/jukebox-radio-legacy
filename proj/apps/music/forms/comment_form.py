@@ -1,15 +1,12 @@
-
 from django import forms
 
 from proj.apps.music.models import Comment
 
 
 class CommentForm(forms.ModelForm):
-
-
     class Meta:
         model = Comment
         fields = (
-            'commenter',
-            'text',
+            "commenter",
+            "text",
         )

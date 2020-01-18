@@ -1,4 +1,3 @@
-
 import json
 
 from datetime import datetime
@@ -33,26 +32,26 @@ channel_layer = get_channel_layer()
 
 
 class StreamManager(BaseManager):
-    '''
+    """
     Django Manager used to manage Stream objects.
-    '''
+    """
 
     def serialize(self, stream):
         if not stream:
             return None
         return {
-            'uuid': str(stream.uuid),
-            'name': stream.title,
-            'status': stream.status,
+            "uuid": str(stream.uuid),
+            "name": stream.title,
+            "status": stream.status,
         }
 
     def change_status(self, stream, status):
-        '''
-        '''
-        Comment = apps.get_model('music.Comment')
-        Record = apps.get_model('music.Record')
-        Stream = apps.get_model('music.Stream')
-        Track = apps.get_model('music.Track')
+        """
+        """
+        Comment = apps.get_model("music.Comment")
+        Record = apps.get_model("music.Record")
+        Stream = apps.get_model("music.Stream")
+        Track = apps.get_model("music.Track")
 
         now = datetime.now()
         now_str = now.isoformat()
@@ -73,26 +72,28 @@ class StreamManager(BaseManager):
         async_to_sync(channel_layer.group_send)(
             stream.chat_room,
             {
-                'type': 'broadcast',
-                'text': json.dumps({
-                    'source': {
-                        'type': 'system',
-                        'display_name': None,
-                        'uuid': None,
-                    },
-                    'data': {
-                        'created_at': now_str,
-                        'status': status,
-                        'text': None,
+                "type": "broadcast",
+                "text": json.dumps(
+                    {
+                        "source": {
+                            "type": "system",
+                            "display_name": None,
+                            "uuid": None,
+                        },
+                        "data": {
+                            "created_at": now_str,
+                            "status": status,
+                            "text": None,
+                        },
                     }
-                }),
-            }
+                ),
+            },
         )
 
     def spin(self, record, stream):
-        '''
+        """
         Spin the record.
-        '''
+        """
         from proj.apps.music.models import Ticket
         from proj.apps.music.models import Comment
 
@@ -100,7 +101,7 @@ class StreamManager(BaseManager):
         now_str = now.isoformat()
 
         track_timestamp = now
-        for tl in record.tracks_through.all().order_by('number'):
+        for tl in record.tracks_through.all().order_by("number"):
             track = tl.track
             Comment.objects.create(
                 created_at=track_timestamp,
@@ -129,72 +130,75 @@ class StreamManager(BaseManager):
         )
 
         uris = list(
-            record.tracks_through.all().order_by('number')
-            .values_list('track__spotify_uri', flat=True)
+            record.tracks_through.all()
+            .order_by("number")
+            .values_list("track__spotify_uri", flat=True)
         )
 
         async_to_sync(channel_layer.group_send)(
             stream.chat_room,
             {
-                'type': 'broadcast',
-                'playback': {
-                    'action': 'play',
-                    'data': {'uris': uris},
-                },
-                'text': json.dumps({
-                    'source': {
-                        'type': 'system',
-                        'display_name': None,
-                        'uuid': None,
-                    },
-                    'data': {
-                        'created_at': now_str,
-                        'status': None,
-                        'text': None,
+                "type": "broadcast",
+                "playback": {"action": "play", "data": {"uris": uris},},
+                "text": json.dumps(
+                    {
+                        "source": {
+                            "type": "system",
+                            "display_name": None,
+                            "uuid": None,
+                        },
+                        "data": {"created_at": now_str, "status": None, "text": None,},
                     }
-                }),
-            }
+                ),
+            },
         )
 
         for ticket in Ticket.objects.filter(is_subscribed=True, stream=stream):
 
-            most_recent_join = Comment.objects.filter(
-                status=Comment.STATUS_JOINED,
-                commenter=ticket.holder,
-            ).order_by('-created_at').first()
+            most_recent_join = (
+                Comment.objects.filter(
+                    status=Comment.STATUS_JOINED, commenter=ticket.holder,
+                )
+                .order_by("-created_at")
+                .first()
+            )
 
             try:
                 assert most_recent_join.stream == stream
             except Exception:
                 continue
 
-            most_recent_leave = Comment.objects.filter(
-                status=Comment.STATUS_LEFT,
-                commenter=ticket.holder,
-                stream=stream,
-            ).order_by('-created_at').first()
+            most_recent_leave = (
+                Comment.objects.filter(
+                    status=Comment.STATUS_LEFT, commenter=ticket.holder, stream=stream,
+                )
+                .order_by("-created_at")
+                .first()
+            )
 
-            if (most_recent_join.created_at and not most_recent_leave) or (most_recent_join.created_at > most_recent_leave.created_at):
-                print('USER IS IN CHAT AND SUBSCRIBED')
+            if (most_recent_join.created_at and not most_recent_leave) or (
+                most_recent_join.created_at > most_recent_leave.created_at
+            ):
+                print("USER IS IN CHAT AND SUBSCRIBED")
                 continue
 
             user = ticket.holder
-            action = 'play'
-            data = json.dumps({'uris': uris})
+            action = "play"
+            data = json.dumps({"uris": uris})
             sat = user.profile.spotify_access_token
             response = requests.put(
-                f'https://api.spotify.com/v1/me/player/{action}',
+                f"https://api.spotify.com/v1/me/player/{action}",
                 data=data,
                 headers={
-                    'Authorization': f'Bearer {sat}',
-                    'Content-Type': 'application/json',
+                    "Authorization": f"Bearer {sat}",
+                    "Content-Type": "application/json",
                 },
             )
 
     def play(self, record):
-        '''
+        """
         Play the record sitting in a paused state.
-        '''
+        """
         now = datetime.now()
 
         record.is_playing = True
@@ -213,30 +217,25 @@ class StreamManager(BaseManager):
         async_to_sync(channel_layer.group_send)(
             record.stream.chat_room,
             {
-                'type': 'broadcast',
-                'playback': {
-                    'action': 'play',
-                    'data': None,
-                },
-                'text': json.dumps({
-                    'source': {
-                        'type': 'system',
-                        'display_name': None,
-                        'uuid': None,
-                    },
-                    'data': {
-                        'created_at': None,
-                        'status': None,
-                        'text': None,
+                "type": "broadcast",
+                "playback": {"action": "play", "data": None,},
+                "text": json.dumps(
+                    {
+                        "source": {
+                            "type": "system",
+                            "display_name": None,
+                            "uuid": None,
+                        },
+                        "data": {"created_at": None, "status": None, "text": None,},
                     }
-                }),
-            }
+                ),
+            },
         )
 
     def pause(self, record):
-        '''
+        """
         Pause the record currently playing.
-        '''
+        """
         now = datetime.now()
 
         record.is_playing = False
@@ -255,30 +254,25 @@ class StreamManager(BaseManager):
         async_to_sync(channel_layer.group_send)(
             record.stream.chat_room,
             {
-                'type': 'broadcast',
-                'playback': {
-                    'action': 'pause',
-                    'data': None,
-                },
-                'text': json.dumps({
-                    'source': {
-                        'type': 'system',
-                        'display_name': None,
-                        'uuid': None,
-                    },
-                    'data': {
-                        'created_at': None,
-                        'status': None,
-                        'text': None,
+                "type": "broadcast",
+                "playback": {"action": "pause", "data": None,},
+                "text": json.dumps(
+                    {
+                        "source": {
+                            "type": "system",
+                            "display_name": None,
+                            "uuid": None,
+                        },
+                        "data": {"created_at": None, "status": None, "text": None,},
                     }
-                }),
-            }
+                ),
+            },
         )
 
     def stop(self, record, stream):
-        '''
+        """
         Stop the record currently spinning.
-        '''
+        """
 
         Comment.objects.create(
             created_at=now,

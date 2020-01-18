@@ -1,4 +1,3 @@
-
 from django.conf import settings
 from django.db import models
 
@@ -26,9 +25,7 @@ class Profile(BaseModel):
     active_stream_uuid = models.UUIDField(null=True, blank=True)
     default_display_name = models.CharField(max_length=32, null=True, blank=True)
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        related_name='profile',
-        on_delete=models.DO_NOTHING,
+        settings.AUTH_USER_MODEL, related_name="profile", on_delete=models.DO_NOTHING,
     )
 
     spotify_access_token = models.CharField(max_length=500, null=True, blank=True)
