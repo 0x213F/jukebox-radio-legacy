@@ -8,7 +8,7 @@ $(".ajax-form").submit(function(e) {
     $this = $(this);
     $error = $this.find(".ajax-form-error");
     redirect = $this.attr("redirect");
-    onsuccess = $this.attr("onsuccess");
+    let onsuccess = $this.attr("onsuccess");
     if($this.attr("type") === "socket") {
       let data = $this.serialize()
       let route = $this.attr("route");

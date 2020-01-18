@@ -9,8 +9,10 @@ function display_list_streams(data) {
   window.localStorage.setItem(KEY_SHOWINGS, JSON.stringify(list_streams));
   window.localStorage.setItem(KEY_USER, JSON.stringify(user));
 
+  console.log(list_streams)
   let $streams_container = $('.list-streams');
   for(let stream of list_streams) {
+    console.log('stream', stream)
     $streams_container.append(generate_stream(stream));
   }
   $('.stream.card').click(display_detail_stream);
@@ -24,4 +26,17 @@ function display_list_streams(data) {
     }
   }
   $(".list-streams").removeClass('hidden');
+}
+
+
+function display_list_broadcasting_streams(data) {
+  console.log('see me!!!')
+  let list_streams = data[KEY_SHOWINGS];
+
+  let $streams_container = $('.list-broadcasting-streams');
+  for(let stream of list_streams) {
+    $streams_container.append(generate_stream(stream));
+  }
+
+  $(".list-broadcasting-streams").removeClass('hidden');
 }
