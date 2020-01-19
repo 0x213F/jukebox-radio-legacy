@@ -19,6 +19,56 @@ function generate_stream(stream) {
   `
 }
 
+function generate_broadcasting_stream(stream) {
+  let showtime_timestring = ''
+  let background_color = ''
+  let status_idle = ''
+  let status_activated = ''
+  if(stream.status === 'idle') {
+    showtime_timestring = 'Idle'
+    background_color = ` style="background-color: #cd9fab!important;"`
+    status_idle = 'checked'
+    status_activated = ''
+  } else if(stream.status === 'activated') {
+    showtime_timestring = 'Active'
+    background_color = ` style="background-color: #b46f82!important;"`
+    status_idle = ''
+    status_activated = 'checked'
+  }
+  return `
+    <div class="broadcasting-stream card" uuid="${stream.uuid}">
+      <span class="stream-album-title label label-rounded">${stream.name}</span><br>
+      <span class="stream-showtime-scheduled label label-rounded"${background_color}>${showtime_timestring}</span>
+
+      <!-- - - - - - - - -->
+      <!-- UPDATE STREAM -->
+      <br>
+      <form class="ajax-form" url="../api/music/update_stream/" type="post" onsuccess='refresh_page' style="border: 1px solid black; height: 55px; width: 140px; position: relative; top: 53px; right: 4px; padding: 2px;">
+
+        <div class="hidden">
+          <input type="text" name="stream_uuid" value="${stream.uuid}">
+        </div>
+
+        <div class="form-group">
+          <label class="form-radio">
+            <input type="radio" name="stream_status" value="idle" ${status_idle}>
+            <i class="form-icon"></i> Idle
+          </label>
+          <label class="form-radio">
+            <input type="radio" name="stream_status" value="activated" ${status_activated}>
+            <i class="form-icon"></i> Active
+          </label>
+        </div>
+
+        <button class="footer-button" style="font-size: 13px;">
+          Update Stream
+        </button>
+      </form>
+
+    </div>
+  `
+}
+
 // SAVE
 // https://feathericons.com/?query=el
 // https://www.color-hex.com/color/0f2f82
@@ -101,6 +151,19 @@ function render_comment(comment_obj) {
   $last_comment.after(html)
 
 }
+
+function display_records(data) {
+  let $container = $('#records-list');
+  $('#records-list').empty();
+  for(var thing of data['records']) {
+    $('#records-list').append(`
+
+      <span>[id=${thing.id}] ${thing.name}</span><br>
+
+      `);
+  }
+}
+
 //   let last_timestamp = null;
 //
   // while(true) {

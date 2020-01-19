@@ -7,7 +7,8 @@
 
 }
 
-.stream.card {
+.stream.card,
+.broadcasting-stream.card {
   transition: background-color 0.3s ease;
   border-radius: 6px;
   cursor: pointer;
@@ -15,11 +16,13 @@
   position: relative;
 }
 
-.stream.card:hover {
+.stream.card:hover,
+.broadcasting-stream.card:hover {
   background-color: rgba(48,55,66,.10);
 }
 
-.stream.card > .stream-album-art {
+.stream.card > .stream-album-art,
+.broadcasting-stream.card > .stream-album-art {
   width: 106px;
   height: 106px;
   border: rgba(48,55,66,.10) solid 2px;
@@ -30,7 +33,8 @@
   margin-top: 67px;
 }
 
-.stream.card > .stream-album-title {
+.stream.card > .stream-album-title,
+.broadcasting-stream.card > .stream-album-title {
   background: rgba(48,55,66,.90)!important;
   margin-left: 14px;
   padding: 8px;
@@ -43,7 +47,8 @@
   height: auto;
 }
 
-.stream.card > .stream-showtime-scheduled {
+.stream.card > .stream-showtime-scheduled,
+.broadcasting-stream.card > .stream-showtime-scheduled {
   width: 110px;
   text-align: center;
   background: rgba(48,55,66,.60)!important;
