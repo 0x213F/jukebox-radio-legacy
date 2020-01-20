@@ -66,6 +66,26 @@ function generate_broadcasting_stream(stream) {
         </button>
       </form>
 
+      <form class="ajax-form" url="../api/music/spin_record/" type="post" onsuccess='refresh_page' style="border: 1px solid black; height: 55px; width: 200px; position: absolute; top: 117px; right: 4px; padding: 2px;">
+
+        <div class="hidden">
+          <input type="text" name="stream_uuid" value="${stream.uuid}">
+        </div>
+
+        <div class="form-group">
+          <span style="float: left; font-size: 12px; display: inline-block; padding-top: 4px;">Record ID </span>
+          <input class="form-input" type="text" name="record_id" placeholder="" style="border: 1px solid black;">
+        </div>
+
+        <div class="hidden">
+          <input type="text" name="stream_uuid" value="${stream.uuid}">
+        </div>
+
+        <button class="footer-button" style="font-size: 13px;">
+          Spin Record
+        </button>
+      </form>
+
     </div>
   `
 }

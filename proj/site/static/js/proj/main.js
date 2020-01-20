@@ -7,6 +7,7 @@ function setup_ajax_forms() {
   $(".ajax-form").unbind()
   $(".ajax-form").submit(function(e) {
       e.preventDefault();
+      console.log(e)
       $this = $(this);
       let url = $this.attr("url")
       $error = $this.find(".ajax-form-error");
@@ -22,7 +23,6 @@ function setup_ajax_forms() {
         let text = JSON.stringify(payload);
         socket.send(text);
       } else if($this.attr("type") === "redirect") {
-        return
         window.location.href = $this.attr("url");
       } else {
         var $input = $("<input>").attr("name", "csrfmiddlewaretoken").val(CSRF_TOKEN).hide();
