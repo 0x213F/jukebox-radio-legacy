@@ -30,11 +30,9 @@ function display_list_streams(data) {
 
 
 function display_list_broadcasting_streams(data) {
-  console.log('RAISE THE BAR')
   let list_streams = data[KEY_SHOWINGS];
   let $streams_container = $('.list-broadcasting-streams');
   for(let stream of list_streams) {
-    console.log(stream)
     $streams_container.append(generate_broadcasting_stream(stream));
   }
   setup_ajax_forms();

@@ -1,6 +1,25 @@
 {% extends "base.html" %}
 
+{% load static %}
+
+{% block basestyles %}
+<!-- custom styles -->
+<link rel="stylesheet" href="{% static 'css/proj/base.css' %}">
+
+<script src="{% static 'js/jquery.js' %}"></script>
+{% endblock %}
+
 {% block main %}
+
+<div id="csrf-token" class="hidden">
+  {% csrf_token %}
+</div>
+
+<script>
+
+var CSRF_TOKEN = $('#csrf-token').children().first().val();
+
+</script>
 
 <div class="main center-horizontal card hidden">
 
