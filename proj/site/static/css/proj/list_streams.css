@@ -69,3 +69,7 @@
   border-radius: 4px;
   display: inline-block;
 }
+
+#records-list::-webkit-scrollbar {
+  display: none;
+}
