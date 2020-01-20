@@ -20,6 +20,7 @@ function generate_stream(stream) {
 }
 
 function generate_broadcasting_stream(stream) {
+  console.log('generate_broadcasting_stream')
   let showtime_timestring = ''
   let background_color = ''
   let status_idle = ''
@@ -157,8 +158,9 @@ function display_records(data) {
   $('#records-list').empty();
   for(var thing of data['records']) {
     $('#records-list').append(`
-
-      <span>[id=${thing.id}] ${thing.name}</span><br>
+      <div style="display: block;">
+        <span>[id=${thing.id}] ${thing.name}</span><br>
+      </div>
 
       `);
   }
