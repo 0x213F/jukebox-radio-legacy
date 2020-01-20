@@ -3,6 +3,7 @@ var LAST_DISPLAY_NAME = ''
 
 // open account modal
 $('button.account.open-modal').click(function() {
+  console.log('its ok')
 
   // initialize form
   let user = JSON.parse(window.localStorage.getItem('user'));

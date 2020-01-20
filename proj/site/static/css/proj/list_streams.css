@@ -7,12 +7,20 @@
 
 }
 
-.stream.card,
+.stream.card {
+  transition: background-color 0.3s ease;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 14px;
+  position: relative;
+}
+
 .broadcasting-stream.card {
   transition: background-color 0.3s ease;
   border-radius: 6px;
   cursor: pointer;
   margin: 14px;
+  height: 182px;
   position: relative;
 }
 
