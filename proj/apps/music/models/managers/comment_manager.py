@@ -1,8 +1,12 @@
+import json
+import requests
 import uuid
+from cryptography.fernet import Fernet
 
 from datetime import datetime
 
 from django.apps import apps
+from django.conf import settings
 
 from channels.db import database_sync_to_async
 
@@ -58,6 +62,8 @@ class CommentManager(BaseManager):
         from proj.apps.music.models import Stream
         from proj.apps.music.models import Ticket
 
+        Profile = apps.get_model('users', 'Profile')
+
         Comment = self.model
 
         now = datetime.utcnow()
@@ -97,9 +103,66 @@ class CommentManager(BaseManager):
         except Exception as e:
             pass
 
+        commands = (
+            '/play ',
+            '/undo ',
+        )
+        text = payload["text"]
+        if not text:
+            pass
+        else:
+            text_subsr = text[0:6]
+            if stream.vote_controlled and (ticket.is_administrator or user.is_superuser):
+                if text_subsr == '/play ':
+                    query = text[6:]
+                    data = {
+                        'q': query,
+                        'type': 'track',
+                    }
+
+                    _cache = await _get_or_fetch_from_cache(
+                        _cache,
+                        "profile",
+                        fetch_func=Profile.objects.get,
+                        fetch_kwargs={"user": user},
+                    )
+                    profile = _cache["profile"]
+
+                    cipher_suite = Fernet(settings.DATABASE_ENCRYPTION_KEY)
+
+                    user_spotify_access_token = cipher_suite.decrypt(
+                        profile.spotify_access_token.encode("utf-8")
+                    ).decode("utf-8")
+
+                    response = requests.get(
+                        "https://api.spotify.com/v1/search",
+                        params=data,
+                        headers={
+                            "Authorization": f"Bearer {user_spotify_access_token}",
+                            "Content-Type": "application/json",
+                        },
+                    )
+
+                    response_json = response.json()
+                    spotify_track_info = response_json['tracks']['items'][0]
+
+                    track_name = spotify_track_info['name']
+                    artist_names = ', '.join([
+                        artist['name']
+                        for artist in spotify_track_info['album']['artists']
+                    ])
+                    uri = spotify_track_info['uri']
+                    text += (
+                        '\n\n'
+                        f'[System] Adding to queue "{track_name}" '
+                        f'by "{artist_names}" <uri={uri}>'
+                    )
+                    status = Comment.STATUS_QUEUE
+
+
         comment = await database_sync_to_async(Comment.objects.create)(
             status=status,
-            text=payload["text"],
+            text=text,
             commenter=user,
             stream=stream,
             track=track,  # TODO

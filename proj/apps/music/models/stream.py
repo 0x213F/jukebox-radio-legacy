@@ -51,6 +51,8 @@ class Stream(BaseModel):
         blank=False,
     )
 
+    vote_controlled = models.BooleanField(default=False)
+
     showtime_actual = models.DateTimeField(null=True, blank=False)
 
     last_status_change_at = models.DateTimeField(null=True, blank=True)

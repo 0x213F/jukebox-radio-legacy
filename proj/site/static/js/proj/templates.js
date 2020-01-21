@@ -123,7 +123,11 @@ function render_comment(comment_obj) {
     border_color = '#c0d9b7';
   } else if(status === 'high') {
     border_color = '#82b46f';
+  } else {
+    border_color = '#576da7';
   }
+
+  var text = text.replace("\n", "<br>");
 
   var group1 = `
     <div class="group">

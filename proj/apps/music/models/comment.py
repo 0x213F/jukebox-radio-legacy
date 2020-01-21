@@ -64,6 +64,9 @@ class Comment(BaseModel):  # TODO Message
     STATUS_NEXT = "next"
     STATUS_PREV = "prev"
 
+    # Suggest changes
+    STATUS_QUEUE = 'queue'
+
     STATUS_TEXT_CHOICES = [
         (STATUS_LOW, ":("),
         (STATUS_MID_LOW, ":/"),
@@ -102,6 +105,7 @@ class Comment(BaseModel):  # TODO Message
         (STATUS_NEUTRAL, "Neutral"),
         (STATUS_NEXT, "Skipped"),
         (STATUS_PREV, "Backtracked"),
+        (STATUS_QUEUE, 'Queued'),
     ]
 
     class Meta:

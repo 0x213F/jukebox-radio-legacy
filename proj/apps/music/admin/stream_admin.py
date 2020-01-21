@@ -56,7 +56,7 @@ class StreamAdmin(admin.ModelAdmin):
             self.fields = ("title",)
             self.readonly_fields = ("",)
         elif obj.status == Stream.STATUS_IDLE:
-            self.fields = ("title",)
+            self.fields = ("title", "vote_controlled")
             self.readonly_fields = ("",)
         elif obj.status == Stream.STATUS_ACTIVATED:
             if obj.time_left_on_current_record:
