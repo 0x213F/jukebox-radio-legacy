@@ -17,7 +17,7 @@ class ListRecordsView(BaseView):
 
         search_query = request.GET.get("query", None)
 
-        records = Record.objects.filter(name__icontains=search_query).order_by("name")
+        records = Record.objects.filter(name__icontains=search_query).exclude(name__icontains='#hide').order_by("name")
 
         response = {
             "records": [Record.objects.serialize(s) for s in records],
