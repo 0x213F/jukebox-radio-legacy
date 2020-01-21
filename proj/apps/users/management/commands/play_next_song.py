@@ -109,3 +109,6 @@ class Command(BaseCommand):
                 Stream.objects.spin(record, stream)
             except Exception:
                 pass
+
+            comment.record = record
+            comment.save()
