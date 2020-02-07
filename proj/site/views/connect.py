@@ -17,6 +17,7 @@ class ConnectView(BaseView):
         """
         Connect the user's account to Spotify.
         """
+        print('DEF HERE')
         source = request.GET.get("source", None)
         code = request.GET.get("code", None)
 
@@ -40,6 +41,7 @@ class ConnectView(BaseView):
         cipher_spotify_refresh_token = cipher_suite.encrypt(
             response_json["refresh_token"].encode("utf-8")
         )
+        print('BY BY HERE')
 
         request.user.profile.spotify_access_token = cipher_spotify_access_token.decode(
             "utf-8"
@@ -56,4 +58,5 @@ class ConnectView(BaseView):
             )
             return HttpResponseRedirect("/admin")
         else:
+            print('ok here!!!')
             return HttpResponseRedirect("/")
