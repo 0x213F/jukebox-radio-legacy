@@ -62,7 +62,7 @@ function onopen(event) {
 
   $chat.scrollTop($chat[0].scrollHeight);
 
-  $('.list-broadcasting-streams').hide();
+  $('.tune-in-streams').hide();
   $('.list-streams').hide();
   $('.row.footer').hide();
   $('.detail-stream').show();
@@ -125,7 +125,7 @@ function onopen(event) {
     // change view
     $('.detail-stream').hide();
     $('.list-streams').show();
-    $('.list-broadcasting-streams').show();
+    $('.tune-in-streams').show();
     $('.footer').show();
   }
   $('.leave.leave-button').click(disconnect)

@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="../static/css/proj/detail_stream.css">
 <link rel="stylesheet" href="../static/css/proj/chat.css">
 <link rel="stylesheet" href="../static/css/proj/modal.css">
+<link rel="stylesheet" href="{% static '../static/css/spectre/spectre.min.css' %}">
+<link rel="stylesheet" href="{% static '../static/css/spectre/spectre-icons.min.css' %}">
 
 <script src="{% static '/js/jquery.js' %}"></script>
 {% endblock %}
@@ -25,81 +27,9 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
 
 </script>
 
-<!-- - - - - - --->
-<!--  MODAL - - -->
-<div class="modal hidden">
-  <div class="body center-horizontal center-vertical">
-
-    <!-- CANCEL -->
-    <div class='row'>
-      <button class="center-horizontal cancel profile">
-        Cancel
-      </button>
-    </div>
-
-    <!-- DELIMETER -->
-    <div class="delimeter"></div>
-
-    <!-- SPOTIFY -->
-    <!-- localhost%3A8000 -->
-    <form class="ajax-form row" url="https://accounts.spotify.com/authorize?client_id=890e3c32aaac4e0fa3dd5cfc22835f11&response_type=code&redirect_uri=http%3A%2F%2Fjukeboxrad.io%2Fconnect%3Fsource%3Dspotify&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state" type="redirect">
-      <button class="center-horizontal spotify success">
-        <img style="margin-right: 8px; height: 12px; float: left; margin-top: 2px;" src="../static/svg/plus-square.svg">
-        Spotify
-      </button>
-    </form>
-
-    <!-- ACCOUNT SELECTOR-->
-    <div class='row'>
-      <p>Your account information that is accessible by...</p>
-    </div>
-    <div class='row align-center'>
-      <button class="select anyone margin-right">Anyone</button>
-      <button class="select friends">Friends</button>
-    </div>
-
-    <!-- ACCOUNT FORM -->
-    <form id="user-update" class="ajax-form" url="../api/user/update/" type="post" onsuccess='hide_modal'>
-
-      <div class="view anyone">
-        <label class='row small-text noselect'>
-          <input style="margin-bottom: 0px;" class="margin-right null-display-name" type="radio" name="display_name_type" value="none">
-          Automatically randomize display name every stream.
-        </label>
-        <label class='row small-text noselect' style="padding-top: 0px;">
-          <input class="margin-right null-display-name" type="radio" name="display_name_type" value="custom">
-          Choose a custom display name.
-        </label>
-        <input class="text update_display_name" type="text" name="display_name" placeholder="" maxlength="16" spellcheck="false">
-        <div class="delimeter"></div>
-      </div>
-
-      <div class="view friends hidden">
-        <div class="form-group">
-          <label class="form-label">First Name</label>
-          <input class="form-input update_first_name" type="text" name="first_name" placeholder="">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Last Name</label>
-          <input class="form-input update_last_name" type="text" name="last_name" placeholder="">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input class="form-input update_email" type="email" name="email" placeholder="">
-        </div>
-      </div>
-
-      <div class="row align-center bottom">
-        <button type="submit" form="user-update" class="success ajax-form">Update</button>
-      </div>
-    </form>
-
-  </div>
-</div>
-
 <div class="main center-horizontal card hidden">
 
-  <div class="body">
+  <div class="card-body">
 
     <!-- - - - - - - - - - - - - - --->
     <!--  LOAD PAGE (LIST SHOWINGS) -->
@@ -107,7 +37,7 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
           type="get"
           url="../api/music/list_streams/"
           submit="onload"
-          onsuccess='display_list_streams'>
+          onsuccess='display_tune_in_streams'>
 
     </form>
 
@@ -117,152 +47,44 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
           type="get"
           url="../api/music/list_broadcasting_streams/"
           submit="onload"
-          onsuccess='display_list_broadcasting_streams'>
+          onsuccess='display_broadcasting_streams'>
 
     </form>
 
-    <!-- - - - - - - - --->
-    <!--  LIST SHOWINGS -->
-    <div class="list-streams hidden">
-      <h2>Tune in</h2>
+    <!-- - - - - - - - - - - - -->
+    <!--  BROADCASTING STREAMS -->
+    <div class="card-header" id="broadcasting-header">
+      <div class="card-title h5">Broadcasting</div>
     </div>
 
-    <!-- - - - - - - - - - - - - - - -->
-    <!--  LIST BROADCASTING SHOWINGS -->
-    <div class="list-broadcasting-streams hidden">
-      <h2>Broadcasting</h2>
+    <div class="broadcasting-streams hidden"></div>
 
-      <!-- - - - --->
-      <!-- SEARCH RECORDS -->
-      <br>
-      <form class="ajax-form" url="../api/music/list_records/" type="get" style="border: 1px solid black; padding: 2px;" onsuccess='display_records'>
-
-        <div class="form-group">
-          <label class="form-label">Search bar:</label>
-          <input class="form-input" type="text" name="query" placeholder="" style="border: 1px solid black;">
-        </div>
-
-        <button class="footer-button">
-          List records
-        </button>
-
-        <div id='records-list' style="width: 100%; height: 85px; overflow-y: scroll; font-size: 10px;">
-
-        </div>
-
-      </form>
-
-      <!-- - - - --->
-      <!-- CREATE STREAM -->
-      <br>
-      <form class="ajax-form" url="../api/music/create_stream/" type="post" style="border: 1px solid black; padding: 2px;" onsuccess='refresh_page'>
-
-        <div class="form-group">
-          <label class="form-label">Stream name</label>
-          <input class="form-input" type="text" name="name" placeholder="" style="border: 1px solid black;">
-        </div>
-
-        <button id="subscription-button" class="footer-button">
-          Create Stream
-        </button>
-      </form>
+    <!-- - - - - - - - - --->
+    <!--  TUNE IN STREAMS -->
+    <div class="card-header">
+      <div class="card-title h5">Tune In</div>
     </div>
 
-    <!-- - - - - - - - - -->
-    <!--  DETAIL SHOWING -->
-    <div class='detail-stream' style='display: none;'>
+    <div class="tune-in-streams hidden"></div>
 
-      <div class="row playback align-center">
-
-        <!-- - - - --->
-        <!-- LEAVE -->
-        <button class="footer-button leave leave-button">
-          Leave
-        </button>
-
-        <!-- - - - --->
-        <!-- TOGGLE SUBSCRIPTION -->
-        <form class="ajax-form" url="../api/music/stream_subscription/" type="post">
-
-          <div class="hidden">
-            <input id="subscription-uuid-sub" type="text" name="stream_uuid">
-          </div>
-
-          <div class="hidden">
-            <input id="subscription-status" type="text" name="status" value='subscribed'>
-          </div>
-
-          <button id="subscription-button" class="footer-button">
-            On
-          </button>
-        </form>
-
-        <!-- - - - --->
-        <!-- TOGGLE SUBSCRIPTION -->
-        <form class="ajax-form" url="../api/music/stream_subscription/" type="post">
-
-
-          <div class="hidden">
-            <input id="subscription-uuid-unsub" type="text" name="stream_uuid">
-          </div>
-
-          <div class="hidden">
-            <input id="subscription-status" type="text" name="status" value='unsubscribed'>
-          </div>
-
-          <button id="subscription-button" class="footer-button">
-            Off
-          </button>
-        </form>
-
-      </div>
-      <div class="chat">
-        <!-- CHAT -->
-      </div>
-      <div class="row flex-wrap controls">
-        <div class="group">
-          <div class="status active hidden">
-            <button class='btn low'>
-            </button>
-            <button class='btn mid_low'>
-            </button>
-            <button class='btn mid_high'>
-            </button>
-            <button class='btn high'>
-            </button>
-          </div>
-          <div class="status waiting hidden"></div>
-        </div>
-        <div class="group chat-input">
-          <input id='chat-input' class="chat-text" type="text">
-          <button id='chat-submit' class="circle-button send"></button>
-        </div>
-      </div>
-
-
-    </div>
-
-
+    <!-- - - - --->
+    <!-- FOOTER -->
     <div class='row align-center footer'>
+      <form class="ajax-form" redirect="/account">
+        <button>
+          Account
+        </button>
+      </form>
 
-      <!-- - - - - -->
-      <!-- ACCOUNT -->
-      <button class="margin-right account open-modal">
-        Account
-      </button>
-
-      <!-- - - - --->
-      <!-- LOGOUT -->
       <form class="ajax-form" url="../api/user/logout/" type="post" redirect="/">
-
-        <button class="account">
+        <button>
           Logout
         </button>
       </form>
-
-
     </div>
+
   </div>
+
 </div>
 
 </div>

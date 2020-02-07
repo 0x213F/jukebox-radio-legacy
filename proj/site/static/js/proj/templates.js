@@ -19,74 +19,38 @@ function generate_stream(stream) {
   `
 }
 
-function generate_broadcasting_stream(stream) {
-  console.log('generate_broadcasting_stream')
-  let showtime_timestring = ''
-  let background_color = ''
-  let status_idle = ''
-  let status_activated = ''
-  if(stream.status === 'idle') {
-    showtime_timestring = 'Idle'
-    background_color = ` style="background-color: #cd9fab!important;"`
-    status_idle = 'checked'
-    status_activated = ''
-  } else if(stream.status === 'activated') {
-    showtime_timestring = 'Active'
-    background_color = ` style="background-color: #b46f82!important;"`
-    status_idle = ''
-    status_activated = 'checked'
-  }
+function generate_stream(stream) {
   return `
-    <div class="broadcasting-stream card" uuid="${stream.uuid}">
-      <span class="stream-album-title label label-rounded">${stream.name}</span><br>
-      <span class="stream-showtime-scheduled label label-rounded"${background_color}>${showtime_timestring}</span>
+  <div class="card-body broadcasting-stream" uuid="${stream.uuid}" style="cursor: pointer;">
+    <div class="card" style="margin-bottom: 0px;">
+      <div class="card-body">
 
-      <!-- - - - - - - - -->
-      <!-- UPDATE STREAM -->
-      <br>
-      <form class="ajax-form" url="../api/music/update_stream/" type="post" onsuccess='refresh_page' style="border: 1px solid black; height: 55px; width: 140px; position: relative; top: 53px; right: 4px; padding: 2px;">
-
-        <div class="hidden">
-          <input type="text" name="stream_uuid" value="${stream.uuid}">
+        <div class="form-group" style="line-height: 36px;">
+          <h5>${stream.name}</h5>
         </div>
 
-        <div class="form-group">
-          <label class="form-radio">
-            <input type="radio" name="stream_status" value="idle" ${status_idle}>
-            <i class="form-icon"></i> Idle
-          </label>
-          <label class="form-radio">
-            <input type="radio" name="stream_status" value="activated" ${status_activated}>
-            <i class="form-icon"></i> Active
-          </label>
+        <div class="form-group" style="line-height: 36px;">
+          <div class="chip" style="border-radius: 28px">
+            <figure class="avatar avatar-sm" data-initial="TS" style="background-color: #5755d9;"></figure>Tony Stark
+          </div>
         </div>
 
-        <button class="footer-button" style="font-size: 13px;">
-          Update Stream
-        </button>
-      </form>
+        <div class="divider"></div>
 
-      <form class="ajax-form" url="../api/music/spin_record/" type="post" onsuccess='refresh_page' style="border: 1px solid black; height: 55px; width: 200px; position: absolute; top: 117px; right: 4px; padding: 2px;">
-
-        <div class="hidden">
-          <input type="text" name="stream_uuid" value="${stream.uuid}">
+        <div class="form-group" style="line-height: 36px;">
+          <span class="chip" style="border-radius: 28px; margin-right: 8px;">🍆</span>
+          <span class="chip" style="border-radius: 28px; margin-right: 8px;">🍑</span>
+          <span class="chip" style="border-radius: 28px; margin-right: 8px;">😇</span>
         </div>
 
-        <div class="form-group">
-          <span style="float: left; font-size: 12px; display: inline-block; padding-top: 4px;">Record ID </span>
-          <input class="form-input" type="text" name="record_id" placeholder="" style="border: 1px solid black;">
+        <div class="form-group" style="line-height: 36px;">
+          <span class="chip" style="border-radius: 28px; margin-right: 8px;">Instrumental</span>
+          <span class="chip" style="border-radius: 28px; margin-right: 8px;">Jazz</span>
         </div>
 
-        <div class="hidden">
-          <input type="text" name="stream_uuid" value="${stream.uuid}">
-        </div>
-
-        <button class="footer-button" style="font-size: 13px;">
-          Spin Record
-        </button>
-      </form>
-
+      </div>
     </div>
+  </div>
   `
 }
 

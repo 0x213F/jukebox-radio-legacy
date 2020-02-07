@@ -15,18 +15,13 @@
   position: relative;
 }
 
-.broadcasting-stream.card {
+.broadcasting-stream.card-body > .card {
   transition: background-color 0.3s ease;
-  border-radius: 6px;
-  cursor: pointer;
-  margin: 14px;
-  height: 182px;
-  position: relative;
 }
 
 .stream.card:hover,
-.broadcasting-stream.card:hover {
-  background-color: rgba(48,55,66,.10);
+.broadcasting-stream.card-body > .card:hover {
+  background-color: #fbfcfc;
 }
 
 .stream.card > .stream-album-art,

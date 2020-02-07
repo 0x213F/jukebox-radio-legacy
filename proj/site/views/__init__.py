@@ -1,3 +1,4 @@
+from .account import AccountView
 from .connect import ConnectView
 from .index import index_view
 from .linkspotify import LinkSpotifyView
