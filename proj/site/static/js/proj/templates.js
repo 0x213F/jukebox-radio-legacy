@@ -2,25 +2,6 @@
 
 function generate_stream(stream) {
 
-  let showtime_timestring = ''
-  let background_color = ''
-  if(stream.status === 'idle') {
-    showtime_timestring = 'Idle'
-    background_color = ` style="background-color: #cd9fab!important;"`
-  } else if(stream.status === 'activated') {
-    showtime_timestring = 'Active'
-    background_color = ` style="background-color: #b46f82!important;"`
-  }
-  return `
-    <div class="stream card" uuid="${stream.uuid}">
-      <span class="stream-album-title label label-rounded">${stream.name}</span><br>
-      <span class="stream-showtime-scheduled label label-rounded"${background_color}>${showtime_timestring}</span>
-    </div>
-  `
-}
-
-function generate_stream(stream) {
-
   var background_color = ''
   if(stream.status === 'activated') {
     background_color = '#32b643';
@@ -159,4 +140,31 @@ function display_records(data) {
 
       `);
   }
+}
+
+
+function generate_host(ticket) {
+
+  console.log(CSRF_TOKEN)
+
+  return `
+  <div class="card-body" style="padding-bottom: 0.75rem;">
+    <div class="toast toast-primary">
+
+      <form class="ajax-form"
+            type="post"
+            url="../../../api/music/update_ticket/"
+            redirect="/stream/${STREAM_UUID}/hosts/">
+
+        <input class="hidden" type="text" name="holder_uuid" value="${ticket.holder_uuid}">
+        <input class="hidden" type="text" name="stream_uuid" value="${STREAM_UUID}">
+        <input class="hidden" type="text" name="is_administrator" value="false">
+
+        <button class="float-right btn btn-error btn-lg" style="height: 10px;"><i class="icon icon-cross" style="height: 10px; width: 10px; top: -12px;"></i></button>
+      </form>
+
+      ${ticket.holder_name}
+    </div>
+  </div>
+  `
 }

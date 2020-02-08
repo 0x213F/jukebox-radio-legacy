@@ -9,11 +9,8 @@ from django.template.response import TemplateResponse
 from proj.core.views import BaseView
 
 
-class StreamView(BaseView):
+class DisplayNameView(BaseView):
     def get(self, request, stream, **kwargs):
-        if not request.user.is_authenticated:
-            return HttpResponseRedirect("/")
-
         Stream = apps.get_model('music', 'Stream')
         Ticket = apps.get_model('music', 'Ticket')
 
@@ -24,7 +21,4 @@ class StreamView(BaseView):
             "holder_uuid": uuid.uuid4(),
         })[0]
 
-        is_host = request.user == stream.owner
-        print(is_host)
-
-        return TemplateResponse(request, "stream.html", {'stream': stream, 'ticket': ticket, 'is_host': is_host})
+        return TemplateResponse(request, "displayname.html", {'stream': stream, 'ticket': ticket})

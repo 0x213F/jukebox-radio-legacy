@@ -1,6 +1,7 @@
 
 var KEY_SHOWINGS = 'streams'
 var KEY_USER = 'user'
+var KEY_TICKETS = 'tickets'
 
 
 function display_tune_in_streams(data) {
@@ -23,6 +24,18 @@ function display_broadcasting_streams(data) {
   setup_ajax_forms();
   $(".broadcasting-streams").removeClass('hidden');
 }
+
+function display_hosts(data) {
+  let list_tickets = data[KEY_TICKETS];
+  let $hosts_container = $('.hosts-list');
+  for(let ticket of list_tickets) {
+    console.log(ticket)
+    $hosts_container.append(generate_host(ticket));
+  }
+  setup_ajax_forms();
+  $(".hosts-list").removeClass('hidden');
+}
+
 
 
 function refresh_page(data) {

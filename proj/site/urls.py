@@ -5,11 +5,14 @@ from django.urls import path
 from .views import AccountView
 from .views import ConnectView
 from .views import CreateStreamView
+from .views import DisplayNameView
+from .views import HostsView
 from .views import index_view
+from .views import LinkSpotifyView
+from .views import QueueView
 from .views import SignInView
 from .views import SignUpView
 from .views import StreamView
-from .views import LinkSpotifyView
 
 
 urlpatterns = [
@@ -20,5 +23,8 @@ urlpatterns = [
     path("linkspotify/", LinkSpotifyView.as_view()),
     path("login/", SignInView.as_view()),
     path("signup/", SignUpView.as_view()),
-    path("stream/<uuid:stream>", StreamView.as_view()),
+    path("stream/<uuid:stream>/", StreamView.as_view()),
+    path("stream/<uuid:stream>/hosts/", HostsView.as_view()),
+    path("stream/<uuid:stream>/queue/", QueueView.as_view()),
+    path("stream/<uuid:stream>/displayname/", DisplayNameView.as_view()),
 ]

@@ -27,16 +27,62 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
 
 </script>
 
-<div class="main center-horizontal card hidden">
+<div class="main center-horizontal card">
 
-  <div class="card-body">
+  <div class="card-body" style="width: 100%;">
+
+    <div class="card-body">
+      <div class="toast toast-primary" style="width: 100%; font-size: 2rem;">{{ stream.title }}</div>
+    </div>
 
     <div class="form-group card-body">
       <form class="ajax-form" redirect="/">
-        <button class="btn btn-primary">
+        <button class="btn btn-secondary" style="float: left;">
           <i class="icon icon-2x icon-back"></i>
         </button>
       </form>
+
+      {% if is_host %}
+
+        <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/queue">
+          <button class="btn btn-secondary" style="margin-left: 1.5rem; float: left;">
+            Queue
+          </button>
+        </form>
+        <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/hosts">
+          <button class="btn btn-secondary" style="margin-left: 1.5rem;">
+            Hosts
+          </button>
+        </form>
+
+      {% elif ticket.is_administrator %}
+
+      <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/displayname">
+        <button class="btn btn-secondary" style="margin-left: 1.5rem; float: left;">
+          Display Name
+        </button>
+      </form>
+        <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/queue">
+          <button class="btn btn-secondary" style="margin-left: 1.5rem;">
+            Queue
+          </button>
+        </form>
+
+      {% else %}
+
+      <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/displayname">
+        <button class="btn btn-secondary" style="margin-left: 1.5rem;">
+          Display Name
+        </button>
+      </form>
+
+      {% endif %}
+    </div>
+
+    <!-- - - --->
+    <!-- CHAT -->
+    <div class=chat style="height: calc(100vh - 250px);">
+
     </div>
 
     <form id="create-stream" class="ajax-form card-body" url="../api/music/create_stream/" type="post" redirect="/">
@@ -44,18 +90,15 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
       {% csrf_token %}
 
       <div class="form-group">
-        <label class="form-label" for="name-create-stream">Name</label>
-        <input class="form-input" id="name-create-stream" type="text" name="name">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="tags-create-stream">Tags</label>
-        <input class="form-input" id="tags-create-stream" type="text" name="tags" placeholder="Dance, Uplifting, ...">
-      </div>
-
-      <div class="form-group">
-        <button type="submit" form="create-stream" class="btn btn-secondary">Create Stream</button>
-        <span class="text-info ajax-form-error" style="margin-left: 1.4em; color: red"><span>
+        <div class="input-group">
+          <select class="form-select select">
+            <option>😕</option>
+            <option selected>😐</option>
+            <option>😀</option>
+          </select>
+          <input type="text" class="form-input" placeholder="...">
+          <button id="chat-submit" class="btn btn-primary input-group-btn"><i class="icon icon-2x icon-message"></i></button>
+        </div>
       </div>
 
     </form>
