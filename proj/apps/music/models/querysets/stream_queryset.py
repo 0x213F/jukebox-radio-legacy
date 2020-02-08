@@ -3,6 +3,8 @@ from proj.core.models.querysets import BaseQuerySet
 from django.apps import apps
 from django.db.models import Exists
 from django.db.models import OuterRef
+from django.db.models import Subquery
+from django.db.models import IntegerField
 
 
 class StreamQuerySet(BaseQuerySet):

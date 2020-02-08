@@ -16,12 +16,12 @@ function display_tune_in_streams(data) {
 
 function display_broadcasting_streams(data) {
   let list_streams = data[KEY_SHOWINGS];
-  let $streams_container = $('.tune-in-streams');
+  let $streams_container = $('.broadcasting-streams');
   for(let stream of list_streams) {
     $streams_container.append(generate_stream(stream));
   }
   setup_ajax_forms();
-  $(".tune-in-streams").removeClass('hidden');
+  $(".broadcasting-streams").removeClass('hidden');
 }
 
 

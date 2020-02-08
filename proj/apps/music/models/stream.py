@@ -51,6 +51,14 @@ class Stream(BaseModel):
         blank=False,
     )
 
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="owned_streams",
+        on_delete=models.DO_NOTHING,
+    )
+
+    tags = models.CharField(max_length=128)  # name
+
     vote_controlled = models.BooleanField(default=False)
 
     showtime_actual = models.DateTimeField(null=True, blank=False)

@@ -31,16 +31,6 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
 
   <div class="card-body">
 
-    <!-- - - - - - - - - - - - - - --->
-    <!--  LOAD PAGE (LIST SHOWINGS) -->
-    <form class="ajax-form hidden"
-          type="get"
-          url="../api/music/list_streams/"
-          submit="onload"
-          onsuccess='display_tune_in_streams'>
-
-    </form>
-
     <!-- - - - - - - - - - - - - - - - - - - - - -->
     <!--  LOAD PAGE (LIST BROADCASTING SHOWINGS) -->
     <form class="ajax-form hidden"
@@ -51,10 +41,29 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
 
     </form>
 
+
+    <!-- - - - - - - - - - - - - - --->
+    <!--  LOAD PAGE (LIST SHOWINGS) -->
+    <form class="ajax-form hidden"
+          type="get"
+          url="../api/music/list_streams/"
+          submit="onload"
+          onsuccess='display_tune_in_streams'>
+
+    </form>
+
     <!-- - - - - - - - - - - - -->
     <!--  BROADCASTING STREAMS -->
     <div class="card-header" id="broadcasting-header">
       <div class="card-title h5">Broadcasting</div>
+    </div>
+
+    <div class="card-body">
+      <form class="ajax-form" redirect="/createstream">
+        <button class="btn">
+          Create Stream
+        </button>
+      </form>
     </div>
 
     <div class="broadcasting-streams hidden"></div>

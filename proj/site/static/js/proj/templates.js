@@ -20,36 +20,43 @@ function generate_stream(stream) {
 }
 
 function generate_stream(stream) {
+
+  var background_color = ''
+  if(stream.status === 'activated') {
+    background_color = '#32b643';
+  } else {
+    background_color = "#5755d9";
+  }
+
+  var tags_html = ''
+  for(tag of stream.tags) {
+    tags_html += `<span class="chip" style="border-radius: 28px; margin-right: 8px;">${tag}</span>`
+  }
   return `
   <div class="card-body broadcasting-stream" uuid="${stream.uuid}" style="cursor: pointer;">
-    <div class="card" style="margin-bottom: 0px;">
-      <div class="card-body">
+    <a href="/stream/${stream.uuid}" class="no-link-style">
+      <div class="card" style="margin-bottom: 0px;">
+        <div class="card-body">
 
-        <div class="form-group" style="line-height: 36px;">
-          <h5>${stream.name}</h5>
-        </div>
-
-        <div class="form-group" style="line-height: 36px;">
-          <div class="chip" style="border-radius: 28px">
-            <figure class="avatar avatar-sm" data-initial="TS" style="background-color: #5755d9;"></figure>Tony Stark
+          <div class="form-group" style="line-height: 36px;">
+            <h5>${stream.name}</h5>
           </div>
+
+          <div class="form-group" style="line-height: 36px;">
+            <div class="chip" style="border-radius: 28px">
+              <figure class="avatar avatar-sm" data-initial="" style="background-color: ${background_color};"></figure>${stream.owner_name}
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="form-group" style="line-height: 36px;">
+            ${tags_html}
+          </div>
+
         </div>
-
-        <div class="divider"></div>
-
-        <div class="form-group" style="line-height: 36px;">
-          <span class="chip" style="border-radius: 28px; margin-right: 8px;">🍆</span>
-          <span class="chip" style="border-radius: 28px; margin-right: 8px;">🍑</span>
-          <span class="chip" style="border-radius: 28px; margin-right: 8px;">😇</span>
-        </div>
-
-        <div class="form-group" style="line-height: 36px;">
-          <span class="chip" style="border-radius: 28px; margin-right: 8px;">Instrumental</span>
-          <span class="chip" style="border-radius: 28px; margin-right: 8px;">Jazz</span>
-        </div>
-
       </div>
-    </div>
+    </form>
   </div>
   `
 }
@@ -153,142 +160,3 @@ function display_records(data) {
       `);
   }
 }
-
-//   let last_timestamp = null;
-//
-  // while(true) {
-  //   last_timestamp = Number($last_comment.attr('timestamp'));
-  //   if(last_timestamp < comment_obj.stream_timestamp || '-Infinity' == $last_comment.attr('timestamp')) {
-  //     break;
-  //   } else {
-  //     $last_comment = $last_comment.prev();
-  //   }
-  // }
-//   let html = undefined;
-//   if(!comment_obj.text) {
-//     display_uuid = ''
-//     if(comment_obj.commenter.profile) {
-//       display_uuid = comment_obj.commenter.profile.display_uuid
-//     }
-//     html = `
-//       <div class="tile hidden"
-//            author="${display_uuid}"
-//            status="${comment_obj.status}"
-//            timestamp="${comment_obj.stream_timestamp}">
-//       </div>`;
-//       $last_comment.after(html);
-//       return;
-//   }
-//
-//   let background_color = undefined;
-//   if(comment_obj.status == 'waiting') {
-//     background_color = '#cdddd6';
-//   } else if(comment_obj.status == 'low') {
-//     background_color = '#b46f82';
-//   } else if(comment_obj.status == 'mid_low') {
-//     background_color = '#d9b7c0';
-//   } else if(comment_obj.status == 'mid_high') {
-//     background_color = '#c0d9b7';
-//   } else if(comment_obj.status == 'high') {
-//     background_color = '#82b46f';
-//   }
-//
-//   let $last_visible_comment = $last_comment;
-//   while(true) {
-//     if($last_visible_comment.hasClass('seen') || $last_visible_comment.hasClass('base')) {
-//       break;
-//     } else {
-//       $last_visible_comment = $last_visible_comment.prev();
-//     }
-//   }
-//   let last_visible_commenter = $last_visible_comment.attr('author')
-//   let last_visible_status = $last_visible_comment.attr('status')
-//   if(user.profile.active_stream && comment_obj.commenter.profile.display_uuid === user.profile.active_stream.display_uuid) {
-//     if(last_visible_commenter === user.profile.active_stream.display_uuid) {
-//       if(last_visible_status === comment_obj.status) {
-//         // the current user sent 2 comments in a row with the SAME status
-//         html = `
-//           <div class="tile me seen"
-//                author="${comment_obj.commenter.profile.display_uuid}"
-//                status="${comment_obj.status}"
-//                timestamp="${comment_obj.stream_timestamp}">
-//             <div class="group">
-//               <div class="comment-text">${comment_obj.text}</div>
-//             </div>
-//           </div>`;
-//       } else {
-//         // the current user sent 2 comments in a row with the DIFFERENT statuses
-//         html = `
-//           <div class="tile me seen"
-//                author="${comment_obj.commenter.profile.display_uuid}"
-//                status="${comment_obj.status}"
-//                timestamp="${comment_obj.stream_timestamp}">
-//             <div class="group">
-//               <div class="comment-text chat-margin-left" style="margin-left: auto!important;">${comment_obj.text}</div>
-//               <div class="commenter-img" style="background-color: ${background_color};"></div>
-//             </div>
-//           </div>`;
-//       }
-//     } else {
-//       // the current user sents a comment
-//       html = `
-//         <div class="tile me seen full"
-//              author="${comment_obj.commenter.profile.display_uuid}"
-//              status="${comment_obj.status}"
-//              timestamp="${comment_obj.stream_timestamp}">
-//           <div class="group">
-//             <div class="comment-author">${comment_obj.commenter.profile.display_name}</div>
-//             <div class="commenter-img" style="background-color: ${background_color};"></div>
-//           </div>
-//           <div class="group">
-//             <div class="comment-text">${comment_obj.text}</div>
-//           </div>
-//         </div>`;
-//     }
-//   } else if(comment_obj.commenter.profile) {
-//     if(last_visible_commenter === comment_obj.commenter.profile.display_uuid) {
-//       if(last_visible_status === comment_obj.status) {
-//         // another user sent 2 comments in a row with the SAME status
-//         html = `
-//           <div class="tile other seen"
-//                author="${comment_obj.commenter.profile.display_uuid}"
-//                status="${comment_obj.status}"
-//                timestamp="${comment_obj.stream_timestamp}">
-//             <div class="group">
-//               <div class="comment-text">${comment_obj.text}</div>
-//             </div>
-//           </div>`;
-//       } else {
-//         // another user sent 2 comments in a row with DIFFERENT statuses
-//         html = `
-//           <div class="tile other seen"
-//                author="${comment_obj.commenter.profile.display_uuid}"
-//                status="${comment_obj.status}"
-//                timestamp="${comment_obj.stream_timestamp}">
-//             <div class="group">
-//               <div class="commenter-img" style="background-color: ${background_color};"></div>
-//               <div class="comment-text chat-margin-left">${comment_obj.text}</div>
-//             </div>
-//           </div>`;
-//       }
-//     } else {
-//       // another user sents a comment
-//       html = `
-//         <div class="tile other seen full"
-//              author="${comment_obj.commenter.profile.display_uuid}"
-//              status="${comment_obj.status}"
-//              timestamp="${comment_obj.stream_timestamp}">
-//           <div class="group">
-//             <div class="commenter-img" style="background-color: ${background_color};"></div>
-//             <div class="comment-author">${comment_obj.commenter.profile.display_name}</div>
-//           </div>
-//           <div class="group">
-//             <div class="comment-text">${comment_obj.text}</div>
-//           </div>
-//         </div>`;
-//     }
-//   } else {
-//     html = '';
-//   }
-//   $last_comment.after(html);
-// }

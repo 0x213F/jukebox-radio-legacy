@@ -37,12 +37,24 @@ class StreamManager(BaseManager):
     """
 
     def serialize(self, stream):
+        Ticket = apps.get_model("music.Ticket")
+
         if not stream:
             return None
+
+        # TODO subquery...
+        owner_ticket = Ticket.objects.get(
+            holder=stream.owner_id,
+            stream=stream.id,
+        )
+        owner_name = owner_ticket.holder_name
+
         return {
             "uuid": str(stream.uuid),
             "name": stream.title,
             "status": stream.status,
+            "tags": stream.tags.split(', '),
+            "owner_name": owner_name,
         }
 
     def change_status(self, stream, status):

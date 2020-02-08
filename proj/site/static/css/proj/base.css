@@ -157,3 +157,8 @@ label {
   display: block;
   flex: 0 0 100%;
 }
+
+.no-link-style {
+  text-decoration: none!important;
+  color: #50596c!important;
+}
