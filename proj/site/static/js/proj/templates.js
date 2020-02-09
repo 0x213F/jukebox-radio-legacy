@@ -11,7 +11,6 @@ function render_comment(comment_obj) {
   let $last_comment = $('.detail-stream > .chat > .tile').last();
   let $last_visible_comment = $('.detail-stream > .chat > .tile.visible').last();
 
-  console.log(comment_obj)
   var ticket_holder_name = comment_obj.ticket.holder_uuid
   let is_current_user = user.profile.active_stream_ticket.holder_uuid === ticket_holder_name
 
