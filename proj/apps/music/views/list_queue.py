@@ -2,22 +2,23 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
 from proj.core.views import BaseView
-from proj.apps.music.models import Comment
-from proj.apps.music.models import Record
-from proj.apps.music.models import Stream
-from proj.apps.users.models import Profile
+from proj.apps.music.models import Queue
 
 
 @method_decorator(login_required, name="dispatch")
-class ListRecordsView(BaseView):
+class ListQueueView(BaseView):
     def get(self, request, **kwargs):
         """
         List all of the stream objects that a user can access.
         """
 
-        records = Record.objects.all().order_by("name")
+        stream_uuid = request.GET.get("stream_uuid", None)
+        queue = Queue.objects.filter(stream__uuid=stream_uuid).order_by("created_at")
+
+        print(Queue.objects.count())
+        print(queue.count(), stream_uuid)
 
         response = {
-            "records": [Record.objects.serialize(s) for s in records],
+            "queue": [Queue.objects.serialize(q) for q in queue],
         }
         return self.http_response(response)

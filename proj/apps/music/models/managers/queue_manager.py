@@ -27,7 +27,9 @@ class QueueManager(BaseManager):
 
     def serialize(self, queue):
         return {
+            'id': queue.id,
             'stream_uuid': queue.stream.uuid,
             'record_id': queue.record_id,
+            'record_name': queue.record.name,
             'created_at': queue.created_at.isoformat(),
         }

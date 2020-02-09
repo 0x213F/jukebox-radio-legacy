@@ -15,11 +15,13 @@
   position: relative;
 }
 
+.record.card,
 .broadcasting-stream.card-body > a > .card {
   transition: background-color 0.3s ease;
 }
 
 .stream.card:hover,
+.record.card:hover,
 .broadcasting-stream.card-body > a > .card:hover {
   background-color: #fbfcfc;
 }

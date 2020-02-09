@@ -13,6 +13,8 @@
 
 <script src="{% static 'js/jquery.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
+<script src="{% static '/js/proj/list_streams.js' %}"></script>
+<script src="{% static '/js/proj/templates.js' %}"></script>
 {% endblock %}
 
 {% block main %}
@@ -21,15 +23,32 @@
   {% csrf_token %}
 </div>
 
+<div id="stream-uuid" class="hidden">
+  <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
+</div>
+
 <script>
 
 var CSRF_TOKEN = $('#csrf-token').children().first().val();
+var STREAM_UUID = $('#stream-uuid').children().first().val();
 
 </script>
 
 <div class="main center-horizontal card hidden">
 
   <div class="card-body" style="width: 100%;">
+
+    <!-- - - - - - - - - - - - - -->
+    <!--  LOAD PAGE (LIST HOSTS) -->
+    <form class="ajax-form hidden"
+          type="get"
+          url="../../../api/music/list_queue/"
+          submit="onload"
+          onsuccess='display_queue'>
+
+          <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
+
+    </form>
 
     <div class="card-header">
       <div class="card-title h5">Queue</div>
@@ -43,48 +62,13 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
       </form>
     </div>
 
-    <div class="card-body">
-      <div class="card" style="margin-bottom: 0rem;">
-        <div class="card-body">
-          <div class="tile">
-            <div class="tile-content">
-              <p class="tile-subtitle">March 2016</p>
-              <p class="tile-title">Initial commit</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="card-body">
-      <div class="card" style="margin-bottom: 0rem;">
-        <div class="card-body">
-          <div class="tile">
-            <div class="tile-content">
-              <p class="tile-subtitle">March 2016</p>
-              <p class="tile-title">Initial commit</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="card-body">
-      <div class="card" style="margin-bottom: 0rem;">
-        <div class="card-body">
-          <div class="tile">
-            <div class="tile-content">
-              <p class="tile-subtitle">March 2016</p>
-              <p class="tile-title">Initial commit</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="queue-list"></div>
 
     <div class="form-group" style="margin-top: 3.5rem;">
       <div class="divider"></div>
     </div>
 
-    <form id="log-in" class="ajax-form card-body" url="../api/user/create/" type="post" redirect="/">
+    <form id="add-record" class="ajax-form card-body" url="../../../api/music/create_queue/" type="post" redirect="/stream/{{ stream.uuid }}/queue/">
 
       {% csrf_token %}
 
@@ -92,13 +76,17 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
         <label class="form-label" for="email-signup">Record</label>
 
         <div class="input-group">
-          <input type="text" class="form-input" placeholder="..." disabled>
+          <input type="text" id="record-name" class="form-input" placeholder="..." name="record_name" disabled>
           <a href="/record/list?stream_uuid={{ stream.uuid }}"><div class="btn btn-primary input-group-btn"><i class="icon icon-2x icon-search"></i></div></a>
         </div>
       </div>
 
+      <input type="text" id="record-id" class="hidden" name="record_id">
+
+      <input type="text" id="stream-uuid" class="hidden" name="stream_uuid" value="{{ stream.uuid }}">
+
       <div class="form-group">
-        <button type="submit" form="log-in" class="btn btn-secondary" disabled>Add Record</button>
+        <button type="submit" form="add-record" id="add-record-submit" class="btn btn-secondary" disabled>Add Record</button>
         <span class="text-info ajax-form-error" style="margin-left: 1.4em; color: red"><span>
       </div>
 
@@ -107,5 +95,20 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
   </div>
 
 </div>
+
+<script>
+
+var url_string = location.href;
+var url = new URL(url_string);
+var record_id = url.searchParams.get("record_id");
+var record_name = url.searchParams.get("record_name");
+
+if(record_id) {
+  $('#record-id').val(record_id);
+  $('#record-name').prop("disabled", false).val(record_name)
+  $('#add-record-submit').prop("disabled", false);
+}
+
+</script>
 
 {% endblock %}

@@ -130,23 +130,34 @@ function render_comment(comment_obj) {
 }
 
 function display_records(data) {
+
+  var url_string = location.href;
+  var url = new URL(url_string);
+  var stream_uuid = url.searchParams.get("stream_uuid");
+
   let $container = $('#records-list');
   $('#records-list').empty();
   for(var thing of data['records']) {
     $('#records-list').append(`
-      <div style="display: block;">
-        <span>[id=${thing.id}] ${thing.name}</span><br>
-      </div>
-
+      <a href="/stream/${stream_uuid}/queue/?record_id=${thing.id}&record_name=${thing.name}"  class="no-link-style">
+        <div class="card-body">
+          <div class="record card" style="margin-bottom: 0rem;">
+            <div class="card-body">
+              <div class="tile" val="${thing.id}">
+                <div class="tile-content">
+                  ${thing.name}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
       `);
   }
 }
 
 
 function generate_host(ticket) {
-
-  console.log(CSRF_TOKEN)
-
   return `
   <div class="card-body" style="padding-bottom: 0.75rem;">
     <div class="toast toast-primary">
@@ -164,6 +175,27 @@ function generate_host(ticket) {
       </form>
 
       ${ticket.holder_name}
+    </div>
+  </div>
+  `
+}
+
+function generate_queue(queue) {
+  return `
+  <div class="card-body" style="padding-bottom: 0.75rem;">
+    <div class="toast toast-primary">
+
+      <form class="ajax-form"
+            type="post"
+            url="../../../api/music/delete_queue/"
+            redirect="/stream/${STREAM_UUID}/queue/">
+
+        <input class="hidden" type="text" name="queue_id" value="${queue.id}">
+
+        <button class="float-right btn btn-error btn-lg" style="height: 10px;"><i class="icon icon-cross" style="height: 10px; width: 10px; top: -12px;"></i></button>
+      </form>
+
+      ${queue.record_name}
     </div>
   </div>
   `
