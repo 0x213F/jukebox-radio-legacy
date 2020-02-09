@@ -13,8 +13,8 @@
 
 <script src="{% static 'js/jquery.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
-<script src="{% static '/js/proj/list_streams.js' %}"></script>
-<script src="{% static '/js/proj/templates.js' %}"></script>
+<script src="{% static '/js/proj/api.js' %}"></script>
+<script src="{% static '/js/proj/queue.js' %}"></script>
 {% endblock %}
 
 {% block main %}
@@ -64,7 +64,7 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
 
     <div class="queue-list"></div>
 
-    <div class="form-group" style="margin-top: 3.5rem;">
+    <div id="conditionally-hide-divider" class="form-group" style="margin-top: 3.5rem;">
       <div class="divider"></div>
     </div>
 

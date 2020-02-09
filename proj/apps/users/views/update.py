@@ -11,7 +11,7 @@ class UpdateView(BaseView):
         Update the user's account information.
         """
         display_name = request.POST.get("display_name", None)
-        email = request.POST.get("email", None)
+        # email = request.POST.get("email", None)
         first_name = request.POST.get("first_name", None)
         last_name = request.POST.get("last_name", None)
 
@@ -19,8 +19,8 @@ class UpdateView(BaseView):
         request.user.profile.save()
 
         if first_name or last_name or email:
-            if email:
-                request.user.email = email
+            # if email:
+                # request.user.email = email
             if first_name:
                 request.user.first_name = first_name
             if last_name:

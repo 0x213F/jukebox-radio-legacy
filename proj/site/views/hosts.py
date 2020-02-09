@@ -28,4 +28,4 @@ class HostsView(BaseView):
             "holder_uuid": uuid.uuid4(),
         })[0]
 
-        return TemplateResponse(request, "hosts.html", {'stream': stream, 'ticket': ticket})
+        return TemplateResponse(request, "manage.html", {'stream': stream, 'ticket': ticket})

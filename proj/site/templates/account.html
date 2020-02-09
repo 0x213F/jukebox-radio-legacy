@@ -5,10 +5,7 @@
 {% block basestyles %}
 <link href="https://fonts.googleapis.com/css?family=Major+Mono+Display|Work+Sans:300,400,700,900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../static/css/proj/base.css">
-<link rel="stylesheet" href="../static/css/proj/list_streams.css">
-<link rel="stylesheet" href="../static/css/proj/detail_stream.css">
-<link rel="stylesheet" href="../static/css/proj/chat.css">
-<link rel="stylesheet" href="../static/css/proj/modal.css">
+
 <link rel="stylesheet" href="{% static '../static/css/spectre/spectre.min.css' %}">
 <link rel="stylesheet" href="{% static '../static/css/spectre/spectre-icons.min.css' %}">
 
@@ -33,13 +30,19 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
 
     <div class="form-group card-body">
       <form class="ajax-form" redirect="/">
-        <button class="btn btn-primary">
+        <button class="btn btn-primary" style="float: left;">
           <i class="icon icon-2x icon-back"></i>
+        </button>
+      </form>
+
+      <form class="ajax-form" redirect="/linkspotify">
+        <button class="btn btn-secondary" style="margin-left: 1.5rem;">
+          Link Spotify
         </button>
       </form>
     </div>
 
-    <form id="log-in" class="ajax-form card-body" url="../api/user/update/" type="post" redirect="/">
+    <form id="update-account" class="ajax-form card-body" url="../api/user/update/" type="post" redirect="/">
 
       {% csrf_token %}
 
@@ -53,23 +56,23 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="last-name-account">Email</label>
-        <input class="form-input" id="last-name-account" type="email" name="email" value="{{ user.email }}">
+        <label class="form-label" for="update-account-email">Email</label>
+        <input class="form-input" id="update-account-email" type="email" name="email" value="{{ user.email }}" disabled>
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="first-name-account">First Name</label>
-        <input class="form-input" id="first-name-account" type="text" name="first_name" value="{{ user.first_name }}">
+        <label class="form-label" for="update-account-first-name">First Name</label>
+        <input class="form-input" id="update-account-first-name" type="text" name="first_name" value="{{ user.first_name }}">
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="last-name-account">Last Name</label>
-        <input class="form-input" id="last-name-account" type="text" name="last_name" value="{{ user.last_name }}">
+        <label class="form-label" for="update-account-last-name">Last Name</label>
+        <input class="form-input" id="update-account-last-name" type="text" name="last_name" value="{{ user.last_name }}">
       </div>
 
 
       <div class="form-group">
-        <button type="submit" form="log-in" class="btn btn-secondary">Update</button>
+        <button type="submit" form="update-account" class="btn btn-secondary">Update</button>
         <span class="text-info ajax-form-error" style="margin-left: 1.4em; color: red"><span>
       </div>
 
