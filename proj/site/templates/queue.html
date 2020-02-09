@@ -29,13 +29,13 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
 
 <div class="main center-horizontal card hidden">
 
-  <div class="card-body">
+  <div class="card-body" style="width: 100%;">
 
     <div class="card-header">
       <div class="card-title h5">Queue</div>
     </div>
 
-    <div class="form-group card-body">
+    <div class="form-group card-body" style="margin-bottom: 3.5rem;">
       <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/">
         <button class="btn btn-secondary" style="float: left;">
           <i class="icon icon-2x icon-back"></i>
@@ -44,7 +44,31 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
     </div>
 
     <div class="card-body">
-      <div class="card">
+      <div class="card" style="margin-bottom: 0rem;">
+        <div class="card-body">
+          <div class="tile">
+            <div class="tile-content">
+              <p class="tile-subtitle">March 2016</p>
+              <p class="tile-title">Initial commit</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="card" style="margin-bottom: 0rem;">
+        <div class="card-body">
+          <div class="tile">
+            <div class="tile-content">
+              <p class="tile-subtitle">March 2016</p>
+              <p class="tile-title">Initial commit</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="card" style="margin-bottom: 0rem;">
         <div class="card-body">
           <div class="tile">
             <div class="tile-content">
@@ -56,7 +80,7 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
       </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" style="margin-top: 3.5rem;">
       <div class="divider"></div>
     </div>
 
@@ -68,8 +92,8 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
         <label class="form-label" for="email-signup">Record</label>
 
         <div class="input-group">
-          <input type="text" class="form-input" placeholder="...">
-          <button id="chat-submit" class="btn btn-primary input-group-btn"><i class="icon icon-2x icon-search"></i></button>
+          <input type="text" class="form-input" placeholder="..." disabled>
+          <a href="/record/list?stream_uuid={{ stream.uuid }}"><div class="btn btn-primary input-group-btn"><i class="icon icon-2x icon-search"></i></div></a>
         </div>
       </div>
 

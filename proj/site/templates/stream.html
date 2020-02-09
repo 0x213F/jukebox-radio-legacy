@@ -44,14 +44,14 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
 
       {% if is_host %}
 
-        <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/queue">
+        <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/manage">
           <button class="btn btn-secondary" style="margin-left: 1.5rem; float: left;">
-            Queue
+            Manage
           </button>
         </form>
-        <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/hosts">
+        <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/queue">
           <button class="btn btn-secondary" style="margin-left: 1.5rem;">
-            Hosts
+            Queue
           </button>
         </form>
 

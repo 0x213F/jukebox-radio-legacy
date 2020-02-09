@@ -1,4 +1,5 @@
 from .comment import Comment
+from .queue import Queue
 from .record import Record
 from .stream import Stream
 from .ticket import Ticket

@@ -6,6 +6,7 @@ from .hosts import HostsView
 from .index import index_view
 from .linkspotify import LinkSpotifyView
 from .queue import QueueView
+from .recordslist import RecordsListView
 from .signin import SignInView
 from .signup import SignUpView
 from .stream import StreamView

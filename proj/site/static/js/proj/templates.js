@@ -154,7 +154,7 @@ function generate_host(ticket) {
       <form class="ajax-form"
             type="post"
             url="../../../api/music/update_ticket/"
-            redirect="/stream/${STREAM_UUID}/hosts/">
+            redirect="/stream/${STREAM_UUID}/manage/">
 
         <input class="hidden" type="text" name="holder_uuid" value="${ticket.holder_uuid}">
         <input class="hidden" type="text" name="stream_uuid" value="${STREAM_UUID}">

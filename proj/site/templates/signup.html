@@ -35,6 +35,16 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
       <div class="card-title h5">Jukebox Radio</div>
     </div>
 
+    <!-- - - - - - - --->
+    <!--  BACK BUTTON -->
+    <div class="card-body" style="margin-bottom: 3.5rem;">
+      <form class="ajax-form" redirect="/">
+        <button class="btn btn-secondary" style="float: left;">
+          <i class="icon icon-2x icon-back"></i>
+        </button>
+      </form>
+    </div>
+
     <form id="log-in" class="ajax-form card-body" url="../api/user/create/" type="post" redirect="/">
 
       {% csrf_token %}
@@ -50,7 +60,7 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
       </div>
 
       <div class="form-group">
-        <button type="submit" form="log-in" class="btn btn-secondary">Sign Up</button>
+        <button type="submit" form="log-in" class="btn btn-primary">Sign Up</button>
         <span class="text-info ajax-form-error" style="margin-left: 1.4em; color: red"><span>
       </div>
 

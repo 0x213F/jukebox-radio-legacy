@@ -20,11 +20,12 @@ class UpdateStreamView(BaseView):
         Stream = apps.get_model("music.Stream")
 
         stream_uuid = request.POST.get("stream_uuid", None)
-        stream_status = request.POST.get("stream_status", None)
+        stream_name = request.POST.get("stream_name", None)
+        stream_tags = request.POST.get("stream_tags", None)
 
-        if not stream_uuid or not stream_status:
+        if not stream_name or not stream_tags:
             raise Exception('Missing required parameters')
 
-        Stream.objects.filter(uuid=stream_uuid).update(status=stream_status)
+        Stream.objects.filter(uuid=stream_uuid).update(title=stream_name, tags=stream_tags)
 
         return self.http_response({})
