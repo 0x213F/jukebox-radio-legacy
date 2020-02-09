@@ -7,21 +7,22 @@ function setup_ajax_forms() {
   $(".ajax-form").unbind()
   $(".ajax-form").submit(function(e) {
       e.preventDefault();
-      console.log(e)
       $this = $(this);
       let url = $this.attr("url")
       $error = $this.find(".ajax-form-error");
       redirect = $this.attr("redirect");
       let onsuccess = $this.attr("onsuccess");
-      if($this.attr("type") === "socket") {
-        let data = $this.serialize()
-        let route = $this.attr("route");
-        let payload = {
-          'data': data,
-          'route': route,
+      if($this.attr("type") === "websocket") {
+        let keys_vals = $this.serializeArray();
+        let data = {};
+        for(key_val of keys_vals) {
+          var key = key_val.name;
+          var val = key_val.value;
+          data[key] = val;
         }
-        let text = JSON.stringify(payload);
-        socket.send(text);
+        let msg = JSON.stringify(data);
+        window['SOCKET'].send(msg);
+        $('#chat-input-main').val('');
       } else if($this.attr("type") === "redirect") {
         window.location.href = $this.attr("url");
       } else {
@@ -52,3 +53,8 @@ $('.ajax-form').each(function (index, value) {
   let submit = $this.attr('submit');
   if(submit && (submit === 'onload')) $this.submit();
 });
+
+// https://stackoverflow.com/questions/2794137/sanitizing-user-input-before-adding-it-to-the-dom-in-javascript
+function encodeHTML(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+}

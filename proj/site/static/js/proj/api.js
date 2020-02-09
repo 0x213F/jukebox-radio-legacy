@@ -1,3 +1,4 @@
+var KEY_COMMENTS = 'comments'
 var KEY_SHOWINGS = 'streams'
 var KEY_USER = 'user'
 var KEY_TICKETS = 'tickets'

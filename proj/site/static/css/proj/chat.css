@@ -1,9 +1,6 @@
 
 /* CHAT CONTAINER */
 
-.detail-stream > .chat::-webkit-scrollbar {
-    display: none;  // Safari and Chrome
-}
 
 .detail-stream > .chat {
   height: calc(100vh - 243.99px);-ms-overflow-style: none; scrollbar-width: none;

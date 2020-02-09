@@ -12,6 +12,8 @@
 
 
 <script src="{% static 'js/jquery.js' %}"></script>
+<script src="{% static 'js/proj/main.js' %}"></script>
+<script src="{% static 'js/proj/api.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
 {% endblock %}
 
@@ -21,9 +23,14 @@
   {% csrf_token %}
 </div>
 
+<div id="stream-uuid" class="hidden">
+  <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
+</div>
+
 <script>
 
 var CSRF_TOKEN = $('#csrf-token').children().first().val();
+var STREAM_UUID = $('#stream-uuid').children().first().val();
 
 </script>
 
@@ -81,22 +88,25 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
 
     <!-- - - --->
     <!-- CHAT -->
-    <div class=chat style="height: calc(100vh - 250px);">
+    <div class="card-body chat-container" style="height: calc(100vh - 250px); overflow-y: scroll;">
 
     </div>
 
-    <form id="create-stream" class="ajax-form card-body" url="../api/music/create_stream/" type="post" redirect="/">
+    <form id="create-stream" class="ajax-form card-body" type="websocket" onsuccess='display_messages'>
 
       {% csrf_token %}
 
+      <input class="hidden" name="stream_uuid" value="{{ stream.uuid }}" />
+      <input class="hidden" name="track_id" value="" />
+
       <div class="form-group">
         <div class="input-group">
-          <select class="form-select select">
-            <option>😕</option>
-            <option selected>😐</option>
-            <option>😀</option>
+          <select class="hide form-select select" name="status">
+            <option value="mid_low">😕</option>
+            <option value="mid_high" selected>😐</option>
+            <option value="high">😀</option>
           </select>
-          <input type="text" class="form-input" placeholder="...">
+          <input type="text" id="chat-input-main" class="form-input" placeholder="..." name="text">
           <button id="chat-submit" class="btn btn-primary input-group-btn"><i class="icon icon-2x icon-message"></i></button>
         </div>
       </div>
@@ -106,5 +116,7 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
   </div>
 
 </div>
+
+<script src="{% static 'js/proj/stream.js' %}"></script>
 
 {% endblock %}

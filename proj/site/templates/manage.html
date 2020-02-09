@@ -66,7 +66,7 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
       </form>
     </div>
 
-    <form id="update-stream" class="ajax-form card-body" url="../../../api/music/update_stream/" type="post" redirect="/stream/{{ stream.uuid }}/manage/" style="margin-top: 3.5rem;">
+    <form id="update-stream" class="ajax-form card-body" url="../../../api/music/update_stream/" type="post" redirect="/stream/{{ stream.uuid }}/" style="margin-top: 3.5rem;">
 
       {% csrf_token %}
 
@@ -93,7 +93,7 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
       <div class="divider"></div>
     </div>
 
-    <form id="update-display-name" class="ajax-form card-body" url="../../../api/music/update_ticket/" type="post" redirect="/stream/{{ stream.uuid }}/manage/">
+    <form id="update-display-name" class="ajax-form card-body" url="../../../api/music/update_ticket/" type="post" redirect="/stream/{{ stream.uuid }}/">
 
       {% csrf_token %}
 

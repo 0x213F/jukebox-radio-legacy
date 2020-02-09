@@ -313,6 +313,10 @@ class Consumer(AsyncConsumer):
         )
         _cache["stream"] = stream
 
+        ticket = await database_sync_to_async(Ticket.objects.get)(
+            holder=_user, stream=stream,
+        )
+
         await (
             self.channel_layer.group_discard(
                 _cache["stream"].chat_room, self.channel_name
@@ -336,7 +340,7 @@ class Consumer(AsyncConsumer):
                 "text": json.dumps(
                     {
                         "data": {
-                            "comments": [Comment.objects.serialize(_cache["comment"])]
+                            "comments": [Comment.objects.serialize(_cache["comment"], ticket=ticket)]
                         }
                     }
                 ),

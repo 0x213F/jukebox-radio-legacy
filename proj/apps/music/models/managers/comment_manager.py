@@ -28,6 +28,7 @@ class CommentManager(BaseManager):
         Stream = apps.get_model("music.Stream")
         Comment = self.model
 
+        print(payload)
         _cache = await _get_or_fetch_from_cache(
             _cache,
             "stream",
