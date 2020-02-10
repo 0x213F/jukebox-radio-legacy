@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import CreateQueueView
+from .views import CreateRecordView
 from .views import CreateStreamView
 from .views import DeleteQueueView
 from .views import ListBroadcastingStreamsView
@@ -16,6 +17,7 @@ from .views import UpdateTicketView
 
 urlpatterns = [
     path("create_queue/", CreateQueueView.as_view()),
+    path("create_record/", CreateRecordView.as_view()),
     path("create_stream/", CreateStreamView.as_view()),
     path("delete_queue/", DeleteQueueView.as_view()),
     path("list_broadcasting_streams/", ListBroadcastingStreamsView.as_view()),

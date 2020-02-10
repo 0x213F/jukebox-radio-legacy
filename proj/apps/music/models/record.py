@@ -2,6 +2,7 @@ from datetime import datetime
 from datetime import timedelta
 
 from django.apps import apps
+from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 
@@ -42,6 +43,12 @@ class Record(BaseModel):
     # - - - - - - - - -
     # fields
     # - - - - - - - - -
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="records",
+        on_delete=models.DO_NOTHING,
+    )
 
     name = models.CharField(max_length=128)
 

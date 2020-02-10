@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.urls import path
 
 from .views import AccountView
+from .views import AddRecordView
 from .views import ConnectView
 from .views import CreateStreamView
 from .views import DisplayNameView
@@ -23,6 +24,7 @@ urlpatterns = [
     path("createstream/", CreateStreamView.as_view()),
     path("linkspotify/", LinkSpotifyView.as_view()),
     path("login/", SignInView.as_view()),
+    path("record/add/", AddRecordView.as_view()),
     path("record/list/", RecordsListView.as_view()),
     path("signup/", SignUpView.as_view()),
     path("stream/<uuid:stream>/", StreamView.as_view()),

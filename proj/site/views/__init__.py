@@ -1,4 +1,5 @@
 from .account import AccountView
+from .addrecord import AddRecordView
 from .connect import ConnectView
 from .createstream import CreateStreamView
 from .displayname import DisplayNameView
