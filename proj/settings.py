@@ -11,14 +11,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "(&t)o93xlj#71p_m@u#4iymmi*+xcopurz1=209mgrt#&(p2wn"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     SERVER_IP,
     "localhost",
     "127.0.0.1",
     SERVER_URL,
-    'jukebox.radio',
+    'jukeb'
 ]
 
 
@@ -121,10 +121,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = "/static/"
-# STATIC_ROOT = f'{BASE_DIR}/proj/site/static/'
-STATICFILES_DIRS = [
-    f"{BASE_DIR}/proj/site/static/",
-]
+
+STATIC_ROOT = f"{BASE_DIR}/proj/site/static/"
+# STATICFILES_DIRS = [
+#     f"{BASE_DIR}/proj/site/static/",
+# ]
 
 
 DATABASE_ENCRYPTION_KEY = "wL-8K4RlFSlmcMaHiSKsGiudPljrVkK_v11wq-Y9-vE=".encode("utf-8")
