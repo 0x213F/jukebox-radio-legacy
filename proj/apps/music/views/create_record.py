@@ -88,7 +88,7 @@ class CreateRecordView(BaseView):
             )
 
             TrackListing.objects.create(
-                record=record, track=track, number=number-1,
+                record=record, track=track, number=track_count-1,
             )
 
         return self.http_response({})
