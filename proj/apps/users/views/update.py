@@ -18,7 +18,7 @@ class UpdateView(BaseView):
         request.user.profile.default_display_name = display_name
         request.user.profile.save()
 
-        if first_name or last_name or email:
+        if first_name or last_name:
             # if email:
                 # request.user.email = email
             if first_name:
