@@ -33,11 +33,12 @@ function comment_wrapper(html, comment) {
 }
 
 function display_status(comment) {
-  return `
-    <span class="chip" style="margin-bottom: 1rem;">
-        ${encodeHTML(comment.ticket.holder_name)} has ${comment.status}.
-    </span>
-  `
+  return '';
+  // return `
+  //   <span class="chip" style="margin-bottom: 1rem;">
+  //       ${encodeHTML(comment.ticket.holder_name)} has ${comment.status}.
+  //   </span>
+  // `
 }
 
 function display_text(comment) {

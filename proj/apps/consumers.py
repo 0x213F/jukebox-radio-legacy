@@ -93,10 +93,37 @@ class Consumer(AsyncConsumer):
             },
         )
 
+        now = datetime.now()
+
         print("success connecting!")
 
+        comments_qs = (
+            Comment.objects
+            .select_related('commenter_ticket')
+            .filter(
+                created_at__gte=now - timedelta(minutes=30),
+                stream__uuid=active_stream_uuid,
+            )
+            .order_by('created_at')
+        )
+
+
+
+        comments = await database_sync_to_async(
+            list
+        )(comments_qs)
+
+        await self.send(
+            {
+                "type": "websocket.send",
+                "text": json.dumps(
+                    {"data": {"comments": [Comment.objects.serialize(c) for c in comments]}}
+                ),
+            }
+        )
+
         # get active record, if it exists
-        now = datetime.now()
+        # now = datetime.now()
         try:
             stream = await database_sync_to_async(
                 Stream.objects.select_related("current_record").get

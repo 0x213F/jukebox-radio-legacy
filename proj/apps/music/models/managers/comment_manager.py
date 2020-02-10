@@ -28,7 +28,6 @@ class CommentManager(BaseManager):
         Stream = apps.get_model("music.Stream")
         Comment = self.model
 
-        print(payload)
         _cache = await _get_or_fetch_from_cache(
             _cache,
             "stream",
@@ -178,6 +177,10 @@ class CommentManager(BaseManager):
         Stream = apps.get_model("music.Stream")
         Ticket = apps.get_model("music.Ticket")
         Track = apps.get_model("music.Track")
+
+        if not ticket:
+            ticket = comment.commenter_ticket
+
         return {
             "id": comment.id,
             "created_at": comment.created_at.isoformat(),
