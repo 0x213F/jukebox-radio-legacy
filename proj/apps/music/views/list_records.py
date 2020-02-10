@@ -15,7 +15,7 @@ class ListRecordsView(BaseView):
         List all of the stream objects that a user can access.
         """
 
-        records = Record.objects.all().order_by("name")
+        records = Record.objects.filter(user=request.user).order_by("name")
 
         response = {
             "records": [Record.objects.serialize(s) for s in records],
