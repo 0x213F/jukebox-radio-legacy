@@ -6,7 +6,7 @@ from django.apps import apps
 
 
 LOOPED_STREAM_IDS = [
-    16,  # 🍃
+    16,
 ]
 
 
