@@ -4,6 +4,7 @@ from datetime import datetime
 from random_username.generate import generate_username
 
 from django.apps import apps
+from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 
 from proj.core.views import BaseView
@@ -25,6 +26,5 @@ class StreamView(BaseView):
         })[0]
 
         is_host = request.user == stream.owner
-        print(is_host)
 
         return TemplateResponse(request, "stream.html", {'stream': stream, 'ticket': ticket, 'is_host': is_host})

@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 
 from proj.core.views import BaseView
