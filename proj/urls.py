@@ -12,7 +12,6 @@ from django.views.static import serve
 urlpatterns = [
     path("api/music/", include("proj.apps.music.urls")),
     path("api/user/", include("proj.apps.users.urls")),
-    path("favicon.ico/", page_not_found, {"exception": Exception("Not Found")}),
     path("", include("proj.site.urls")),
     path("admin/", admin.site.urls),
 ]
