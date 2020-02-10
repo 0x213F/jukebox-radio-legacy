@@ -39,7 +39,15 @@ class CreateQueueView(BaseView):
         )
 
         now = datetime.now()
-        if now > stream.record_terminates_at.replace(tzinfo=None):
+
+        try:
+            should_play_song = (
+                now > stream.record_terminates_at.replace(tzinfo=None)
+            )
+        except Exception:
+            should_play_song = True
+
+        if should_play_song:
             Stream.objects.spin(record, stream)
             queue.played_at = now
             queue.save()
