@@ -34,8 +34,9 @@ class CreateRecordView(BaseView):
             user=request.user,
         )
 
-        track_count = 1
+        track_count = 0
         while True:
+            track_count += 1
             spotify_uri = request.POST.get(f"spotify_uri_{track_count}", None)
 
             if not spotify_uri:
