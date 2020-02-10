@@ -15,5 +15,4 @@ urlpatterns = [
     path("favicon.ico/", page_not_found, {"exception": Exception("Not Found")}),
     path("", include("proj.site.urls")),
     path("admin/", admin.site.urls),
-    url(r'^/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
 ]
