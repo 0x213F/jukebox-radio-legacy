@@ -38,7 +38,7 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
     <!-- - - - - - - --->
     <!--  BACK BUTTON -->
     <div class="card-body" style="margin-bottom: 3.5rem;">
-      <form class="ajax-form" redirect="/">
+      <form id="back-button" class="ajax-form" redirect="/">
         <button class="btn btn-secondary" style="float: left;">
           <i class="icon icon-2x icon-back"></i>
         </button>
@@ -112,6 +112,7 @@ var url = new URL(url_string);
 var stream_uuid = url.searchParams.get("stream_uuid");
 
 $('#log-in').attr('redirect', '/record/list/?stream_uuid=' + stream_uuid)
+$('#back-button').attr('redirect', '/record/list/?stream_uuid=' + stream_uuid)
 
 </script>
 

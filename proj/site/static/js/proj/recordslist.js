@@ -10,7 +10,7 @@ function display_records(data) {
   for(var thing of data['records']) {
     $('#records-list').append(`
       <a href="/stream/${stream_uuid}/queue/?record_id=${thing.id}&record_name=${thing.name}"  class="no-link-style">
-        <div class="card-body">
+        <div class="card-body" style="padding-bottom: 0rem;">
           <div class="record card" style="margin-bottom: 0rem;">
             <div class="card-body">
               <div class="tile" val="${thing.id}">
