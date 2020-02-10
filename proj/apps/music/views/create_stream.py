@@ -31,7 +31,7 @@ class CreateStreamView(BaseView):
             raise Exception('Must provide a stream name')
 
         now = datetime.now()
-        stream = Stream.objects.create(title=stream_name, tags=tags, owner=request.user)
+        stream = Stream.objects.create(title=stream_name, tags=tags, owner=request.user, last_status_change_at=now, status=Stream.STATUS_ACTIVATED)
         Ticket.objects.create(
             holder=request.user,
             stream=stream,

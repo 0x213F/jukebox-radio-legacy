@@ -17,13 +17,13 @@ class Command(BaseCommand):
         streams_to_idle = Stream.objects.filter(
             Q(
                 status=Stream.STATUS_ACTIVATED,
-                record_terminates_at__lt=now - timedelta(minutes=5),
-                last_status_change_at__lt=now - timedelta(minutes=5),
+                record_terminates_at__lt=now - timedelta(minutes=2),
+                last_status_change_at__lt=now - timedelta(minutes=2),
             )
             | Q(
                 status=Stream.STATUS_ACTIVATED,
                 record_terminates_at__isnull=True,
-                last_status_change_at__lt=now - timedelta(minutes=5),
+                last_status_change_at__lt=now - timedelta(minutes=2),
             )
         )
         streams_to_idle.update(status=Stream.STATUS_IDLE, current_record=None)
