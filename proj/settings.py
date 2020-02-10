@@ -18,7 +18,7 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     SERVER_URL,
-    'jukeb'
+    'jukebox.radio',
 ]
 
 
@@ -122,10 +122,10 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-STATIC_ROOT = f"{BASE_DIR}/proj/site/static/"
-# STATICFILES_DIRS = [
-#     f"{BASE_DIR}/proj/site/static/",
-# ]
+# STATIC_ROOT = f"{BASE_DIR}/proj/site/static/"
+STATICFILES_DIRS = [
+    f"{BASE_DIR}/proj/site/static/",
+]
 
 
 DATABASE_ENCRYPTION_KEY = "wL-8K4RlFSlmcMaHiSKsGiudPljrVkK_v11wq-Y9-vE=".encode("utf-8")
