@@ -44,6 +44,7 @@ def schedule_spin(stream_id):
 
     now = datetime.now()
     queue.played_at = now
+    queue.save()
 
     next_play = now + timedelta(milliseconds=(record.duration_ms + 250))
 
