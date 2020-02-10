@@ -13,10 +13,7 @@ class ListQueueView(BaseView):
         """
 
         stream_uuid = request.GET.get("stream_uuid", None)
-        queue = Queue.objects.filter(stream__uuid=stream_uuid).order_by("created_at")
-
-        print(Queue.objects.count())
-        print(queue.count(), stream_uuid)
+        queue = Queue.objects.filter(stream__uuid=stream_uuid, played_at__isnull=True).order_by("created_at")
 
         response = {
             "queue": [Queue.objects.serialize(q) for q in queue],

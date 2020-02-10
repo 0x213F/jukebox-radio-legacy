@@ -46,3 +46,5 @@ class Queue(BaseModel):
     )
 
     created_at = models.DateTimeField(default=datetime.now, blank=True)
+
+    played_at = models.DateTimeField(blank=True, null=True)
