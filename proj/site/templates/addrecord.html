@@ -45,7 +45,7 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
       </form>
     </div>
 
-    <form id="log-in" class="ajax-form card-body" url="../../api/music/create_record/" type="post" redirect="/">
+    <form id="log-in" class="ajax-form card-body" url="../../api/music/create_record/" type="post">
 
       {% csrf_token %}
 
@@ -104,5 +104,15 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
   </div>
 
 </div>
+
+<script>
+
+var url_string = location.href;
+var url = new URL(url_string);
+var stream_uuid = url.searchParams.get("stream_uuid");
+
+$('#log-in').attr('redirect', '/record/list/?stream_uuid=' + stream_uuid)
+
+</script>
 
 {% endblock %}

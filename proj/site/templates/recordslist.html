@@ -57,7 +57,7 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
         </button>
       </form>
 
-      <form class="ajax-form" redirect="/record/add">
+      <form class="ajax-form" redirect="/record/add/?stream_uuid={{ stream_uuid }}">
         <button class="btn btn-secondary" style="margin-left: 1.5rem; float: left;">
           Add Record
         </button>
