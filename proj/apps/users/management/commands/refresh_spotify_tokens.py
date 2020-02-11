@@ -26,8 +26,8 @@ class Command(BaseCommand):
                 data={
                     "grant_type": "refresh_token",
                     "refresh_token": spotify_refresh_token,
-                    "client_id": "890e3c32aaac4e0fa3dd5cfc22835f11",
-                    "client_secret": "ce1072297bb0469e9adf1820c38616fa",
+                    "client_id": settings.SPOTIFY_CLIENT_ID,
+                    "client_secret": settings.SPOTIFY_CLIENT_SECRET,
                 },
             )
             response_json = response.json()
