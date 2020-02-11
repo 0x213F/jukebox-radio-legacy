@@ -6,7 +6,8 @@ from django.apps import apps
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from proj import secrets
+from proj.secrets import SPOTIFY_CLIENT_ID
+from proj.secrets import SPOTIFY_CLIENT_SECRET
 
 
 class Command(BaseCommand):
@@ -28,8 +29,8 @@ class Command(BaseCommand):
                 data={
                     "grant_type": "refresh_token",
                     "refresh_token": spotify_refresh_token,
-                    "client_id": secrets.SPOTIFY_CLIENT_ID,
-                    "client_secret": secrets.SPOTIFY_CLIENT_SECRET,
+                    "client_id": SPOTIFY_CLIENT_ID,
+                    "client_secret": SPOTIFY_CLIENT_SECRET,
                 },
             )
             response_json = response.json()

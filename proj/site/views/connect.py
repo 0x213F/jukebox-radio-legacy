@@ -8,7 +8,8 @@ from django.utils.decorators import method_decorator
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib import messages
 
-from proj import secrets
+from proj.secrets import SPOTIFY_CLIENT_ID
+from proj.secrets import SPOTIFY_CLIENT_SECRET
 from proj.core.views import BaseView
 
 
@@ -28,8 +29,8 @@ class ConnectView(BaseView):
                 "grant_type": "authorization_code",
                 "code": code,
                 "redirect_uri": f"http://{current_site}/connect?source={source}",
-                "client_id": secrets.SPOTIFY_CLIENT_ID,
-                "client_secret": secrets.SPOTIFY_CLIENT_SECRET,
+                "client_id": SPOTIFY_CLIENT_ID,
+                "client_secret": SPOTIFY_CLIENT_SECRET,
             },
         )
         response_json = response.json()
