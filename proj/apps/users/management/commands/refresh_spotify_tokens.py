@@ -6,9 +6,6 @@ from django.apps import apps
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from secrets import SPOTIFY_CLIENT_ID
-from secrets import SPOTIFY_CLIENT_SECRET
-
 
 class Command(BaseCommand):
     help = "Refreshes Spotify API tokens"
@@ -29,8 +26,8 @@ class Command(BaseCommand):
                 data={
                     "grant_type": "refresh_token",
                     "refresh_token": spotify_refresh_token,
-                    "client_id": SPOTIFY_CLIENT_ID,
-                    "client_secret": SPOTIFY_CLIENT_SECRET,
+                    "client_id": '133a25c7195344dbafd4f50d7450330f',
+                    "client_secret": '4029f523ad8a46cb86e29b9dd54cc257',
                 },
             )
             response_json = response.json()
