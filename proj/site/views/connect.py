@@ -8,8 +8,8 @@ from django.utils.decorators import method_decorator
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib import messages
 
-from proj.secrets import SPOTIFY_CLIENT_ID
-from proj.secrets import SPOTIFY_CLIENT_SECRET
+from secrets import SPOTIFY_CLIENT_ID
+from secrets import SPOTIFY_CLIENT_SECRET
 from proj.core.views import BaseView
 
 

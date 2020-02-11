@@ -6,8 +6,8 @@ from django.apps import apps
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from proj.secrets import SPOTIFY_CLIENT_ID
-from proj.secrets import SPOTIFY_CLIENT_SECRET
+from secrets import SPOTIFY_CLIENT_ID
+from secrets import SPOTIFY_CLIENT_SECRET
 
 
 class Command(BaseCommand):
