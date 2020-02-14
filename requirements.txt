@@ -32,7 +32,7 @@ cryptography==2.8
 daphne==2.3.0
 distro==1.4.0
 distro-info===0.18ubuntu0.18.04.1
-Django==3.0
+Django==3.0.3
 django-admin-list-filter-dropdown==1.0.3
 django-encrypted-fields==1.1.2
 django-encrypted-model-fields==0.5.8
