@@ -11,13 +11,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "(&t)o93xlj#71p_m@u#4iymmi*+xcopurz1=209mgrt#&(p2wn"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
-    SERVER_IP,
     "localhost",
     "127.0.0.1",
-    SERVER_URL,
+    '138.197.220.117',
     'jukebox.radio',
 ]
 
@@ -53,6 +52,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = "proj.urls"
@@ -122,9 +122,9 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-# STATIC_ROOT = f"{BASE_DIR}/proj/site/static/"
+STATIC_ROOT = f"/root/album_party/proj/site/static/"
 STATICFILES_DIRS = [
-    f"{BASE_DIR}/proj/site/static/",
+    f"/root/album_party/proj/site/static/",
 ]
 
 
