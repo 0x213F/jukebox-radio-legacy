@@ -88,7 +88,7 @@ python-chess==0.26.0
 python-debian==0.1.32
 python-keyczar==0.716
 pytz==2018.5
-pyxdg==0.25
+pyxdg==0.26
 PyYAML==3.12
 random-username==1.0.2
 redis==2.10.6
