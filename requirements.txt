@@ -89,7 +89,7 @@ python-debian==0.1.32
 python-keyczar==0.716
 pytz==2018.5
 pyxdg==0.25
-PyYAML==3.12
+PyYAML==5.1
 random-username==1.0.2
 redis==2.10.6
 regex==2020.1.8
