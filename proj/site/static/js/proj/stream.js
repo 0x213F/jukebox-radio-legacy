@@ -65,6 +65,8 @@ function onmessage(event) {
   let record = payload.data[KEY_RECORD] || null;
   let tracklistings = payload.data[KEY_TRACKLISTINGS] || null;
 
+  console.log(stream, record)
+
   if(!stream && !record) {
 
     // previous behavior
@@ -80,7 +82,7 @@ function onmessage(event) {
 
   } else if(record) {
     var stream_title = $('.card.active-stream').find('h5').text();
-    $('.currently-playing').find('.title').text(stream_title);
+    $('.currently-playing').find('.title').text(record.name);
 
     $('.currently-playing').removeClass('hide');
     $('.waiting-to-play').addClass('hide');

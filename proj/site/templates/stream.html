@@ -15,6 +15,7 @@
 <script src="{% static 'js/proj/main.js' %}"></script>
 <script src="{% static 'js/proj/api.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/home.css' %}">
 {% endblock %}
 
 {% block main %}
@@ -88,7 +89,7 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
 
     <!-- - - --->
     <!-- CHAT -->
-    <div class="card-body chat-container" style="height: calc(100vh - 250px); overflow-y: scroll;">
+    <div class="card-body chat-container" style="height: calc(100vh - 320px); overflow-y: scroll;">
 
     </div>
 
@@ -135,10 +136,6 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
     <span class="title">
       My Beautiful Dark Twisted Fantasy
     </span>
-
-    <button id="play-bar-chat-button" class="btn btn-primary">
-      Chat <i class="icon icon-message"></i>
-    </button>
 
   </div>
 

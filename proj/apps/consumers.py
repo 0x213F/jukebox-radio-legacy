@@ -51,17 +51,6 @@ class Consumer(AsyncConsumer):
 
         await self.websocket_accept()
 
-
-        # if ticket:
-        #     await self.send(
-        #         {
-        #             "type": "websocket.send",
-        #             "text": json.dumps(
-        #                 {"data": {"ticket": Ticket.objects.serialize(ticket),}}
-        #             ),
-        #         }
-        #     )
-
         if not _user_profile.spotify_access_token:
             await self.send_stream_status(
                 active_stream_uuid,
@@ -211,7 +200,13 @@ class Consumer(AsyncConsumer):
 
         await self.play_tracks(
             user_spotify_access_token,
-            {"action": "play", "data": {"uris": uris, "position_ms": -expected_ms},},
+            {
+                "action": "play",
+                "data": {
+                    "uris": uris,
+                    "position_ms": -expected_ms,
+                },
+            }
         )
 
         record = now_playing.record
