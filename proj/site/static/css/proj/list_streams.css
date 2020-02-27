@@ -16,14 +16,17 @@
 }
 
 .record.card,
-.broadcasting-stream.card-body > a > .card {
+.broadcasting-stream.card-body > .card {
   transition: background-color 0.3s ease;
+  transition: border-color 0.3s ease;
 }
 
-.stream.card:hover,
-.record.card:hover,
-.broadcasting-stream.card-body > a > .card:hover {
+.broadcasting-stream.card-body > .card:hover {
   background-color: #fbfcfc;
+}
+
+.broadcasting-stream.card-body > .card.active-stream {
+  border-color: #5764c6;
 }
 
 .stream.card > .stream-album-art,

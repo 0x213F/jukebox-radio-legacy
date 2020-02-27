@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="../static/css/proj/detail_stream.css">
 <link rel="stylesheet" href="../static/css/proj/chat.css">
 <link rel="stylesheet" href="../static/css/proj/modal.css">
+<link rel="stylesheet" href="../static/css/proj/home.css">
 <link rel="stylesheet" href="{% static '../static/css/spectre/spectre.min.css' %}">
 <link rel="stylesheet" href="{% static '../static/css/spectre/spectre-icons.min.css' %}">
 
@@ -98,7 +99,48 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
 
 </div>
 
+<div id="play-bar" class="play-bar hide-under-view">
+
+  <div class="content currently-playing hide">
+
+    <div class="album-art">
+      <img />
+    </div>
+
+    <span class="title">
+      My Beautiful Dark Twisted Fantasy
+    </span>
+
+    <button id="play-bar-chat-button" class="btn btn-primary">
+      Chat <i class="icon icon-message"></i>
+    </button>
+
+  </div>
+
+  <div class="content spotify-disconnected hide">
+
+    <div class="warning-flag">
+      <i class="icon icon-4x icon-flag" style="font-size: 48px; font-color: white;"></i>
+    </div>
+
+    <span class="title">
+      No music is playing
+    </span>
+
+    <span class="sub-title">
+      You must be already streaming on your device.
+    </span>
+
+    <a href="spotify:open">
+      <button id="play-bar-chat-button" class="btn btn-warning">
+        Fix <i class="icon icon-check"></i>
+      </button>
+    </a>
+
+  </div>
+
 </div>
+
 {% endblock %}
 
 
