@@ -9,7 +9,6 @@ from .views import CreateStreamView
 from .views import DisplayNameView
 from .views import HostsView
 from .views import index_view
-from .views import LinkSpotifyView
 from .views import QueueView
 from .views import RecordsListView
 from .views import SignInView
@@ -22,7 +21,6 @@ urlpatterns = [
     path("account/", AccountView.as_view()),
     path("connect/", ConnectView.as_view()),
     path("createstream/", CreateStreamView.as_view()),
-    path("linkspotify/", LinkSpotifyView.as_view()),
     path("login/", SignInView.as_view()),
     path("record/add/", AddRecordView.as_view()),
     path("record/list/", RecordsListView.as_view()),

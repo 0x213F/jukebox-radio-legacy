@@ -60,6 +60,8 @@ function display_broadcasting_streams(data) {
   }
   setup_ajax_forms();
   $(".broadcasting-streams").removeClass('hidden');
+
+  $('.card-body.broadcasting-stream > .card').click(activate_stream)
 }
 
 // CLICK LISTENERS
@@ -108,11 +110,19 @@ function onmessage(event) {
   } else if(stream.status === 'waiting') {
     $('.waiting-to-play').removeClass('hide');
     $('.spotify-disconnected').addClass('hide');
+    $('.link-spotify').addClass('hide');
     var $playBar = $('#play-bar');
     $playBar.removeClass('hide-under-view');
   } else if(stream.status === 'disconnected') {
     $('.waiting-to-play').addClass('hide');
     $('.spotify-disconnected').removeClass('hide');
+    $('.link-spotify').addClass('hide');
+    var $playBar = $('#play-bar');
+    $playBar.removeClass('hide-under-view');
+  } else if(stream.status === 'linkspotify') {
+    $('.waiting-to-play').addClass('hide');
+    $('.spotify-disconnected').addClass('hide');
+    $('.link-spotify').removeClass('hide');
     var $playBar = $('#play-bar');
     $playBar.removeClass('hide-under-view');
   }

@@ -63,6 +63,17 @@
   bottom: 8px;
 }
 
+/* link-spotify */
+
+.play-bar > .content.link-spotify {
+  padding: 20px 74px;
+}
+
+.play-bar > .content.link-spotify > a {
+  width: 160px;
+  border-top-right-radius: 12px;
+}
+
 /* currently-playing */
 
 .play-bar > .content.currently-playing > .btn,

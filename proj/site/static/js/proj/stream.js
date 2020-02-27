@@ -5,6 +5,7 @@ var endpoint = (
   `?uuid=${STREAM_UUID}`
 )
 
+console.log('HERE')
 window['SOCKET'] = new WebSocket(endpoint)
 window['SOCKET'].onopen = onopen
 window['SOCKET'].onmessage = onmessage
@@ -55,6 +56,7 @@ function display_text(comment) {
 /* - - - - - - - - - - - */
 
 function onopen(event) {
+  console.log('opened')
   // NOOP
 }
 

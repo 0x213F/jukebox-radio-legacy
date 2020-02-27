@@ -44,22 +44,27 @@ class Consumer(AsyncConsumer):
         _user_profile = _cache["profile"]
         ticket = _cache["ticket"]
 
-        await (
-            self.channel_layer.group_add(_cache["stream"].chat_room, self.channel_name)
-        )
+        channel_name = _cache["stream"].chat_room
+        await self.add_to_channel(channel_name)
 
-        await self.send(
-            {"type": "websocket.accept",}
-        )
+        await self.websocket_accept()
 
-        await self.send(
-            {
-                "type": "websocket.send",
-                "text": json.dumps(
-                    {"data": {"ticket": Ticket.objects.serialize(ticket),}}
-                ),
-            }
-        )
+        if ticket:
+            await self.send(
+                {
+                    "type": "websocket.send",
+                    "text": json.dumps(
+                        {"data": {"ticket": Ticket.objects.serialize(ticket),}}
+                    ),
+                }
+            )
+
+        if not _user_profile.spotify_access_token:
+            await self.send_stream_status(
+                active_stream_uuid,
+                'linkspotify'
+            )
+            return
 
         # Create record of comment.
         join_payload = {
@@ -75,28 +80,12 @@ class Consumer(AsyncConsumer):
         comment = _cache["comment"]
 
         # tell the chatroom that the user has joined
-        await self.channel_layer.group_send(  # TODO: put as manager method
-            _cache["stream"].chat_room,
-            {
-                "type": "broadcast",
-                "text": json.dumps(
-                    {
-                        "data": {
-                            "comments": [
-                                Comment.objects.serialize(
-                                    _cache["comment"], ticket=ticket
-                                ),
-                            ],
-                        }
-                    }
-                ),
-            },
-        )
+        stream = _cache["stream"]
+        join_comment = _cache["comment"]
+        await self.channel_post_comment(stream, join_comment, ticket)
 
+        # get comments from the last 30 min
         now = datetime.now()
-
-        print("success connecting!")
-
         comments_qs = (
             Comment.objects
             .select_related('commenter_ticket')
@@ -106,21 +95,12 @@ class Consumer(AsyncConsumer):
             )
             .order_by('created_at')
         )
-
-
-
         comments = await database_sync_to_async(
             list
         )(comments_qs)
 
-        await self.send(
-            {
-                "type": "websocket.send",
-                "text": json.dumps(
-                    {"data": {"comments": [Comment.objects.serialize(c) for c in comments]}}
-                ),
-            }
-        )
+        # send comments just to the current user
+        await self.send_comments(comments)
 
         # get active record, if it exists
         # now = datetime.now()
@@ -134,14 +114,7 @@ class Consumer(AsyncConsumer):
                 record_terminates_at__gt=(now + timedelta(seconds=5)),
             )
         except Exception as e:
-            await self.send(
-                {
-                    "type": "websocket.send",
-                    "text": json.dumps(
-                        {"data": {"stream": {"status": "waiting", "uuid": active_stream_uuid}}}
-                    ),
-                }
-            )
+            await self.send_stream_status(active_stream_uuid, 'waiting')
             return
 
         # get the now playing target progress in ms
@@ -158,14 +131,7 @@ class Consumer(AsyncConsumer):
             )()
 
         except Exception as e:
-            await self.send(
-                {
-                    "type": "websocket.send",
-                    "text": json.dumps(
-                        {"data": {"stream": {"status": "waiting", "uuid": active_stream_uuid}}}
-                    ),
-                }
-            )
+            await self.send_stream_status(active_stream_uuid, 'waiting')
             return
 
         assert now_playing
@@ -204,15 +170,23 @@ class Consumer(AsyncConsumer):
                 # if within N second(s), leave be
                 return
         except Exception as e:
-            await self.send(
-                {
-                    "type": "websocket.send",
-                    "text": json.dumps(
-                        {"data": {"stream": {"status": "disconnected", "uuid": active_stream_uuid}}}
-                    ),
-                }
-            )
-            return
+            try:
+                # edge case that is only hit when one of the following happens:
+                # - user revokes our app from their settings page then comes
+                #   back again to use the site
+                # - cron messes up and we don't refresh tokens so they all
+                #   expire
+                if response_json['error']['message'] == 'The access token expired':
+                    await self.send_stream_status(
+                        active_stream_uuid,
+                        'linkspotify'
+                    )
+                else:
+                    raise Exception()
+            except Exception:
+                await self.send_stream_status(active_stream_uuid, 'disconnected')
+            finally:
+                return
 
         # get other tracks to play in future
         uris = stream.current_record.tracks_through.order_by("number").values_list(
@@ -275,35 +249,14 @@ class Consumer(AsyncConsumer):
             holder=_user, stream=_cache["stream"],
         )
 
-        await self.channel_layer.group_send(  # TODO: put as manager method
-            _cache["stream"].chat_room,
-            {
-                "type": "broadcast",
-                "text": json.dumps(
-                    {
-                        "data": {
-                            "comments": [
-                                Comment.objects.serialize(
-                                    _cache["comment"], ticket=ticket
-                                )
-                            ],
-                        }
-                    }
-                ),
-            },
-        )
+        comment = _cache["comment"]
+        await self.channel_post_comment(stream, comment, ticket)
 
         if payload["status"] == Comment.STATUS_LEFT:
             # If leaving the chat, send final comment response back to original
             # user.
-            await self.send(
-                {
-                    "type": "websocket.send",
-                    "text": json.dumps(
-                        {"comments": [Comment.objects.serialize(_cache["comment"])]}
-                    ),
-                }
-            )
+            comments = [_cache["comment"]]
+            await self.send_comments(comments)
             return
 
     # - - - - - - - - - - - -
@@ -389,4 +342,63 @@ class Consumer(AsyncConsumer):
                     }
                 ),
             },
+        )
+
+    # - - - - - -
+    # HELPERS
+    # - - - - - -
+
+    async def websocket_accept(self):
+        await self.send({"type": "websocket.accept"})
+
+    async def add_to_channel(self, channel_name):
+        await (
+            self.channel_layer.group_add(channel_name, self.channel_name)
+        )
+
+    async def channel_post_comment(self, stream, comment, ticket):
+        await self.channel_layer.group_send(
+            stream.chat_room,
+            {
+                "type": "broadcast",
+                "text": json.dumps({
+                    "data": {
+                        "comments": [
+                            Comment.objects.serialize(
+                                comment, ticket=ticket
+                            )
+                        ],
+                    }
+                }),
+            },
+        )
+
+    async def send_stream_status(self, stream_uuid, status):
+        await self.send(
+            {
+                "type": "websocket.send",
+                "text": json.dumps({
+                    "data": {
+                        "stream": {
+                            "status": status,
+                            "uuid": stream_uuid,
+                        }
+                    }
+                }),
+            }
+        )
+
+    async def send_comments(self, comments, ticket=None):
+        await self.send(
+            {
+                "type": "websocket.send",
+                "text": json.dumps({
+                    "data": {
+                        "comments": [
+                            Comment.objects.serialize(c, ticket=ticket)
+                            for c in comments
+                        ],
+                    }
+                }),
+            }
         )
