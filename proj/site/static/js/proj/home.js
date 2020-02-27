@@ -64,7 +64,7 @@ function display_broadcasting_streams(data) {
 
 // CLICK LISTENERS
 
-function activate_stream(data) {
+function activate_stream() {
   var uuid = $(this).parent().attr('uuid');
 
   $('.active-stream').removeClass('active-stream');
@@ -74,6 +74,10 @@ function activate_stream(data) {
     'ws://' + window.location.host + window.location.pathname +
     `?uuid=${uuid}`
   )
+
+  if(window['SOCKET']) {
+    window['SOCKET'].close()
+  }
 
   window['SOCKET'] = new WebSocket(endpoint)
   window['SOCKET'].onopen = onopen

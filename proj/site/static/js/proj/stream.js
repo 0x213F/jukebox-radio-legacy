@@ -1,7 +1,7 @@
 
 
 var endpoint = (
-  'ws://' + window.location.host + window.location.pathname +
+  'wss://' + window.location.host + window.location.pathname +
   `?uuid=${STREAM_UUID}`
 )
 

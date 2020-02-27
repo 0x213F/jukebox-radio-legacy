@@ -11,7 +11,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "(&t)o93xlj#71p_m@u#4iymmi*+xcopurz1=209mgrt#&(p2wn"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -122,10 +122,11 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-STATIC_ROOT = f"/root/album_party/proj/site/static/"
-STATICFILES_DIRS = [
-    f"/root/album_party/proj/site/static/",
-]
+# '/root/album_party/proj/site/static/'
+STATIC_ROOT = "/Users/joshschultheiss/Developer/album_party/proj/site/static/"
+STATICFILES_DIRS = []
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 DATABASE_ENCRYPTION_KEY = "wL-8K4RlFSlmcMaHiSKsGiudPljrVkK_v11wq-Y9-vE=".encode("utf-8")
