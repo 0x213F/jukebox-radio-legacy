@@ -117,6 +117,24 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
 
   </div>
 
+  <div class="content waiting-to-play hide">
+
+    <div class="loading-container">
+      <i class="form-icon loading" style="font-size: 48px; font-color: white;"></i>
+    </div>
+
+    <span class="title">
+      Waiting for the stream to start playing music...
+    </span>
+
+    <a href="spotify:open">
+      <button id="play-bar-chat-button" class="btn btn-warning">
+        Fix <i class="icon icon-check"></i>
+      </button>
+    </a>
+
+  </div>
+
   <div class="content spotify-disconnected hide">
 
     <div class="warning-flag">

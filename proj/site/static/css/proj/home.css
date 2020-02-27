@@ -76,6 +76,25 @@
   border-top-right-radius: 12px;
 }
 
+/* waiting-to-play */
+
+.play-bar > .content > .title {
+  width: 131px;
+  font-size: 14px;
+  position: absolute;
+  left: 82px;
+  top: 6px;
+}
+
+.play-bar > .content.waiting-to-play > .loading-container {
+  padding: 36px;
+}
+
+.play-bar > .content.waiting-to-play > .title {
+  top: 14px;
+  width: 166px;
+}
+
 /* spotify-disconnected */
 
 .play-bar > .content.spotify-disconnected > .warning-flag {
@@ -88,6 +107,10 @@
 
 .play-bar > .content.spotify-disconnected > .warning-flag > .icon:after {
   border-color: white!important;
+}
+
+.play-bar > .content.spotify-disconnected > .title {
+  width: 144px;
 }
 
 .play-bar > .content.spotify-disconnected > .sub-title {

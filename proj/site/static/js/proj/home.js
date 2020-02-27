@@ -99,6 +99,21 @@ function onopen(event) {
 }
 
 function onmessage(event) {
-  var $playBar = $('#play-bar');
-  $playBar.removeClass('hide-under-view');
+  let text = event.data;
+  let payload = JSON.parse(text);
+  let stream = payload.data[KEY_STREAM];
+  console.log(stream);
+  if(!stream) {
+    // NOOP
+  } else if(stream.status === 'waiting') {
+    $('.waiting-to-play').removeClass('hide');
+    $('.spotify-disconnected').addClass('hide');
+    var $playBar = $('#play-bar');
+    $playBar.removeClass('hide-under-view');
+  } else if(stream.status === 'disconnected') {
+    $('.waiting-to-play').addClass('hide');
+    $('.spotify-disconnected').removeClass('hide');
+    var $playBar = $('#play-bar');
+    $playBar.removeClass('hide-under-view');
+  }
 }

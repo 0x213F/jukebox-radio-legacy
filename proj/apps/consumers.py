@@ -134,8 +134,14 @@ class Consumer(AsyncConsumer):
                 record_terminates_at__gt=(now + timedelta(seconds=5)),
             )
         except Exception as e:
-            print("no active record")
-            print("returning")
+            await self.send(
+                {
+                    "type": "websocket.send",
+                    "text": json.dumps(
+                        {"data": {"stream": {"status": "waiting", "uuid": active_stream_uuid}}}
+                    ),
+                }
+            )
             return
 
         # get the now playing target progress in ms
@@ -152,9 +158,15 @@ class Consumer(AsyncConsumer):
             )()
 
         except Exception as e:
-            print("no active track")
-            print("WARNING: this edge case should not be hit.")
-            print("returning")
+            await self.send(
+                {
+                    "type": "websocket.send",
+                    "text": json.dumps(
+                        {"data": {"stream": {"status": "waiting", "uuid": active_stream_uuid}}}
+                    ),
+                }
+            )
+            return
 
         assert now_playing
 
@@ -192,9 +204,14 @@ class Consumer(AsyncConsumer):
                 # if within N second(s), leave be
                 return
         except Exception as e:
-            print("undocumented spotify error")
-            print(e)
-            print("returning")
+            await self.send(
+                {
+                    "type": "websocket.send",
+                    "text": json.dumps(
+                        {"data": {"stream": {"status": "disconnected", "uuid": active_stream_uuid}}}
+                    ),
+                }
+            )
             return
 
         # get other tracks to play in future
