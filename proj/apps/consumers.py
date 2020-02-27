@@ -19,6 +19,8 @@ from proj.apps.music.models import Ticket
 from proj.apps.music.models import Comment
 from proj.apps.users.models import Profile
 from proj.apps.music.models import Stream
+from proj.apps.music.models import Record
+from proj.apps.music.models import TrackListing
 from proj.core.resources.cache import _get_or_fetch_from_cache
 from proj.core.fns import results
 
@@ -49,15 +51,16 @@ class Consumer(AsyncConsumer):
 
         await self.websocket_accept()
 
-        if ticket:
-            await self.send(
-                {
-                    "type": "websocket.send",
-                    "text": json.dumps(
-                        {"data": {"ticket": Ticket.objects.serialize(ticket),}}
-                    ),
-                }
-            )
+
+        # if ticket:
+        #     await self.send(
+        #         {
+        #             "type": "websocket.send",
+        #             "text": json.dumps(
+        #                 {"data": {"ticket": Ticket.objects.serialize(ticket),}}
+        #             ),
+        #         }
+        #     )
 
         if not _user_profile.spotify_access_token:
             await self.send_stream_status(
@@ -120,7 +123,7 @@ class Consumer(AsyncConsumer):
         # get the now playing target progress in ms
         try:
             now_playing = await database_sync_to_async(
-                Comment.objects.select_related("track")
+                Comment.objects.select_related('track', 'record')
                 .filter(
                     created_at__lte=now,
                     stream__uuid=active_stream_uuid,
@@ -167,8 +170,11 @@ class Consumer(AsyncConsumer):
 
             record_is_over = False  # abs(spotify_ms + expected_ms) > 5000
             if track_is_already_playing or record_is_over:
-                # if within N second(s), leave be
+                # the user is already tuned into this stream
+                record = now_playing.record
+                await self.send_record(record)
                 return
+
         except Exception as e:
             try:
                 # edge case that is only hit when one of the following happens:
@@ -176,6 +182,8 @@ class Consumer(AsyncConsumer):
                 #   back again to use the site
                 # - cron messes up and we don't refresh tokens so they all
                 #   expire
+                if response.status_code == 204:
+                    raise Exception('The user does not have Spotify open')
                 if response_json['error']['message'] == 'The access token expired':
                     await self.send_stream_status(
                         active_stream_uuid,
@@ -205,6 +213,9 @@ class Consumer(AsyncConsumer):
             user_spotify_access_token,
             {"action": "play", "data": {"uris": uris, "position_ms": -expected_ms},},
         )
+
+        record = now_playing.record
+        await self.send_record(record)
 
     # - - - - -
     # receieve
@@ -398,6 +409,25 @@ class Consumer(AsyncConsumer):
                             Comment.objects.serialize(c, ticket=ticket)
                             for c in comments
                         ],
+                    }
+                }),
+            }
+        )
+
+    async def send_record(self, record):
+        qs = TrackListing.objects.select_related('track').filter(record=record)
+        tracklistings = await database_sync_to_async(list)(qs)
+
+        await self.send(
+            {
+                "type": "websocket.send",
+                "text": json.dumps({
+                    "data": {
+                        "record": Record.objects.serialize(record),
+                        "tracklistings": [
+                            TrackListing.objects.serialize(tracklisting)
+                            for tracklisting in tracklistings
+                        ]
                     }
                 }),
             }

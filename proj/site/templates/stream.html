@@ -106,12 +106,79 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
             <option value="mid_high" selected>😐</option>
             <option value="high">😀</option>
           </select>
-          <input type="text" id="chat-input-main" class="form-input" placeholder="..." name="text">
+          <input type="text" id="chat-input-main" class="form-input" placeholder="..." name="text" autocomplete="off">
           <button id="chat-submit" class="btn btn-primary input-group-btn"><i class="icon icon-2x icon-message"></i></button>
         </div>
       </div>
 
     </form>
+
+  </div>
+
+</div>
+
+<div id="play-bar" class="play-bar hide-under-view">
+
+  <div class="content link-spotify">
+    <!-- localhost%3A8000 -->
+    <!-- jukeboxrad.io -->
+    <!-- jukebox.radio -->
+    <a class="btn btn-primary" href="https://accounts.spotify.com/authorize?client_id=133a25c7195344dbafd4f50d7450330f&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Fconnect%3Fsource%3Dspotify&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state">Authorize Spotify <i class="icon icon-link"></i></a>
+  </div>
+
+  <div class="content currently-playing hide">
+
+    <div class="album-art">
+      <img />
+    </div>
+
+    <span class="title">
+      My Beautiful Dark Twisted Fantasy
+    </span>
+
+    <button id="play-bar-chat-button" class="btn btn-primary">
+      Chat <i class="icon icon-message"></i>
+    </button>
+
+  </div>
+
+  <div class="content waiting-to-play hide">
+
+    <div class="loading-container">
+      <i class="form-icon loading" style="font-size: 48px; font-color: white;"></i>
+    </div>
+
+    <span class="title">
+      Waiting for the stream to start playing music...
+    </span>
+
+    <a href="spotify:open">
+      <button id="play-bar-chat-button" class="btn btn-warning">
+        Fix <i class="icon icon-check"></i>
+      </button>
+    </a>
+
+  </div>
+
+  <div class="content spotify-disconnected hide">
+
+    <div class="warning-flag">
+      <i class="icon icon-4x icon-flag" style="font-size: 48px; font-color: white;"></i>
+    </div>
+
+    <span class="title">
+      No music is playing
+    </span>
+
+    <span class="sub-title">
+      You must be already streaming on your device.
+    </span>
+
+    <a href="spotify:open">
+      <button id="play-bar-chat-button" class="btn btn-warning">
+        Fix <i class="icon icon-check"></i>
+      </button>
+    </a>
 
   </div>
 

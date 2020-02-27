@@ -1,11 +1,10 @@
 
 
 var endpoint = (
-  'wss://' + window.location.host + window.location.pathname +
-  `?uuid=${STREAM_UUID}`
+  'ws://' + window.location.host +
+  `/?uuid=${STREAM_UUID}`
 )
 
-console.log('HERE')
 window['SOCKET'] = new WebSocket(endpoint)
 window['SOCKET'].onopen = onopen
 window['SOCKET'].onmessage = onmessage
@@ -56,18 +55,66 @@ function display_text(comment) {
 /* - - - - - - - - - - - */
 
 function onopen(event) {
-  console.log('opened')
   // NOOP
 }
 
 function onmessage(event) {
   let text = event.data;
   let payload = JSON.parse(text);
+  let stream = payload.data[KEY_STREAM] || null;
+  let record = payload.data[KEY_RECORD] || null;
+  let tracklistings = payload.data[KEY_TRACKLISTINGS] || null;
 
-  let comments = payload.data[KEY_COMMENTS]
-  if(comments.length) {
-    for(comment of comments) {
-      display_comment(comment);
+  if(!stream && !record) {
+
+    // previous behavior
+    let text = event.data;
+    let payload = JSON.parse(text);
+
+    let comments = payload.data[KEY_COMMENTS];
+    if(comments.length) {
+      for(comment of comments) {
+        display_comment(comment);
+      }
     }
+
+  } else if(record) {
+    var stream_title = $('.card.active-stream').find('h5').text();
+    $('.currently-playing').find('.title').text(stream_title);
+
+    $('.currently-playing').removeClass('hide');
+    $('.waiting-to-play').addClass('hide');
+    $('.spotify-disconnected').addClass('hide');
+    $('.link-spotify').addClass('hide');
+
+    var $playBar = $('#play-bar');
+    $playBar.removeClass('hide-under-view');
+    // TODO
+    console.log(record)
+    console.log(tracklistings)
+  } else if(stream.status === 'waiting') {
+    $('.currently-playing').addClass('hide');
+    $('.waiting-to-play').removeClass('hide');
+    $('.spotify-disconnected').addClass('hide');
+    $('.link-spotify').addClass('hide');
+
+    var $playBar = $('#play-bar');
+    $playBar.removeClass('hide-under-view');
+  } else if(stream.status === 'disconnected') {
+    $('.currently-playing').addClass('hide');
+    $('.waiting-to-play').addClass('hide');
+    $('.spotify-disconnected').removeClass('hide');
+    $('.link-spotify').addClass('hide');
+
+    var $playBar = $('#play-bar');
+    $playBar.removeClass('hide-under-view');
+  } else if(stream.status === 'linkspotify') {
+    $('.currently-playing').addClass('hide');
+    $('.waiting-to-play').addClass('hide');
+    $('.spotify-disconnected').addClass('hide');
+    $('.link-spotify').removeClass('hide');
+
+    var $playBar = $('#play-bar');
+    $playBar.removeClass('hide-under-view');
   }
 }

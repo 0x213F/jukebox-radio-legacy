@@ -122,6 +122,7 @@ class StreamManager(BaseManager):
                 commenter=None,
                 stream=stream,
                 track=track,
+                record=record,
                 commenter_ticket=None,
             )
             track_timestamp += timedelta(milliseconds=track.spotify_duration_ms)
