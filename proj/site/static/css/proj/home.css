@@ -19,7 +19,6 @@
   border-top: 1px solid #5764c6;
   border-left: 1px solid #5764c6;
   border-right: 1px solid #5764c6;
-  border-top-right-radius: 16px;
 
   /* styling for centering the div */
   left: 50%;
@@ -51,7 +50,7 @@
   width: 131px;
   font-size: 14px;
   position: absolute;
-  left: 82px;
+  left: 100px;
   top: 6px;
 }
 
@@ -71,7 +70,6 @@
 
 .play-bar > .content.link-spotify > a {
   width: 160px;
-  border-top-right-radius: 12px;
 }
 
 /* currently-playing */
@@ -79,12 +77,11 @@
 .play-bar > .content.currently-playing > .btn,
 .play-bar > .content.spotify-disconnected > a > .btn  {
   position: absolute;
-  right: -72px;
-  top: 10px;
+  right: -66px;
+  top: 16px;
 
   padding-left: 10px;
   padding-right: 10px;
-  border-top-right-radius: 12px;
 }
 
 /* waiting-to-play */
@@ -93,16 +90,17 @@
   width: 131px;
   font-size: 14px;
   position: absolute;
-  left: 82px;
+  left: 38px;
   top: 6px;
 }
 
 .play-bar > .content.waiting-to-play > .loading-container {
   padding: 36px;
+  padding-left: 268px;
 }
 
 .play-bar > .content.waiting-to-play > .title {
-  top: 14px;
+  top: 15px;
   width: 166px;
 }
 
@@ -122,12 +120,15 @@
 
 .play-bar > .content.spotify-disconnected > .title {
   width: 144px;
+
+  top: 8px;
+  left: 36px!important;
 }
 
 .play-bar > .content.spotify-disconnected > .sub-title {
   width: 140px;
-  left: 82px;
-  top: 32px;
+  left: 36px;
+  top: 33px;
 }
 
 .play-bar > .content.spotify-disconnected > .btn {
@@ -137,5 +138,4 @@
 
   padding-left: 10px;
   padding-right: 10px;
-  border-top-right-radius: 12px;
 }

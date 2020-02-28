@@ -14,7 +14,12 @@ class ListStreamsView(BaseView):
         """
         List all of the stream objects that a user can access.
         """
-        broadcasting_ids = Stream.objects.list_broadcasting_streams(request.user).order_by("id").values_list('id', flat=True)
+        broadcasting_ids = (
+            Stream.objects
+            .list_broadcasting_streams(request.user)
+            .order_by("id")
+            .values_list('id', flat=True)
+        )
 
         streams = Stream.objects.list_streams(request.user).order_by("id")
 

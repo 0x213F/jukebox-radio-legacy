@@ -49,6 +49,13 @@ function display_tune_in_streams(data) {
   $(".tune-in-streams").removeClass('hidden');
 
   $('.card-body.broadcasting-stream > .card').click(activate_stream)
+
+  var last_active_stream_uuid = data[KEY_USER].profile.last_active_stream_uuid;
+  console.log(last_active_stream_uuid)
+  if(last_active_stream_uuid) {
+    // we assume this stream is still active
+    $(`[uuid='${last_active_stream_uuid}']`).find('.card').click()
+  }
 }
 
 
@@ -67,10 +74,19 @@ function display_broadcasting_streams(data) {
 // CLICK LISTENERS
 
 function activate_stream() {
+  var $this = $(this)
   var uuid = $(this).parent().attr('uuid');
 
+  if($this.hasClass('active-stream')) {
+    window['SOCKET'].close();
+    $this.removeClass('active-stream');
+    var $playBar = $('#play-bar');
+    $playBar.addClass('hide-under-view');
+    return;
+  }
+
   $('.active-stream').removeClass('active-stream');
-  $(this).addClass('active-stream');
+  $this.addClass('active-stream');
 
   var endpoint = (
     'ws://' + window.location.host + window.location.pathname +
@@ -81,7 +97,6 @@ function activate_stream() {
     window['SOCKET'].close()
   }
 
-  console.log(endpoint)
   window['SOCKET'] = new WebSocket(endpoint)
   window['SOCKET'].onopen = onopen
   window['SOCKET'].onmessage = onmessage
@@ -150,3 +165,31 @@ function onmessage(event) {
     $playBar.removeClass('hide-under-view');
   }
 }
+
+var window_debouncer = Date.now();
+$(window).focus(function() {
+  var now = Date.now()
+  if(now - window_debouncer < 500) {
+    return;
+  }
+  window_debouncer = now;
+  var $bar = $('.content.spotify-disconnected');
+  if($bar.hasClass('hide')) {
+    return;
+  }
+
+  // resync music the hacky way
+  var uuid = $('.card.active-stream').parent().attr('uuid');
+  var endpoint = (
+    'ws://' + window.location.host + window.location.pathname +
+    `?uuid=${uuid}`
+  )
+
+  if(window['SOCKET']) {
+    window['SOCKET'].close()
+  }
+
+  window['SOCKET'] = new WebSocket(endpoint)
+  window['SOCKET'].onopen = onopen
+  window['SOCKET'].onmessage = onmessage
+});

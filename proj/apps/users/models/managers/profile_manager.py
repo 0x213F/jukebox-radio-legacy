@@ -45,6 +45,7 @@ class ProfileManager(BaseManager):
                 "active_stream_ticket": Ticket.objects.serialize(active_ticket),
                 "scopes": scopes,
                 "active_stream": Stream.objects.serialize(active_stream),
+                "last_active_stream_uuid": user.profile.last_active_stream_uuid,
                 "active_stream_uuid": user.profile.active_stream_uuid,
                 "default_name": user.profile.default_display_name,
             },
@@ -56,6 +57,7 @@ class ProfileManager(BaseManager):
         """
         Profile = self.model
         profile = await database_sync_to_async(Profile.objects.get)(user_id=user.id)
+        profile.last_active_stream_uuid = profile.active_stream_uuid
         profile.active_stream_uuid = None
         await database_sync_to_async(profile.save)()
 
@@ -87,6 +89,7 @@ class ProfileManager(BaseManager):
         )
 
         profile = _cache["profile"]
+        profile.last_active_stream_uuid = stream.uuid
         profile.active_stream_uuid = stream.uuid
         await database_sync_to_async(profile.save)()
 

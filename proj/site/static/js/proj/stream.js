@@ -81,8 +81,8 @@ function onmessage(event) {
     }
 
   } else if(record) {
-    var stream_title = $('.card.active-stream').find('h5').text();
-    $('.currently-playing').find('.title').text(record.name);
+    // var stream_title = $('.card.active-stream').find('h5').text();
+    // $('.currently-playing').find('.title').text(record.name);
 
     $('.currently-playing').removeClass('hide');
     $('.waiting-to-play').addClass('hide');
@@ -120,3 +120,11 @@ function onmessage(event) {
     $playBar.removeClass('hide-under-view');
   }
 }
+
+$(document).ready(function() {
+  $('#mute-button').click(function() {
+    var $this = $(this);
+    $this.toggleClass('btn-primary');
+    $this.blur();
+  });
+});

@@ -16,6 +16,7 @@
 <script src="{% static 'js/proj/api.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
 <link rel="stylesheet" href="{% static 'css/proj/home.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/stream.css' %}">
 {% endblock %}
 
 {% block main %}
@@ -45,7 +46,7 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
 
     <div class="form-group card-body">
       <form class="ajax-form" redirect="/">
-        <button class="btn btn-secondary" style="float: left;">
+        <button class="btn btn-secondary btn-lg" style="float: left; width: 40px;">
           <i class="icon icon-2x icon-back"></i>
         </button>
       </form>
@@ -53,34 +54,34 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
       {% if is_host %}
 
         <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/manage">
-          <button class="btn btn-secondary" style="margin-left: 1.5rem; float: left;">
-            Manage
+          <button class="btn btn-secondary btn-lg" style="margin-left: 1.5rem; float: left; width: 40px;">
+            <i class="gg-more" style="left: 4px;"></i>
           </button>
         </form>
         <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/queue">
-          <button class="btn btn-secondary" style="margin-left: 1.5rem;">
-            Queue
+          <button class="btn btn-secondary btn-lg" style="margin-left: 1.5rem; width: 32px;">
+            <i class="gg-layout-list" style="left: 2px;"></i>
           </button>
         </form>
 
       {% elif ticket.is_administrator %}
 
       <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/displayname">
-        <button class="btn btn-secondary" style="margin-left: 1.5rem; float: left;">
-          Display Name
+        <button class="btn btn-secondary btn-lg" style="margin-left: 1.5rem; float: left; width: 40px;">
+          <i class="gg-girl" style="left: 1px;"></i>
         </button>
       </form>
         <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/queue">
-          <button class="btn btn-secondary" style="margin-left: 1.5rem;">
-            Queue
+          <button class="btn btn-secondary btn-lg" style="margin-left: 1.5rem; width: 40px;">
+            <i class="gg-layout-list" style="left: 2px;"></i>
           </button>
         </form>
 
       {% else %}
 
       <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/displayname">
-        <button class="btn btn-secondary" style="margin-left: 1.5rem;">
-          Display Name
+        <button class="btn btn-secondary btn-lg" style="margin-left: 1.5rem; width: 40px;">
+          <i class="gg-girl" style="left: 1px;"></i>
         </button>
       </form>
 
@@ -89,7 +90,7 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
 
     <!-- - - --->
     <!-- CHAT -->
-    <div class="card-body chat-container" style="height: calc(100vh - 320px); overflow-y: scroll;">
+    <div class="card-body chat-container" style="height: calc(100vh - 331px); overflow-y: scroll;">
 
     </div>
 
@@ -107,8 +108,10 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
             <option value="mid_high" selected>😐</option>
             <option value="high">😀</option>
           </select>
-          <input type="text" id="chat-input-main" class="form-input" placeholder="..." name="text" autocomplete="off">
-          <button id="chat-submit" class="btn btn-primary input-group-btn"><i class="icon icon-2x icon-message"></i></button>
+          <input type="text" id="chat-input-main" class="form-input input-lg" placeholder="" name="text" autocomplete="off" style="padding-left: 14px;">
+          <button id="chat-submit" class="btn btn-primary input-group-btn btn-lg" style="width: 40px;">
+            <i class="icon icon-2x icon-message"></i>
+          </button>
         </div>
       </div>
 
@@ -118,23 +121,25 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
 
 </div>
 
-<div id="play-bar" class="play-bar hide-under-view">
+<div id="play-bar" class="play-bar">
 
-  <div class="content link-spotify">
+  <div class="content link-spotify hide">
     <!-- localhost%3A8000 -->
     <!-- jukeboxrad.io -->
     <!-- jukebox.radio -->
     <a class="btn btn-primary" href="https://accounts.spotify.com/authorize?client_id=133a25c7195344dbafd4f50d7450330f&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Fconnect%3Fsource%3Dspotify&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state">Authorize Spotify <i class="icon icon-link"></i></a>
   </div>
 
-  <div class="content currently-playing hide">
+  <div class="content currently-playing-detail">
 
     <div class="album-art">
       <img />
     </div>
 
-    <span class="title">
-      My Beautiful Dark Twisted Fantasy
+    <span class="play-pause">
+      <button id="mute-button" class="btn">
+        <i class="gg-music-speaker"></i>
+      </button>
     </span>
 
   </div>

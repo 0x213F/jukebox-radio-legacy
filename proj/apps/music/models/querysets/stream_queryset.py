@@ -34,3 +34,8 @@ class StreamQuerySet(BaseQuerySet):
                 )
             )
         )
+
+    def annotate_active_user_count(self):
+        Profile = apps.get_model('users', 'Profile')
+
+        Profile.objects.filter(active_stream_uuid=OuterRef('uuid'))

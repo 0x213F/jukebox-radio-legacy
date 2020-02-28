@@ -350,9 +350,9 @@ class Consumer(AsyncConsumer):
             },
         )
 
-    # - - - - - -
-    # HELPERS
-    # - - - - - -
+    # - - - - - - - - - - - - - -
+    #          HELPERS           |
+    # - - - - - - - - - - - - - -
 
     async def websocket_accept(self):
         await self.send({"type": "websocket.accept"})

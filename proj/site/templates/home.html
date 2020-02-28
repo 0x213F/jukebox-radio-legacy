@@ -63,7 +63,7 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
 
     <div class="card-body">
       <form class="ajax-form" redirect="/createstream">
-        <button class="btn">
+        <button class="btn btn-lg">
           Create Stream
         </button>
       </form>
@@ -114,11 +114,7 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
       <img />
     </div>
 
-    <span class="title">
-      My Beautiful Dark Twisted Fantasy
-    </span>
-
-    <button id="play-bar-chat-button" class="btn btn-primary">
+    <button id="play-bar-chat-button" class="btn btn-primary btn-lg">
       Chat <i class="icon icon-message"></i>
     </button>
 
@@ -134,31 +130,21 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
       Waiting for the stream to start playing music...
     </span>
 
-    <a href="spotify:open">
-      <button id="play-bar-chat-button" class="btn btn-warning">
-        Fix <i class="icon icon-check"></i>
-      </button>
-    </a>
-
   </div>
 
   <div class="content spotify-disconnected hide">
-
-    <div class="warning-flag">
-      <i class="icon icon-4x icon-flag" style="font-size: 48px; font-color: white;"></i>
-    </div>
 
     <span class="title">
       No music is playing
     </span>
 
     <span class="sub-title">
-      You must be already streaming on your device.
+      You must already be streaming on your device.
     </span>
 
     <a href="spotify:open">
-      <button id="play-bar-chat-button" class="btn btn-warning">
-        Fix <i class="icon icon-check"></i>
+      <button id="play-bar-chat-button" class="btn btn-lg">
+        Fix <i class="gg-external" style="display: inline-block; margin-left: 5px; margin-right: 1px;"></i>
       </button>
     </a>
 
