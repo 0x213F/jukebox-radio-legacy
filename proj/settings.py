@@ -18,6 +18,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     '138.197.220.117',
     'jukebox.radio',
+    'jukeboxrad.io',
 ]
 
 

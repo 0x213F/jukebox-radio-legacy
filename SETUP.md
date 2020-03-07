@@ -1,4 +1,5 @@
-# ChessGame
+
+# Setup
 
 ## macOS
 
