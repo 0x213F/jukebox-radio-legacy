@@ -11,3 +11,7 @@ __pycache__/
 
 # config
 proj/secrets.py
+
+
+# macOS
+.DS_Store

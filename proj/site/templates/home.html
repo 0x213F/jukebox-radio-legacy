@@ -16,27 +16,6 @@
 
   <div class="card-body">
 
-    <!-- - - - - - - - - - - - - - - - - - - - - -->
-    <!--  LOAD PAGE (LIST BROADCASTING SHOWINGS) -->
-    <form class="ajax-form hidden"
-          type="get"
-          url="../api/music/list_broadcasting_streams/"
-          submit="onload"
-          onsuccess='display_broadcasting_streams'>
-
-    </form>
-
-
-    <!-- - - - - - - - - - - - - - --->
-    <!--  LOAD PAGE (LIST SHOWINGS) -->
-    <form class="ajax-form hidden"
-          type="get"
-          url="../api/music/list_streams/"
-          submit="onload"
-          onsuccess='display_tune_in_streams'>
-
-    </form>
-
     <!-- - - - - - - - - - - - -->
     <!--  BROADCASTING STREAMS -->
     <div class="card-body">
@@ -47,6 +26,13 @@
       </form>
     </div>
 
+    <form class="ajax-form hidden"
+          type="get"
+          url="../api/music/list_broadcasting_streams/"
+          submit="onload"
+          onsuccess='display_broadcasting_streams'>
+    </form>
+
     <div class="broadcasting-streams hidden"></div>
 
     <!-- - - - - - - - - --->
@@ -54,6 +40,13 @@
     <div class="card-header">
       <div class="card-title h5">Tune In</div>
     </div>
+
+    <form class="ajax-form hidden"
+          type="get"
+          url="../api/music/list_streams/"
+          submit="onload"
+          onsuccess='display_tune_in_streams'>
+    </form>
 
     <div class="tune-in-streams hidden"></div>
 
@@ -77,6 +70,8 @@
 
 </div>
 
+<!-- - - - - - --->
+<!--  PLAY BAR  -->
 {% include "play_bar.html" %}
 
 {% endblock %}

@@ -12,10 +12,14 @@
 
   <div class="card-body" style="width: 100%;">
 
+    <!-- - - - - - - --->
+    <!--  STREAM NAME -->
     <div class="card-body">
       <div class="toast toast-primary" style="width: 100%; font-size: 2rem;">{{ stream.title }}</div>
     </div>
 
+    <!-- - - - - - - --->
+    <!--  BACK BUTTON -->
     <form class="ajax-form card-body"
           redirect="/stream/{{ stream.uuid }}/">
       <button class="btn btn-secondary" style="float: left;">
@@ -23,7 +27,8 @@
       </button>
     </form>
 
-
+    <!-- - - - - - - - - - - -->
+    <!-- UPDATE DISPLAY NAME -->
     <form id="update-display-name"
           class="ajax-form card-body"
           url="../../../api/music/update_ticket/"
