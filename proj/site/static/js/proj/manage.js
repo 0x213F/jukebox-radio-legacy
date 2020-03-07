@@ -1,4 +1,6 @@
 
+var STREAM_UUID = $('#stream-uuid').children().first().val();
+
 function generate_host(ticket) {
   return `
   <div class="card-body" style="padding-bottom: 0.75rem;">

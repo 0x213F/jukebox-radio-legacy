@@ -2,16 +2,7 @@
 
 {% load static %}
 
-{% block basestyles %}
-<link href="https://fonts.googleapis.com/css?family=Major+Mono+Display|Work+Sans:300,400,700,900&display=swap" rel="stylesheet">
-
-<!-- custom styles -->
-<link rel="stylesheet" href="{% static 'css/spectre/spectre.min.css' %}">
-<link rel="stylesheet" href="{% static 'css/spectre/spectre-icons.min.css' %}">
-<link rel="stylesheet" href="{% static 'css/proj/base.css' %}">
-
-
-<script src="{% static 'js/jquery.js' %}"></script>
+{% block styles %}
 <script src="{% static 'js/proj/main.js' %}"></script>
 <script src="{% static 'js/proj/api.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
@@ -21,17 +12,12 @@
 
 {% block main %}
 
-<div id="csrf-token" class="hidden">
-  {% csrf_token %}
-</div>
-
 <div id="stream-uuid" class="hidden">
   <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
 </div>
 
 <script>
 
-var CSRF_TOKEN = $('#csrf-token').children().first().val();
 var STREAM_UUID = $('#stream-uuid').children().first().val();
 
 </script>

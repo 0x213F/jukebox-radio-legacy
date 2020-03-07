@@ -2,39 +2,18 @@
 
 {% load static %}
 
-{% block basestyles %}
-<link href="https://fonts.googleapis.com/css?family=Major+Mono+Display|Work+Sans:300,400,700,900&display=swap" rel="stylesheet">
-
-<!-- custom styles -->
-<link rel="stylesheet" href="{% static 'css/spectre/spectre.min.css' %}">
-<link rel="stylesheet" href="{% static 'css/spectre/spectre-icons.min.css' %}">
-<link rel="stylesheet" href="{% static 'css/proj/base.css' %}">
-
-
-<script src="{% static 'js/jquery.js' %}"></script>
-<link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
+{% block styles %}
 <script src="{% static '/js/proj/api.js' %}"></script>
 <script src="{% static '/js/proj/manage.js' %}"></script>
 {% endblock %}
 
 {% block main %}
 
-<div id="csrf-token" class="hidden">
-  {% csrf_token %}
-</div>
-
 <div id="stream-uuid" class="hidden">
   <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
 </div>
 
-<script>
-
-var CSRF_TOKEN = $('#csrf-token').children().first().val();
-var STREAM_UUID = $('#stream-uuid').children().first().val();
-
-</script>
-
-<div class="main center-horizontal card hidden">
+<div class="main center-horizontal card">
 
   <div class="card-body" style="width: 100%;">
 
@@ -66,9 +45,14 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
       </form>
     </div>
 
-    <form id="update-stream" class="ajax-form card-body" url="../../../api/music/update_stream/" type="post" redirect="/stream/{{ stream.uuid }}/" style="margin-top: 3.5rem;">
-
-      {% csrf_token %}
+    <!-- - - - - - - - - -->
+    <!--  UPDATE STREAM  -->
+    <form id="update-stream"
+          class="ajax-form card-body"
+          url="../../../api/music/update_stream/"
+          type="post"
+          redirect="/stream/{{ stream.uuid }}/"
+          style="margin-top: 3.5rem;">
 
       <input class="hidden" type="text" name="stream_uuid" value="{{ stream.uuid }}">
 
@@ -93,9 +77,13 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
       <div class="divider"></div>
     </div>
 
-    <form id="update-display-name" class="ajax-form card-body" url="../../../api/music/update_ticket/" type="post" redirect="/stream/{{ stream.uuid }}/">
-
-      {% csrf_token %}
+    <!-- - - - - - - - - -->
+    <!--  UPDATE TICKET  -->
+    <form id="update-display-name"
+          class="ajax-form card-body"
+          url="../../../api/music/update_ticket/"
+          type="post"
+          redirect="/stream/{{ stream.uuid }}/">
 
       <div class="form-group">
         <label class="form-label" for="change-display-name">Display Name</label>
@@ -125,9 +113,13 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
     <!-- HOSTS LIST -->
     <div class="hosts-list" style="margin-top: 2rem;"></div>
 
-    <form id="add-host" class="ajax-form card-body" url="../../../api/music/update_ticket/" type="post" redirect="/stream/{{ stream.uuid }}/manage/">
-
-      {% csrf_token %}
+    <!-- - - - - - - -->
+    <!--  ADD HOST   -->
+    <form id="add-host"
+          class="ajax-form card-body"
+          url="../../../api/music/update_ticket/"
+          type="post"
+          redirect="/stream/{{ stream.uuid }}/manage/">
 
       <div class="form-group">
         <label class="form-label" for="email-signup">Email</label>

@@ -119,58 +119,7 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
 
 </div>
 
-<div id="play-bar" class="play-bar hide-under-view">
-
-  <div class="content link-spotify">
-    <!-- localhost%3A8000 -->
-    <!-- jukeboxrad.io -->
-    <!-- jukebox.radio -->
-    <a class="btn btn-primary" href="https://accounts.spotify.com/authorize?client_id=133a25c7195344dbafd4f50d7450330f&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Fconnect%3Fsource%3Dspotify&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state">Authorize Spotify <i class="icon icon-link"></i></a>
-  </div>
-
-  <div class="content currently-playing hide">
-
-    <div class="album-art">
-      <img />
-    </div>
-
-    <button id="play-bar-chat-button" class="btn btn-primary btn-lg">
-      Chat <i class="icon icon-message"></i>
-    </button>
-
-  </div>
-
-  <div class="content waiting-to-play hide">
-
-    <div class="loading-container">
-      <i class="form-icon loading" style="font-size: 48px; font-color: white;"></i>
-    </div>
-
-    <span class="title">
-      Waiting for the stream to start playing music...
-    </span>
-
-  </div>
-
-  <div class="content spotify-disconnected hide">
-
-    <span class="title">
-      No music is playing
-    </span>
-
-    <span class="sub-title">
-      You must already be streaming on your device.
-    </span>
-
-    <a href="spotify:open">
-      <button id="play-bar-chat-button" class="btn btn-lg">
-        Fix <i class="gg-external" style="display: inline-block; margin-left: 5px; margin-right: 1px;"></i>
-      </button>
-    </a>
-
-  </div>
-
-</div>
+{% include "play_bar.html" %}
 
 <script>
 

@@ -14,12 +14,17 @@
 
     <title>Jukebox Radio</title>
 
-    <script src="https://kit.fontawesome.com/9b8eb27b91.js" crossorigin="anonymous"></script>
+    {% block basestyles %}
+
+    <!-- imported styles -->
+    <link rel="stylesheet" href="{% static 'css/spectre/spectre.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/spectre/spectre-icons.min.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=Major+Mono+Display|Work+Sans:300,400,700,900&display=swap" rel="stylesheet">
     <link href="https://css.gg/c?=|music-speaker|comment|girl|music|layout-list|more|external" rel="stylesheet">
 
-    {% block basestyles %}
     <!-- custom styles -->
     <link rel="stylesheet" href="{% static 'css/proj/base.css' %}">
+
     {% endblock %}
 
     {% block styles %}{% endblock %}
@@ -30,12 +35,16 @@
 
     {% block main %}{% endblock %}
 
+    <!-- global JS variable: CSRF_TOKEN -->
+    <div id="csrf-token" class="hidden">{% csrf_token %}</div>
+
     {% block basescripts %}
     <script src="{% static 'js/jquery.js' %}"></script>
     <script src="{% static 'js/proj/main.js' %}"></script>
     {% endblock %}
 
     {% block scripts %}{% endblock %}
+
 </body>
 
 </html>
