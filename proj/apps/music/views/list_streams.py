@@ -1,27 +1,28 @@
+from django.apps import apps
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
 from proj.core.views import BaseView
-from proj.apps.music.models import Comment
-from proj.apps.music.models import Ticket
-from proj.apps.music.models import Stream
-from proj.apps.users.models import Profile
 
 
-@method_decorator(login_required, name="dispatch")
+@method_decorator(login_required, name='dispatch')
 class ListStreamsView(BaseView):
     def get(self, request, **kwargs):
-        """
+        '''
         List all of the stream objects that a user can access.
-        """
+        '''
+        Stream = apps.get_model('music', 'Stream')
+        Ticket = apps.get_model('music', 'Ticket')
+        Profile = apps.get_model('users', 'Profile')
+
         broadcasting_ids = (
             Stream.objects
             .list_broadcasting_streams(request.user)
-            .order_by("id")
+            .order_by('id')
             .values_list('id', flat=True)
         )
 
-        streams = Stream.objects.list_streams(request.user).order_by("id")
+        streams = Stream.objects.list_streams(request.user).order_by('id')
 
         active_ticket = None
         active_stream_uuid = request.user.profile.active_stream_uuid
@@ -37,8 +38,8 @@ class ListStreamsView(BaseView):
             streams_data.append(Stream.objects.serialize(s))
 
         response = {
-            "streams": streams_data,
-            "user": (
+            'streams': streams_data,
+            'user': (
                 Profile.objects.serialize_user(
                     request.user, active_ticket=active_ticket
                 )

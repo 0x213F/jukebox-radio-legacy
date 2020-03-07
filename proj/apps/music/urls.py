@@ -8,7 +8,6 @@ from .views import ListHostsView
 from .views import ListQueueView
 from .views import ListStreamsView
 from .views import SearchLibraryView
-from .views import SpinRecordView
 from .views import StreamSubscriptionView
 from .views import UpdateStreamView
 from .views import UpdateTicketView
@@ -23,7 +22,6 @@ urlpatterns = [
     path("list_queue/", ListQueueView.as_view()),
     path("list_streams/", ListStreamsView.as_view()),
     path("search_library/", SearchLibraryView.as_view()),
-    path("spin_record/", SpinRecordView.as_view()),
     path("stream_subscription/", StreamSubscriptionView.as_view()),
     path("update_stream/", UpdateStreamView.as_view()),
     path("update_ticket/", UpdateTicketView.as_view()),

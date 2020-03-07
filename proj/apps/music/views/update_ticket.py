@@ -6,22 +6,21 @@ from django.apps import apps
 from proj.core.views import BaseView
 
 
-
-@method_decorator(login_required, name="dispatch")
+@method_decorator(login_required, name='dispatch')
 class UpdateTicketView(BaseView):
 
     def post(self, request, **kwargs):
-        """
+        '''
         Update the user's account information.
-        """
-        Ticket = apps.get_model("music.Ticket")
+        '''
+        Ticket = apps.get_model('music.Ticket')
 
-        holder_uuid = request.POST.get("holder_uuid", None)
-        email = request.POST.get("email", None)
-        stream_uuid = request.POST.get("stream_uuid", None)
-        holder_name = request.POST.get("display_name", None)
+        holder_uuid = request.POST.get('holder_uuid', None)
+        email = request.POST.get('email', None)
+        stream_uuid = request.POST.get('stream_uuid', None)
+        holder_name = request.POST.get('display_name', None)
 
-        is_administrator = request.POST.get("is_administrator", None)
+        is_administrator = request.POST.get('is_administrator', None)
         is_administrator = True if is_administrator == 'true' else False
 
         ticket = Ticket.objects.get(
