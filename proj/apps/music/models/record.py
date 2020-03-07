@@ -52,6 +52,8 @@ class Record(BaseModel):
 
     name = models.CharField(max_length=128)
 
+    spotify_uri = models.CharField(max_length=128)
+
     is_playing = models.BooleanField(default=False)
 
     tracks = models.ManyToManyField("music.Track", through="music.TrackListing")

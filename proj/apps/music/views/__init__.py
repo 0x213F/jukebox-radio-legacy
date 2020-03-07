@@ -7,6 +7,7 @@ from .list_hosts import ListHostsView
 from .list_queue import ListQueueView
 from .list_records import ListRecordsView
 from .list_streams import ListStreamsView
+from .search_library import SearchLibraryView
 from .spin_record import SpinRecordView
 from .stream_subscription import StreamSubscriptionView
 from .update_stream import UpdateStreamView

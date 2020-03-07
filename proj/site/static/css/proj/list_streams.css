@@ -25,7 +25,9 @@
   background-color: #fbfcfc;
 }
 
-.broadcasting-stream.card-body > .card.active-stream {
+.broadcasting-stream.card-body > .card.active-stream,
+.broadcasting-streams.card-body > .card.active-stream,
+.tune-in-streams.card-body > .card.active-stream {
   border-color: #5764c6;
 }
 

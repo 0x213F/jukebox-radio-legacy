@@ -1,5 +1,5 @@
 
-function generate_stream(stream) {
+function generate_stream(stream, class_name) {
 
   var background_color = ''
   if(stream.status === 'activated') {
@@ -13,7 +13,7 @@ function generate_stream(stream) {
     tags_html += `<span class="chip" style="border-radius: 28px; margin-right: 8px;">${tag}</span>`
   }
   return `
-  <div class="card-body broadcasting-stream" uuid="${stream.uuid}" style="cursor: pointer;">
+  <div class="card-body ${class_name}" uuid="${stream.uuid}" style="cursor: pointer;">
     <div class="card" style="margin-bottom: 0px;">
       <div class="card-body">
 
@@ -43,15 +43,15 @@ function display_tune_in_streams(data) {
   let list_streams = data[KEY_SHOWINGS];
   let $streams_container = $('.tune-in-streams');
   for(let stream of list_streams) {
-    $streams_container.append(generate_stream(stream));
+    $streams_container.append(generate_stream(stream, 'tune-in-streams'));
   }
   setup_ajax_forms();
   $(".tune-in-streams").removeClass('hidden');
 
-  $('.card-body.broadcasting-stream > .card').click(activate_stream)
+  $('.card-body.tune-in-streams > .card').click(activate_stream)
 
   var last_active_stream_uuid = data[KEY_USER].profile.last_active_stream_uuid;
-  console.log(last_active_stream_uuid)
+  console.log('display_tune_in_streams')
   if(last_active_stream_uuid) {
     // we assume this stream is still active
     $(`[uuid='${last_active_stream_uuid}']`).find('.card').click()
@@ -63,18 +63,26 @@ function display_broadcasting_streams(data) {
   let list_streams = data[KEY_SHOWINGS];
   let $streams_container = $('.broadcasting-streams');
   for(let stream of list_streams) {
-    $streams_container.append(generate_stream(stream));
+    $streams_container.append(generate_stream(stream, 'broadcasting-stream'));
   }
   setup_ajax_forms();
   $(".broadcasting-streams").removeClass('hidden');
 
   $('.card-body.broadcasting-stream > .card').click(activate_stream)
+
+  var last_active_stream_uuid = data[KEY_USER].profile.last_active_stream_uuid;
+  console.log('display_broadcasting_streams')
+  if(last_active_stream_uuid) {
+    // we assume this stream is still active
+    $(`[uuid='${last_active_stream_uuid}']`).find('.card').click()
+  }
 }
 
 // CLICK LISTENERS
 
 function activate_stream() {
-  var $this = $(this)
+  console.log('activate_stream')
+  var $this = $(this);
   var uuid = $(this).parent().attr('uuid');
 
   if($this.hasClass('active-stream')) {

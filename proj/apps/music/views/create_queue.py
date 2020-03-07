@@ -26,10 +26,18 @@ class CreateQueueView(BaseView):
         Record = apps.get_model("music.Record")
         Stream = apps.get_model("music.Stream")
 
-        record_id = request.POST.get("record_id", None)
+        spotify_uri = request.POST.get("uri", None)
+        img = request.POST.get("img", None)
+        record_name = request.POST.get("record_name", None)
+
         stream_uuid = request.POST.get("stream_uuid", None)
 
-        record = Record.objects.get(id=record_id)
+        record = Record.objects.get_or_create_from_uri(
+            spotify_uri,
+            record_name=record_name,
+            img=img,
+            user=request.user,
+        )
         stream = Stream.objects.get(uuid=stream_uuid)
 
         queue = Queue.objects.create(

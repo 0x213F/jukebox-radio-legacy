@@ -57,13 +57,9 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
 
     <!-- - - - - - - - - - - - -->
     <!--  BROADCASTING STREAMS -->
-    <div class="card-header" id="broadcasting-header">
-      <div class="card-title h5">Broadcasting</div>
-    </div>
-
     <div class="card-body">
       <form class="ajax-form" redirect="/createstream">
-        <button class="btn btn-lg">
+        <button class="btn btn-lg" style="width: 100%;">
           Create Stream
         </button>
       </form>
@@ -156,6 +152,5 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
 
 
 {% block basescripts %}
-<script src="{% static '/js/proj/home.js' %}"></script>
 <script src="{% static '/js/proj/main.js' %}"></script>
 {% endblock %}

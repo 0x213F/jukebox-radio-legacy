@@ -9,7 +9,9 @@ from datetime import timedelta
 
 from proj.apps.utils import broadcast_message
 from proj.core.models.managers import BaseManager
+from proj.core.resources import Spotify
 
+from django.apps import apps
 from django.contrib.auth.models import User
 
 from asgiref.sync import async_to_sync
@@ -34,3 +36,22 @@ class RecordManager(BaseManager):
             "id": record.id,
             "name": record.name,
         }
+
+    def get_or_create_from_uri(self, uri, record_name, img, user=None):
+        Record = apps.get_model('music', 'Record')
+        Track = apps.get_model('music', 'Track')
+        try:
+            return Record.objects.get(spotify_uri=uri)
+        except Record.DoesNotExist:
+            pass
+        if 'track' in uri:
+            tracks = [Track.objects.get_or_create_from_uri(uri, user=user)]
+        elif 'album' in uri:
+            spotify = Spotify(user)
+            album_info = spotify.get_album_info(uri)
+            tracks = Track.objects.bulk_create_from_album_info(album_info)
+        elif 'playlist' in uri:
+            spotify = Spotify(user)
+            album_info = spotify.get_playlist_info(uri)
+            tracks = Track.objects.bulk_create_from_album_info(album_info)
+            raise ValueError('PLAYLIST DEBUG')

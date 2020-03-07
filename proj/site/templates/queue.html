@@ -9,12 +9,15 @@
 <link rel="stylesheet" href="{% static 'css/spectre/spectre.min.css' %}">
 <link rel="stylesheet" href="{% static 'css/spectre/spectre-icons.min.css' %}">
 <link rel="stylesheet" href="{% static 'css/proj/base.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/home.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/queue.css' %}">
 
 
 <script src="{% static 'js/jquery.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
 <script src="{% static '/js/proj/api.js' %}"></script>
 <script src="{% static '/js/proj/queue.js' %}"></script>
+<script src="{% static '/js/proj/addrecord.js' %}"></script>
 {% endblock %}
 
 {% block main %}
@@ -34,7 +37,7 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
 
 </script>
 
-<div class="main center-horizontal card hidden">
+<div class="main center-horizontal card">
 
   <div class="card-body" style="width: 100%;">
 
@@ -68,29 +71,102 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
       <div class="divider"></div>
     </div>
 
-    <form id="add-record" class="ajax-form card-body" url="../../../api/music/create_queue/" type="post" redirect="/stream/{{ stream.uuid }}/queue/">
 
-      {% csrf_token %}
 
-      <div class="form-group">
-        <label class="form-label" for="email-signup">Record</label>
+    <form id="search-library" class="ajax-form card-body" url="../../../api/music/search_library/" type="get" onsuccess="display_search_results">
 
-        <div class="input-group">
-          <input type="text" id="record-name" class="form-input" placeholder="..." name="record_name" disabled>
-          <a href="/record/list?stream_uuid={{ stream.uuid }}"><div class="btn btn-primary input-group-btn"><i class="icon icon-2x icon-search"></i></div></a>
-        </div>
+      <!-- TABS TO SELECT TYPE -->
+      <input id="search-library-type" class="hidden" name="type" value="album">
+      <div class="filter-nav">
+        <label class="chip active" value="album">Album</label>
+        <label class="chip" value="playlist">Playlist</label>
+        <label class="chip" value="track">Song</label>
       </div>
 
-      <input type="text" id="record-id" class="hidden" name="record_id">
-
-      <input type="text" id="stream-uuid" class="hidden" name="stream_uuid" value="{{ stream.uuid }}">
-
-      <div class="form-group">
-        <button type="submit" form="add-record" id="add-record-submit" class="btn btn-secondary" disabled>Add Record</button>
-        <span class="text-info ajax-form-error" style="margin-left: 1.4em; color: red"><span>
+      <!-- INLINE SEARCH BAR -->
+      <div class="form-group" style="margin-top: 15px;">
+        <input class="form-input input-lg" type="text" name="query" style="width: calc(100% - 40px); float: left;">
+        <button type="submit" form="search-library" class="btn btn-primary btn-lg input-group-btn" style="width: 40px;">
+          <i class="icon icon-2x icon-search"></i>
+        </button>
       </div>
 
     </form>
+
+    <!-- SEARCH RESULTS -->
+    <div id="search-library-results" class="form-group hidden">
+      <ul id="search-results-container" class="menu" style="max-height: calc(100vh - 500px); overflow-y: auto;">
+        <!-- menu list items -->
+
+      </ul>
+    </div>
+
+    <form id="create-record" class="ajax-form card-body" url="../../../api/music/create_queue/" type="post">
+
+      <input id="create-record-record-name" class="hidden" name="record_name">
+      <input id="create-record-uri" class="hidden" name="uri">
+      <input id="create-record-img" class="hidden" name="img">
+      <input class="hidden" name="stream_uuid" value="{{ stream.uuid }}">
+
+      <div class="form-group">
+        <button id="create-record-submit" type="submit" form="create-record" class="btn btn-secondary btn-lg" disabled>Add to Queue</button>
+        <span class="text-info ajax-form-error" style="margin-left: 1.4em; color: red"><span>
+      </div>
+    </form>
+
+
+  </div>
+
+</div>
+
+<div id="play-bar" class="play-bar hide-under-view">
+
+  <div class="content link-spotify">
+    <!-- localhost%3A8000 -->
+    <!-- jukeboxrad.io -->
+    <!-- jukebox.radio -->
+    <a class="btn btn-primary" href="https://accounts.spotify.com/authorize?client_id=133a25c7195344dbafd4f50d7450330f&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Fconnect%3Fsource%3Dspotify&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state">Authorize Spotify <i class="icon icon-link"></i></a>
+  </div>
+
+  <div class="content currently-playing hide">
+
+    <div class="album-art">
+      <img />
+    </div>
+
+    <button id="play-bar-chat-button" class="btn btn-primary btn-lg">
+      Chat <i class="icon icon-message"></i>
+    </button>
+
+  </div>
+
+  <div class="content waiting-to-play hide">
+
+    <div class="loading-container">
+      <i class="form-icon loading" style="font-size: 48px; font-color: white;"></i>
+    </div>
+
+    <span class="title">
+      Waiting for the stream to start playing music...
+    </span>
+
+  </div>
+
+  <div class="content spotify-disconnected hide">
+
+    <span class="title">
+      No music is playing
+    </span>
+
+    <span class="sub-title">
+      You must already be streaming on your device.
+    </span>
+
+    <a href="spotify:open">
+      <button id="play-bar-chat-button" class="btn btn-lg">
+        Fix <i class="gg-external" style="display: inline-block; margin-left: 5px; margin-right: 1px;"></i>
+      </button>
+    </a>
 
   </div>
 

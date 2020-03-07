@@ -55,12 +55,12 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
 
         <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/manage">
           <button class="btn btn-secondary btn-lg" style="margin-left: 1.5rem; float: left; width: 40px;">
-            <i class="gg-more" style="left: 4px;"></i>
+            <i class="gg-more" style="left: 8px;"></i>
           </button>
         </form>
         <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/queue">
-          <button class="btn btn-secondary btn-lg" style="margin-left: 1.5rem; width: 32px;">
-            <i class="gg-layout-list" style="left: 2px;"></i>
+          <button class="btn btn-secondary btn-lg" style="margin-left: 1.5rem; width: 40px;">
+            <i class="gg-layout-list" style="left: 6px;"></i>
           </button>
         </form>
 
@@ -137,9 +137,15 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
     </div>
 
     <span class="play-pause">
-      <button id="mute-button" class="btn">
-        <i class="gg-music-speaker"></i>
-      </button>
+
+      <form id="create-stream" class="ajax-form card-body" type="websocket" onsuccess='display_messages'>
+        <input class="hidden" type="text" name="process" value="change-volume">
+
+        <button id="mute-button" class="btn">
+          <i class="gg-music-speaker"></i>
+        </button>
+      </form>
+
     </span>
 
   </div>

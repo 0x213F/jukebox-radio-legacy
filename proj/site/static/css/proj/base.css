@@ -133,6 +133,10 @@ label {
   margin-bottom: 90px;
 }
 
+.hidden {
+  display: none;
+}
+
 .row {
   padding: 15px 20px;
   display: flex;

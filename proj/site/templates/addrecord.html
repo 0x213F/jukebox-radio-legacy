@@ -12,6 +12,7 @@
 
 
 <script src="{% static 'js/jquery.js' %}"></script>
+<script src="{% static 'js/proj/addrecord.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
 {% endblock %}
 
@@ -27,12 +28,12 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
 
 </script>
 
-<div class="main center-horizontal card hidden">
+<div class="main center-horizontal card">
 
   <div class="card-body" style="width: 100%;">
 
     <div class="card-header">
-      <div class="card-title h5">Add Record</div>
+      <div class="card-title h5">Create Record</div>
     </div>
 
     <!-- - - - - - - --->
@@ -45,60 +46,39 @@ var CSRF_TOKEN = $('#csrf-token').children().first().val();
       </form>
     </div>
 
-    <form id="log-in" class="ajax-form card-body" url="../../api/music/create_record/" type="post">
+    <form id="search-library" class="ajax-form card-body" url="../../api/music/search_library/" type="get" onsuccess="display_search_results">
 
-      {% csrf_token %}
-
-      <div class="form-group">
-        <label class="form-label" for="record-name">Record Name</label>
-        <input class="form-input" id="record-name" type="text" name="record_name">
+      <!-- TABS TO SELECT TYPE -->
+      <input id="search-library-type" class="hidden" name="type" value="album">
+      <div class="filter-nav">
+        <label class="chip active" value="album">Album</label>
+        <label class="chip" value="playlist">Playlist</label>
+        <label class="chip" value="track">Song</label>
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="spotify-uri-1">Track 1 (Spotify URI)</label>
-        <input class="form-input" id="spotify-uri-1" type="text" name="spotify_uri_1">
+      <!-- INLINE SEARCH BAR -->
+      <div class="form-group" style="margin-top: 15px;">
+        <input class="form-input input-lg" type="text" name="query" style="width: calc(100% - 40px); float: left;">
+        <button type="submit" form="search-library" class="btn btn-primary btn-lg input-group-btn" style="width: 40px;">
+          <i class="icon icon-2x icon-search"></i>
+        </button>
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="spotify-uri-2">Track 2 (Spotify URI)</label>
-        <input class="form-input" id="spotify-uri-2" type="text" name="spotify_uri_2">
-      </div>
+    </form>
 
-      <div class="form-group">
-        <label class="form-label" for="spotify-uri-3">Track 3 (Spotify URI)</label>
-        <input class="form-input" id="spotify-uri-3" type="text" name="spotify_uri_3">
-      </div>
+    <!-- SEARCH RESULTS -->
+    <div id="search-library-results" class="form-group hidden">
+      <ul id="search-results-container" class="menu" style="max-height: calc(100vh - 500px); overflow-y: auto;">
+        <!-- menu list items -->
 
-      <div class="form-group">
-        <label class="form-label" for="spotify-uri-4">Track 4 (Spotify URI)</label>
-        <input class="form-input" id="spotify-uri-4" type="text" name="spotify_uri_4">
-      </div>
+      </ul>
+    </div>
 
+    <form id="create-record" class="ajax-form card-body" url="../../api/music/create_record/" type="post">
       <div class="form-group">
-        <label class="form-label" for="spotify-uri-5">Track 5 (Spotify URI)</label>
-        <input class="form-input" id="spotify-uri-5" type="text" name="spotify_uri_5">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="spotify-uri-6">Track 6 (Spotify URI)</label>
-        <input class="form-input" id="spotify-uri-6" type="text" name="spotify_uri_6">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="spotify-uri-7">Track 7 (Spotify URI)</label>
-        <input class="form-input" id="spotify-uri-7" type="text" name="spotify_uri_7">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="spotify-uri-8">Track 8 (Spotify URI)</label>
-        <input class="form-input" id="spotify-uri-8" type="text" name="spotify_uri_8">
-      </div>
-
-      <div class="form-group">
-        <button type="submit" form="log-in" class="btn btn-secondary">Add Record</button>
+        <button type="submit" form="create-record" class="btn btn-secondary btn-lg" disabled>Create Record</button>
         <span class="text-info ajax-form-error" style="margin-left: 1.4em; color: red"><span>
       </div>
-
     </form>
 
   </div>

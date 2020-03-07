@@ -26,6 +26,7 @@ function generate_queue(queue) {
   `
 }
 
+// WEBSOCKET FUNCTIONS
 
 function display_queue(data) {
   let list_queue = data[KEY_QUEUE];
@@ -39,3 +40,77 @@ function display_queue(data) {
   setup_ajax_forms();
   $queue_container.removeClass('hidden');
 }
+
+function onopen(event) {
+  // NOOP
+}
+
+function onmessage(event) {
+  let text = event.data;
+  let payload = JSON.parse(text);
+  let stream = payload.data[KEY_STREAM] || null;
+  let record = payload.data[KEY_RECORD] || null;
+  let tracklistings = payload.data[KEY_TRACKLISTINGS] || null;
+
+  if(!stream && !record) {
+    // NOOP
+  } else if(record) {
+    var stream_title = $('.card.active-stream').find('h5').text();
+    $('.currently-playing').find('.title').text(stream_title);
+
+    $('.currently-playing').removeClass('hide');
+    $('.waiting-to-play').addClass('hide');
+    $('.spotify-disconnected').addClass('hide');
+    $('.link-spotify').addClass('hide');
+
+    var $playBar = $('#play-bar');
+    $playBar.removeClass('hide-under-view');
+    // TODO
+    console.log(record)
+    console.log(tracklistings)
+  } else if(stream.status === 'waiting') {
+    $('.currently-playing').addClass('hide');
+    $('.waiting-to-play').removeClass('hide');
+    $('.spotify-disconnected').addClass('hide');
+    $('.link-spotify').addClass('hide');
+
+    var $playBar = $('#play-bar');
+    $playBar.removeClass('hide-under-view');
+  } else if(stream.status === 'disconnected') {
+    $('.currently-playing').addClass('hide');
+    $('.waiting-to-play').addClass('hide');
+    $('.spotify-disconnected').removeClass('hide');
+    $('.link-spotify').addClass('hide');
+
+    var $playBar = $('#play-bar');
+    $playBar.removeClass('hide-under-view');
+  } else if(stream.status === 'linkspotify') {
+    $('.currently-playing').addClass('hide');
+    $('.waiting-to-play').addClass('hide');
+    $('.spotify-disconnected').addClass('hide');
+    $('.link-spotify').removeClass('hide');
+
+    var $playBar = $('#play-bar');
+    $playBar.removeClass('hide-under-view');
+  }
+}
+
+function activate_stream() {
+  var url = window.location.href;
+  var uuid = url.substring(url.length - 43, url.length - 7);
+
+  var endpoint = (
+    'ws://' + window.location.host + window.location.pathname +
+    `?uuid=${uuid}`
+  )
+
+  if(window['SOCKET']) {
+    window['SOCKET'].close()
+  }
+
+  window['SOCKET'] = new WebSocket(endpoint)
+  window['SOCKET'].onopen = onopen
+  window['SOCKET'].onmessage = onmessage
+}
+
+activate_stream()
