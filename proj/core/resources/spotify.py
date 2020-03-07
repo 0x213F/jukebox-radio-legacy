@@ -95,3 +95,23 @@ class Spotify(object):
                 'spotify_name': track['name'],
             } for track in response_json['items']
         ]
+
+
+    def get_playlist_info(self, spotify_uri):
+        spotify_id = spotify_uri[17:]
+        response = requests.get(
+            f'https://api.spotify.com/v1/playlists/{spotify_id}',
+            headers={
+                "Authorization": f"Bearer {self.token}",
+                "Content-Type": "application/json",
+            },
+        )
+        response_json = response.json()
+
+        return [
+            {
+                'spotify_uri': track['track']['uri'],
+                'spotify_duration_ms': track['track']['duration_ms'],
+                'spotify_name': track['track']['name'],
+            } for track in response_json['tracks']['items']
+        ]

@@ -40,7 +40,9 @@ class RecordManager(BaseManager):
     def get_or_create_from_uri(self, uri, record_name, img, user=None):
         Record = apps.get_model('music', 'Record')
         Track = apps.get_model('music', 'Track')
+        TrackListing = apps.get_model('music', 'TrackListing')
         try:
+            # assume the record is finalized
             return Record.objects.get(spotify_uri=uri)
         except Record.DoesNotExist:
             pass
@@ -54,4 +56,14 @@ class RecordManager(BaseManager):
             spotify = Spotify(user)
             album_info = spotify.get_playlist_info(uri)
             tracks = Track.objects.bulk_create_from_album_info(album_info)
-            raise ValueError('PLAYLIST DEBUG')
+
+        record = Record.objects.create(
+            name=record_name,
+            user=user,
+            spotify_uri=uri,
+            spotify_img=img,
+        )
+
+        TrackListing.objects.add_to_record(record, tracks)
+
+        return record

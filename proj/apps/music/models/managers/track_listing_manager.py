@@ -14,3 +14,15 @@ class TrackListingManager(BaseManager):
                 "spotify_duration_ms": tracklisting.track.spotify_duration_ms,
             }
         }
+
+    def add_to_record(self, record, tracks):
+        TrackListing = self.model
+        tls = []
+        number = 1
+        for track in tracks:
+            tl = TrackListing(
+                record=record, track=track, number=number,
+            )
+            tls.append(tl)
+            number += 1
+        TrackListing.objects.bulk_create(tls)

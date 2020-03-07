@@ -32,6 +32,7 @@ class CreateQueueView(BaseView):
 
         stream_uuid = request.POST.get("stream_uuid", None)
 
+        print(record_name)
         record = Record.objects.get_or_create_from_uri(
             spotify_uri,
             record_name=record_name,

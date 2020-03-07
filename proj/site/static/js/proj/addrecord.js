@@ -74,7 +74,7 @@ function display_search_results(data) {
 
     var uri = $this.attr('uri');
     var img = $this.attr('img');
-    var record_name = $this.attr('record_name');
+    var record_name = $this.attr('record-name');
 
     $('#create-record-record-name').val(record_name);
     $('#create-record-uri').val(uri);

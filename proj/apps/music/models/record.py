@@ -53,6 +53,7 @@ class Record(BaseModel):
     name = models.CharField(max_length=128)
 
     spotify_uri = models.CharField(max_length=128)
+    spotify_img = models.CharField(max_length=256)
 
     is_playing = models.BooleanField(default=False)
 
