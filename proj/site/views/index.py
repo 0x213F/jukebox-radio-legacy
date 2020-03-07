@@ -1,9 +1,9 @@
-from django.http import HttpResponseRedirect
-from django.template.response import TemplateResponse
+from proj.core.views import BaseView
 
 
-def index_view(request):
-    if request.user.is_authenticated:
-        return TemplateResponse(request, "home.html")
+class IndexView(BaseView):
+    def get(self, request, **kwargs):
+        if request.user.is_authenticated:
+            return self.template_response(request, 'home.html')
 
-    return TemplateResponse(request, "index.html")
+        return self.template_response(request, 'index.html')

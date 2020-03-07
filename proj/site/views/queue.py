@@ -1,19 +1,25 @@
 from django.apps import apps
-from django.http import HttpResponseRedirect
-from django.template.response import TemplateResponse
 
 from proj.core.views import BaseView
 
 
 class QueueView(BaseView):
     def get(self, request, stream, **kwargs):
-        if not request.user.is_authenticated:
-            return HttpResponseRedirect("/")
-
         Ticket = apps.get_model('music', 'Ticket')
         Stream = apps.get_model('music', 'Stream')
-        stream = Stream.objects.get(uuid=stream)
 
-        Ticket.objects.get(holder=request.user, stream=stream, is_administrator=True)
+        if not request.user.is_authenticated:
+            return self.redirect_response('/')
 
-        return TemplateResponse(request, "queue.html", {'stream': stream})
+        ticket = (
+            Ticket.objects
+            .select_related('stream')
+            .get(
+                holder=request.user,
+                stream__uuid=stream,
+                is_administrator=True,
+            )
+        )
+        stream = ticket.stream
+
+        return self.template_response(request, 'queue.html', {'stream': stream})
