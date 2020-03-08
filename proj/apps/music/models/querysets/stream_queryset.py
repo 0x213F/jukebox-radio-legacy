@@ -10,7 +10,7 @@ class StreamQuerySet(BaseQuerySet):
     Django QuerySet used to query Stream objects.
     '''
 
-    def list_streams(self, user):
+    def list_streams(self):
         '''
         QuerySet of stream objects that a user can access.
         '''
@@ -37,12 +37,12 @@ class StreamQuerySet(BaseQuerySet):
         QuerySet of stream objects that a user can access.
         '''
         Ticket = apps.get_model('music', 'Ticket')
-        return self.filter(
+        return self.list_streams().exclude(
             Exists(
                 Ticket.objects.filter(
                     stream_id=OuterRef('id'),
                     holder=user,
-                    is_administrator=False,
+                    is_administrator=True,
                 )
             )
         )

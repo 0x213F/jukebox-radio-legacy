@@ -1,4 +1,8 @@
 
+  /////  ///////  /////
+ /////  STREAMS  /////
+/////  ///////  /////
+
 function generate_stream(stream, class_name) {
 
   var background_color = ''
@@ -51,13 +55,11 @@ function display_tune_in_streams(data) {
   $('.card-body.tune-in-streams > .card').click(activate_stream)
 
   var last_active_stream_uuid = data[KEY_USER].profile.last_active_stream_uuid;
-  console.log('display_tune_in_streams')
   if(last_active_stream_uuid) {
     // we assume this stream is still active
     $(`[uuid='${last_active_stream_uuid}']`).find('.card').click()
   }
 }
-
 
 function display_broadcasting_streams(data) {
   let list_streams = data[KEY_SHOWINGS];
@@ -71,7 +73,6 @@ function display_broadcasting_streams(data) {
   $('.card-body.broadcasting-stream > .card').click(activate_stream)
 
   var last_active_stream_uuid = data[KEY_USER].profile.last_active_stream_uuid;
-  console.log('display_broadcasting_streams')
   if(last_active_stream_uuid) {
     // we assume this stream is still active
     $(`[uuid='${last_active_stream_uuid}']`).find('.card').click()
@@ -80,8 +81,11 @@ function display_broadcasting_streams(data) {
 
 // CLICK LISTENERS
 
+// we need this inside play_bar.js so we can display a dialog to tell the user
+// to start playing music
+var IS_BROADCASTING = false;
+
 function activate_stream() {
-  console.log('activate_stream')
   var $this = $(this);
   var uuid = $(this).parent().attr('uuid');
 
@@ -91,6 +95,12 @@ function activate_stream() {
     var $playBar = $('#play-bar');
     $playBar.addClass('hide-under-view');
     return;
+  }
+
+  if($this.parent().hasClass('broadcasting-stream')) {
+    IS_BROADCASTING = true;
+  } else {
+    IS_BROADCASTING = false;
   }
 
   $('.active-stream').removeClass('active-stream');
@@ -110,7 +120,9 @@ function activate_stream() {
   window['SOCKET'].onmessage = onmessage
 }
 
-// WEBSOCKET FUNCTIONS
+  /////  //////////  /////
+ /////  WEBSOCKETS  /////
+/////  //////////  /////
 
 function onopen(event) {
   // NOOP
@@ -123,7 +135,7 @@ function onmessage(event) {
   let record = payload.data[KEY_RECORD] || null;
   let tracklistings = payload.data[KEY_TRACKLISTINGS] || null;
 
-  update_play_bar(stream, record)
+  update_play_bar(stream, record, true);
 }
 
 var window_debouncer = Date.now();

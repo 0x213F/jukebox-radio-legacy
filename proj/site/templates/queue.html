@@ -2,20 +2,13 @@
 
 {% load static %}
 
-{% block basestyles %}
-<link href="https://fonts.googleapis.com/css?family=Major+Mono+Display|Work+Sans:300,400,700,900&display=swap" rel="stylesheet">
-
-<!-- custom styles -->
-<link rel="stylesheet" href="{% static 'css/spectre/spectre.min.css' %}">
-<link rel="stylesheet" href="{% static 'css/spectre/spectre-icons.min.css' %}">
-<link rel="stylesheet" href="{% static 'css/proj/base.css' %}">
+{% block styles %}
 <link rel="stylesheet" href="{% static 'css/proj/home.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/play_bar.css' %}">
 <link rel="stylesheet" href="{% static 'css/proj/queue.css' %}">
 
 
 <script src="{% static 'js/jquery.js' %}"></script>
-<script src="{% static '/js/proj/queue.js' %}"></script>
-<script src="{% static '/js/proj/addrecord.js' %}"></script>
 {% endblock %}
 
 {% block main %}
@@ -104,12 +97,13 @@
 
 </div>
 
-{% endblock %}
-
 <!-- - - - - - -->
 <!--  PLAY BAR -->
 {% include "play_bar.html" %}
 
+{% endblock %}
+
 {% block scripts %}
 <script src="{% static '/js/proj/play_bar.js' %}"></script>
+<script src="{% static '/js/proj/queue.js' %}"></script>
 {% endblock %}

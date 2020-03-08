@@ -37,3 +37,30 @@ function display_hosts(data) {
   setup_ajax_forms();
   $(".hosts-list").removeClass('hidden');
 }
+
+function onopen(event) {
+  // NOOP
+}
+
+function onmessage(event) {
+  let text = event.data;
+  let payload = JSON.parse(text);
+  let stream = payload.data[KEY_STREAM] || null;
+  let record = payload.data[KEY_RECORD] || null;
+  let tracklistings = payload.data[KEY_TRACKLISTINGS] || null;
+
+  update_play_bar(stream, record);
+}
+
+var url = window.location.href;
+var uuid = url.substring(url.length - 44, url.length - 8);
+console.log(uuid)
+
+var endpoint = (
+  'ws://' + window.location.host + window.location.pathname +
+  `?uuid=${uuid}`
+)
+
+window['SOCKET'] = new WebSocket(endpoint)
+window['SOCKET'].onopen = onopen
+window['SOCKET'].onmessage = onmessage

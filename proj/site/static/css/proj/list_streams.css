@@ -17,12 +17,12 @@
 
 .record.card,
 .broadcasting-stream.card-body > .card {
-  transition: background-color 0.3s ease;
-  transition: border-color 0.3s ease;
+  transition: background-color 0.2s ease;
+  transition: box-shadow 0.2s ease;
 }
 
 .broadcasting-stream.card-body > .card:hover {
-  background-color: #fbfcfc;
+  box-shadow: 0 0 0 2px #e7eaf2;
 }
 
 .broadcasting-stream.card-body > .card.active-stream,

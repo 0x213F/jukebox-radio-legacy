@@ -22,6 +22,7 @@ class RecordManager(BaseManager):
         return {
             'id': record.id,
             'name': record.name,
+            'img': record.spotify_img,
         }
 
     def get_or_create_from_uri(self, uri, record_name, img, user=None):

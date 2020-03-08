@@ -1,46 +1,8 @@
-
-var STREAM_UUID = $('#stream-uuid').children().first().val();
-
-var endpoint = (
-  'ws://' + window.location.host +
-  `/?uuid=${STREAM_UUID}`
-)
-
-window['SOCKET'] = new WebSocket(endpoint)
-window['SOCKET'].onopen = onopen
-window['SOCKET'].onmessage = onmessage
-
+  /////  ////////////   /////
+ /////  CHAT HELPERS   /////
+/////  ////////////   /////
 
 let $CHAT_CONTAINER = $('.chat-container')
-function display_comment(comment) {
-  var html = '';
-  if(comment.status === 'joined' || comment.status === 'left') {
-    html = display_status(comment);
-  } else if(comment.status === 'mid_high' || comment.status === 'mid_low' || comment.status === 'high') {
-    html = display_text(comment);
-  }
-
-  html = comment_wrapper(html)
-  $CHAT_CONTAINER.append(html);
-  $CHAT_CONTAINER.scrollTop($CHAT_CONTAINER[0].scrollHeight);
-}
-
-function comment_wrapper(html, comment) {
-  return `
-    <div class="comment" >
-      ${html}
-    </div>
-  `
-}
-
-function display_status(comment) {
-  return '';
-  // return `
-  //   <span class="chip" style="margin-bottom: 1rem;">
-  //       ${encodeHTML(comment.ticket.holder_name)} has ${comment.status}.
-  //   </span>
-  // `
-}
 
 function display_text(comment) {
   return `
@@ -52,8 +14,29 @@ function display_text(comment) {
   `
 }
 
+function comment_wrapper(html, comment) {
+  return `
+    <div class="comment" >
+      ${html}
+    </div>
+  `
+}
 
-/* - - - - - - - - - - - */
+function display_comment(comment) {
+  var html = '';
+  if(comment.status === 'mid_high' || comment.status === 'mid_low' || comment.status === 'high') {
+    html = display_text(comment);
+  } else {
+    return;
+  }
+  html = comment_wrapper(html)
+  $CHAT_CONTAINER.append(html);
+  $CHAT_CONTAINER.scrollTop($CHAT_CONTAINER[0].scrollHeight);
+}
+
+  /////  //////////  /////
+ /////  WEBSOCKETS  /////
+/////  //////////  /////
 
 function onopen(event) {
   // NOOP
@@ -66,75 +49,21 @@ function onmessage(event) {
   let record = payload.data[KEY_RECORD] || null;
   let tracklistings = payload.data[KEY_TRACKLISTINGS] || null;
 
-  console.log(stream, record)
-
-  if(!stream && !record) {
-
-    // previous behavior
-    let text = event.data;
-    let payload = JSON.parse(text);
-
-    let comments = payload.data[KEY_COMMENTS];
-    if(comments.length) {
-      for(comment of comments) {
-        display_comment(comment);
-      }
+  let comments = payload.data[KEY_COMMENTS];
+  if(comments && comments.length) {
+    for(comment of comments) {
+      display_comment(comment);
     }
-
-  } else if(record) {
-    // var stream_title = $('.card.active-stream').find('h5').text();
-    // $('.currently-playing').find('.title').text(record.name);
-
-    $('.currently-playing').removeClass('hide');
-    $('.waiting-to-play').addClass('hide');
-    $('.spotify-disconnected').addClass('hide');
-    $('.link-spotify').addClass('hide');
-
-    var $playBar = $('#play-bar');
-    $playBar.removeClass('hide-under-view');
-    // TODO
-    console.log(record)
-    console.log(tracklistings)
-  } else if(stream.status === 'waiting') {
-    $('.currently-playing').addClass('hide');
-    $('.waiting-to-play').removeClass('hide');
-    $('.spotify-disconnected').addClass('hide');
-    $('.link-spotify').addClass('hide');
-
-    var $playBar = $('#play-bar');
-    $playBar.removeClass('hide-under-view');
-  } else if(stream.status === 'disconnected') {
-    $('.currently-playing').addClass('hide');
-    $('.waiting-to-play').addClass('hide');
-    $('.spotify-disconnected').removeClass('hide');
-    $('.link-spotify').addClass('hide');
-
-    var $playBar = $('#play-bar');
-    $playBar.removeClass('hide-under-view');
-  } else if(stream.status === 'linkspotify') {
-    $('.currently-playing').addClass('hide');
-    $('.waiting-to-play').addClass('hide');
-    $('.spotify-disconnected').addClass('hide');
-    $('.link-spotify').removeClass('hide');
-
-    var $playBar = $('#play-bar');
-    $playBar.removeClass('hide-under-view');
   }
+
+  update_play_bar(stream, record);
 }
 
-$(document).ready(function() {
-  $('#mute-button').click(function() {
-    var $this = $(this);
+var endpoint = (
+  'ws://' + window.location.host +
+  `/?uuid=${STREAM_UUID}`
+)
 
-    $fas = $this.find('.fas')
-    if($fas.hasClass('fa-volume-up')) {
-      $fas.removeClass('fa-volume-up');
-      $fas.addClass('fa-volume-down');
-    } else {
-      $fas.addClass('fa-volume-up');
-      $fas.removeClass('fa-volume-down');
-    }
-
-    $this.blur();
-  });
-});
+window['SOCKET'] = new WebSocket(endpoint)
+window['SOCKET'].onopen = onopen
+window['SOCKET'].onmessage = onmessage

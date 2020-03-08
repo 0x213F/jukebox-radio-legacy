@@ -3,7 +3,7 @@
 
 .play-bar.hide-under-view {
   bottom: -72px;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .play-bar {
@@ -72,7 +72,8 @@
 /* currently-playing */
 
 .play-bar > .content.currently-playing > .btn,
-.play-bar > .content.spotify-disconnected > a > .btn  {
+.play-bar > .content.spotify-disconnected > a > .btn,
+.play-bar > .content.please-play-music > .btn  {
   position: absolute;
   right: -66px;
   top: 16px;
@@ -115,14 +116,16 @@
   border-color: white!important;
 }
 
-.play-bar > .content.spotify-disconnected > .title {
+.play-bar > .content.spotify-disconnected > .title,
+.play-bar > .content.please-play-music > .title {
   width: 144px;
 
   top: 8px;
   left: 36px!important;
 }
 
-.play-bar > .content.spotify-disconnected > .sub-title {
+.play-bar > .content.spotify-disconnected > .sub-title,
+.play-bar > .content.please-play-music > .sub-title {
   width: 140px;
   left: 36px;
   top: 33px;

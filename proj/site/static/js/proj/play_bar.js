@@ -1,50 +1,90 @@
 
 function update_play_bar(stream, record) {
-  if(!stream && !record) {
-    // NOOP
-  } else if(record) {
-    var stream_title = $('.card.active-stream').find('h5').text();
-    $('.currently-playing').find('.title').text(stream_title);
+  var $currently_playing = $('.currently-playing');
+  var $waiting_to_play = $('.waiting-to-play');
+  var $link_spotify = $('.link-spotify');
+  var $spotify_disconnected = $('.spotify-disconnected');
+  var $please_play_music = $('.please-play-music');
 
-    $('.currently-playing').removeClass('hide');
-    $('.waiting-to-play').addClass('hide');
-    $('.spotify-disconnected').addClass('hide');
-    $('.link-spotify').addClass('hide');
+  var $img = $('#album-art-img')
 
-    var $playBar = $('#play-bar');
-    $playBar.removeClass('hide-under-view');
-    // TODO
-  } else if(stream.status === 'waiting') {
-    $('.currently-playing').addClass('hide');
-    $('.waiting-to-play').removeClass('hide');
-    $('.spotify-disconnected').addClass('hide');
-    $('.link-spotify').addClass('hide');
-
-    var $playBar = $('#play-bar');
-    $playBar.removeClass('hide-under-view');
-  } else if(stream.status === 'disconnected') {
-    $('.currently-playing').addClass('hide');
-    $('.waiting-to-play').addClass('hide');
-    $('.spotify-disconnected').removeClass('hide');
-    $('.link-spotify').addClass('hide');
-
-    var $playBar = $('#play-bar');
-    $playBar.removeClass('hide-under-view');
-  } else if(stream.status === 'linkspotify') {
-    $('.currently-playing').addClass('hide');
-    $('.waiting-to-play').addClass('hide');
-    $('.spotify-disconnected').addClass('hide');
-    $('.link-spotify').removeClass('hide');
-
-    var $playBar = $('#play-bar');
-    $playBar.removeClass('hide-under-view');
+  var is_broad = null;
+  try {
+    is_broad = IS_BROADCASTING;
+  } catch(err) {
+    is_broad = false;
   }
+  if(record) {
+    var stream_title = $('.card.active-stream').find('h5').text();
+    $currently_playing.find('.title').text(stream_title);
+    $img.attr('src', record.img);
+
+    $currently_playing.removeClass('hide');
+    $waiting_to_play.addClass('hide');
+    $spotify_disconnected.addClass('hide');
+    $link_spotify.addClass('hide');
+    $please_play_music.addClass('hide');
+  } else if (stream && is_broad) {
+    console.log('here')
+    $currently_playing.addClass('hide');
+    $waiting_to_play.addClass('hide');
+    $spotify_disconnected.addClass('hide');
+    $link_spotify.addClass('hide');
+    $please_play_music.removeClass('hide');
+  } else if (!stream) {
+    return;
+  } else if(stream.status === 'waiting') {
+    $currently_playing.addClass('hide');
+    $waiting_to_play.removeClass('hide');
+    $spotify_disconnected.addClass('hide');
+    $link_spotify.addClass('hide');
+    $please_play_music.addClass('hide');
+  } else if(stream.status === 'disconnected') {
+    $currently_playing.addClass('hide');
+    $waiting_to_play.addClass('hide');
+    $spotify_disconnected.removeClass('hide');
+    $link_spotify.addClass('hide');
+    $please_play_music.addClass('hide');
+  } else if(stream.status === 'linkspotify') {
+    $currently_playing.addClass('hide');
+    $waiting_to_play.addClass('hide');
+    $spotify_disconnected.addClass('hide');
+    $link_spotify.removeClass('hide');
+    $please_play_music.addClass('hide');
+  }
+
+  var $playBar = $('#play-bar');
+  $playBar.removeClass('hide-under-view');
 }
 
 $( document ).ready(function() {
+
+
+  /////  NAVIGATE TO CHAT
   $('#play-bar-chat-button').click(function(data) {
     var uuid = STREAM_UUID || $('.active-stream').parent().attr('uuid');
-    console.log(uuid)
     window.location.href = `/stream/${uuid}`;
+  });
+
+  /////  NAVIGATE TO QUEUE
+  $('#go-to-queue').click(function(data) {
+    var uuid = STREAM_UUID || $('.active-stream').parent().attr('uuid');
+    window.location.href = `/stream/${uuid}/queue`;
+  });
+
+  /////  TOGGLE SOUND LEVEL
+  $('#mute-button').click(function() {
+    var $this = $(this);
+
+    $fas = $this.find('.fas')
+    if($fas.hasClass('fa-volume-up')) {
+      $fas.removeClass('fa-volume-up');
+      $fas.addClass('fa-volume-down');
+    } else {
+      $fas.addClass('fa-volume-up');
+      $fas.removeClass('fa-volume-down');
+    }
+
+    $this.blur();
   });
 });

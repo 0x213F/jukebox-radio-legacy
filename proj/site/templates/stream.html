@@ -4,6 +4,7 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'css/proj/home.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/play_bar.css' %}">
 <link rel="stylesheet" href="{% static 'css/proj/stream.css' %}">
 {% endblock %}
 
@@ -98,10 +99,13 @@
 
 </div>
 
+<!-- - - - - - -->
+<!--  PLAY BAR -->
 {% include "play_bar.html" %}
 
 {% endblock %}
 
 {% block scripts %}
+<script src="{% static 'js/proj/play_bar.js' %}"></script>
 <script src="{% static 'js/proj/stream.js' %}"></script>
 {% endblock %}

@@ -7,28 +7,32 @@
     <a class="btn btn-primary" href="https://accounts.spotify.com/authorize?client_id=133a25c7195344dbafd4f50d7450330f&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Fconnect%3Fsource%3Dspotify&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state">Authorize Spotify <i class="icon icon-link"></i></a>
   </div>
 
-  <!-- - - - - - - - -->
-  <!--  LINK SPOTIFY -->
+  <!-- - - - - - - - - - --->
+  <!--  CURRENTLY PLAYING -->
   <div class="content currently-playing hide">
 
     <div class="album-art">
-      <img />
+      <img id="album-art-img" style="width: 72px;"/>
     </div>
 
     <button id="play-bar-chat-button" class="btn btn-primary btn-lg">
       Chat <i class="icon icon-message"></i>
     </button>
 
-    <form id="create-stream" class="ajax-form card-body" type="websocket" onsuccess='display_messages'>
+    <form id="toggle-volume"
+          class="ajax-form card-body"
+          type="websocket"
+          onsuccess='display_messages'>
       <input class="hidden" type="text" name="process" value="change-volume">
-
-      <button id="mute-button" class="btn">
+      <button id="mute-button" class="btn" style="float: right; margin-top: 16px; margin-right: 30px; height: 40px; width: 40px;">
         <i class="fas fa-volume-up"></i>
       </button>
     </form>
 
   </div>
 
+  <!-- - - - - - - - - - - - - - - - - - - - - - --->
+  <!--  WAITING FOR STREAM TO START PLAYING MUSIC -->
   <div class="content waiting-to-play hide">
 
     <div class="loading-container">
@@ -41,6 +45,8 @@
 
   </div>
 
+  <!-- - - - - - - - - - - - - - -->
+  <!--  SPOTIFY CLIENT NOT FOUND -->
   <div class="content spotify-disconnected hide">
 
     <span class="title">
@@ -56,6 +62,24 @@
         Fix <i class="gg-external" style="display: inline-block; margin-left: 5px; margin-right: 1px;"></i>
       </button>
     </a>
+
+  </div>
+
+  <!-- - - - - - - - - - --->
+  <!--  PLEASE PLAY MUSIC -->
+  <div class="content please-play-music hide">
+
+    <span class="title">
+      No music is playing
+    </span>
+
+    <span class="sub-title">
+      Click the musical notes to add music to the queue.
+    </span>
+
+    <button id="go-to-queue" class="btn btn-lg">
+      <i class="gg-music" style="display: inline-block; margin-left: 5px; margin-right: 1px;"></i>
+    </button>
 
   </div>
 
