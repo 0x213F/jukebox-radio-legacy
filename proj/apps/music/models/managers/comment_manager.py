@@ -17,74 +17,23 @@ from proj.core.resources.cache import _get_or_fetch_from_cache
 
 
 class CommentManager(BaseManager):
-    """
+    '''
     Django Manager used to manage Comment objects.
-    """
+    '''
 
-    async def validate_create_comment_payload_async(self, user, payload, _cache=None):
-        """
-        Validate a user's channels payload to create a comment.
-        """
-        Stream = apps.get_model("music.Stream")
-        Comment = self.model
-
-        _cache = await _get_or_fetch_from_cache(
-            _cache,
-            "stream",
-            fetch_func=Stream.objects.get,
-            fetch_kwargs={"uuid": payload["stream_uuid"]},
-        )
-        stream = _cache["stream"]
-
-        try:
-            comment = await database_sync_to_async(Comment.objects.latest_comment)(
-                user, stream
-            )
-            if (comment.status == Comment.STATUS_LEFT) and (
-                payload["status"] != Comment.STATUS_JOINED
-            ):
-                # Can only join after leaving a stream.
-                return results.RESULT_FAILED_VALIDATION, _cache
-            elif (comment.status != Comment.STATUS_LEFT) and (
-                payload["status"] == Comment.STATUS_JOINED
-            ):
-                # Refresh the comments if re-joining
-                return (results.RESULT_PERFORM_SIDE_EFFECT_ONLY, _cache)
-        except Comment.DoesNotExist:
-            pass
-
-        return results.RESULT_TRUE, _cache
-
-    async def create_from_payload_async(self, user, payload, *, _cache=None):
-        """
+    async def create_from_payload_async(self, user, payload, *, _cache=None, stream=None, ticket=None):
+        '''
         Create a comment from a user's channels payload.
-        """
-        from proj.apps.music.models import Stream
-        from proj.apps.music.models import Ticket
-
+        '''
+        Comment = apps.get_model('music', 'Comment')
+        Stream = apps.get_model('music', 'Stream')
+        Ticket = apps.get_model('music', 'Ticket')
         Profile = apps.get_model('users', 'Profile')
-
-        Comment = self.model
 
         now = datetime.utcnow()
 
-        _cache = await _get_or_fetch_from_cache(
-            _cache,
-            "stream",
-            fetch_func=Stream.objects.get,
-            fetch_kwargs={"uuid": payload["stream_uuid"]},
-        )
-        stream = _cache["stream"]
-
-        _cache = await _get_or_fetch_from_cache(
-            _cache,
-            "ticket",
-            fetch_func=Ticket.objects.get,
-            fetch_kwargs={"holder_id": user.id, "stream_id": stream.id},
-        )
-        ticket = _cache["ticket"]
-
         status = payload["status"]
+        text = payload["text"]
 
         cmt = None
         track = None
@@ -103,13 +52,7 @@ class CommentManager(BaseManager):
         except Exception as e:
             pass
 
-        commands = (
-            '/play ',
-            '/undo ',
-        )
-        text = payload["text"]
-
-        comment = await database_sync_to_async(Comment.objects.create)(
+        return await database_sync_to_async(Comment.objects.create)(
             status=status,
             text=text,
             commenter=user,
@@ -118,14 +61,11 @@ class CommentManager(BaseManager):
             track_timestamp=track_timestamp,
             commenter_ticket=ticket,
         )
-        _set_cache(_cache, "comment", comment)
-
-        return _cache
 
     def serialize(self, comment, ticket=None):
-        Stream = apps.get_model("music.Stream")
-        Ticket = apps.get_model("music.Ticket")
-        Track = apps.get_model("music.Track")
+        Stream = apps.get_model('music', 'Stream')
+        Ticket = apps.get_model('music', 'Ticket')
+        Track = apps.get_model('music', 'Track')
 
         if not ticket:
             ticket = comment.commenter_ticket
@@ -139,5 +79,5 @@ class CommentManager(BaseManager):
             "track": comment.track_id,  # Track.objects.serialize(comment.track),
             "ticket": Ticket.objects.serialize(
                 ticket
-            ),  # Ticket.objects.serialize(comment.commenter_ticket),
+            ),
         }

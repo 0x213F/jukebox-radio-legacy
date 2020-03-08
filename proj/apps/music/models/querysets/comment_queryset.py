@@ -1,3 +1,6 @@
+from datetime import datetime
+from datetime import timedelta
+
 from proj.core.models.querysets import BaseQuerySet
 
 
@@ -19,6 +22,21 @@ class CommentQuerySet(BaseQuerySet):
             qs = qs.filter(created_at__gt=most_recent_comment_timestamp)
         qs = qs.order_by('created_at')
         return qs[:100]
+
+    def recent(self, stream_uuid):
+        '''
+        Get a stream's recent comments.
+        '''
+        now = datetime.now()
+        return (
+            self
+            .select_related('commenter_ticket')
+            .filter(
+                created_at__gte=now - timedelta(minutes=30),
+                stream__uuid=stream_uuid,
+            )
+            .order_by('created_at')
+        )
 
     def latest_comment(self, user, stream):
         '''

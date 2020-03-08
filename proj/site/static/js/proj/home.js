@@ -106,7 +106,7 @@ function activate_stream() {
 
   var endpoint = (
     'ws://' + window.location.host + window.location.pathname +
-    `?uuid=${uuid}`
+    `?uuid=${uuid}&foo=bar`
   )
 
   if(window['SOCKET']) {

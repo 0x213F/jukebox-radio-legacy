@@ -5,6 +5,7 @@ from datetime import timedelta
 import json
 import requests
 import uuid
+from urllib import parse
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -21,6 +22,7 @@ from proj.apps.users.models import Profile
 from proj.apps.music.models import Stream
 from proj.apps.music.models import Record
 from proj.apps.music.models import TrackListing
+from proj.core.resources import Spotify
 from proj.core.resources.cache import _get_or_fetch_from_cache
 from proj.core.fns import results
 
@@ -28,171 +30,190 @@ from proj.core.fns import results
 class Consumer(AsyncConsumer):
 
     # - - - -
+    # helpers
+    # - - - -
+
+    def initialize_cache(self):
+        '''
+        We attach any expensive data (typically from the DB) to the instance
+        '''
+        self._cache = {}
+
+    async def get_user(self):
+        '''
+        Gets the instance's users along with their profile
+        '''
+        try:
+            self._cache['profile']
+        except KeyError:
+            self._cache['profile'] = await database_sync_to_async(
+                Profile.objects.get
+            )(user=self.scope['user'])
+            self.scope['user'].profile = self._cache['profile']
+        finally:
+            return self.scope['user']
+
+    @property
+    def spotify(self):
+        try:
+            return self._spotify
+        except AttributeError:
+            self._spotify = Spotify(self.scope['user'])
+            return self._spotify
+
+    def get_spotify(self):
+        return Spotify(self.scope['user'])
+
+    def get_data_from_ws_path(self):
+        '''
+        Takes a path from the query_string and parses it into a dict
+        '''
+        ws_path = self.scope['query_string']
+        return dict(
+            parse.parse_qsl(parse.urlsplit(ws_path).path.decode("utf-8"))
+        )
+
+    # - - - -
     # connect
     # - - - -
 
     async def websocket_connect(self, event):
-        """
-        """
-        _cache = {}
-        _user = self.scope["user"]
+        self.initialize_cache()
+        _user = await self.get_user()
 
-        cipher_suite = Fernet(settings.DATABASE_ENCRYPTION_KEY)
+        # [0]
+        # user needs to have Spotify linked before joining the stream/ channel
+        if not _user.profile.spotify_access_token:
+            await self.send_playback_status('linkspotify')
+            return
 
-        active_stream_uuid = self.scope["query_string"][5:].decode("utf-8")
-        print('===========')
-        print(active_stream_uuid)
-        _cache = await Profile.objects.join_stream_async(
-            _user, active_stream_uuid, _cache=_cache,
+        url_params = self.get_data_from_ws_path()
+        active_stream_uuid = url_params['uuid']
+
+        await Profile.objects.join_stream_async(
+            _user, active_stream_uuid, _cache=self._cache,
         )
-        _user_profile = _cache["profile"]
-        ticket = _cache["ticket"]
 
-        channel_name = _cache["stream"].chat_room
-        await self.add_to_channel(channel_name)
+        await self.add_to_channel()
 
         await self.websocket_accept()
 
-        if not _user_profile.spotify_access_token:
-            await self.send_stream_status(
-                active_stream_uuid,
-                'linkspotify'
-            )
-            return
-
-        # Create record of comment.
+        # [1]
+        # create record of joining
         join_payload = {
             "stream_uuid": active_stream_uuid,
             "status": Comment.STATUS_JOINED,
             "text": None,
         }
-        _cache = await (
+        comment = await (
             Comment.objects.create_from_payload_async(
-                _user, join_payload, _cache=_cache
+                _user, join_payload, stream=self._cache['stream'], ticket=self._cache['ticket'],
             )
         )
-        comment = _cache["comment"]
+        self._cache['comment'] = comment
 
+        # [2]
         # tell the chatroom that the user has joined
-        stream = _cache["stream"]
-        join_comment = _cache["comment"]
-        await self.channel_post_comment(stream, join_comment, ticket)
-
-        # get comments from the last 30 min
-        now = datetime.now()
-        comments_qs = (
-            Comment.objects
-            .select_related('commenter_ticket')
-            .filter(
-                created_at__gte=now - timedelta(minutes=30),
-                stream__uuid=active_stream_uuid,
-            )
-            .order_by('created_at')
+        await self.channel_post_comment(
+            self._cache['stream'],
+            self._cache['comment'],
+            self._cache['ticket'],
         )
-        comments = await database_sync_to_async(
-            list
-        )(comments_qs)
 
+        # [3]
+        # get comments from the last 30 min
+        comments_qs = Comment.objects.recent(active_stream_uuid)
+        comments = await database_sync_to_async(list)(comments_qs)
+
+        # [4]
         # send comments just to the current user
         await self.send_comments(comments)
 
-        # get active record, if it exists
-        # now = datetime.now()
-        try:
-            stream = await database_sync_to_async(
-                Stream.objects.select_related("current_record").get
-            )(
-                uuid=active_stream_uuid,
-                status=Stream.STATUS_ACTIVATED,
-                current_record__isnull=False,
-                record_terminates_at__gt=(now + timedelta(seconds=5)),
-            )
-        except Exception as e:
-            await self.send_stream_status(active_stream_uuid, 'waiting')
+        # [5]
+        # if no record is currently playing, return
+        record_ends_at = (
+            self._cache['stream']
+            .record_terminates_at.replace(tzinfo=None)
+        )
+        if datetime.now() > record_ends_at:
+            await self.send_playback_status('waiting')
             return
 
+        # [6]
         # get the now playing target progress in ms
         try:
             now_playing = await database_sync_to_async(
                 Comment.objects.select_related('track', 'record')
                 .filter(
-                    created_at__lte=now,
+                    created_at__lte=datetime.now(),
                     stream__uuid=active_stream_uuid,
                     status=Comment.STATUS_START,
                 )
                 .order_by("-created_at")
                 .first
             )()
-
+            assert now_playing
         except Exception as e:
-            await self.send_stream_status(active_stream_uuid, 'waiting')
+            await self.send_playback_status('waiting')
             return
 
-        assert now_playing
-
-        expected_ms = (
-            now_playing.created_at.replace(tzinfo=None) - now
-        ).total_seconds() * 1000
-
-        # get the actual progress in ms
+        # [7]
+        # determine if the user's Spotify is already synced with the stream
         try:
-            user_spotify_access_token = cipher_suite.decrypt(
-                _user_profile.spotify_access_token.encode("utf-8")
-            ).decode("utf-8")
-            response = requests.get(
-                "https://api.spotify.com/v1/me/player/currently-playing",
-                headers={
-                    "Authorization": f"Bearer {user_spotify_access_token}",
-                    "Content-Type": "application/json",
-                },
+            currently_playing_data = await (
+                self.spotify.get_currently_playing_async()
             )
 
-            response_json = response.json()
+            spotify_track_duration_ms = currently_playing_data['spotify_ms']
+            spotify_uri = currently_playing_data['spotify_uri']
+            spotify_is_playing = currently_playing_data['spotify_is_playing']
 
-            spotify_ms = response_json["progress_ms"]
-            spotify_uri = response_json["item"]["uri"]
-            spotify_is_playing = response_json["is_playing"]
+            ms_since_track_was_played = (
+                datetime.now() - now_playing.created_at.replace(tzinfo=None)
+            ).total_seconds() * 1000
+            offsync_ms = abs(
+                ms_since_track_was_played - spotify_track_duration_ms
+            )
 
-            track_is_already_playing = (
+            user_is_already_in_sync = (
                 spotify_is_playing
                 and spotify_uri == now_playing.track.spotify_uri
-                and abs(expected_ms + spotify_ms) < 5000
+                and offsync_ms < 5000
             )
 
-            record_is_over = False  # abs(spotify_ms + expected_ms) > 5000
-            if track_is_already_playing or record_is_over:
-                # the user is already tuned into this stream
+            if user_is_already_in_sync:
                 record = now_playing.record
                 await self.send_record(record)
                 return
 
         except Exception as e:
+            # edge cases that we hit when one of the following happens:
+            # - user revokes our app from their settings page then comes
+            #   back again to use the site
+            # - cron messes up and we don't refresh tokens so they all
+            #   expire (hopefully this never happens)
+            # - some undocumented error (likely another error from the
+            #   Spotify API)
             try:
-                # edge case that is only hit when one of the following happens:
-                # - user revokes our app from their settings page then comes
-                #   back again to use the site
-                # - cron messes up and we don't refresh tokens so they all
-                #   expire
                 if response.status_code == 204:
                     raise Exception('The user does not have Spotify open')
                 if response_json['error']['message'] == 'The access token expired':
-                    await self.send_stream_status(
-                        active_stream_uuid,
-                        'linkspotify'
-                    )
+                    await self.send_playback_status('linkspotify')
                 else:
                     raise Exception()
             except Exception:
-                await self.send_stream_status(active_stream_uuid, 'disconnected')
+                await self.send_playback_status('linkspotify')
             finally:
                 return
 
-        # get other tracks to play in future
-        uris = stream.current_record.tracks_through.order_by("number").values_list(
-            "track__spotify_uri", flat=True
+        # [8]
+        # get the track playing and tracks in the queue
+        uris = (
+            self._cache['stream'].current_record.tracks_through
+            .order_by('number').values_list('track__spotify_uri', flat=True)
         )
         uris = await database_sync_to_async(list)(uris)
-        while uris:
+        while uris:  # TODO: BUG!
             if uris[0] == now_playing.track.spotify_uri:
                 break
             uris = uris[1:]
@@ -200,17 +221,24 @@ class Consumer(AsyncConsumer):
         if not uris:
             return
 
+        # [9]
+        # sync the user's playback with the stream
+        ms_since_track_was_played = (
+            datetime.now() - now_playing.created_at.replace(tzinfo=None)
+        ).total_seconds() * 1000
         await self.play_tracks(
-            user_spotify_access_token,
+            self.spotify.token,
             {
                 "action": "play",
                 "data": {
                     "uris": uris,
-                    "position_ms": -expected_ms,
+                    "position_ms": ms_since_track_was_played,
                 },
             }
         )
 
+        # [A]
+        # update the front-end with playback status
         record = now_playing.record
         await self.send_record(record)
 
@@ -220,75 +248,27 @@ class Consumer(AsyncConsumer):
 
     async def websocket_receive(self, event):
         payload = json.loads(event["text"])
-        _user = self.scope["user"]
-        _cache = {}
 
-        # Validate request payload.
-        is_valid, _cache = await (
-            Comment.objects.validate_create_comment_payload_async(_user, payload)
-        )
-        if is_valid == results.RESULT_FAILED_VALIDATION:
-            return
-        elif is_valid == results.RESULT_PERFORM_SIDE_EFFECT_ONLY:
-            # Display initial chat content.
-            comments = await Comment.objects.list_comments_async(
-                _cache["stream"], payload["most_recent_comment_timestamp"]
+        # create comment in DB
+        comment = await (
+            Comment.objects.create_from_payload_async(
+                self.scope["user"], payload,
+                stream=self._cache['stream'], ticket=self._cache['ticket']
             )
-            comments = [Comment.objects.serialize(comment) for comment in comments]
-            await self.send(
-                {
-                    "type": "websocket.send",
-                    "text": json.dumps({"data": {"comments": comments}}),
-                }
-            )
-            return
-
-        # Create record of comment.
-        _cache = await (
-            Comment.objects.create_from_payload_async(_user, payload, _cache=_cache)
         )
 
-        stream = await database_sync_to_async(Stream.objects.get)(
-            uuid=payload["stream_uuid"]
-        )
-        _cache["stream"] = stream
-
-        ticket = await database_sync_to_async(Ticket.objects.get)(
-            holder=_user, stream=_cache["stream"],
-        )
-
-        comment = _cache["comment"]
-        await self.channel_post_comment(stream, comment, ticket)
-
-        if payload["status"] == Comment.STATUS_LEFT:
-            # If leaving the chat, send final comment response back to original
-            # user.
-            comments = [_cache["comment"]]
-            await self.send_comments(comments)
-            return
+        await self.channel_post_comment(self._cache['stream'], comment, self._cache['ticket'])
 
     # - - - - - - - - - - - -
     # broadcast
     # - - - - - - - - - - - -
 
     async def broadcast(self, event):
-        """
-        """
-        _user = self.scope["user"]
+        await self.send({"type": "websocket.send", "text": event["text"]})
 
-        await self.send(
-            {"type": "websocket.send", "text": event["text"],}
-        )
-
-        _profile = await database_sync_to_async(Profile.objects.get)(user=_user)
-
-        cipher_suite = Fernet(settings.DATABASE_ENCRYPTION_KEY)
-        user_spotify_access_token = cipher_suite.decrypt(
-            _profile.spotify_access_token.encode("utf-8")
-        ).decode("utf-8")
         try:
-            if bool(event["playback"]) and bool(user_spotify_access_token):
-                await self.play_tracks(user_spotify_access_token, event["playback"])
+            if bool(event["playback"]) and bool(self.spotify.token):
+                await self.play_tracks(self.spotify.token, event["playback"])
         except:
             pass
 
@@ -309,24 +289,20 @@ class Consumer(AsyncConsumer):
     # - - - - - -
 
     async def websocket_disconnect(self, event):
-        _cache = {}
+
         _user = self.scope["user"]
         await Profile.objects.leave_stream_async(_user)
-        active_stream_uuid = self.scope["query_string"][5:].decode("utf-8")
-        stream = await database_sync_to_async(Stream.objects.get)(
-            uuid=active_stream_uuid
-        )
-        _cache["stream"] = stream
+
+        url_params = self.get_data_from_ws_path()
+        active_stream_uuid = url_params['uuid']
+
+        stream = self._cache["stream"]
 
         ticket = await database_sync_to_async(Ticket.objects.get)(
             holder=_user, stream=stream,
         )
 
-        await (
-            self.channel_layer.group_discard(
-                _cache["stream"].chat_room, self.channel_name
-            )
-        )
+        await self.remove_from_channel()
 
         # Create record of comment.
         payload = {
@@ -334,18 +310,19 @@ class Consumer(AsyncConsumer):
             "status": Comment.STATUS_LEFT,
             "text": None,
         }
-        _cache = await (
-            Comment.objects.create_from_payload_async(_user, payload, _cache=_cache)
+        comment = await (
+            Comment.objects.create_from_payload_async(_user, payload, stream=self._cache['stream'], ticket=self._cache['ticket'],)
         )
+        self._cache['comment'] = comment
 
         await self.channel_layer.group_send(  # TODO: put as manager method
-            _cache["stream"].chat_room,
+            self._cache["stream"].chat_room,
             {
                 "type": "broadcast",
                 "text": json.dumps(
                     {
                         "data": {
-                            "comments": [Comment.objects.serialize(_cache["comment"], ticket=ticket)]
+                            "comments": [Comment.objects.serialize(self._cache["comment"], ticket=ticket)]
                         }
                     }
                 ),
@@ -359,10 +336,18 @@ class Consumer(AsyncConsumer):
     async def websocket_accept(self):
         await self.send({"type": "websocket.accept"})
 
-    async def add_to_channel(self, channel_name):
+    async def add_to_channel(self):
+        self._channel_name = self._cache['stream'].chat_room
         await (
-            self.channel_layer.group_add(channel_name, self.channel_name)
+            self.channel_layer.group_add(self._channel_name, self.channel_name)
         )
+
+    async def remove_from_channel(self):
+        assert self._channel_name
+        await self.channel_layer.group_discard(
+            self._channel_name, self.channel_name
+        )
+        self._channel_name = None
 
     async def channel_post_comment(self, stream, comment, ticket):
         await self.channel_layer.group_send(
@@ -381,7 +366,7 @@ class Consumer(AsyncConsumer):
             },
         )
 
-    async def send_stream_status(self, stream_uuid, status):
+    async def send_playback_status(self, status):
         await self.send(
             {
                 "type": "websocket.send",
@@ -389,7 +374,10 @@ class Consumer(AsyncConsumer):
                     "data": {
                         "stream": {
                             "status": status,
-                            "uuid": stream_uuid,
+                            **Stream.objects.serialize(self._cache["stream"])
+                        },
+                        "playback": {
+                            "status": status,
                         }
                     }
                 }),

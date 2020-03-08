@@ -1,4 +1,5 @@
 import requests
+import requests_async
 from urllib.parse import urlparse
 from cryptography.fernet import Fernet
 
@@ -8,9 +9,10 @@ from django.contrib.sites.shortcuts import get_current_site
 
 class Spotify(object):
 
-    def __init__(self, user):
+    def __init__(self, user, async_mode=False):
         self.user = user
         self._token = None
+        self._async = async_mode
 
     @classmethod
     def get_spotify_authorization_uri(cls, request, source):
@@ -130,3 +132,18 @@ class Spotify(object):
                 'spotify_name': track['track']['name'],
             } for track in response_json['tracks']['items']
         ]
+
+    async def get_currently_playing_async(self):
+        response = await requests_async.get(
+            "https://api.spotify.com/v1/me/player/currently-playing",
+            headers={
+                "Authorization": f"Bearer {self.token}",
+                "Content-Type": "application/json",
+            },
+        )
+        response_json = response.json()
+        return {
+            'spotify_ms': response_json['progress_ms'],
+            'spotify_uri': response_json['item']['uri'],
+            'spotify_is_playing': response_json['is_playing'],
+        }

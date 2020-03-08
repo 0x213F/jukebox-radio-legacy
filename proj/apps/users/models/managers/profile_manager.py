@@ -13,6 +13,7 @@ from django.db.models import Value
 from django.db.models import When
 
 from proj.core.models.managers import BaseManager
+from proj.core.resources.cache import _set_cache
 from proj.core.resources.cache import _get_or_fetch_from_cache
 
 
@@ -62,40 +63,33 @@ class ProfileManager(BaseManager):
         await database_sync_to_async(profile.save)()
 
     async def join_stream_async(self, user, stream_uuid, *, _cache=None):
-        """
+        '''
         After getting the active stream by UUID:
 
         - Update the user's active stream on their profile.
         - Create or create a ticket record for the user.
-        """
-        from proj.apps.music.models import Stream
-        from proj.apps.music.models import Ticket
-
-        Profile = apps.get_model("users.Profile")
-
-        _cache = await _get_or_fetch_from_cache(
-            _cache,
-            "stream",
-            fetch_func=Stream.objects.get,
-            fetch_kwargs={"uuid": stream_uuid},
-        )
-        stream = _cache["stream"]
+        '''
+        Stream = apps.get_model('music', 'Stream')
+        Ticket = apps.get_model('music', 'Ticket')
+        Profile = apps.get_model('users', 'Profile')
 
         _cache = await _get_or_fetch_from_cache(
             _cache,
-            "profile",
-            fetch_func=Profile.objects.get,
-            fetch_kwargs={"user": user},
+            'stream',
+            fetch_func=Stream.objects.select_related('current_record').get,
+            fetch_kwargs={'uuid': stream_uuid},
         )
+        stream = _cache['stream']
+        _set_cache(_cache, 'stream', stream)
 
-        profile = _cache["profile"]
+        profile = user.profile
         profile.last_active_stream_uuid = stream.uuid
         profile.active_stream_uuid = stream.uuid
         await database_sync_to_async(profile.save)()
 
         _cache = await _get_or_fetch_from_cache(
             _cache,
-            "ticket",
+            'ticket',
             fetch_func=Ticket.objects.get_or_create,
             fetch_kwargs={
                 "holder": user,
@@ -108,5 +102,9 @@ class ProfileManager(BaseManager):
                 },
             },
         )
+        ticket = _cache['ticket']
+        _set_cache(_cache, 'ticket', ticket)
+
+        print(_cache.keys())
 
         return _cache

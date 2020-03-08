@@ -54,6 +54,7 @@ class Stream(BaseModel):
         related_name='owned_streams',
         on_delete=models.DO_NOTHING,
     )
+    owner_name = models.CharField(max_length=128)
 
     tags = models.CharField(max_length=128)
 
