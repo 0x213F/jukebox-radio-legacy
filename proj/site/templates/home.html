@@ -4,9 +4,6 @@
 
 {% block styles %}
 <link rel="stylesheet" href="../static/css/proj/list_streams.css">
-<link rel="stylesheet" href="../static/css/proj/detail_stream.css">
-<link rel="stylesheet" href="../static/css/proj/chat.css">
-<link rel="stylesheet" href="../static/css/proj/modal.css">
 <link rel="stylesheet" href="../static/css/proj/home.css">
 {% endblock %}
 
@@ -54,13 +51,13 @@
     <!-- FOOTER -->
     <div class='row align-center footer'>
       <form class="ajax-form" redirect="/account">
-        <button style="margin-right: 1rem;">
+        <button class="btn btn-link btn-lg" style="margin-right: 1rem; float: left;">
           Account
         </button>
       </form>
 
       <form class="ajax-form" url="../api/user/logout/" type="post" redirect="/">
-        <button style="margin-left: 1rem;">
+        <button class="btn btn-link btn-lg" style="margin-left: 1rem;">
           Logout
         </button>
       </form>

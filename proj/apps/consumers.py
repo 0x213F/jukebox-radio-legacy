@@ -40,6 +40,8 @@ class Consumer(AsyncConsumer):
         cipher_suite = Fernet(settings.DATABASE_ENCRYPTION_KEY)
 
         active_stream_uuid = self.scope["query_string"][5:].decode("utf-8")
+        print('===========')
+        print(active_stream_uuid)
         _cache = await Profile.objects.join_stream_async(
             _user, active_stream_uuid, _cache=_cache,
         )

@@ -24,6 +24,6 @@ class Track(BaseModel):
     # fields |
     # - - - -
 
-    spotify_uri = models.CharField(max_length=36)  # TODO make unique
-    spotify_name = models.CharField(max_length=64)
+    spotify_uri = models.CharField(max_length=64)  # TODO make unique
+    spotify_name = models.CharField(max_length=256)
     spotify_duration_ms = models.PositiveIntegerField()

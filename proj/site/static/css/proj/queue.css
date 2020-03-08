@@ -1,4 +1,5 @@
 .search-result-selected {
+  /* taken from Spectre CSS autocomplete */
   box-shadow: 0 0 0 0.2rem rgba(87,100,198,.15);
   color: #5764c6;
   background: #fbfbfe;

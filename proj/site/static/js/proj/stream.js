@@ -1,4 +1,5 @@
 
+var STREAM_UUID = $('#stream-uuid').children().first().val();
 
 var endpoint = (
   'ws://' + window.location.host +
@@ -124,7 +125,16 @@ function onmessage(event) {
 $(document).ready(function() {
   $('#mute-button').click(function() {
     var $this = $(this);
-    $this.toggleClass('btn-primary');
+
+    $fas = $this.find('.fas')
+    if($fas.hasClass('fa-volume-up')) {
+      $fas.removeClass('fa-volume-up');
+      $fas.addClass('fa-volume-down');
+    } else {
+      $fas.addClass('fa-volume-up');
+      $fas.removeClass('fa-volume-down');
+    }
+
     $this.blur();
   });
 });

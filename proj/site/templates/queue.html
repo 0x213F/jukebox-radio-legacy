@@ -14,7 +14,6 @@
 
 
 <script src="{% static 'js/jquery.js' %}"></script>
-<link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
 <script src="{% static '/js/proj/api.js' %}"></script>
 <script src="{% static '/js/proj/queue.js' %}"></script>
 <script src="{% static '/js/proj/addrecord.js' %}"></script>
@@ -22,20 +21,9 @@
 
 {% block main %}
 
-<div id="csrf-token" class="hidden">
-  {% csrf_token %}
-</div>
-
 <div id="stream-uuid" class="hidden">
   <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
 </div>
-
-<script>
-
-var CSRF_TOKEN = $('#csrf-token').children().first().val();
-var STREAM_UUID = $('#stream-uuid').children().first().val();
-
-</script>
 
 <div class="main center-horizontal card">
 
@@ -48,9 +36,7 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
           url="../../../api/music/list_queue/"
           submit="onload"
           onsuccess='display_queue'>
-
-          <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
-
+      <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
     </form>
 
     <div class="card-header">
@@ -120,20 +106,5 @@ var STREAM_UUID = $('#stream-uuid').children().first().val();
 </div>
 
 {% include "play_bar.html" %}
-
-<script>
-
-var url_string = location.href;
-var url = new URL(url_string);
-var record_id = url.searchParams.get("record_id");
-var record_name = url.searchParams.get("record_name");
-
-if(record_id) {
-  $('#record-id').val(record_id);
-  $('#record-name').prop("disabled", false).val(record_name)
-  $('#add-record-submit').prop("disabled", false);
-}
-
-</script>
 
 {% endblock %}

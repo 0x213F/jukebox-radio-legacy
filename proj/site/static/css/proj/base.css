@@ -5,116 +5,28 @@
     font-family: 'Work Sans', sans-serif;
 }
 
-button {
-    font-size: 14px;
-    padding: 10px 14px;
-    border-radius: 4px;
-    font-weight: normal;
-}
-
-button:hover {
-    background-color: #e7eaf2;
-    transition: background-color 0.3s ease;
-    cursor: pointer;
-}
-
-button:focus {
-    background-color: #cfd5e6;
-    outline: 0;
-}
-
-button.cancel:hover {
-    background-color: #f2e7ea;
-}
-
-button.success:hover {
-    background-color: #eaf2e7;
-}
-
-button.cancel-force {
-    background-color: #f2e7ea;
-}
-
-button.success-force {
-    background-color: #eaf2e7;
-}
-
 .main {
     width: 310px;
-    height: calc(100% - 34px);
+    height: calc(100vh - 104px);
 }
 
 .body {
   width: 100%;
 }
 
-.small-text {
-  font-size: 14px;
-}
-
 .hidden {
     display: none;
-}
-
-.inline-block {
-    display: inline-block;
 }
 
 .disabled {
   cursor: not-allowed;
 }
 
-.bottom {
-    bottom: 0px;
-}
-
 .center-horizontal {
     margin: 0 auto;
 }
 
-.center-vertical {
-    margin: auto 0;
-}
-
-.center-horizontal.center-vertical {
-    margin: auto;
-}
-
-input.text {
-  width: calc(100% - 48px);
-  height: 30px;
-  margin-left: 20px;
-  margin-right: 20px;
-  padding-left: 4px;
-  padding-right: 4px;
-  padding-top: 0px;
-  padding-bottom: 0px;
-  font-size: 14px;
-  border-bottom: 2px #cfd5e6 solid;
-}
-
-input.text.disabled {
-  background-color: #cfd5e6;
-  border-radius: 4px;
-}
-
-input.text:focus,
-input.text:-webkit-autofill,
-input.text:-webkit-autofill:hover,
-input.text:-webkit-autofill:focus {
-    outline: 0;
-    -webkit-box-shadow: 0 0 0px 1000px rgba(254, 254, 254, 1.00) inset;
-}
-
-.margin-right {
-    margin-right: 15px;
-}
-
-label {
-  cursor: pointer;
-}
-
-.noselect {
+.no-select {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
      -khtml-user-select: none; /* Konqueror HTML */
@@ -129,44 +41,5 @@ label {
   align-items: stretch;
   border: 2px #e7eaf2 solid;
   border-radius: 4px;
-  margin-top: 15px;
-  margin-bottom: 90px;
-}
-
-.hidden {
-  display: none;
-}
-
-.row {
-  padding: 15px 20px;
-  display: flex;
-  font-weight: lighter;
-  position: relative;
-}
-
-.row.align-center {
-  align-items: center;
-  justify-content: center;
-}
-
-.row.flex-wrap {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.row > .group {
-  width: 300px;
-  margin: auto;
-  float:left;
-  display: block;
-  flex: 0 0 100%;
-}
-
-.no-link-style {
-  text-decoration: none!important;
-  color: #50596c!important;
-}
-
-.chat-container::-webkit-scrollbar {
-    display: none;  // Safari and Chrome
+  margin-top: 16px;
 }
