@@ -1,10 +1,7 @@
 from datetime import datetime
-import random
-import uuid
 
 from django.conf import settings
 from django.db import models
-from django.forms import fields
 
 from proj.apps.music.models.managers import CommentManager
 from proj.apps.music.models.querysets import CommentQuerySet
@@ -12,50 +9,29 @@ from proj.apps.music.models.querysets import CommentQuerySet
 from proj.core.models import BaseModel
 
 
-class StatusMessage:
-    STREAM_ACTIVATED = "stream_activated"
-    STREAM_IDLE = "stream_idle"
-    USER_JOINED = "user_joined"
-    USER_LEFT = "user_left"
-
-
-class CommentMessage:
-    EMOTE_LOW = "emote_low"
-    EMOTE_MID_LOW = "emote_mid_low"
-    EMOTE_NEUTRAL = "emote_neutral"
-    EMOTE_MID_HIGH = "emote_mid_high"
-    EMOTE_HIGH = "emote_high"
-
-
-class StreamMessage:
-    STREAM_SPIN = "spin"
-    STREAM_PAUSE = "pause"
-    STREAM_PLAY = "play"
-
-
 class Comment(BaseModel):  # TODO Message
 
     # - - - - - - -
-    # config model
+    # config model |
     # - - - - - - -
 
-    # Stream status change (StatusMessage)
+    # Stream status change
     STATUS_ACTIVATED = "activated"
     STATUS_IDLE = "idle"
 
-    # User status change (StatusMessage)
+    # User status change
     STATUS_JOINED = "joined"
     STATUS_WAITED = "waited"  # TODO remove
     STATUS_LEFT = "left"
 
-    # User comment posted (CommentMessage)
+    # User comment posted
     STATUS_LOW = "low"
     STATUS_MID_LOW = "mid_low"
     STATUS_NEUTRAL = "neutral"
     STATUS_MID_HIGH = "mid_high"
     STATUS_HIGH = "high"
 
-    # Playback change (PlaybackMessage)
+    # Playback change
     STATUS_SPIN = "spin"
     STATUS_STOP = "stop"
     STATUS_START = "start"
@@ -117,7 +93,7 @@ class Comment(BaseModel):  # TODO Message
         return f"[{self.commenter_id}] {self.text}"
 
     # - - - -
-    # fields
+    # fields |
     # - - - -
 
     created_at = models.DateTimeField(default=datetime.now, blank=True)

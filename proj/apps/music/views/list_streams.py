@@ -7,6 +7,7 @@ from proj.core.views import BaseView
 
 @method_decorator(login_required, name='dispatch')
 class ListStreamsView(BaseView):
+
     def get(self, request, **kwargs):
         '''
         List all of the stream objects that a user can access.
@@ -15,14 +16,7 @@ class ListStreamsView(BaseView):
         Ticket = apps.get_model('music', 'Ticket')
         Profile = apps.get_model('users', 'Profile')
 
-        broadcasting_ids = (
-            Stream.objects
-            .list_broadcasting_streams(request.user)
-            .order_by('id')
-            .values_list('id', flat=True)
-        )
-
-        streams = Stream.objects.list_streams(request.user).order_by('id')
+        streams = Stream.objects.list_tune_in_streams(request.user).order_by('id')
 
         active_ticket = None
         active_stream_uuid = request.user.profile.active_stream_uuid
@@ -31,14 +25,8 @@ class ListStreamsView(BaseView):
                 holder=request.user, stream__uuid=active_stream_uuid,
             )
 
-        streams_data = []
-        for s in streams:
-            if s.id in broadcasting_ids:
-                continue
-            streams_data.append(Stream.objects.serialize(s))
-
         response = {
-            'streams': streams_data,
+            'streams': [Stream.objects.serialize(s) for s in streams],
             'user': (
                 Profile.objects.serialize_user(
                     request.user, active_ticket=active_ticket

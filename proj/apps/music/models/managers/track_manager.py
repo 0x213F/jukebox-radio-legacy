@@ -2,16 +2,16 @@ from proj.core.models.managers import BaseManager
 from proj.core.resources import Spotify
 
 class TrackManager(BaseManager):
-    """
+    '''
     Django Manager used to manage Track objects.
-    """
+    '''
 
     def serialize(self, track):
         if not track:
             return None
         return {
-            "spotify_name": track.spotify_name,
-            "spotify_uri": track.spotify_uri,
+            'spotify_name': track.spotify_name,
+            'spotify_uri': track.spotify_uri,
         }
 
     def get_or_create_from_uri(self, uri, user=None):
@@ -28,9 +28,12 @@ class TrackManager(BaseManager):
         )
 
     def bulk_create_from_album_info(self, album_info):
+        '''
+        Bulk create tracks given a list of track data
+        '''
         Track = self.model
 
-        # get tracks that already exist
+        # don't re-create tracks that already exist
         spotify_uris = [i['spotify_uri'] for i in album_info]
         tracks_from_db = Track.objects.filter(spotify_uri__in=spotify_uris)
         existing_spotify_uris = (

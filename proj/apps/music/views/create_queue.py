@@ -1,4 +1,3 @@
-import uuid
 from datetime import datetime
 from datetime import timedelta
 
@@ -15,24 +14,23 @@ from proj.core.views import BaseView
 from proj.apps.music import tasks
 
 
-@method_decorator(login_required, name="dispatch")
+@method_decorator(login_required, name='dispatch')
 class CreateQueueView(BaseView):
 
     def post(self, request, **kwargs):
-        """
+        '''
         Update the user's account information.
-        """
-        Queue = apps.get_model("music.Queue")
-        Record = apps.get_model("music.Record")
-        Stream = apps.get_model("music.Stream")
+        '''
+        Queue = apps.get_model('music.Queue')
+        Record = apps.get_model('music.Record')
+        Stream = apps.get_model('music.Stream')
 
-        spotify_uri = request.POST.get("uri", None)
-        img = request.POST.get("img", None)
-        record_name = request.POST.get("record_name", None)
+        spotify_uri = request.POST.get('uri', None)
+        img = request.POST.get('img', None)
+        record_name = request.POST.get('record_name', None)
 
-        stream_uuid = request.POST.get("stream_uuid", None)
+        stream_uuid = request.POST.get('stream_uuid', None)
 
-        print(record_name)
         record = Record.objects.get_or_create_from_uri(
             spotify_uri,
             record_name=record_name,
@@ -65,7 +63,7 @@ class CreateQueueView(BaseView):
             queue.save()
             next_play_time = (
                 stream.record_terminates_at.replace(tzinfo=None) +
-                timedelta(milliseconds=250)
+                timedelta(milliseconds=150)
             )
             tasks.schedule_spin.apply_async(eta=next_play_time, args=[stream.id])
 

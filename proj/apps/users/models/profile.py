@@ -10,7 +10,7 @@ from proj.core.models import BaseModel
 class Profile(BaseModel):
 
     # - - - - - - - -
-    # config model
+    # config model   |
     # - - - - - - - -
 
     class Meta:
@@ -18,8 +18,11 @@ class Profile(BaseModel):
 
     objects = ProfileManager.from_queryset(ProfileQuerySet)()
 
+    def __str__(self):
+        return self.default_display_name
+
     # - - - -
-    # fields
+    # fields |
     # - - - -
 
     last_active_stream_uuid = models.UUIDField(null=True, blank=True)

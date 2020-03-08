@@ -4,7 +4,6 @@ from datetime import datetime
 
 from django.apps import apps
 
-from proj.apps.utils import broadcast_message
 from proj.core.models.managers import BaseManager
 
 from asgiref.sync import async_to_sync
@@ -19,7 +18,6 @@ from urllib.parse import urlencode
 from datetime import datetime
 from datetime import timedelta
 
-from proj.apps.utils import broadcast_message
 from proj.core.models.managers import BaseManager
 
 from django.contrib.auth.models import User

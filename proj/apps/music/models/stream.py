@@ -1,10 +1,8 @@
 import uuid
 
 from datetime import datetime
-from datetime import timezone
 
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 from proj.apps.music.models.managers import StreamManager
@@ -16,15 +14,15 @@ from proj.core.models import BaseModel
 class Stream(BaseModel):
 
     # - - - - - - -
-    # config model
+    # config model |
     # - - - - - - -
 
-    STATUS_ACTIVATED = "activated"
-    STATUS_IDLE = "idle"
+    STATUS_ACTIVATED = 'activated'
+    STATUS_IDLE = 'idle'
 
     STATUS_CHOICES = [
-        (STATUS_ACTIVATED, "Activated"),
-        (STATUS_IDLE, "idle"),
+        (STATUS_ACTIVATED, 'Activated'),
+        (STATUS_IDLE, 'Idle'),
     ]
 
     class Meta:
@@ -36,7 +34,7 @@ class Stream(BaseModel):
         return self.title
 
     # - - - -
-    # fields
+    # fields |
     # - - - -
 
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
@@ -44,8 +42,8 @@ class Stream(BaseModel):
     title = models.CharField(max_length=128)  # name
 
     current_record = models.ForeignKey(
-        "music.Record",
-        related_name="now_playing_at_streams",
+        'music.Record',
+        related_name='now_playing_at_streams',
         on_delete=models.SET_NULL,
         null=True,
         blank=False,
@@ -53,11 +51,11 @@ class Stream(BaseModel):
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name="owned_streams",
+        related_name='owned_streams',
         on_delete=models.DO_NOTHING,
     )
 
-    tags = models.CharField(max_length=128)  # name
+    tags = models.CharField(max_length=128)
 
     vote_controlled = models.BooleanField(default=False)
 
@@ -68,13 +66,13 @@ class Stream(BaseModel):
 
     status = models.CharField(max_length=128, default=STATUS_IDLE)
 
+    # - - - - - -
+    # properties |
+    # - - - - - -
+
     @property
     def chat_room(self):
-        # TODO need a more graceful way of doing this with async. for now a
-        # constant is fine
-        # foo = ContentType.objects.get_for_model(self)
-        foo = 1
-        return f"{foo}-{self.id}"
+        return f'stream-{self.id}'
 
     @property
     def time_left_on_current_record(self):

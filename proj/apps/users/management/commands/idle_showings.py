@@ -7,10 +7,10 @@ from django.db.models import Q
 
 
 class Command(BaseCommand):
-    help = "Idle streams"
+    help = 'Idle streams'
 
     def handle(self, *args, **options):
-        Stream = apps.get_model("music.Stream")
+        Stream = apps.get_model('music.Stream')
 
         now = datetime.now()
 

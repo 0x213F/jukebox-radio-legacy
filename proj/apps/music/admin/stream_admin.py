@@ -17,7 +17,6 @@ from proj.apps.music.models import Record
 from proj.apps.music.models import Stream
 from proj.apps.music.models import TrackListing
 
-from proj.apps.music.admin.inline import RecordInline
 from proj.apps.music.forms import StreamForm
 
 

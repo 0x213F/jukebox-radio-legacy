@@ -1,11 +1,7 @@
 from datetime import datetime
-from datetime import timedelta
 
-from django.apps import apps
 from django.conf import settings
 from django.db import models
-
-from channels.db import database_sync_to_async
 
 from proj.apps.music.models.managers import QueueManager
 from proj.apps.music.models.querysets import QueueQuerySet
@@ -16,7 +12,7 @@ from proj.core.models import BaseModel
 class Queue(BaseModel):
 
     # - - - - - - -
-    # config model
+    # config model |
     # - - - - - - -
 
     class Meta:
@@ -27,9 +23,9 @@ class Queue(BaseModel):
     def __str__(self):
         return self.name
 
-    # - - - - - - - - -
-    # fields
-    # - - - - - - - - -
+    # - - - -
+    # fields |
+    # - - - -
 
     stream = models.ForeignKey(
         "music.Stream", related_name="queued", on_delete=models.DO_NOTHING,

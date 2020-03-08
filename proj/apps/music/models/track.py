@@ -1,10 +1,4 @@
-import datetime
-import random
-import uuid
-
-from django.conf import settings
 from django.db import models
-from django.forms import fields
 
 from proj.apps.music.models.managers import TrackManager
 from proj.apps.music.models.querysets import TrackQuerySet
@@ -15,7 +9,7 @@ from proj.core.models import BaseModel
 class Track(BaseModel):
 
     # - - - - - - -
-    # config model
+    # config model |
     # - - - - - - -
 
     class Meta:
@@ -27,7 +21,7 @@ class Track(BaseModel):
         return self.spotify_name
 
     # - - - -
-    # fields
+    # fields |
     # - - - -
 
     spotify_uri = models.CharField(max_length=36)  # TODO make unique

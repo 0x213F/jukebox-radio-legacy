@@ -15,8 +15,8 @@ from django.shortcuts import redirect
 from proj.apps.music.forms import TrackForm
 from proj.apps.music.models import TrackListing
 from proj.apps.music.models import Track
-from proj.apps.music.backends import Spotify
 from proj.apps.users.models import Profile
+from proj.core.resources import Spotify
 
 
 @admin.register(Track)
@@ -130,13 +130,6 @@ class TrackAdmin(admin.ModelAdmin):
             track_that_already_exists = Track.objects.get(spotify_uri=spotify_uri)
             if track_that_already_exists:
                 track = track_that_already_exists
-                if not Record.objects.can_add_track(record, track.spotify_duration_ms):
-                    self.message_user(
-                        request,
-                        "Track cannot fit on the selected record.",
-                        level=messages.ERROR,
-                    )
-                    return
                 number = TrackListing.objects.filter(record=record).count() + 1
                 TrackListing.objects.create(
                     record=record, track=track, number=number,
@@ -162,14 +155,6 @@ class TrackAdmin(admin.ModelAdmin):
 
         spotify_duration_ms = response_json["duration_ms"]
         track.spotify_duration_ms = spotify_duration_ms
-
-        if not Record.objects.can_add_track(record, spotify_duration_ms):
-            self.message_user(
-                request,
-                "Track cannot fit on the selected record.",
-                level=messages.ERROR,
-            )
-            return
 
         track.spotify_name = response_json["name"][:32]
         if len(response_json["name"]) > 32:

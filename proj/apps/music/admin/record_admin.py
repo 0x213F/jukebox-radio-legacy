@@ -10,14 +10,13 @@ from django.utils.html import format_html
 from django.conf.urls import url
 from django.shortcuts import redirect
 
-from proj.apps.music.admin.inline import TrackInline
 from proj.apps.music.forms import RecordForm
 from proj.apps.music.models import Comment
 from proj.apps.music.models import Record
 from proj.apps.music.models import TrackListing
 from proj.apps.music.models import Track
-from proj.apps.music.backends import Spotify
 from proj.apps.users.models import Profile
+from proj.core.resources import Spotify
 
 
 @admin.register(Record)

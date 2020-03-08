@@ -11,22 +11,22 @@ from django.apps import apps
 from proj.core.views import BaseView
 
 
-SUBSCRIBED = "subscribed"
-UNSUBSCRIBED = "unsubscribed"
+SUBSCRIBED = 'subscribed'
+UNSUBSCRIBED = 'unsubscribed'
 
 
-@method_decorator(login_required, name="dispatch")
+@method_decorator(login_required, name='dispatch')
 class CreateStreamView(BaseView):
 
     def post(self, request, **kwargs):
-        """
+        '''
         Update the user's account information.
-        """
-        Stream = apps.get_model("music.Stream")
-        Ticket = apps.get_model("music.Ticket")
+        '''
+        Stream = apps.get_model('music.Stream')
+        Ticket = apps.get_model('music.Ticket')
 
-        stream_name = request.POST.get("name", None)
-        tags = request.POST.get("tags", None)
+        stream_name = request.POST.get('name', None)
+        tags = request.POST.get('tags', None)
         if not stream_name or not tags:
             raise Exception('Must provide a stream name')
 
