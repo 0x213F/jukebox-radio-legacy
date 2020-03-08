@@ -79,8 +79,6 @@ function display_broadcasting_streams(data) {
   }
 }
 
-// CLICK LISTENERS
-
 // we need this inside play_bar.js so we can display a dialog to tell the user
 // to start playing music
 var IS_BROADCASTING = false;
@@ -138,6 +136,8 @@ function onmessage(event) {
   update_play_bar(stream, record, true);
 }
 
+// on window focus, try re-connecting if Spotify is disconnected
+
 var window_debouncer = Date.now();
 $(window).focus(function() {
   var now = Date.now()
@@ -150,7 +150,7 @@ $(window).focus(function() {
     return;
   }
 
-  // resync music the hacky way
+  // TODO make an endpoint instead of resetting the connection
   var uuid = $('.card.active-stream').parent().attr('uuid');
   var endpoint = (
     'ws://' + window.location.host + window.location.pathname +

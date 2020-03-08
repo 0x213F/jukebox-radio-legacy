@@ -31,6 +31,10 @@ read and follow the instructions in SETUP.md.
 
 ## Contributing
 
+### Onboarding
+
+https://tutorial.djangogirls.org/en/
+
 ### Workflow
 
 Below is an abbreviated list of steps that should be followed when contributing

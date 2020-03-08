@@ -18,6 +18,7 @@ function setup_ajax_forms() {
         }
         let msg = JSON.stringify(data);
         window['SOCKET'].send(msg);
+        // TODO don't put this in here
         $('#chat-input-main').val('');
       } else if($this.attr("type") === "redirect") {
         window.location.href = $this.attr("url");

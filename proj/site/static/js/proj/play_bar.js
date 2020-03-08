@@ -57,8 +57,11 @@ function update_play_bar(stream, record) {
   $playBar.removeClass('hide-under-view');
 }
 
-$( document ).ready(function() {
+  /////  ////  /////
+ /////  INIT  /////
+/////  ////  /////
 
+$( document ).ready(function() {
 
   /////  NAVIGATE TO CHAT
   $('#play-bar-chat-button').click(function(data) {

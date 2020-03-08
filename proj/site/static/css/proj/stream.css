@@ -1,16 +1,3 @@
-.play-pause > form > .btn {
-    border-radius: 40px;
-    border-width: 1px;
-    height: 40px;
-    width: 40px;
-
-    padding: auto;
-
-    position: relative;
-    top: 15px;
-    right: -170px;
-}
-
 .chat-container::-webkit-scrollbar {
     display: none;  // Safari and Chrome
 }

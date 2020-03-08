@@ -1,5 +1,7 @@
 
-var STREAM_UUID = $('#stream-uuid').children().first().val();
+  /////  /////  /////
+ /////  HOSTS  /////
+/////  /////  /////
 
 function generate_host(ticket) {
   return `
@@ -38,6 +40,10 @@ function display_hosts(data) {
   $(".hosts-list").removeClass('hidden');
 }
 
+  /////  //////////  /////
+ /////  WEBSOCKETS  /////
+/////  //////////  /////
+
 function onopen(event) {
   // NOOP
 }
@@ -54,7 +60,6 @@ function onmessage(event) {
 
 var url = window.location.href;
 var uuid = url.substring(url.length - 44, url.length - 8);
-console.log(uuid)
 
 var endpoint = (
   'ws://' + window.location.host + window.location.pathname +
