@@ -98,80 +98,10 @@
 
 </div>
 
-<div id="play-bar" class="play-bar">
-
-  <div class="content link-spotify hide">
-    <!-- localhost%3A8000 -->
-    <!-- jukeboxrad.io -->
-    <!-- jukebox.radio -->
-    <a class="btn btn-primary" href="https://accounts.spotify.com/authorize?client_id=133a25c7195344dbafd4f50d7450330f&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Fconnect%3Fsource%3Dspotify&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state">Authorize Spotify <i class="icon icon-link"></i></a>
-  </div>
-
-  <div class="content currently-playing-detail">
-
-    <div class="album-art">
-      <img />
-    </div>
-
-    <span class="play-pause">
-
-      <form id="create-stream" class="ajax-form card-body" type="websocket" onsuccess='display_messages'>
-        <input class="hidden" type="text" name="process" value="change-volume">
-
-        <button id="mute-button" class="btn">
-          <i class="fas fa-volume-up"></i>
-        </button>
-      </form>
-
-    </span>
-
-  </div>
-
-  <div class="content waiting-to-play hide">
-
-    <div class="loading-container">
-      <i class="form-icon loading" style="font-size: 48px; font-color: white;"></i>
-    </div>
-
-    <span class="title">
-      Waiting for the stream to start playing music...
-    </span>
-
-    <a href="spotify:open">
-      <button id="play-bar-chat-button" class="btn btn-warning">
-        Fix <i class="icon icon-check"></i>
-      </button>
-    </a>
-
-  </div>
-
-  <div class="content spotify-disconnected hide">
-
-    <div class="warning-flag">
-      <i class="icon icon-4x icon-flag" style="font-size: 48px; font-color: white;"></i>
-    </div>
-
-    <span class="title">
-      No music is playing
-    </span>
-
-    <span class="sub-title">
-      You must be already streaming on your device.
-    </span>
-
-    <a href="spotify:open">
-      <button id="play-bar-chat-button" class="btn btn-warning">
-        Fix <i class="icon icon-check"></i>
-      </button>
-    </a>
-
-  </div>
-
-</div>
+{% include "play_bar.html" %}
 
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/proj/api.js' %}"></script>
 <script src="{% static 'js/proj/stream.js' %}"></script>
 {% endblock %}

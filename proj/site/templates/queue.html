@@ -14,7 +14,6 @@
 
 
 <script src="{% static 'js/jquery.js' %}"></script>
-<script src="{% static '/js/proj/api.js' %}"></script>
 <script src="{% static '/js/proj/queue.js' %}"></script>
 <script src="{% static '/js/proj/addrecord.js' %}"></script>
 {% endblock %}
@@ -105,6 +104,12 @@
 
 </div>
 
+{% endblock %}
+
+<!-- - - - - - -->
+<!--  PLAY BAR -->
 {% include "play_bar.html" %}
 
+{% block scripts %}
+<script src="{% static '/js/proj/play_bar.js' %}"></script>
 {% endblock %}

@@ -10,12 +10,12 @@
     height: calc(100vh - 104px);
 }
 
-.body {
+.main.card > .card-body {
   width: 100%;
 }
 
 .hidden {
-    display: none;
+    display: none!important;
 }
 
 .disabled {

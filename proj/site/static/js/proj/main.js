@@ -1,12 +1,5 @@
 
-// global object for CSRF token
-var CSRF_TOKEN = $('#csrf-token').children().first().val();
-
-// global object to hold data for the view
-var VIEW = {}
-
 function setup_ajax_forms() {
-  // custom form submission handler
   $(".ajax-form").unbind();
   $(".ajax-form").submit(function(e) {
       e.preventDefault();
@@ -48,7 +41,7 @@ function setup_ajax_forms() {
 }
 
 // custom form submission handler
-setup_ajax_forms()
+setup_ajax_forms();
 
 // on page load, submit forms that should be submitted "onload"
 $('.ajax-form').each(function (index, value) {

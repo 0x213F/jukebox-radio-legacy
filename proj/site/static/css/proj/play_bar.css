@@ -1,0 +1,138 @@
+/* * * * * * */
+/* PLAY BAR  */
+
+.play-bar.hide-under-view {
+  bottom: -72px;
+  transition: all 0.3s ease;
+}
+
+.play-bar {
+  width: 308px;
+  height: 72px;
+  position: fixed;
+  bottom: 0px;
+  background-color: #fbfcfc;
+
+  border-top: 1px solid #5764c6;
+  border-left: 1px solid #5764c6;
+  border-right: 1px solid #5764c6;
+
+  /* styling for centering the div */
+  left: 50%;
+  margin-left: -154px;  /* half the width */
+
+  transition: bottom 0.5s ease;
+}
+
+.play-bar > .content {
+  height: 72px;
+  width: 224px;  /*  */
+  display: inline-block;
+  float: left;
+  position: relative;
+}
+
+.play-bar > .content > .album-art,
+.play-bar > .content > .warning-flag {
+  height: 72px;
+  width: 72px;
+  margin-right: 10px;
+  background-color: #5764c6;
+  display: inline-block;
+  float: left;
+  position: relative;
+}
+
+.play-bar > .content > .title {
+  width: 131px;
+  font-size: 14px;
+  position: absolute;
+  left: 100px;
+  top: 6px;
+}
+
+.play-bar > .content > .sub-title {
+  font-size: 10px;
+  font-weight: 300;
+  position: absolute;
+  right: -72px;
+  bottom: 8px;
+}
+
+/* link-spotify */
+
+.play-bar > .content.link-spotify {
+  padding: 20px 74px;
+}
+
+.play-bar > .content.link-spotify > a {
+  width: 160px;
+}
+
+/* currently-playing */
+
+.play-bar > .content.currently-playing > .btn,
+.play-bar > .content.spotify-disconnected > a > .btn  {
+  position: absolute;
+  right: -66px;
+  top: 16px;
+
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+/* waiting-to-play */
+
+.play-bar > .content > .title {
+  width: 131px;
+  font-size: 14px;
+  position: absolute;
+  left: 38px;
+  top: 6px;
+}
+
+.play-bar > .content.waiting-to-play > .loading-container {
+  padding: 36px;
+  padding-left: 268px;
+}
+
+.play-bar > .content.waiting-to-play > .title {
+  top: 15px;
+  width: 166px;
+}
+
+/* spotify-disconnected */
+
+.play-bar > .content.spotify-disconnected > .warning-flag {
+  padding: 12px 0px 4px 9px;
+}
+
+.play-bar > .content.spotify-disconnected > .warning-flag > .icon:before {
+  background-color: white!important;
+}
+
+.play-bar > .content.spotify-disconnected > .warning-flag > .icon:after {
+  border-color: white!important;
+}
+
+.play-bar > .content.spotify-disconnected > .title {
+  width: 144px;
+
+  top: 8px;
+  left: 36px!important;
+}
+
+.play-bar > .content.spotify-disconnected > .sub-title {
+  width: 140px;
+  left: 36px;
+  top: 33px;
+}
+
+.play-bar > .content.spotify-disconnected > .btn {
+  position: absolute;
+  right: -72px;
+  top: 10px;
+
+  padding-left: 10px;
+  padding-right: 10px;
+}
