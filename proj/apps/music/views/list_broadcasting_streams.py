@@ -1,3 +1,6 @@
+from datetime import datetime
+from datetime import timedelta
+
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
@@ -16,8 +19,23 @@ class ListBroadcastingStreamsView(BaseView):
         """
         streams = Stream.objects.list_broadcasting_streams(request.user).order_by("id")
 
+        now = datetime.now()
+
         response = {
-            "streams": [Stream.objects.serialize(s) for s in streams],
+            "streams": [
+                Stream.objects.serialize(
+                    s,
+                    active_users=(
+                        s.comments
+                        .filter(
+                            created_at__gte=now - timedelta(minutes=10),
+                        )
+                        .distinct('commenter_id')
+                        .order_by('commenter_id')
+                    )
+                )
+                for s in streams
+            ],
             "user": (
                 Profile.objects.serialize_user(
                     request.user,

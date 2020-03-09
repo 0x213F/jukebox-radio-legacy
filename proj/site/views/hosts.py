@@ -25,5 +25,6 @@ class HostsView(BaseView):
             )
         )
         stream = ticket.stream
+        stream.tags = ''.join(stream.tags.split(", "))
 
         return self.template_response(request, 'manage.html', {'stream': stream, 'ticket': ticket})

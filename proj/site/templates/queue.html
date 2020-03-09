@@ -19,10 +19,10 @@
 
     <!-- - - - - - - - - - - - - -->
     <!--  LOAD PAGE (LIST HOSTS) -->
-    <form class="ajax-form hidden"
+    <form id="form-load-hosts"
+          class="ajax-form hidden"
           type="get"
           url="../../../api/music/list_queue/"
-          submit="onload"
           onsuccess='display_queue'>
       <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
     </form>

@@ -19,6 +19,11 @@ class UpdateStreamView(BaseView):
         stream_name = request.POST.get('stream_name', None)
         stream_tags = request.POST.get('stream_tags', None)
 
+        if len(stream_tags) > 3:
+            raise ValueError('Too many emojis')
+
+        stream_tags = ', '.join([char for char in stream_tags])
+
         if not stream_name or not stream_tags:
             raise Exception('Missing required parameters')
 

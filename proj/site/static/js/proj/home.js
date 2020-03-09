@@ -16,10 +16,12 @@ function generate_stream(stream, class_name) {
   for(tag of stream.tags) {
     tags_html += `<span class="chip" style="border-radius: 28px; margin-right: 8px;">${tag}</span>`
   }
+  var user_count = 3;
+  console.log(stream)
   return `
   <div class="card-body ${class_name}" uuid="${stream.uuid}" style="cursor: pointer;">
     <div class="card" style="margin-bottom: 0px;">
-      <div class="card-body">
+      <div class="card-body" style="width: 100%;">
 
         <div class="form-group" style="line-height: 36px;">
           <h5>${stream.name}</h5>
@@ -29,12 +31,13 @@ function generate_stream(stream, class_name) {
           <div class="chip" style="border-radius: 28px">
             <figure class="avatar avatar-sm" data-initial="" style="background-color: ${background_color};"></figure>${stream.owner_name}
           </div>
+          ${tags_html}
         </div>
 
-        <div class="divider"></div>
-
         <div class="form-group" style="line-height: 36px;">
-          ${tags_html}
+          <div class="chip" style="border-radius: 28px">
+            ${stream.user_count} active users
+          </div>
         </div>
 
       </div>

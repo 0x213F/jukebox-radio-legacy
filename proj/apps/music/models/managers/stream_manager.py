@@ -34,9 +34,13 @@ class StreamManager(BaseManager):
     Django Manager used to manage Stream objects.
     """
 
-    def serialize(self, stream):
+    def serialize(self, stream, active_users=None):
         if not stream:
             return None
+
+        user_count = 0
+        if active_users:
+            user_count=active_users.count()
 
         return {
             "uuid": str(stream.uuid),
@@ -44,6 +48,7 @@ class StreamManager(BaseManager):
             "status": stream.status,
             "tags": stream.tags.split(', '),
             "owner_name": stream.owner_name,
+            "user_count": user_count,
         }
 
     def change_status(self, stream, status):
@@ -165,48 +170,6 @@ class StreamManager(BaseManager):
                 ),
             },
         )
-
-        for ticket in Ticket.objects.filter(is_subscribed=True, stream=stream):
-
-            most_recent_join = (
-                Comment.objects.filter(
-                    status=Comment.STATUS_JOINED, commenter=ticket.holder,
-                )
-                .order_by("-created_at")
-                .first()
-            )
-
-            try:
-                assert most_recent_join.stream == stream
-            except Exception:
-                continue
-
-            most_recent_leave = (
-                Comment.objects.filter(
-                    status=Comment.STATUS_LEFT, commenter=ticket.holder, stream=stream,
-                )
-                .order_by("-created_at")
-                .first()
-            )
-
-            if (most_recent_join.created_at and not most_recent_leave) or (
-                most_recent_join.created_at > most_recent_leave.created_at
-            ):
-                print("USER IS IN CHAT AND SUBSCRIBED")
-                continue
-
-            user = ticket.holder
-            action = "play"
-            data = json.dumps({"uris": uris})
-            sat = user.profile.spotify_access_token
-            response = requests.put(
-                f"https://api.spotify.com/v1/me/player/{action}",
-                data=data,
-                headers={
-                    "Authorization": f"Bearer {sat}",
-                    "Content-Type": "application/json",
-                },
-            )
 
     def play(self, record):
         """

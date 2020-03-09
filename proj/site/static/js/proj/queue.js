@@ -33,6 +33,7 @@ function generate_queue(queue) {
 function display_queue(data) {
   let list_queue = data[KEY_QUEUE];
   let $queue_container = $('.queue-list');
+  $queue_container.empty();
   if(!list_queue.length) {
     $('#conditionally-hide-divider').hide();
   }

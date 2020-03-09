@@ -15,7 +15,6 @@ function update_play_bar(stream, record, playback) {
     is_broad = false;
   }
 
-  console.log(stream, record, playback)
   if(record) {
     var stream_title = $('.card.active-stream').find('h5').text();
     $currently_playing.find('.title').text(stream_title);
@@ -26,6 +25,11 @@ function update_play_bar(stream, record, playback) {
     $spotify_disconnected.addClass('hide');
     $link_spotify.addClass('hide');
     $please_play_music.addClass('hide');
+  
+    $form_add_hosts = $('#form-load-hosts');
+    if($form_add_hosts) {
+      $form_add_hosts.submit();
+    }
   } else if (stream && is_broad) {
     $currently_playing.addClass('hide');
     $waiting_to_play.addClass('hide');

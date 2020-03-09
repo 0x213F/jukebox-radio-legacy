@@ -2,7 +2,7 @@
 /* PLAY BAR  */
 
 .play-bar.hide-under-view {
-  bottom: -72px;
+  bottom: -108px;
   transition: all 0.2s ease;
 }
 

@@ -26,18 +26,23 @@ class CreateStreamView(BaseView):
         Ticket = apps.get_model('music.Ticket')
 
         stream_name = request.POST.get('name', None)
-        tags = 'no, more, tags'
+        tags = request.POST.get('tags', None)
+
+        if len(tags) > 3:
+            raise ValueError('Too many emojis')
+
+        tags = ', '.join([char for char in tags])
         if not stream_name or not tags:
             raise Exception('Must provide a stream name')
 
         now = datetime.now()
-        stream = Stream.objects.create(title=stream_name, tags=tags, owner=request.user, last_status_change_at=now, status=Stream.STATUS_ACTIVATED)
+        holder_name = request.user.profile.default_display_name or generate_username(1)[0]
+
+        stream = Stream.objects.create(title=stream_name, tags=tags, owner=request.user, owner_name=holder_name, last_status_change_at=now, status=Stream.STATUS_ACTIVATED)
         Ticket.objects.create(
             holder=request.user,
             stream=stream,
-            holder_name=(
-                request.user.profile.default_display_name or generate_username(1)[0]
-            ),
+            holder_name=holder_name,
             holder_uuid=uuid.uuid4(),
             is_administrator=True,
         )

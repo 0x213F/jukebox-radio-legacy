@@ -23,7 +23,7 @@ class UpdateTicketView(BaseView):
         is_administrator = request.POST.get('is_administrator', None)
         is_administrator = True if is_administrator == 'true' else False
 
-        ticket = Ticket.objects.get(
+        ticket = Ticket.objects.select_related('stream').get(
             holder=request.user,
             stream__uuid=stream_uuid,
         )
@@ -47,6 +47,8 @@ class UpdateTicketView(BaseView):
         else:
             if holder_name:
                 ticket.holder_name = holder_name
+                ticket.stream.owner_name = holder_name
+                ticket.stream.save()
             if is_administrator:
                 ticket.is_administrator = is_administrator
 

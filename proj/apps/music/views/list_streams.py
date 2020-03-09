@@ -1,3 +1,6 @@
+from datetime import datetime
+from datetime import timedelta
+
 from django.apps import apps
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -25,8 +28,23 @@ class ListStreamsView(BaseView):
                 holder=request.user, stream__uuid=active_stream_uuid,
             )
 
+        now = datetime.now()
+
         response = {
-            'streams': [Stream.objects.serialize(s) for s in streams],
+            'streams': [
+                Stream.objects.serialize(
+                    s,
+                    active_users=(
+                        s.comments
+                        .filter(
+                            created_at__gte=now - timedelta(minutes=10),
+                        )
+                        .distinct('commenter_id')
+                        .order_by('created_at')
+                    )
+                )
+                for s in streams
+            ],
             'user': (
                 Profile.objects.serialize_user(
                     request.user, active_ticket=active_ticket
