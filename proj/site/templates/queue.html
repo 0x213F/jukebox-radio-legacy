@@ -59,7 +59,7 @@
 
       <!-- INLINE SEARCH BAR -->
       <div class="form-group" style="margin-top: 15px;">
-        <input class="form-input input-lg" type="text" name="query" style="width: calc(100% - 40px); float: left;">
+        <input id="search-bar-input" class="form-input input-lg" type="text" name="query" style="width: calc(100% - 40px); float: left;">
         <button type="submit" form="search-library" class="btn btn-primary btn-lg input-group-btn" style="width: 40px;">
           <i class="icon icon-2x icon-search"></i>
         </button>
@@ -75,7 +75,7 @@
       </ul>
     </div>
 
-    <form id="create-record" class="ajax-form card-body" url="../../../api/music/create_queue/" type="post">
+    <form id="create-record" class="ajax-form card-body" url="../../../api/music/create_queue/" type="post" onsuccess="success_adding_queue">
 
       <input id="create-record-record-name" class="hidden" name="record_name">
       <input id="create-record-uri" class="hidden" name="uri">

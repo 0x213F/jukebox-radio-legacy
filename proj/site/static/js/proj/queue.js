@@ -43,6 +43,19 @@ function display_queue(data) {
   $queue_container.removeClass('hidden');
 }
 
+function success_adding_queue(data) {
+  // hide search results
+  var $search_results = $('#search-library-results');
+  $search_results.hide();
+  // remove query from search bar
+  $('#search-bar-input').val('');
+  // add queue object
+  let $queue_container = $('.queue-list');
+  $queue_container.append(generate_queue(data));
+  // reset ajax forms
+  setup_ajax_forms();
+}
+
   /////  //////  /////
  /////  SEARCH  /////
 /////  //////  /////

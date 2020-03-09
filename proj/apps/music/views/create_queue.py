@@ -67,4 +67,4 @@ class CreateQueueView(BaseView):
             )
             tasks.schedule_spin.apply_async(eta=next_play_time, args=[stream.id])
 
-        return self.http_response({})
+        return self.http_response(Queue.objects.serialize(queue))
