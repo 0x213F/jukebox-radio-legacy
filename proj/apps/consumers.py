@@ -282,7 +282,11 @@ class Consumer(AsyncConsumer):
         url_params = self.get_data_from_ws_path()
         active_stream_uuid = url_params['uuid']
 
-        stream = self._cache["stream"]
+        # if there is no stream, then it failed to connect in the first place
+        try:
+            stream = self._cache["stream"]
+        except Exception:
+            return
 
         ticket = await database_sync_to_async(Ticket.objects.get)(
             holder=_user, stream=stream,
