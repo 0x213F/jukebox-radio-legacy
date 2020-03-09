@@ -65,8 +65,10 @@ function display_tune_in_streams(data) {
 }
 
 function display_broadcasting_streams(data) {
+  console.log(data)
   let list_streams = data[KEY_SHOWINGS];
-  if(!list_streams) {
+  console.log(data)
+  if(!list_streams.length) {
     return;
   }
   let $streams_container = $('.broadcasting-streams');
