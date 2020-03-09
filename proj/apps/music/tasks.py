@@ -1,8 +1,14 @@
+import json
 from celery import shared_task
 from datetime import datetime
 from datetime import timedelta
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 from django.apps import apps
+
+
+channel_layer = get_channel_layer()
 
 
 LOOPED_STREAM_IDS = [
@@ -28,6 +34,27 @@ def schedule_spin(stream_id):
     )
     if not queue:
         if stream_id not in LOOPED_STREAM_IDS:
+            async_to_sync(channel_layer.group_send)(
+                stream.chat_room,
+                {
+                    "type": "broadcast",
+                    "text": json.dumps(
+                        {
+                            "source": {
+                                "type": "system",
+                                "display_name": None,
+                                "uuid": None,
+                            },
+                            "data": {
+                                "stream": Stream.objects.serialize(stream),
+                                "playback": {
+                                    "status": 'waiting',
+                                },
+                            },
+                        }
+                    ),
+                },
+            )
             return
         queue = (
             Queue

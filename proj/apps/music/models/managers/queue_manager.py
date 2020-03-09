@@ -25,6 +25,8 @@ class QueueManager(BaseManager):
     pass
 
     def serialize(self, queue):
+        print('hello')
+        print(queue.record.__dict__)
         return {
             'id': queue.id,
             'stream_uuid': queue.stream.uuid,

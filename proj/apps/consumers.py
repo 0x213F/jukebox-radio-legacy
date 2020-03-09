@@ -81,6 +81,8 @@ class Consumer(AsyncConsumer):
         self.initialize_cache()
         _user = await self.get_user()
 
+        await self.websocket_accept()
+
         # [0]
         # user needs to have Spotify linked before joining the stream/ channel
         if not _user.profile.spotify_access_token:
@@ -95,8 +97,6 @@ class Consumer(AsyncConsumer):
         )
 
         await self.add_to_channel()
-
-        await self.websocket_accept()
 
         # [1]
         # create record of joining
@@ -131,11 +131,11 @@ class Consumer(AsyncConsumer):
 
         # [5]
         # if no record is currently playing, return
-        record_ends_at = (
-            self._cache['stream']
-            .record_terminates_at.replace(tzinfo=None)
-        )
-        if datetime.now() > record_ends_at:
+        record_terminates_at = self._cache['stream'].record_terminates_at
+        if (
+            record_terminates_at and
+            datetime.now() > record_terminates_at.replace(tzinfo=None)
+        ):
             await self.send_playback_status('waiting')
             return
 
@@ -353,14 +353,16 @@ class Consumer(AsyncConsumer):
         )
 
     async def send_playback_status(self, status):
+        if status != 'linkspotify':
+            stream = Stream.objects.serialize(self._cache["stream"])
+        else:
+            stream = {}
         await self.send(
             {
                 "type": "websocket.send",
                 "text": json.dumps({
                     "data": {
-                        "stream": {
-                            **Stream.objects.serialize(self._cache["stream"])
-                        },
+                        "stream": stream,
                         "playback": {
                             "status": status,
                         }

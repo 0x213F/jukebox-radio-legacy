@@ -14,13 +14,17 @@ class ListQueueView(BaseView):
         Queue = apps.get_model('music', 'Queue')
 
         stream_uuid = request.GET.get('stream_uuid', None)
-        queue = (
+
+        queue_qs = (
             Queue.objects
+            .select_related('record')
             .filter(stream__uuid=stream_uuid, played_at__isnull=True)
             .order_by('created_at')
         )
 
         response = {
-            'queue': [Queue.objects.serialize(q) for q in queue],
+            'queue': [Queue.objects.serialize(q) for q in queue_qs],
         }
+        print('s')
+        print(response)
         return self.http_response(response)

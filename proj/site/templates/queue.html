@@ -50,16 +50,16 @@
     <form id="search-library" class="ajax-form card-body" url="../../../api/music/search_library/" type="get" onsuccess="display_search_results">
 
       <!-- TABS TO SELECT TYPE -->
-      <input id="search-library-type" class="hidden" name="type" value="album">
+      <input id="search-library-type" class="hidden" name="type" value="track">
       <div class="filter-nav">
-        <label class="chip active" value="album">Album</label>
+        <label class="chip active" value="track">Song</label>
+        <label class="chip" value="album">Album</label>
         <label class="chip" value="playlist">Playlist</label>
-        <label class="chip" value="track">Song</label>
       </div>
 
       <!-- INLINE SEARCH BAR -->
       <div class="form-group" style="margin-top: 15px;">
-        <input id="search-bar-input" class="form-input input-lg" type="text" name="query" style="width: calc(100% - 40px); float: left;">
+        <input id="search-bar-input" class="form-input input-lg" type="text" name="query" autocomplete="off" style="width: calc(100% - 40px); float: left;">
         <button type="submit" form="search-library" class="btn btn-primary btn-lg input-group-btn" style="width: 40px;">
           <i class="icon icon-2x icon-search"></i>
         </button>
@@ -75,15 +75,15 @@
       </ul>
     </div>
 
-    <form id="create-record" class="ajax-form card-body" url="../../../api/music/create_queue/" type="post" onsuccess="success_adding_queue">
+    <form id="create-queue" class="ajax-form card-body" url="../../../api/music/create_queue/" type="post" onsuccess="success_adding_queue">
 
-      <input id="create-record-record-name" class="hidden" name="record_name">
-      <input id="create-record-uri" class="hidden" name="uri">
-      <input id="create-record-img" class="hidden" name="img">
+      <input id="create-queue-record-name" class="hidden" name="record_name">
+      <input id="create-queue-uri" class="hidden" name="uri">
+      <input id="create-queue-img" class="hidden" name="img">
       <input class="hidden" name="stream_uuid" value="{{ stream.uuid }}">
 
       <div class="form-group">
-        <button id="create-record-submit" type="submit" form="create-record" class="btn btn-secondary btn-lg" disabled>Add to Queue</button>
+        <button id="create-record-submit" type="submit" form="create-queue" class="btn btn-secondary btn-lg" disabled>Add to Queue</button>
         <span class="text-info ajax-form-error" style="margin-left: 1.4em; color: red"><span>
       </div>
     </form>

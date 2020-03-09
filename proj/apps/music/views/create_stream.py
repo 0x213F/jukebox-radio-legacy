@@ -26,7 +26,7 @@ class CreateStreamView(BaseView):
         Ticket = apps.get_model('music.Ticket')
 
         stream_name = request.POST.get('name', None)
-        tags = request.POST.get('tags', None)
+        tags = 'no, more, tags'
         if not stream_name or not tags:
             raise Exception('Must provide a stream name')
 

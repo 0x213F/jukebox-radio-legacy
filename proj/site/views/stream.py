@@ -30,5 +30,7 @@ class StreamView(BaseView):
                 'stream': stream,
                 'ticket': ticket,
                 'is_host': is_host,
+                'should_display_chat_button': False,
+                'should_display_volume_button': True,
             }
         )

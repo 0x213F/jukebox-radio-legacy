@@ -22,4 +22,8 @@ class QueueView(BaseView):
         )
         stream = ticket.stream
 
-        return self.template_response(request, 'queue.html', {'stream': stream})
+        return self.template_response(request, 'queue.html', {
+            'stream': stream,
+            'should_display_chat_button': False,
+            'should_display_volume_button': True,
+        })

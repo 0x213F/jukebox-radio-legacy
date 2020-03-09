@@ -69,8 +69,33 @@ $(document).ready(function() {
     $chips_selector.removeClass('active');
     $this.addClass('active');
     $type_selector.val(value);
+    $('#search-library').submit();
+  });
+
+  var $search_bar_input = $('#search-bar-input');
+
+  var typingTimer;                //timer identifier
+  var doneTypingInterval = 200;   //time in ms, 0.2 seconds for example
+
+  $search_bar_input.on('keyup', function () {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(search_after_done_typing, doneTypingInterval);
+  });
+
+  //on keydown, clear the countdown
+  $search_bar_input.on('keydown', function () {
+    clearTimeout(typingTimer);
   });
 });
+
+function search_after_done_typing() {
+  if(!$('#search-bar-input').val()) {
+    var $search_results = $('#search-library-results');
+    $search_results.hide();
+    return;
+  }
+  $('#search-library').submit();
+}
 
 
 function display_search_results(data) {
@@ -138,9 +163,9 @@ function display_search_results(data) {
     var img = $this.attr('img');
     var record_name = $this.attr('record-name');
 
-    $('#create-record-record-name').val(record_name);
-    $('#create-record-uri').val(uri);
-    $('#create-record-img').val(img);
+    $('#create-queue-record-name').val(record_name);
+    $('#create-queue-uri').val(uri);
+    $('#create-queue-img').val(img);
 
     $a_selectors.removeClass('search-result-selected');
     $(this).addClass('search-result-selected');

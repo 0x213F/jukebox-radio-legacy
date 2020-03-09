@@ -97,6 +97,8 @@ class StreamManager(BaseManager):
         """
         from proj.apps.music.models import Ticket
         from proj.apps.music.models import Comment
+        Stream = apps.get_model('music', 'Stream')
+        Record = apps.get_model('music', 'Record')
 
         now = datetime.now()
         now_str = now.isoformat()
@@ -149,7 +151,16 @@ class StreamManager(BaseManager):
                             "display_name": None,
                             "uuid": None,
                         },
-                        "data": {"created_at": now_str, "status": None, "text": None,},
+                        "data": {
+                            "created_at": now_str,
+                            "status": None,
+                            "text": None,
+                            "stream": Stream.objects.serialize(stream),
+                            "playback": {
+                                "status": 'play_record',
+                            },
+                            "record": Record.objects.serialize(record),
+                        },
                     }
                 ),
             },

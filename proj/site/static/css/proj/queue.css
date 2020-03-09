@@ -4,3 +4,7 @@
   color: #5764c6;
   background: #fbfbfe;
 }
+
+.chip {
+  cursor: pointer;
+}

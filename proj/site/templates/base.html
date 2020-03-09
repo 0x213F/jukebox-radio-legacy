@@ -28,11 +28,24 @@
 
     {% endblock %}
 
+    <!-- lavalamp -->
+    <style>
+      canvas {
+        position: absolute;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+        top: 0px;
+      }
+    </style>
+
     {% block styles %}{% endblock %}
 </head>
 
 <!-- min width supported ~ 320px -->
 <body>
+
+    <canvas id="lamp-anim" class="lamp-anim"></canvas>
 
     {% block main %}{% endblock %}
 
@@ -43,6 +56,7 @@
     <script src="{% static 'js/jquery.js' %}"></script>
     <script src="{% static 'js/proj/globals.js' %}"></script>
     <script src="{% static 'js/proj/main.js' %}"></script>
+    <script src="{% static 'js/lavalamp.js' %}"></script>
     {% endblock %}
 
     {% block scripts %}{% endblock %}

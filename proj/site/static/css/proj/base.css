@@ -6,12 +6,20 @@
 }
 
 .main {
-    width: 310px;
+    width: calc(100% - 32px);
+    min-width: 310px;
+    max-width: 400px;
     height: calc(100vh - 104px);
+    border-color: #f1f1fc!important;
 }
 
 .main.card > .card-body {
   width: 100%;
+  overflow-y: auto;
+}
+
+.main.card > .card-body::-webkit-scrollbar {
+    display: none;  // Safari and Chrome
 }
 
 .hidden {

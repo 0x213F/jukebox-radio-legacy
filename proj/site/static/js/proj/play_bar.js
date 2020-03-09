@@ -15,6 +15,7 @@ function update_play_bar(stream, record, playback) {
     is_broad = false;
   }
 
+  console.log(stream, record, playback)
   if(record) {
     var stream_title = $('.card.active-stream').find('h5').text();
     $currently_playing.find('.title').text(stream_title);
