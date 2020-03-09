@@ -66,12 +66,17 @@ function display_tune_in_streams(data) {
 
 function display_broadcasting_streams(data) {
   let list_streams = data[KEY_SHOWINGS];
+  if(!list_streams) {
+    return;
+  }
   let $streams_container = $('.broadcasting-streams');
   for(let stream of list_streams) {
     $streams_container.append(generate_stream(stream, 'broadcasting-stream'));
   }
   setup_ajax_forms();
   $(".broadcasting-streams").removeClass('hidden');
+
+  $('#create-stream-button').hide();
 
   $('.card-body.broadcasting-stream > .card').click(activate_stream)
 

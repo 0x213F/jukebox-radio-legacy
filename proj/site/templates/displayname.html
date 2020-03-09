@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/proj/play_bar.css' %}">
+{% endblock %}
+
 {% block main %}
 
 <div class="main center-horizontal card">
@@ -53,4 +59,13 @@
 
 </div>
 
+<!-- - - - - - -->
+<!--  PLAY BAR -->
+{% include "play_bar.html" %}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static '/js/proj/play_bar.js' %}"></script>
+<script src="{% static '/js/proj/displayname.js' %}"></script>
 {% endblock %}

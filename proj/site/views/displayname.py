@@ -17,4 +17,9 @@ class DisplayNameView(BaseView):
         )
         stream = ticket.stream
 
-        return self.template_response(request, 'displayname.html', {'stream': stream, 'ticket': ticket})
+        return self.template_response(request, 'displayname.html', {
+            'stream': stream,
+            'ticket': ticket,
+            'should_display_chat_button': False,
+            'should_display_volume_button': False,
+        })

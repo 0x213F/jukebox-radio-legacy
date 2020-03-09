@@ -14,11 +14,11 @@
   position: fixed;
   bottom: -36px;
 
-  background-color: rgb(251, 252, 252, 0.9);
+  background-color: rgb(256, 256, 256, 0.9);
 
-  border-top: 1px solid #5764c6;
-  border-left: 1px solid #5764c6;
-  border-right: 1px solid #5764c6;
+  border-top: 2px solid #f1f1fc;
+  border-left: 2px solid #f1f1fc;
+  border-right: 2px solid #f1f1fc;
 
   left: 50%;
   transform: translate(-50%, -50%);

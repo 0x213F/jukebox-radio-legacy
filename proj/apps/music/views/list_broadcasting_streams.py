@@ -29,6 +29,7 @@ class ListBroadcastingStreamsView(BaseView):
                         s.comments
                         .filter(
                             created_at__gte=now - timedelta(minutes=10),
+                            commenter_id__isnull=False,
                         )
                         .distinct('commenter_id')
                         .order_by('commenter_id')
