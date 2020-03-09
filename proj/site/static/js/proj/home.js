@@ -65,9 +65,7 @@ function display_tune_in_streams(data) {
 }
 
 function display_broadcasting_streams(data) {
-  console.log(data)
   let list_streams = data[KEY_SHOWINGS];
-  console.log(data)
   if(!list_streams.length) {
     return;
   }
