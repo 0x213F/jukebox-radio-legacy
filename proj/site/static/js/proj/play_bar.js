@@ -1,5 +1,5 @@
 
-function update_play_bar(stream, record) {
+function update_play_bar(stream, record, playback) {
   var $currently_playing = $('.currently-playing');
   var $waiting_to_play = $('.waiting-to-play');
   var $link_spotify = $('.link-spotify');
@@ -14,6 +14,7 @@ function update_play_bar(stream, record) {
   } catch(err) {
     is_broad = false;
   }
+
   if(record) {
     var stream_title = $('.card.active-stream').find('h5').text();
     $currently_playing.find('.title').text(stream_title);
@@ -25,7 +26,6 @@ function update_play_bar(stream, record) {
     $link_spotify.addClass('hide');
     $please_play_music.addClass('hide');
   } else if (stream && is_broad) {
-    console.log('here')
     $currently_playing.addClass('hide');
     $waiting_to_play.addClass('hide');
     $spotify_disconnected.addClass('hide');
@@ -33,19 +33,19 @@ function update_play_bar(stream, record) {
     $please_play_music.removeClass('hide');
   } else if (!stream) {
     return;
-  } else if(stream.status === 'waiting') {
+  } else if(playback.status === 'waiting') {
     $currently_playing.addClass('hide');
     $waiting_to_play.removeClass('hide');
     $spotify_disconnected.addClass('hide');
     $link_spotify.addClass('hide');
     $please_play_music.addClass('hide');
-  } else if(stream.status === 'disconnected') {
+  } else if(playback.status === 'disconnected') {
     $currently_playing.addClass('hide');
     $waiting_to_play.addClass('hide');
     $spotify_disconnected.removeClass('hide');
     $link_spotify.addClass('hide');
     $please_play_music.addClass('hide');
-  } else if(stream.status === 'linkspotify') {
+  } else if(playback.status === 'linkspotify') {
     $currently_playing.addClass('hide');
     $waiting_to_play.addClass('hide');
     $spotify_disconnected.addClass('hide');

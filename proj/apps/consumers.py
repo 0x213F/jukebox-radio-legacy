@@ -187,24 +187,10 @@ class Consumer(AsyncConsumer):
                 return
 
         except Exception as e:
-            # edge cases that we hit when one of the following happens:
-            # - user revokes our app from their settings page then comes
-            #   back again to use the site
-            # - cron messes up and we don't refresh tokens so they all
-            #   expire (hopefully this never happens)
-            # - some undocumented error (likely another error from the
-            #   Spotify API)
-            try:
-                if response.status_code == 204:
-                    raise Exception('The user does not have Spotify open')
-                if response_json['error']['message'] == 'The access token expired':
-                    await self.send_playback_status('linkspotify')
-                else:
-                    raise Exception()
-            except Exception:
-                await self.send_playback_status('linkspotify')
-            finally:
-                return
+            # assuming everything is behaving as expected, we assume that the
+            # user's Spotify client is disconnected
+            await self.send_playback_status('disconnected')
+            return
 
         # [8]
         # get the track playing and tracks in the queue
@@ -373,7 +359,6 @@ class Consumer(AsyncConsumer):
                 "text": json.dumps({
                     "data": {
                         "stream": {
-                            "status": status,
                             **Stream.objects.serialize(self._cache["stream"])
                         },
                         "playback": {
@@ -412,7 +397,10 @@ class Consumer(AsyncConsumer):
                         "tracklistings": [
                             TrackListing.objects.serialize(tracklisting)
                             for tracklisting in tracklistings
-                        ]
+                        ],
+                        "playback": {
+                            "status": 'play_record',
+                        }
                     }
                 }),
             }

@@ -56,7 +56,10 @@ function onmessage(event) {
     }
   }
 
-  update_play_bar(stream, record);
+  let playback = payload.data[KEY_PLAYBACK] || null;
+  if(playback) {
+    update_play_bar(stream, record, playback);
+  }
 }
 
 var endpoint = (

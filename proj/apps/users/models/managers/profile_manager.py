@@ -105,6 +105,4 @@ class ProfileManager(BaseManager):
         ticket = _cache['ticket']
         _set_cache(_cache, 'ticket', ticket)
 
-        print(_cache.keys())
-
         return _cache

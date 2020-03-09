@@ -55,7 +55,10 @@ function onmessage(event) {
   let record = payload.data[KEY_RECORD] || null;
   let tracklistings = payload.data[KEY_TRACKLISTINGS] || null;
 
-  update_play_bar(stream, record);
+  let playback = payload.data[KEY_PLAYBACK] || null;
+  if(playback) {
+    update_play_bar(stream, record, playback);
+  }
 }
 
 var url = window.location.href;

@@ -1,12 +1,4 @@
 
-.list_streams {
-
-}
-
-.list_streams > .stream.card {
-
-}
-
 .stream.card {
   transition: background-color 0.3s ease;
   border-radius: 6px;
@@ -16,17 +8,18 @@
 }
 
 .record.card,
-.broadcasting-stream.card-body > .card {
-  transition: background-color 0.2s ease;
-  transition: box-shadow 0.2s ease;
+.broadcasting-stream.card-body > .card,
+.tune-in-streams.card-body > .card {
+  transition: border-color 0.2s ease!important;
 }
 
-.broadcasting-stream.card-body > .card:hover {
+.broadcasting-stream.card-body > .card:hover,
+.tune-in-streams.card-body > .card:hover {
   box-shadow: 0 0 0 2px #e7eaf2;
 }
 
 .broadcasting-stream.card-body > .card.active-stream,
-.broadcasting-streams.card-body > .card.active-stream,
+.broadcasting-stream.card-body > .card.active-stream,
 .tune-in-streams.card-body > .card.active-stream {
   border-color: #5764c6;
 }
