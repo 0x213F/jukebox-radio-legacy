@@ -48,7 +48,7 @@ def schedule_spin(stream_id):
                             "data": {
                                 "stream": Stream.objects.serialize(stream),
                                 "playback": {
-                                    "status": 'waiting',
+                                    "status": 'waiting-for-stream-to-start',
                                 },
                             },
                         }

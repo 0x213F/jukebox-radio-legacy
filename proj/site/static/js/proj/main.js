@@ -3,7 +3,22 @@ function setup_ajax_forms() {
   $(".ajax-form").unbind();
   $(".ajax-form").submit(function(e) {
       e.preventDefault();
+
       $this = $(this);
+
+      let beforesubmit = $this.attr("beforesubmit")
+      try {
+        if(beforesubmit) {
+          window[beforesubmit]()
+        }
+      } catch(error) {
+        if(error === 'rate_limit_exceeded') {
+          return;
+        } else {
+          throw error;
+        }
+      }
+
       let url = $this.attr("url")
       $error = $this.find(".ajax-form-error");
       redirect = $this.attr("redirect");

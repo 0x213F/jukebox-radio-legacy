@@ -8,3 +8,19 @@
 .chip {
   cursor: pointer;
 }
+
+.toast-delete {
+  cursor: pointer;
+  background-color: rgba(87, 100, 198, 0.9);
+  color: white;
+  outline: 0;
+  width: 24px;
+  height: 24px;
+  margin-top: -2px;
+  margin-right: -2px;
+  border-radius: 0.2rem;
+}
+
+.toast-delete:hover {
+  background-color: rgba(247,248,249,.5);
+}

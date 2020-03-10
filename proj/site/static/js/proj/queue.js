@@ -5,7 +5,7 @@
 
 function generate_queue(queue) {
   return `
-    <div class="card-body" style="padding-top: 16px;">
+    <div class="card-body" style="padding-bottom: 16px; padding-top: 0px;">
       <form class="ajax-form"
             type="post"
             url="../../../api/music/delete_queue/"
@@ -13,7 +13,9 @@ function generate_queue(queue) {
 
         <input class="hidden" type="text" name="queue_id" value="${queue.id}">
         <div class="toast toast-primary" style="height: 40px; padding: 9px; padding-left: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-            <button class="btn btn-clear float-right"></button>
+            <button class="btn-link float-right toast-delete">
+              <i class="icon icon-cross"></i>
+            </button>
             ${queue.record_name}
         </div>
       </form>
@@ -27,6 +29,7 @@ function display_queue(data) {
   $queue_container.empty();
   if(!list_queue.length) {
     $('#conditionally-hide-divider').hide();
+    $('#search-bar-input').focus();
     return;
   }
   for(let queue of list_queue) {
@@ -42,6 +45,7 @@ function success_adding_queue(data) {
   $search_results.hide();
   // remove query from search bar
   $('#search-bar-input').val('');
+  defocus_searchbar();
   // add queue object
   let $queue_container = $('.queue-list');
   $queue_container.append(generate_queue(data));
@@ -70,28 +74,66 @@ $(document).ready(function() {
   var $search_bar_input = $('#search-bar-input');
 
   var typingTimer;                //timer identifier
-  var doneTypingInterval = 200;   //time in ms, 0.2 seconds for example
+  var doneTypingInterval = 500;   //time in ms, 0.2 seconds for example
 
   $search_bar_input.on('keyup', function () {
     clearTimeout(typingTimer);
     typingTimer = setTimeout(search_after_done_typing, doneTypingInterval);
   });
 
-  //on keydown, clear the countdown
+  // on keydown, clear the countdown
   $search_bar_input.on('keydown', function () {
     clearTimeout(typingTimer);
   });
+
+  $search_bar_input.on('focus', function () {
+    focus_searchbar()
+  });
+
+  $search_bar_input.on('blur', function () {
+
+  });
 });
+
+
+function defocus_searchbar() {
+  $('#create-record-submit').hide();
+  $('#search-type-choices').hide();
+  $('.queue-list').show();
+  $('#search-library').css("padding-top", "0px");
+}
+
+function focus_searchbar() {
+  $('#create-record-submit').show();
+  $('#search-type-choices').show();
+  $('.queue-list').hide();
+  $('#search-library').css("padding-top", "46px");
+}
+
+
+var last_searched = Date.now();
+function validate_search_eligible() {
+  var now = Date.now();
+
+  if(!$('#search-bar-input').val()) {
+    throw "rate_limit_exceeded";
+  } else if(now - last_searched > 500) {
+    last_searched = now;
+  } else {
+    throw "rate_limit_exceeded";
+  }
+}
 
 function search_after_done_typing() {
   if(!$('#search-bar-input').val()) {
     var $search_results = $('#search-library-results');
     $search_results.hide();
+    defocus_searchbar();
     return;
   }
+  focus_searchbar()
   $('#search-library').submit();
 }
-
 
 function display_search_results(data) {
   var type = data.type
@@ -165,6 +207,7 @@ function display_search_results(data) {
     $a_selectors.removeClass('search-result-selected');
     $(this).addClass('search-result-selected');
     $create_record.attr('disabled', false);
+    focus_searchbar();
   })
 }
 
