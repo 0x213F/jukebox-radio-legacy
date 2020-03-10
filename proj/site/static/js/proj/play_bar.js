@@ -1,61 +1,30 @@
 
-function update_play_bar(stream, record, playback) {
-  var $currently_playing = $('.currently-playing');
-  var $waiting_to_play = $('.waiting-to-play');
-  var $link_spotify = $('.link-spotify');
-  var $spotify_disconnected = $('.spotify-disconnected');
-  var $please_play_music = $('.please-play-music');
+let AUTHORIZE_SPOTIFY = 'authorize-spotify';
 
-  var $img = $('#album-art-img')
 
-  var is_broad = null;
-  try {
-    is_broad = IS_BROADCASTING;
-  } catch(err) {
-    is_broad = false;
+function show_section(class_name) {
+  if(class_name === SECTION_AUTHORIZE_SPOTIFY) {
+
   }
 
-  if(record) {
-    var stream_title = $('.card.active-stream').find('h5').text();
-    $currently_playing.find('.title').text(stream_title);
-    $img.attr('src', record.img);
+}
 
-    $currently_playing.removeClass('hide');
-    $waiting_to_play.addClass('hide');
-    $spotify_disconnected.addClass('hide');
-    $link_spotify.addClass('hide');
-    $please_play_music.addClass('hide');
-  
-    $form_add_hosts = $('#form-load-hosts');
-    if($form_add_hosts) {
-      $form_add_hosts.submit();
-    }
-  } else if (stream && is_broad) {
-    $currently_playing.addClass('hide');
-    $waiting_to_play.addClass('hide');
-    $spotify_disconnected.addClass('hide');
-    $link_spotify.addClass('hide');
-    $please_play_music.removeClass('hide');
-  } else if (!stream) {
+
+function update_play_bar(payload) {
+  let playback_data = payload.data[KEY_PLAYBACK]
+  let visible_section_class_name = playback_data.next_step;
+
+  if(visible_section_class_name === 'noop') {
     return;
-  } else if(playback.status === 'waiting') {
-    $currently_playing.addClass('hide');
-    $waiting_to_play.removeClass('hide');
-    $spotify_disconnected.addClass('hide');
-    $link_spotify.addClass('hide');
-    $please_play_music.addClass('hide');
-  } else if(playback.status === 'disconnected') {
-    $currently_playing.addClass('hide');
-    $waiting_to_play.addClass('hide');
-    $spotify_disconnected.removeClass('hide');
-    $link_spotify.addClass('hide');
-    $please_play_music.addClass('hide');
-  } else if(playback.status === 'linkspotify') {
-    $currently_playing.addClass('hide');
-    $waiting_to_play.addClass('hide');
-    $spotify_disconnected.addClass('hide');
-    $link_spotify.removeClass('hide');
-    $please_play_music.addClass('hide');
+  }
+
+  $('.play-bar > .content').hide();
+  $('.play-bar > .' + visible_section_class_name).show();
+
+  let record_data = payload.data[KEY_RECORD];
+  if(record_data) {
+    $('.play-bar > .content > .album-art').attr('src', record_data.img);
+    try { $('#form-load-queue').submit(); } catch(error) {};
   }
 
   var $playBar = $('#play-bar');
@@ -70,6 +39,7 @@ $( document ).ready(function() {
 
   /////  NAVIGATE TO CHAT
   $('#play-bar-chat-button').click(function(data) {
+    console.log('HELLO')
     var uuid = STREAM_UUID || $('.active-stream').parent().attr('uuid');
     window.location.href = `/stream/${uuid}`;
   });

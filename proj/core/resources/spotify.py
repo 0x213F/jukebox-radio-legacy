@@ -12,7 +12,19 @@ class Spotify(object):
     def __init__(self, user, async_mode=False):
         self.user = user
         self._token = None
+        self._refresh_token = None
         self._async = async_mode
+        self._cipher_suite = Fernet(settings.DATABASE_ENCRYPTION_KEY)
+
+    def store_access_token(self, access_token):
+        cipher_spotify_access_token = self._cipher_suite.encrypt(access_token.encode('utf-8')).decode('utf-8')
+        self.user.profile.spotify_access_token = cipher_spotify_access_token
+        self.user.profile.save()
+
+    def store_refresh_token(self, refresh_token):
+        cipher_spotify_refresh_token = self._cipher_suite.encrypt(refresh_token.encode('utf-8')).decode('utf-8')
+        self.user.profile.spotify_refresh_token = cipher_spotify_refresh_token
+        self.user.profile.save()
 
     @classmethod
     def get_spotify_authorization_uri(cls, request, source):
@@ -31,10 +43,18 @@ class Spotify(object):
     @property
     def token(self):
         if not self._token:
-            self._token = Fernet(settings.DATABASE_ENCRYPTION_KEY).decrypt(
+            self._token = self._cipher_suite.decrypt(
                 self.user.profile.spotify_access_token.encode("utf-8")
             ).decode("utf-8")
         return self._token
+
+    @property
+    def refresh_token(self):
+        if not self._refresh_token:
+            self._refresh_token = self._cipher_suite.decrypt(
+                self.user.profile.spotify_refresh_token.encode("utf-8")
+            ).decode("utf-8")
+        return self._refresh_token
 
     def search_library(self, query, type):
         data = {

@@ -4,7 +4,10 @@ import sys
 
 from django.apps import apps
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
+
+from proj.core.resources import Spotify
 
 
 class Command(BaseCommand):
@@ -13,14 +16,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         Profile = apps.get_model('users.Profile')
 
-        profiles_to_refresh = Profile.objects.filter(spotify_access_token__isnull=False)
+        user_qs = User.objects.filter(
+            profile__spotify_access_token__isnull=False,
+        )
 
-        for profile in profiles_to_refresh:
+        for user in user_qs:
             try:
-                cipher_suite = Fernet(settings.DATABASE_ENCRYPTION_KEY)
-                spotify_refresh_token = cipher_suite.decrypt(
-                    profile.spotify_refresh_token.encode('utf-8')
-                ).decode('utf-8')
+                spotify = Spotify(user)
+                spotify_refresh_token = spotify.refresh_token
 
                 response = requests.post(
                     'https://accounts.spotify.com/api/token',
@@ -33,12 +36,13 @@ class Command(BaseCommand):
                 )
                 response_json = response.json()
 
-                cipher_spotify_access_token = cipher_suite.encrypt(
-                    response_json['access_token'].encode('utf-8')
-                )
+                spotify.store_access_token(response_json['access_token'])
 
-                profile.spotify_access_token = cipher_spotify_access_token.decode('utf-8')
-                profile.spotify_scope = response_json['scope']
-                profile.save()
-            except Exception:
+                user.profile.spotify_scope = response_json['scope']
+                user.profile.save()
+            except Exception as e:
+                user.profile.spotify_access_token = None
+                user.profile.spotify_refresh_token = None
+                user.profile.spotify_scope = None
+                user.profile.save()
                 pass

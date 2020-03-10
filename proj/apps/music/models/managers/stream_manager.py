@@ -162,7 +162,7 @@ class StreamManager(BaseManager):
                             "text": None,
                             "stream": Stream.objects.serialize(stream),
                             "playback": {
-                                "status": 'play_record',
+                                "next_step": 'currently-playing',
                             },
                             "record": Record.objects.serialize(record),
                         },

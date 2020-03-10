@@ -17,7 +17,6 @@ function generate_stream(stream, class_name) {
     tags_html += `<span class="chip" style="border-radius: 28px; margin-right: 8px;">${tag}</span>`
   }
   var user_count = 3;
-  console.log(stream)
   return `
   <div class="card-body ${class_name}" uuid="${stream.uuid}" style="cursor: pointer;">
     <div class="card" style="margin-bottom: 0px;">
@@ -113,8 +112,8 @@ function activate_stream() {
   $this.addClass('active-stream');
 
   var endpoint = (
-    'wss://' + window.location.host + window.location.pathname +
-    `?uuid=${uuid}&foo=bar`
+    'ws://' + window.location.host + window.location.pathname +
+    `?uuid=${uuid}&display_comments=false`
   )
 
   if(window['SOCKET']) {
@@ -137,14 +136,8 @@ function onopen(event) {
 function onmessage(event) {
   let text = event.data;
   let payload = JSON.parse(text);
-  let stream = payload.data[KEY_STREAM] || null;
-  let record = payload.data[KEY_RECORD] || null;
-  let tracklistings = payload.data[KEY_TRACKLISTINGS] || null;
 
-  let playback = payload.data[KEY_PLAYBACK] || null;
-  if(playback) {
-    update_play_bar(stream, record, playback);
-  }
+  update_play_bar(payload);
 }
 
 // on window focus, try re-connecting if Spotify is disconnected
@@ -164,7 +157,7 @@ $(window).focus(function() {
   // TODO make an endpoint instead of resetting the connection
   var uuid = $('.card.active-stream').parent().attr('uuid');
   var endpoint = (
-    'wss://' + window.location.host + window.location.pathname +
+    'ws://' + window.location.host + window.location.pathname +
     `?uuid=${uuid}`
   )
 

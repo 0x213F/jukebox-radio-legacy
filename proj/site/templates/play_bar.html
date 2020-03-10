@@ -1,23 +1,68 @@
 <div id="play-bar" class="play-bar hide-under-view">
 
-  <!-- - - - - - - - -->
-  <!--  LINK SPOTIFY -->
-  <div class="content link-spotify">
+  <!-- - - - - - - - - - --->
+  <!--  AUTHORIZE SPOTIFY -->
+  <div class="content authorize-spotify">
     <!-- localhost%3A8000 | jukeboxrad.io | jukebox.radio -->
-    <a class="btn btn-primary" href="https://accounts.spotify.com/authorize?client_id=133a25c7195344dbafd4f50d7450330f&response_type=code&redirect_uri=https%3A%2F%2Fjukebox.radio%2Fconnect%3Fsource%3Dspotify&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state">Authorize Spotify <i class="icon icon-link"></i></a>
+    <div class="centered-button">
+      <a class="btn btn-primary"
+         href="https://accounts.spotify.com/authorize?client_id=133a25c7195344dbafd4f50d7450330f&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fconnect&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state">
+         Authorize Spotify <i class="icon icon-link"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- - - - - - - - - - - - - - - - - - - - - - --->
+  <!--  WAITING FOR STREAM TO START PLAYING MUSIC -->
+  <div class="content waiting-for-stream-to-start">
+
+    <span class="text">
+      Waiting for the stream to start playing music...
+    </span>
+
+    <div class="lds-dual-ring square-right"></div>
+
+  </div>
+
+  <!-- - - - - - - - - - --->
+  <!--  PLEASE PLAY MUSIC -->
+  <div class="content add-music-to-queue">
+
+    <span class="text">
+      Add music to the queue to start the stream.
+    </span>
+
+    <button id="go-to-queue" class="btn btn-lg square-right">
+      <i class="gg-layout-list" style="left: 6px;"></i>
+    </button>
+
+  </div>
+
+  <!-- - - - - - - - - - - - - - -->
+  <!--  SPOTIFY CLIENT NOT FOUND -->
+  <div class="content spotify-streaming-client-not-found">
+
+    <span class="text">
+      Start by streaming music on your device.
+    </span>
+
+    <a href="spotify:open">
+      <button class="btn btn-lg square-right">
+        <i class="gg-external" style="right: -7px; top: -1px;"></i>
+      </button>
+    </a>
+
   </div>
 
   <!-- - - - - - - - - - --->
   <!--  CURRENTLY PLAYING -->
-  <div class="content currently-playing hide">
+  <div class="content currently-playing">
 
-    <div class="album-art">
-      <img id="album-art-img" style="width: 72px;"/>
-    </div>
+    <img class="album-art" draggable="false"/>
 
     {% if should_display_chat_button %}
-    <button id="play-bar-chat-button" class="btn btn-primary btn-lg" style="float: right; margin-top: 16px; margin-right: 16px; height: 40px;">
-      Chat <i class="icon icon-message"></i>
+    <button id="play-bar-chat-button" class="btn btn-primary btn-lg square-right">
+      <i class="icon icon-message"></i>
     </button>
     {% endif %}
 
@@ -26,64 +71,12 @@
           type="post"
           url="../../../api/music/change_volume/"
           onsuccess='changed_volume'>
-      <input class="hidden" type="text" name="volue_level" value="change-volume">
-      <button id="mute-button" class="btn" style="float: right; margin-top: 16px; margin-right: 16px; height: 40px; width: 40px;">
+      <input class="hidden" type="text" name="volume_level" value="change-volume">
+      <button id="mute-button" class="btn btn-lg square-right">
         <i class="fas fa-volume-up"></i>
       </button>
     </form>
     {% endif %}
-
-  </div>
-
-  <!-- - - - - - - - - - - - - - - - - - - - - - --->
-  <!--  WAITING FOR STREAM TO START PLAYING MUSIC -->
-  <div class="content waiting-to-play hide">
-
-    <div class="loading-container">
-      <i class="form-icon loading" style="font-size: 48px; font-color: white;"></i>
-    </div>
-
-    <span class="title">
-      Waiting for the stream to start playing music...
-    </span>
-
-  </div>
-
-  <!-- - - - - - - - - - - - - - -->
-  <!--  SPOTIFY CLIENT NOT FOUND -->
-  <div class="content spotify-disconnected hide">
-
-    <span class="title">
-      No music is playing
-    </span>
-
-    <span class="sub-title">
-      You must already be streaming on your device.
-    </span>
-
-    <a href="spotify:open">
-      <button id="play-bar-chat-button" class="btn btn-lg">
-        Fix <i class="gg-external" style="display: inline-block; margin-left: 5px; margin-right: 1px;"></i>
-      </button>
-    </a>
-
-  </div>
-
-  <!-- - - - - - - - - - --->
-  <!--  PLEASE PLAY MUSIC -->
-  <div class="content please-play-music hide">
-
-    <span class="title">
-      No music is playing
-    </span>
-
-    <span class="sub-title">
-      Click the musical notes to add music to the queue.
-    </span>
-
-    <button id="go-to-queue" class="btn btn-lg" style="float: right; margin-top: 16px; margin-right: 16px; height: 40px; width: 40px;">
-      <i class="gg-music" style="left: 6px;"></i>
-    </button>
 
   </div>
 

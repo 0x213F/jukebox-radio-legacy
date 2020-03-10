@@ -1,3 +1,57 @@
+
+.square-right {
+  width: 40px;
+  height: 40px;
+  margin-top: 16px;
+  margin-right: 16px;
+  float: right;
+}
+
+/* SPINNER */
+
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 4px solid #5764c6;
+  border-color: #5764c6 transparent #5764c6 transparent;
+  animation: lds-dual-ring 3.33s linear infinite;
+}
+
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* PLAY BAR SECTIONS */
+
+.play-bar > .content.authorize-spotify {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.play-bar > .content > .text {
+  margin-top: 16px;
+  margin-left: 16px;
+  width: calc(100% - 104px);
+  height: 40px;
+  float: left;
+}
+
+.play-bar > .content > .album-art {
+  height: 72px;
+  width: 72px;
+  float: left;
+  display: inline-block;
+}
+
 /* * * * * * */
 /* PLAY BAR  */
 
@@ -24,109 +78,4 @@
   transform: translate(-50%, -50%);
 
   transition: bottom 0.5s ease;
-}
-
-.play-bar > .content {
-  height: 72px;
-  width: 100%;  /*  */
-  display: inline-block;
-  float: left;
-  position: relative;
-}
-
-.play-bar > .content > .album-art,
-.play-bar > .content > .warning-flag {
-  height: 72px;
-  width: 72px;
-  margin-right: 10px;
-  background-color: #5764c6;
-  display: inline-block;
-  float: left;
-  position: relative;
-}
-
-.play-bar > .content > .title {
-  width: 131px;
-  font-size: 14px;
-  position: absolute;
-  left: 100px;
-  top: 6px;
-}
-
-.play-bar > .content > .sub-title {
-  font-size: 10px;
-  font-weight: 300;
-  position: absolute;
-  right: -72px;
-  bottom: 8px;
-}
-
-/* link-spotify */
-
-.play-bar > .content.link-spotify {
-  padding: 20px 74px;
-}
-
-.play-bar > .content.link-spotify > a {
-  width: 160px;
-}
-
-/* currently-playing */
-
-/* waiting-to-play */
-
-.play-bar > .content > .title {
-  width: 131px;
-  font-size: 14px;
-  position: absolute;
-  left: 38px;
-  top: 6px;
-}
-
-.play-bar > .content.waiting-to-play > .loading-container {
-  padding: 36px;
-  padding-left: 268px;
-}
-
-.play-bar > .content.waiting-to-play > .title {
-  top: 15px;
-  width: 166px;
-}
-
-/* spotify-disconnected */
-
-.play-bar > .content.spotify-disconnected > .warning-flag {
-  padding: 12px 0px 4px 9px;
-}
-
-.play-bar > .content.spotify-disconnected > .warning-flag > .icon:before {
-  background-color: white!important;
-}
-
-.play-bar > .content.spotify-disconnected > .warning-flag > .icon:after {
-  border-color: white!important;
-}
-
-.play-bar > .content.spotify-disconnected > .title,
-.play-bar > .content.please-play-music > .title {
-  width: 144px;
-
-  top: 8px;
-  left: 36px!important;
-}
-
-.play-bar > .content.spotify-disconnected > .sub-title,
-.play-bar > .content.please-play-music > .sub-title {
-  width: 140px;
-  left: 36px;
-  top: 33px;
-}
-
-.play-bar > .content.spotify-disconnected > .btn {
-  position: absolute;
-  right: -72px;
-  top: 10px;
-
-  padding-left: 10px;
-  padding-right: 10px;
 }

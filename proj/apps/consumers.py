@@ -86,7 +86,7 @@ class Consumer(AsyncConsumer):
         # [0]
         # user needs to have Spotify linked before joining the stream/ channel
         if not _user.profile.spotify_access_token:
-            await self.send_playback_status('linkspotify')
+            await self.send_playback_status('authorize-spotify')
             return
 
         url_params = self.get_data_from_ws_path()
@@ -120,14 +120,20 @@ class Consumer(AsyncConsumer):
             self._cache['ticket'],
         )
 
-        # [3]
-        # get comments from the last 30 min
-        comments_qs = Comment.objects.recent(active_stream_uuid)
-        comments = await database_sync_to_async(list)(comments_qs)
+        try:
+            display_comments = url_params['display_comments'] == 'true'
+        except KeyError:
+            display_comments = False
+        self._cache['display_comments'] = display_comments
+        if display_comments:
+            # [3]
+            # get comments from the last 30 min
+            comments_qs = Comment.objects.recent(active_stream_uuid)
+            comments = await database_sync_to_async(list)(comments_qs)
 
-        # [4]
-        # send comments just to the current user
-        await self.send_comments(comments)
+            # [4]
+            # send comments just to the current user
+            await self.send_comments(comments)
 
         # [5]
         # if no record is currently playing, return
@@ -135,8 +141,11 @@ class Consumer(AsyncConsumer):
         if (
             record_terminates_at and
             datetime.now() > record_terminates_at.replace(tzinfo=None)
-        ):
-            await self.send_playback_status('waiting')
+        ) or not record_terminates_at:
+            if self._cache['ticket'].is_administrator:
+                await self.send_playback_status('add-music-to-queue')
+            else:
+                await self.send_playback_status('waiting-for-stream-to-start')
             return
 
         # [6]
@@ -154,7 +163,7 @@ class Consumer(AsyncConsumer):
             )()
             assert now_playing
         except Exception as e:
-            await self.send_playback_status('waiting')
+            await self.send_playback_status('waiting-for-stream-to-start')
             return
 
         # [7]
@@ -189,7 +198,9 @@ class Consumer(AsyncConsumer):
         except Exception as e:
             # assuming everything is behaving as expected, we assume that the
             # user's Spotify client is disconnected
-            await self.send_playback_status('disconnected')
+            await self.send_playback_status(
+                'spotify-streaming-client-not-found'
+            )
             return
 
         # [8]
@@ -250,6 +261,13 @@ class Consumer(AsyncConsumer):
     # - - - - - - - - - - - -
 
     async def broadcast(self, event):
+        try:
+            payload = json.loads(event['text'])
+            if not self._cache['display_comments'] and payload['data']['comments']:
+                return
+        except KeyError:
+            pass
+
         await self.send({"type": "websocket.send", "text": event["text"]})
 
         try:
@@ -351,13 +369,16 @@ class Consumer(AsyncConsumer):
                                 comment, ticket=ticket
                             )
                         ],
+                        "playback": {
+                            'next_step': 'noop',
+                        }
                     }
                 }),
             },
         )
 
     async def send_playback_status(self, status):
-        if status != 'linkspotify':
+        if status != 'authorize-spotify':
             stream = Stream.objects.serialize(self._cache["stream"])
         else:
             stream = {}
@@ -368,7 +389,7 @@ class Consumer(AsyncConsumer):
                     "data": {
                         "stream": stream,
                         "playback": {
-                            "status": status,
+                            "next_step": status,
                         }
                     }
                 }),
@@ -385,6 +406,9 @@ class Consumer(AsyncConsumer):
                             Comment.objects.serialize(c, ticket=ticket)
                             for c in comments
                         ],
+                        "playback": {
+                            'next_step': 'noop',
+                        }
                     }
                 }),
             }
@@ -405,7 +429,7 @@ class Consumer(AsyncConsumer):
                             for tracklisting in tracklistings
                         ],
                         "playback": {
-                            "status": 'play_record',
+                            "next_step": 'currently-playing',
                         }
                     }
                 }),

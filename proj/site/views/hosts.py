@@ -15,6 +15,9 @@ class HostsView(BaseView):
         if not request.user.is_authenticated:
             return self.redirect_response('/')
 
+        if not request.user.is_authenticated:
+            return self.redirect_response('/')
+
         ticket = (
             Ticket.objects
             .select_related('stream')

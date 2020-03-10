@@ -18,11 +18,12 @@
   <div class="card-body" style="width: 100%;">
 
     <!-- - - - - - - - - - - - - -->
-    <!--  LOAD PAGE (LIST HOSTS) -->
-    <form id="form-load-hosts"
+    <!--  LOAD PAGE (LIST QUEUE) -->
+    <form id="form-load-queue"
           class="ajax-form hidden"
           type="get"
           url="../../../api/music/list_queue/"
+          submit="onload"
           onsuccess='display_queue'>
       <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
     </form>
@@ -31,7 +32,7 @@
       <div class="card-title h5">Queue</div>
     </div>
 
-    <div class="form-group card-body" style="margin-bottom: 3.5rem;">
+    <div class="form-group card-body" style="height: 40px;">
       <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/">
         <button class="btn btn-secondary" style="float: left;">
           <i class="icon icon-2x icon-back"></i>
@@ -41,7 +42,7 @@
 
     <div class="queue-list"></div>
 
-    <div id="conditionally-hide-divider" class="form-group" style="margin-top: 3.5rem;">
+    <div id="conditionally-hide-divider" class="form-group">
       <div class="divider"></div>
     </div>
 
@@ -59,8 +60,8 @@
 
       <!-- INLINE SEARCH BAR -->
       <div class="form-group" style="margin-top: 15px;">
-        <input id="search-bar-input" class="form-input input-lg" type="text" name="query" autocomplete="off" style="width: calc(100% - 40px); float: left;">
-        <button type="submit" form="search-library" class="btn btn-primary btn-lg input-group-btn" style="width: 40px;">
+        <input id="search-bar-input" class="form-input input-lg" type="text" name="query" autocomplete="off" style="width: calc(100% - 40px); float: left; border-top-right-radius: 0px; border-bottom-right-radius: 0px;">
+        <button type="submit" form="search-library" class="btn btn-primary btn-lg input-group-btn" style="width: 40px;  border-top-left-radius: 0px; border-bottom-left-radius: 0px;">
           <i class="icon icon-2x icon-search"></i>
         </button>
       </div>

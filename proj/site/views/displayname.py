@@ -8,6 +8,8 @@ from proj.core.views import BaseView
 
 class DisplayNameView(BaseView):
     def get(self, request, stream, **kwargs):
+        if not request.user.is_authenticated:
+            return self.redirect_response('/')
         Ticket = apps.get_model('music', 'Ticket')
 
         ticket = (

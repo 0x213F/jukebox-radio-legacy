@@ -5,27 +5,18 @@
 
 function generate_queue(queue) {
   return `
-    <div class="card-body" style="padding-bottom: 0.75rem;">
-      <div class="toast toast-primary">
+    <div class="card-body" style="padding-top: 16px;">
+      <form class="ajax-form"
+            type="post"
+            url="../../../api/music/delete_queue/"
+            redirect="/stream/${STREAM_UUID}/queue/">
 
-        <form class="ajax-form"
-              type="post"
-              url="../../../api/music/delete_queue/"
-              redirect="/stream/${STREAM_UUID}/queue/">
-
-          <input class="hidden" type="text" name="queue_id" value="${queue.id}">
-
-          <button class="float-right btn btn-error btn-lg"
-                  style="height: 10px;">
-          <i class="icon icon-cross"
-             style="height: 10px; width: 10px; top: -12px;">
-          </i>
-          </button>
-
-        </form>
-
-        ${queue.record_name}
-      </div>
+        <input class="hidden" type="text" name="queue_id" value="${queue.id}">
+        <div class="toast toast-primary" style="height: 40px; padding: 9px; padding-left: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            <button class="btn btn-clear float-right"></button>
+            ${queue.record_name}
+        </div>
+      </form>
     </div>
   `
 }
@@ -36,6 +27,7 @@ function display_queue(data) {
   $queue_container.empty();
   if(!list_queue.length) {
     $('#conditionally-hide-divider').hide();
+    return;
   }
   for(let queue of list_queue) {
     $queue_container.append(generate_queue(queue));
@@ -53,6 +45,8 @@ function success_adding_queue(data) {
   // add queue object
   let $queue_container = $('.queue-list');
   $queue_container.append(generate_queue(data));
+
+  $('#conditionally-hide-divider').show();
   // reset ajax forms
   setup_ajax_forms();
 }
@@ -185,21 +179,15 @@ function onopen(event) {
 function onmessage(event) {
   let text = event.data;
   let payload = JSON.parse(text);
-  let stream = payload.data[KEY_STREAM] || null;
-  let record = payload.data[KEY_RECORD] || null;
-  let tracklistings = payload.data[KEY_TRACKLISTINGS] || null;
 
-  let playback = payload.data[KEY_PLAYBACK] || null;
-  if(playback) {
-    update_play_bar(stream, record, playback);
-  }
+  update_play_bar(payload);
 }
 
 var url = window.location.href;
 var uuid = url.substring(url.length - 43, url.length - 7);
 
 var endpoint = (
-  'wss://' + window.location.host + window.location.pathname +
+  'ws://' + window.location.host + window.location.pathname +
   `?uuid=${uuid}`
 )
 

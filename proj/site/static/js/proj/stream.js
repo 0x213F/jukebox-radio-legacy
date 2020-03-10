@@ -42,29 +42,26 @@ function onopen(event) {
   // NOOP
 }
 
-function onmessage(event) {
-  let text = event.data;
-  let payload = JSON.parse(text);
-  let stream = payload.data[KEY_STREAM] || null;
-  let record = payload.data[KEY_RECORD] || null;
-  let tracklistings = payload.data[KEY_TRACKLISTINGS] || null;
-
+function display_comments(payload) {
   let comments = payload.data[KEY_COMMENTS];
   if(comments && comments.length) {
     for(comment of comments) {
       display_comment(comment);
     }
   }
+}
 
-  let playback = payload.data[KEY_PLAYBACK] || null;
-  if(playback) {
-    update_play_bar(stream, record, playback);
-  }
+function onmessage(event) {
+  let text = event.data;
+  let payload = JSON.parse(text);
+
+  update_play_bar(payload);
+  display_comments(payload);
 }
 
 var endpoint = (
-  'wss://' + window.location.host +
-  `/?uuid=${STREAM_UUID}`
+  'ws://' + window.location.host +
+  `/?uuid=${STREAM_UUID}&display_comments=true`
 )
 
 window['SOCKET'] = new WebSocket(endpoint)
