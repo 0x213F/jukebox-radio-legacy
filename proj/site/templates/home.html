@@ -17,7 +17,7 @@
     <!--  CREATE STREAM -->
     {% if user_is_active %}
     <div id="create-stream-button" class="card-body">
-      <form  {% if user_is_active %} class="ajax-form" {% endif %} redirect="/createstream" {% if user_is_active %} disabled {% endif %}>
+      <form class="ajax-form" redirect="/createstream">
         <button class="btn btn-lg" style="width: 100%;">
           Create Stream
         </button>
@@ -28,6 +28,14 @@
     <!-- - - - - - - - - - - - - --->
     <!--  COMPLETE ACCOUNT SIGNUP -->
     {% if not user_is_active %}
+    <div id="create-stream-button" class="card-body">
+      <form>
+        <button class="btn btn-lg" style="width: 100%;" disabled>
+          Create Stream
+        </button>
+      </form>
+    </div>
+
     <div id="create-user-account" class="card-body">
       <form class="ajax-form" redirect="/signup">
         <button class="btn btn-primary btn-lg" style="width: 100%;">
