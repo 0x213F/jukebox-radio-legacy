@@ -13,16 +13,32 @@
 
   <div class="card-body">
 
-    <!-- - - - - - - - - - - - -->
-    <!--  BROADCASTING STREAMS -->
+    <!-- - - - - - - - --->
+    <!--  CREATE STREAM -->
+    {% if user_is_active %}
     <div id="create-stream-button" class="card-body">
-      <form class="ajax-form" redirect="/createstream">
+      <form  {% if user_is_active %} class="ajax-form" {% endif %} redirect="/createstream" {% if user_is_active %} disabled {% endif %}>
         <button class="btn btn-lg" style="width: 100%;">
           Create Stream
         </button>
       </form>
     </div>
+    {% endif %}
 
+    <!-- - - - - - - - - - - - - --->
+    <!--  COMPLETE ACCOUNT SIGNUP -->
+    {% if not user_is_active %}
+    <div id="create-user-account" class="card-body">
+      <form class="ajax-form" redirect="/signup">
+        <button class="btn btn-primary btn-lg" style="width: 100%;">
+          Create Account
+        </button>
+      </form>
+    </div>
+    {% endif %}
+
+    <!-- - - - - - - - - - - - -->
+    <!--  BROADCASTING STREAMS -->
     <form class="ajax-form hidden"
           type="get"
           url="../api/music/list_broadcasting_streams/"
