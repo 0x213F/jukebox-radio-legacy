@@ -25,7 +25,7 @@ class CreateStreamView(BaseView):
         Stream = apps.get_model('music.Stream')
         Ticket = apps.get_model('music.Ticket')
 
-        if not request.user.profile.is_active:
+        if not request.user.profile.activated_at:
             raise Exception('come on now!')
 
         stream_name = request.POST.get('name', None)

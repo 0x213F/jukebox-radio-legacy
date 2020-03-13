@@ -21,7 +21,7 @@ def create_view(request):
     # authentication
     # - - - - - - - -
     if request.user.is_authenticated:
-        if request.user.profile.is_active:
+        if request.user.profile.activated_at:
             raise ValueError('cannot change login of active user')
         request.user.email = email
         request.user.username = email
