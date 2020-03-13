@@ -21,12 +21,13 @@ def create_view(request):
     # authentication
     # - - - - - - - -
     if request.user.is_authenticated:
-        if request.user.profile.activated_at:
+        user = request.user
+        if user.profile.activated_at:
             raise ValueError('cannot change login of active user')
-        request.user.email = email
-        request.user.username = email
-        request.user.set_password(password)
-        request.user.save()
+        user.email = email
+        user.username = email
+        user.set_password(password)
+        user.save()
         login(request, user)
         return HttpResponse(status=201)
 
