@@ -24,6 +24,8 @@ def create_view(request):
         user = request.user
         if user.profile.activated_at:
             raise ValueError('cannot change login of active user')
+        user.profile.activated_at = datetime.now()
+        user.profile.save()
         user.email = email
         user.username = email
         user.set_password(password)
