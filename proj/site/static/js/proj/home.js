@@ -114,7 +114,7 @@ function activate_stream() {
   window.location.href = `/stream/${uuid}`
 
   // var endpoint = (
-  //   'ws://' + window.location.host + window.location.pathname +
+  //   'wss://' + window.location.host + window.location.pathname +
   //   `?uuid=${uuid}&display_comments=false`
   // )
   //
@@ -159,7 +159,7 @@ $(window).focus(function() {
   // TODO make an endpoint instead of resetting the connection
   var uuid = $('.card.active-stream').parent().attr('uuid');
   var endpoint = (
-    'ws://' + window.location.host + window.location.pathname +
+    'wss://' + window.location.host + window.location.pathname +
     `?uuid=${uuid}`
   )
 
