@@ -2,7 +2,7 @@ var url = window.location.href;
 var uuid = url.substring(url.length - 49, url.length - 13);
 
 var endpoint = (
-  'wss://' + window.location.host + window.location.pathname +
+  'ws://' + window.location.host + window.location.pathname +
   `?uuid=${uuid}`
 )
 

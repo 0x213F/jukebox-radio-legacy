@@ -125,7 +125,7 @@ STATIC_URL = '/static/'
 
 # /root/album_party/proj/site/static/
 # /Users/joshschultheiss/Developer/album_party/proj/site/static/
-STATIC_ROOT = "/root/album_party/proj/site/static/"
+STATIC_ROOT = "/Users/joshschultheiss/Developer/album_party/proj/site/static/"
 STATICFILES_DIRS = []
 
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
