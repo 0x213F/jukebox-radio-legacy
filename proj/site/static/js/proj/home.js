@@ -56,11 +56,11 @@ function display_tune_in_streams(data) {
 
   $('.card-body.tune-in-streams > .card').click(activate_stream)
 
-  var last_active_stream_uuid = data[KEY_USER].profile.last_active_stream_uuid;
-  if(last_active_stream_uuid) {
-    // we assume this stream is still active
-    $(`[uuid='${last_active_stream_uuid}']`).find('.card').click()
-  }
+  // var last_active_stream_uuid = data[KEY_USER].profile.last_active_stream_uuid;
+  // if(last_active_stream_uuid) {
+  //   // we assume this stream is still active
+  //   $(`[uuid='${last_active_stream_uuid}']`).find('.card').click()
+  // }
 }
 
 function display_broadcasting_streams(data) {
@@ -79,11 +79,11 @@ function display_broadcasting_streams(data) {
 
   $('.card-body.broadcasting-stream > .card').click(activate_stream)
 
-  var last_active_stream_uuid = data[KEY_USER].profile.last_active_stream_uuid;
-  if(last_active_stream_uuid) {
-    // we assume this stream is still active
-    $(`[uuid='${last_active_stream_uuid}']`).find('.card').click()
-  }
+  // var last_active_stream_uuid = data[KEY_USER].profile.last_active_stream_uuid;
+  // if(last_active_stream_uuid) {
+  //   // we assume this stream is still active
+  //   $(`[uuid='${last_active_stream_uuid}']`).find('.card').click()
+  // }
 }
 
 // we need this inside play_bar.js so we can display a dialog to tell the user
@@ -111,18 +111,20 @@ function activate_stream() {
   $('.active-stream').removeClass('active-stream');
   $this.addClass('active-stream');
 
-  var endpoint = (
-    'ws://' + window.location.host + window.location.pathname +
-    `?uuid=${uuid}&display_comments=false`
-  )
+  window.location.href = `/stream/${uuid}`
 
-  if(window['SOCKET']) {
-    window['SOCKET'].close()
-  }
-
-  window['SOCKET'] = new WebSocket(endpoint)
-  window['SOCKET'].onopen = onopen
-  window['SOCKET'].onmessage = onmessage
+  // var endpoint = (
+  //   'ws://' + window.location.host + window.location.pathname +
+  //   `?uuid=${uuid}&display_comments=false`
+  // )
+  //
+  // if(window['SOCKET']) {
+  //   window['SOCKET'].close()
+  // }
+  //
+  // window['SOCKET'] = new WebSocket(endpoint)
+  // window['SOCKET'].onopen = onopen
+  // window['SOCKET'].onmessage = onmessage
 }
 
   /////  //////////  /////

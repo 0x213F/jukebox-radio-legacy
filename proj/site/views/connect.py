@@ -36,4 +36,10 @@ class ConnectView(BaseView):
         spotify.store_access_token(response_json['access_token'])
         spotify.store_refresh_token(response_json['refresh_token'])
 
-        return self.redirect_response('/')
+        if request.user.profile.activated_stream_redirect:
+            stream_uuid_str = str(request.user.profile.activated_stream_redirect)
+            request.user.profile.activated_stream_redirect = None
+            request.user.profile.save()
+            return self.redirect_response(f'/stream/{stream_uuid_str}')
+        else:
+            return self.redirect_response('/')

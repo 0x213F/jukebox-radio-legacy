@@ -30,8 +30,11 @@ class Ticket(BaseModel):
     holder = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='tickets', on_delete=models.DO_NOTHING,
     )
+
     is_administrator = models.BooleanField(default=False)
     is_subscribed = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
+
     stream = models.ForeignKey(
         'music.Stream', related_name='tickets', on_delete=models.DO_NOTHING,
     )

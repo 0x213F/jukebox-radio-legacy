@@ -4,6 +4,7 @@ from .createstream import CreateStreamView
 from .displayname import DisplayNameView
 from .hosts import HostsView
 from .index import IndexView
+from .linkspotify import LinkSpotifyView
 from .queue import QueueView
 from .signin import SignInView
 from .signup import SignUpView

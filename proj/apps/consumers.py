@@ -303,12 +303,14 @@ class Consumer(AsyncConsumer):
         # if there is no stream, then it failed to connect in the first place
         try:
             stream = self._cache["stream"]
-        except Exception:
+        except Exception as e:
+            print(e)
             return
 
-        ticket = await database_sync_to_async(Ticket.objects.get)(
-            holder=_user, stream=stream,
-        )
+        ticket = self._cache["ticket"]
+
+        ticket.is_active = False
+        await database_sync_to_async(ticket.save)()
 
         await self.remove_from_channel()
 

@@ -103,6 +103,10 @@ class ProfileManager(BaseManager):
             },
         )
         ticket = _cache['ticket']
+
+        ticket.is_active = True
+        await database_sync_to_async(ticket.save)()
+
         _set_cache(_cache, 'ticket', ticket)
 
         return _cache

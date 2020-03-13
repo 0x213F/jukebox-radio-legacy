@@ -50,12 +50,6 @@ class RecordAdmin(admin.ModelAdmin):
         "duration",
     )
 
-    def get_actions(self, request):
-        actions = super().get_actions(request)
-        if "delete_selected" in actions:
-            del actions["delete_selected"]
-        return actions
-
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
             self.fields = ("name",)

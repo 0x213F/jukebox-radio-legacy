@@ -23,13 +23,14 @@ class UpdateTicketView(BaseView):
         is_administrator = request.POST.get('is_administrator', None)
         is_administrator = True if is_administrator == 'true' else False
 
-        ticket = Ticket.objects.select_related('stream').get(
+        ticket = Ticket.objects.select_related('stream', 'stream__owner').get(
             holder=request.user,
             stream__uuid=stream_uuid,
         )
 
         if email:
             assert ticket.stream.owner == request.user
+
             ticket = Ticket.objects.get(
                 holder__email=email,
                 stream__uuid=stream_uuid,
@@ -37,20 +38,14 @@ class UpdateTicketView(BaseView):
             if is_administrator and ticket.is_administrator:
                 raise Excpection('already an admin')
             ticket.is_administrator = is_administrator
-        elif holder_uuid:
-            assert ticket.stream.owner == request.user
-            ticket = Ticket.objects.get(
-                stream__uuid=stream_uuid,
-                holder_uuid=holder_uuid,
-            )
-            ticket.is_administrator = is_administrator
-        else:
-            if holder_name:
-                ticket.holder_name = holder_name
-                ticket.stream.owner_name = holder_name
-                ticket.stream.save()
-            if is_administrator:
-                ticket.is_administrator = is_administrator
+
+        if holder_name:
+            ticket.holder_name = holder_name
+
+        if ticket.stream.owner == request.user:
+            ticket.stream.owner_name = holder_name
+            ticket.stream.save()
+
 
         ticket.save()
 

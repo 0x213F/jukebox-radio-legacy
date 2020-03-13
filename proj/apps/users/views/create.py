@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.http import HttpResponse
@@ -25,7 +27,7 @@ def create_view(request):
     # - - - -
     try:
         user = User.objects.create_user(email, email, password)
-        Profile.objects.create(user=user)
+        Profile.objects.create(user=user, activated_at=datetime.now())
         login(request, user)
         return HttpResponse(status=201)
     except Exception as e:

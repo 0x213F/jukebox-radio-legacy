@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 from random_username.generate import generate_username
 
@@ -12,14 +13,23 @@ class StreamView(BaseView):
         Ticket = apps.get_model('music', 'Ticket')
 
         if not request.user.is_authenticated:
-            return self.redirect_response('/')
+            return self.redirect_response(f'/linkspotify?stream_uuid={stream}')
 
-        ticket = (
-            Ticket.objects
-            .select_related('stream')
-            .get(holder=request.user, stream__uuid=stream)
-        )
-        stream = ticket.stream
+        try:
+            ticket = (
+                Ticket.objects
+                .get(holder=request.user, stream__uuid=stream)
+            )
+            stream = ticket.stream
+        except Ticket.DoesNotExist:
+            stream = Stream.objects.get(uuid=stream)
+            ticket = Ticket.objects.create(
+                holder=request.user,
+                stream=stream,
+                timestamp_last_active=datetime.utcnow(),
+                holder_name=request.user.profile.default_display_name or generate_username(1)[0],
+                holder_uuid=uuid.uuid4(),
+            )
 
         is_host = request.user == stream.owner
 

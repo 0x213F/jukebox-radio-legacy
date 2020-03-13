@@ -25,15 +25,7 @@ class ListBroadcastingStreamsView(BaseView):
             "streams": [
                 Stream.objects.serialize(
                     s,
-                    active_users=(
-                        s.comments
-                        .filter(
-                            created_at__gte=now - timedelta(minutes=10),
-                            commenter_id__isnull=False,
-                        )
-                        .distinct('commenter_id')
-                        .order_by('commenter_id')
-                    )
+                    active_users=s.tickets.filter(is_active=True)
                 )
                 for s in streams
             ],
