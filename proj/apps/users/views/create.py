@@ -27,6 +27,7 @@ def create_view(request):
         request.user.username = email
         request.user.set_password(password)
         request.user.save()
+        login(request, user)
         return HttpResponse(status=201)
 
     # create
