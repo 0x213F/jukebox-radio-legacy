@@ -4,6 +4,7 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'css/proj/play_bar.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/manage.css' %}">
 {% endblock %}
 
 {% block main %}
@@ -16,6 +17,8 @@
 
   <div class="card-body" style="width: 100%;">
 
+    <div class="stream-name">{{ stream.title }}</div>
+
     <!-- - - - - - - - - - - - - -->
     <!--  LOAD PAGE (LIST HOSTS) -->
     <form class="ajax-form hidden"
@@ -25,12 +28,6 @@
           onsuccess='display_hosts'>
           <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
     </form>
-
-    <!-- - - - --->
-    <!--  HOSTS -->
-    <div class="card-header">
-      <div class="card-title h5">Manage</div>
-    </div>
 
     <!-- - - - - - - --->
     <!--  BACK BUTTON -->

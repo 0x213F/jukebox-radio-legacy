@@ -246,6 +246,10 @@ class Consumer(AsyncConsumer):
     async def websocket_receive(self, event):
         payload = json.loads(event["text"])
 
+        if not self.scope["user"].profile.activated_at:
+            # user must sign up before posting a comments
+            return;
+
         # create comment in DB
         comment = await (
             Comment.objects.create_from_payload_async(

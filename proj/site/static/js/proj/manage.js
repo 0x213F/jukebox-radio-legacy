@@ -59,7 +59,7 @@ var url = window.location.href;
 var uuid = url.substring(url.length - 44, url.length - 8);
 
 var endpoint = (
-  'wss://' + window.location.host + window.location.pathname +
+  'ws://' + window.location.host + window.location.pathname +
   `?uuid=${uuid}`
 )
 

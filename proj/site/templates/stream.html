@@ -17,13 +17,11 @@
 
   <div class="card-body" style="width: 100%;">
 
-    <div class="card-body">
-      <div class="toast toast-primary" style="width: 100%; font-size: 2rem;">{{ stream.title }}</div>
-    </div>
+    <div class="stream-name">{{ stream.title }}</div>
 
-    <div class="form-group card-body">
+    <div class="form-group" style="margin-bottom: 32px; height: 40px;" style="display: block;">
       <form class="ajax-form" redirect="/">
-        <button class="btn btn-secondary btn-lg" style="float: left; width: 40px;">
+        <button class="btn btn-secondary btn-lg btn-icon" style="float: left;">
           <i class="icon icon-2x icon-back"></i>
         </button>
       </form>
@@ -31,34 +29,24 @@
       {% if is_host %}
 
         <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/manage">
-          <button class="btn btn-secondary btn-lg" style="margin-left: 1.5rem; float: left; width: 40px;">
+          <button class="btn btn-secondary btn-lg btn-icon" style="margin-left: 16px;">
             <i class="gg-more" style="left: 8px;"></i>
-          </button>
-        </form>
-        <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/queue">
-          <button class="btn btn-secondary btn-lg" style="margin-left: 1.5rem; width: 40px;">
-            <i class="gg-layout-list" style="left: 6px;"></i>
           </button>
         </form>
 
       {% elif ticket.is_administrator %}
 
       <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/displayname">
-        <button class="btn btn-secondary btn-lg" style="margin-left: 1.5rem; float: left; width: 40px;">
-          <i class="gg-girl" style="left: 1px;"></i>
+        <button class="btn btn-secondary btn-lg btn-icon" style="margin-left: 16px;">
+          <i class="gg-more" style="left: 8px;"></i>
         </button>
       </form>
-        <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/queue">
-          <button class="btn btn-secondary btn-lg" style="margin-left: 1.5rem; width: 40px;">
-            <i class="gg-layout-list" style="left: 6px;"></i>
-          </button>
-        </form>
 
       {% else %}
 
       <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/displayname">
-        <button class="btn btn-secondary btn-lg" style="margin-left: 1.5rem; width: 40px;">
-          <i class="gg-girl" style="left: 1px;"></i>
+        <button class="btn btn-secondary btn-lg btn-icon" style="margin-left: 16px;">
+          <i class="gg-more" style="left: 8px;"></i>
         </button>
       </form>
 
@@ -67,7 +55,7 @@
 
     <!-- - - --->
     <!-- CHAT -->
-    <div class="card-body chat-container" style="height: calc(100vh - 331px); overflow-y: scroll;">
+    <div class="card-body chat-container" style="height: calc(100vh - 312px); overflow-y: scroll;">
 
     </div>
 
@@ -78,18 +66,17 @@
       <input class="hidden" name="stream_uuid" value="{{ stream.uuid }}" />
       <input class="hidden" name="track_id" value="" />
 
-      <div class="form-group">
-        <div class="input-group">
-          <select class="hide form-select select" name="status">
-            <option value="mid_low">😕</option>
-            <option value="mid_high" selected>😐</option>
-            <option value="high">😀</option>
-          </select>
-          <input type="text" id="chat-input-main" class="form-input input-lg" placeholder="" name="text" autocomplete="off" style="padding-left: 14px;">
-          <button id="chat-submit" class="btn btn-primary input-group-btn btn-lg" style="width: 40px;">
-            <i class="icon icon-2x icon-message"></i>
-          </button>
-        </div>
+      <div class="input-group">
+        <input type="text"
+               id="chat-input-main"
+               class="form-input input-lg input-bar"
+               placeholder=""
+               name="text"
+               autocomplete="off">
+        <button id="chat-submit"
+                class="btn btn-primary btn-lg input-button">
+          <i class="icon icon-2x icon-message"></i>
+        </button>
       </div>
 
     </form>

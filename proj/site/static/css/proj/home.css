@@ -1,0 +1,48 @@
+#create-stream-button {
+  margin-bottom: 16px;
+}
+
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background-color: rgb(256, 256, 256, 0.95);
+}
+
+/* * * * * * * * * * * * * * * * */
+
+.main {
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+  height: calc(100vh - 24px);
+}
+
+.card.stream {
+  margin-top: 16px;
+  padding: 16px;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease!important;
+  border: 1px solid #5764c6;
+  background-color: rgb(256, 256, 256, 0.95);
+}
+
+.card.stream:hover {
+  box-shadow: 0 0 0 4px #f1f1fc;
+}
+
+.card.stream:first-child {
+  margin-top: 0px;
+}
+
+.card.stream > .card-body > .stream-name {
+  font-weight: 400;
+  color: #727e96;
+  font-size: 24px;
+  padding: 4px;
+  margin-bottom: 12px;
+}
+
+.chip {
+  background-color: #f1f1fc!important;
+  color: #727e96;
+}

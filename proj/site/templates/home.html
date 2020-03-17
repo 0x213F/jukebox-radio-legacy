@@ -5,6 +5,7 @@
 {% block styles %}
 <link rel="stylesheet" href="{% static 'css/proj/list_streams.css' %}">
 <link rel="stylesheet" href="{% static 'css/proj/play_bar.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/home.css' %}">
 {% endblock %}
 
 {% block main %}
@@ -16,7 +17,7 @@
     <!-- - - - - - - - --->
     <!--  CREATE STREAM -->
     {% if user_is_active %}
-    <div id="create-stream-button" class="card-body">
+    <div id="create-stream-button">
       <form class="ajax-form" redirect="/createstream">
         <button class="btn btn-lg" style="width: 100%;">
           Create Stream
@@ -28,7 +29,7 @@
     <!-- - - - - - - - - - - - - --->
     <!--  COMPLETE ACCOUNT SIGNUP -->
     {% if not user_is_active %}
-    <div id="create-stream-button" class="card-body">
+    <div id="create-stream-button" class="card-body" style="cursor: not-allowed;">
       <form>
         <button class="btn btn-lg" style="width: 100%;" disabled>
           Create Stream
@@ -47,6 +48,18 @@
 
     <!-- - - - - - - - - - - - -->
     <!--  BROADCASTING STREAMS -->
+    <div id="broadcasting-and-create-stream" class="card-header hidden">
+      <div class="card-title h5" style="margin: 16px; margin-top: 0px; line-height: 40px; height: 40px; display: inline-block; color: #727e96;">Broadcasting</div>
+
+      <div id="create-stream-button" style="float: right; margin-top: 0px; margin-bottom: 16px;">
+        <form class="ajax-form" redirect="/createstream">
+          <button class="btn btn-lg btn-icon">
+            <i class="icon icon-2x icon-plus"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
     <form class="ajax-form hidden"
           type="get"
           url="../api/music/list_broadcasting_streams/"
@@ -59,7 +72,7 @@
     <!-- - - - - - - - - --->
     <!--  TUNE IN STREAMS -->
     <div class="card-header">
-      <div class="card-title h5">Tune In</div>
+      <div class="card-title h5" style="margin: 16px; margin-top: 32px; color: #727e96;">Tune In</div>
     </div>
 
     <form class="ajax-form hidden"
@@ -93,10 +106,6 @@
   </div>
 
 </div>
-
-<!-- - - - - - -->
-<!--  PLAY BAR -->
-{% include "play_bar.html" %}
 
 {% endblock %}
 

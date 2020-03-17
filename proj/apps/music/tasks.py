@@ -73,6 +73,6 @@ def schedule_spin(stream_id):
     queue.played_at = now
     queue.save()
 
-    next_play = now + timedelta(milliseconds=(record.duration_ms + 250))
+    next_play = now + timedelta(milliseconds=(record.duration_ms))  # + 250
 
     schedule_spin.apply_async(eta=next_play, args=[stream_id])

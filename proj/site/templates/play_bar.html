@@ -6,7 +6,7 @@
     <!-- localhost%3A8000 | jukeboxrad.io | jukebox.radio -->
     <div class="centered-button">
       <a class="btn btn-primary"
-         href="https://accounts.spotify.com/authorize?client_id=133a25c7195344dbafd4f50d7450330f&response_type=code&redirect_uri=https%3A%2F%2Fjukebox.radio%2Fconnect&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state">
+         href="https://accounts.spotify.com/authorize?client_id=133a25c7195344dbafd4f50d7450330f&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fconnect&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state">
          Authorize Spotify <i class="icon icon-link"></i>
       </a>
     </div>
@@ -20,7 +20,7 @@
       Waiting for the stream to start playing music...
     </span>
 
-    <div class="lds-dual-ring square-right"></div>
+    <div class="lds-dual-ring square-left"></div>
 
   </div>
 
@@ -28,11 +28,9 @@
   <!--  PLEASE PLAY MUSIC -->
   <div class="content add-music-to-queue">
 
-    <span class="text">
-      Add music to the queue to start the stream.
-    </span>
+    <div class="lds-dual-ring square-left"></div>
 
-    <button id="go-to-queue" class="btn btn-lg square-right">
+    <button id="go-to-queue" class="btn btn-lg square-right tooltip tooltip-left force-tooltip" data-tooltip="Add music to the queue">
       <i class="gg-layout-list" style="left: 6px;"></i>
     </button>
 
@@ -60,24 +58,63 @@
 
     <img class="album-art" draggable="false"/>
 
-    {% if should_display_chat_button %}
-    <button id="play-bar-chat-button" class="btn btn-primary btn-lg square-right">
-      <i class="icon icon-message"></i>
+    {% if should_display_queue_button %}
+    <button id="queue-button" class="btn btn-secondary btn-lg square-right">
+      <i class="gg-layout-list" style="left: 6px;"></i>
     </button>
-    {% endif %}
-
-    {% if should_display_volume_button %}
-    <form class="ajax-form"
-          type="post"
-          url="../../../api/music/change_volume/"
-          onsuccess='changed_volume'>
-      <input class="hidden" type="text" name="volume_level" value="change-volume">
-      <button id="mute-button" class="btn btn-lg square-right">
-        <i class="fas fa-volume-up"></i>
-      </button>
-    </form>
     {% endif %}
 
   </div>
 
+
+  <div id="play-bar-queue" class="content queue" style="height: 110px;">
+
+    <div id="queued-up"></div>
+
+    <div class="add-to-queue-form">
+
+      <form id="search-library"
+            class="ajax-form"
+            url="../../../api/music/search_library/"
+            type="get"
+            beforesubmit="validate_search_eligible"
+            onsuccess="display_search_results">
+
+        <!-- TABS TO SELECT TYPE -->
+        <input id="search-library-type" class="hidden" name="type" value="track">
+        <div id="search-type-choices" class="filter-nav" style="margin-bottom: 16px; margin-left: 24px;">
+          <label class="search-type active" value="track">Track</label>
+          <label class="search-type" value="album">Album</label>
+          <label class="search-type" value="playlist">Playlist</label>
+        </div>
+
+        <!-- INLINE SEARCH BAR -->
+        <div class="input-group search-group">
+          <input id="search-bar-input"
+                 class="form-input input-lg input-bar search-bar"
+                 type="text"
+                 name="query"
+                 autocomplete="off">
+          <button type="submit"
+                  form="search-library"
+                  class="btn btn-primary btn-lg input-button search-button">
+            <i class="icon icon-2x icon-search"></i>
+          </button>
+        </div>
+
+      </form>
+
+  </div>
+
 </div>
+
+<!-- - - - - - - - - - - - - -->
+<!--  LOAD QUEUE             -->
+<form id="form-load-queue"
+      class="ajax-form hidden"
+      type="get"
+      url="../../../api/music/list_queue/"
+      submit="onload"
+      onsuccess='populate_queue'>
+  <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
+</form>

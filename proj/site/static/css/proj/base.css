@@ -5,22 +5,12 @@
     font-family: 'Work Sans', sans-serif;
 }
 
-.main {
-    width: calc(100% - 32px);
-    min-width: 310px;
-    max-width: 400px;
-    height: calc(100vh - 104px);
-    border-color: #f1f1fc!important;
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow-y: hidden;
 }
 
-.main.card > .card-body {
-  width: 100%;
-  overflow-y: auto;
-}
-
-.main.card > .card-body::-webkit-scrollbar {
-    display: none;  // Safari and Chrome
-}
 
 .hidden {
     display: none!important;
@@ -28,10 +18,6 @@
 
 .disabled {
   cursor: not-allowed;
-}
-
-.center-horizontal {
-    margin: 0 auto;
 }
 
 .no-select {
@@ -44,10 +30,63 @@
                                   supported by Chrome and Opera */
 }
 
+.card .card-body, .card .card-footer, .card .card-header {
+  padding: 0px;
+}
+
+.card .card-body:last-child, .card .card-footer:last-child, .card .card-header:last-child {
+  padding: 0px;
+}
+
 .card {
   display: flex;
   align-items: stretch;
-  border: 2px #e7eaf2 solid;
-  border-radius: 8px;
-  margin-top: 16px;
+  border: 4px #e7eaf2 solid;
+  border-radius: 12px;
+}
+
+.center-horizontal {
+    margin: 0 auto;
+}
+
+/* * * * * * * * * * * * * * * * */
+
+.main {
+    width: calc(100% - 24px);
+    min-width: 310px;
+    max-width: 400px;
+    height: calc(100vh - 104px);
+    border: 0px!important;
+    margin-top: 12px;
+    border-radius: 20px;
+    background-color: rgb(256, 256, 256, 0.95);
+    backdrop-filter: blur(12px);
+}
+
+.main.card > .card-body {
+  width: 100%;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.main.card > .card-body::-webkit-scrollbar {
+    display: none;  // Safari and Chrome
+}
+
+
+.input-bar {
+  padding-left: 12px;
+  border-color: #727e96;
+  color: #727e96;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  box-shadow: none!important;
+  border-right: 0px;
+}
+
+.input-button {
+  width: 40px;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  border-left: 0px;
 }

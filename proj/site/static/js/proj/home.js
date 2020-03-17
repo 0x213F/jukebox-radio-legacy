@@ -14,32 +14,28 @@ function generate_stream(stream, class_name) {
 
   var tags_html = ''
   for(tag of stream.tags) {
-    tags_html += `<span class="chip" style="border-radius: 28px; margin-right: 8px;">${tag}</span>`
+    tags_html += `<span class="chip" style="border-radius: 28px; margin-right: 8px; width: 28px; line-height: 28px; text-align: center; display: inline-block;">${tag}</span>`
   }
   var user_count = 3;
   return `
-  <div class="card-body ${class_name}" uuid="${stream.uuid}" style="cursor: pointer;">
-    <div class="card" style="margin-bottom: 0px;">
-      <div class="card-body" style="width: 100%;">
+  <div class="card stream ${class_name}" uuid="${stream.uuid}" style="cursor: pointer;">
+    <div class="card-body" style="width: 100%;">
 
-        <div class="form-group" style="line-height: 36px;">
-          <h5>${stream.name}</h5>
+      <h3 class="stream-name">${stream.name}</h5>
+
+      <div class="form-group" style="line-height: 36px;">
+        <div class="chip" style="border-radius: 28px">
+          <figure class="avatar avatar-sm" data-initial="" style="background-color: ${background_color};"></figure>${stream.owner_name}
         </div>
-
-        <div class="form-group" style="line-height: 36px;">
-          <div class="chip" style="border-radius: 28px">
-            <figure class="avatar avatar-sm" data-initial="" style="background-color: ${background_color};"></figure>${stream.owner_name}
-          </div>
-          ${tags_html}
-        </div>
-
-        <div class="form-group" style="line-height: 36px;">
-          <div class="chip" style="border-radius: 28px">
-            ${stream.user_count} active users
-          </div>
-        </div>
-
+        ${tags_html}
       </div>
+
+      <div class="form-group" style="line-height: 36px;">
+        <div class="chip" style="border-radius: 28px">
+          ${stream.user_count} active users
+        </div>
+      </div>
+
     </div>
   </div>
   `
@@ -49,12 +45,12 @@ function display_tune_in_streams(data) {
   let list_streams = data[KEY_SHOWINGS];
   let $streams_container = $('.tune-in-streams');
   for(let stream of list_streams) {
-    $streams_container.append(generate_stream(stream, 'tune-in-streams'));
+    $streams_container.append(generate_stream(stream, 'tune-in'));
   }
   setup_ajax_forms();
   $(".tune-in-streams").removeClass('hidden');
 
-  $('.card-body.tune-in-streams > .card').click(activate_stream)
+  $('.card.stream').click(activate_stream)
 
   // var last_active_stream_uuid = data[KEY_USER].profile.last_active_stream_uuid;
   // if(last_active_stream_uuid) {
@@ -70,14 +66,15 @@ function display_broadcasting_streams(data) {
   }
   let $streams_container = $('.broadcasting-streams');
   for(let stream of list_streams) {
-    $streams_container.append(generate_stream(stream, 'broadcasting-stream'));
+    $streams_container.append(generate_stream(stream, 'broadcasting'));
   }
   setup_ajax_forms();
   $(".broadcasting-streams").removeClass('hidden');
 
   $('#create-stream-button').hide();
+  $('#broadcasting-and-create-stream').removeClass('hidden');
 
-  $('.card-body.broadcasting-stream > .card').click(activate_stream)
+  $('.card.stream').click(activate_stream)
 
   // var last_active_stream_uuid = data[KEY_USER].profile.last_active_stream_uuid;
   // if(last_active_stream_uuid) {
@@ -92,7 +89,7 @@ var IS_BROADCASTING = false;
 
 function activate_stream() {
   var $this = $(this);
-  var uuid = $(this).parent().attr('uuid');
+  var uuid = $(this).attr('uuid');
 
   if($this.hasClass('active-stream')) {
     window['SOCKET'].close();
@@ -114,7 +111,7 @@ function activate_stream() {
   window.location.href = `/stream/${uuid}`
 
   // var endpoint = (
-  //   'wss://' + window.location.host + window.location.pathname +
+  //   'ws://' + window.location.host + window.location.pathname +
   //   `?uuid=${uuid}&display_comments=false`
   // )
   //
@@ -159,7 +156,7 @@ function onmessage(event) {
 //   // TODO make an endpoint instead of resetting the connection
 //   var uuid = $('.card.active-stream').parent().attr('uuid');
 //   var endpoint = (
-//     'wss://' + window.location.host + window.location.pathname +
+//     'ws://' + window.location.host + window.location.pathname +
 //     `?uuid=${uuid}`
 //   )
 //

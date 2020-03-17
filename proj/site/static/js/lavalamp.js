@@ -36,8 +36,8 @@ window.lavaAnimation = (function() {
         resize: function() {
           var t = this.elem;
           for (
-            this.width = t.offsetWidth,
-              this.height = t.offsetHeight,
+            this.width = t.offsetWidth * window.devicePixelRatio,
+              this.height = t.offsetHeight * window.devicePixelRatio,
               this.left = 0,
               this.top = 0;
             null != t;
@@ -243,7 +243,7 @@ window.lavaAnimation = (function() {
       },
       a = i.screen.init("lamp-anim", null, !0),
       o = a.ctx;
-    a.resize(), (t = new e(a.width, a.height, 6, "#f1f1fc", "#f1f1fc"));
+    a.resize(), (t = new e(a.width, a.height, 6, "#5764c6", "#5764c6"));
   }
   return { run: n };
 })();
