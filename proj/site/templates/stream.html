@@ -13,6 +13,10 @@
   <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
 </div>
 
+<div id="stream-unique-custom-id" class="hidden">
+  <input type="text" name="stream_uuid" value="{{ stream.unique_custom_id }}">
+</div>
+
 <div id="main-card" class="main center-horizontal card">
 
   <div class="card-body" style="width: 100%;">
@@ -28,7 +32,7 @@
 
       {% if is_host %}
 
-        <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/manage">
+        <form class="ajax-form" redirect="/stream/{{ stream.unique_custom_id }}/manage">
           <button class="btn btn-secondary btn-lg btn-icon" style="margin-left: 16px;">
             <i class="gg-more" style="left: 8px;"></i>
           </button>
@@ -36,7 +40,7 @@
 
       {% elif ticket.is_administrator %}
 
-      <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/displayname">
+      <form class="ajax-form" redirect="/stream/{{ stream.unique_custom_id }}/displayname">
         <button class="btn btn-secondary btn-lg btn-icon" style="margin-left: 16px;">
           <i class="gg-more" style="left: 8px;"></i>
         </button>
@@ -44,7 +48,7 @@
 
       {% else %}
 
-      <form class="ajax-form" redirect="/stream/{{ stream.uuid }}/displayname">
+      <form class="ajax-form" redirect="/stream/{{ stream.unique_custom_id }}/displayname">
         <button class="btn btn-secondary btn-lg btn-icon" style="margin-left: 16px;">
           <i class="gg-more" style="left: 8px;"></i>
         </button>

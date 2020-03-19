@@ -172,7 +172,7 @@ function generate_queue(queue) {
       <form class="ajax-form"
             type="post"
             url="../../../api/music/delete_queue/"
-            redirect="/stream/${STREAM_UUID}/">
+            redirect="/stream/${STREAM_UNIQUE_CUSTOM_ID}/">
         <input class="hidden" type="text" name="queue_id" value="${queue.id}">
 
         <div>

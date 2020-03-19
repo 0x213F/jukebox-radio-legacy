@@ -5,8 +5,7 @@ from django.urls import path
 from .views import AccountView
 from .views import ConnectView
 from .views import CreateStreamView
-from .views import DisplayNameView
-from .views import HostsView
+from .views import ManageView
 from .views import IndexView
 from .views import LinkSpotifyView
 from .views import QueueView
@@ -24,6 +23,5 @@ urlpatterns = [
     path('signup/', SignUpView.as_view()),
     path('linkspotify/', LinkSpotifyView.as_view()),
     path('stream/<stream>/', StreamView.as_view()),
-    path('stream/<stream>/manage/', HostsView.as_view()),
-    path('stream/<stream>/displayname/', DisplayNameView.as_view()),
+    path('stream/<stream>/manage/', ManageView.as_view()),
 ]

@@ -2,6 +2,7 @@
 // templated server data stored in the DOM
 var CSRF_TOKEN = $('#csrf-token').children().first().val();
 var STREAM_UUID = $('#stream-uuid').children().first().val();
+var STREAM_UNIQUE_CUSTOM_ID = $('#stream-unique-custom-id').children().first().val();
 
 // global object to hold data for the view
 var VIEW = {}
