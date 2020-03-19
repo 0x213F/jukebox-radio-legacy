@@ -44,6 +44,7 @@ class StreamManager(BaseManager):
 
         return {
             "uuid": str(stream.uuid),
+            "unique_custom_id": stream.unique_custom_id,
             "name": stream.title,
             "status": stream.status,
             "tags": stream.tags.split(', '),

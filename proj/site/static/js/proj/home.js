@@ -18,7 +18,7 @@ function generate_stream(stream, class_name) {
   }
   var user_count = 3;
   return `
-  <div class="card stream ${class_name}" uuid="${stream.uuid}" style="cursor: pointer;">
+  <div class="card stream ${class_name}" uuid="${stream.uuid}" unique_custom_id="${stream.unique_custom_id}" style="cursor: pointer;">
     <div class="card-body" style="width: 100%;">
 
       <h3 class="stream-name">${stream.name}</h5>
@@ -89,39 +89,9 @@ var IS_BROADCASTING = false;
 
 function activate_stream() {
   var $this = $(this);
-  var uuid = $(this).attr('uuid');
+  var unique_custom_id = $(this).attr('unique_custom_id');
 
-  if($this.hasClass('active-stream')) {
-    window['SOCKET'].close();
-    $this.removeClass('active-stream');
-    var $playBar = $('#play-bar');
-    $playBar.addClass('hide-under-view');
-    return;
-  }
-
-  if($this.parent().hasClass('broadcasting-stream')) {
-    IS_BROADCASTING = true;
-  } else {
-    IS_BROADCASTING = false;
-  }
-
-  $('.active-stream').removeClass('active-stream');
-  $this.addClass('active-stream');
-
-  window.location.href = `/stream/${uuid}`
-
-  // var endpoint = (
-  //   'ws://' + window.location.host + window.location.pathname +
-  //   `?uuid=${uuid}&display_comments=false`
-  // )
-  //
-  // if(window['SOCKET']) {
-  //   window['SOCKET'].close()
-  // }
-  //
-  // window['SOCKET'] = new WebSocket(endpoint)
-  // window['SOCKET'].onopen = onopen
-  // window['SOCKET'].onmessage = onmessage
+  window.location.href = `/stream/${unique_custom_id}`
 }
 
   /////  //////////  /////

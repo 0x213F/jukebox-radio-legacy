@@ -1,4 +1,71 @@
-<div id="play-bar" class="play-bar hide-under-view">
+<div id="search-view" class="main center-horizontal card hidden">
+  <div class="card-body" style="width: 100%;">
+
+    <form id="search-library"
+          class="ajax-form"
+          url="../../../api/music/search_library/"
+          type="get"
+          beforesubmit="validate_search_eligible"
+          onsuccess="display_search_results">
+
+      <!-- TABS TO SELECT TYPE -->
+      <input id="search-library-type" class="hidden" name="type" value="track">
+      <div id="search-type-choices" class="filter-nav" style="margin-bottom: 16px;">
+        <label class="search-type active" value="track">Track</label>
+        <label class="search-type" value="album">Album</label>
+        <label class="search-type" value="playlist">Playlist</label>
+      </div>
+
+      <!-- INLINE SEARCH BAR -->
+      <div class="input-group search-group">
+
+        <button type="button" class="exit-search-button btn btn-secondary btn-lg search-back-button">
+          <i class="icon icon-2x icon-back"></i>
+        </button>
+
+        <input id="search-bar-input"
+               class="form-input input-lg search-input-bar"
+               type="text"
+               name="query"
+               autocomplete="off">
+        <button type="submit"
+                form="search-library"
+                class="hidden">
+          <i class="icon icon-2x icon-search"></i>
+        </button>
+      </div>
+
+    </form>
+
+    <div id="search-results" class="no-scrollbar hidden"></div>
+
+  </div>
+</div>
+
+
+<div id="queue-view" class="main center-horizontal card hidden">
+  <div class="card-body" style="width: 100%;">
+
+    <button type="button" class="exit-search-button btn btn-secondary btn-lg search-back-button" style="margin-bottom: 16px;">
+      <i class="icon icon-2x icon-back"></i>
+    </button>
+
+    <div id="play-bar-queue" class="content queue">
+
+      <div id="queued-up"></div>
+    </div>
+
+    <div class="input-group fake-search-bar">
+      <input class="form-input input-lg input-bar" placeholder="Add music to the queue">
+      <button type="button" class="btn btn-primary btn-lg input-button" style="min-width: 40px;">
+        <i class="icon icon-2x icon-search"></i>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div id="play-bar" class="play-bar center-horizontal">
 
   <!-- - - - - - - - - - --->
   <!--  AUTHORIZE SPOTIFY -->
@@ -16,23 +83,26 @@
   <!--  WAITING FOR STREAM TO START PLAYING MUSIC -->
   <div class="content waiting-for-stream-to-start">
 
+    <div class="lds-dual-ring square-left" style="margin: 16px!important;"></div>
+
     <span class="text">
       Waiting for the stream to start playing music...
     </span>
-
-    <div class="lds-dual-ring square-left"></div>
 
   </div>
 
   <!-- - - - - - - - - - --->
   <!--  PLEASE PLAY MUSIC -->
-  <div class="content add-music-to-queue">
+  <div class="content add-music-to-queue" style="padding: 16px; padding-right: 24px;">
 
     <div class="lds-dual-ring square-left"></div>
 
-    <button id="go-to-queue" class="btn btn-lg square-right tooltip tooltip-left force-tooltip" data-tooltip="Add music to the queue">
-      <i class="gg-layout-list" style="left: 6px;"></i>
-    </button>
+    <div class="input-group fake-search-bar">
+      <input class="form-input input-lg input-bar" placeholder="Add music to the queue">
+      <button type="button" class="btn btn-primary btn-lg input-button" style="min-width: 40px;">
+        <i class="icon icon-2x icon-search"></i>
+      </button>
+    </div>
 
   </div>
 
@@ -58,51 +128,9 @@
 
     <img class="album-art" draggable="false"/>
 
-    {% if should_display_queue_button %}
-    <button id="queue-button" class="btn btn-secondary btn-lg square-right">
+    <button class="go-to-queue btn btn-lg square-right tooltip tooltip-left force-tooltip" data-tooltip="Add music to the queue">
       <i class="gg-layout-list" style="left: 6px;"></i>
     </button>
-    {% endif %}
-
-  </div>
-
-
-  <div id="play-bar-queue" class="content queue" style="height: 110px;">
-
-    <div id="queued-up"></div>
-
-    <div class="add-to-queue-form">
-
-      <form id="search-library"
-            class="ajax-form"
-            url="../../../api/music/search_library/"
-            type="get"
-            beforesubmit="validate_search_eligible"
-            onsuccess="display_search_results">
-
-        <!-- TABS TO SELECT TYPE -->
-        <input id="search-library-type" class="hidden" name="type" value="track">
-        <div id="search-type-choices" class="filter-nav" style="margin-bottom: 16px; margin-left: 24px;">
-          <label class="search-type active" value="track">Track</label>
-          <label class="search-type" value="album">Album</label>
-          <label class="search-type" value="playlist">Playlist</label>
-        </div>
-
-        <!-- INLINE SEARCH BAR -->
-        <div class="input-group search-group">
-          <input id="search-bar-input"
-                 class="form-input input-lg input-bar search-bar"
-                 type="text"
-                 name="query"
-                 autocomplete="off">
-          <button type="submit"
-                  form="search-library"
-                  class="btn btn-primary btn-lg input-button search-button">
-            <i class="icon icon-2x icon-search"></i>
-          </button>
-        </div>
-
-      </form>
 
   </div>
 

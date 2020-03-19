@@ -6,7 +6,7 @@ let $CHAT_CONTAINER = $('.chat-container')
 
 function display_text(comment) {
   return `
-    <div style="border: 1px solid #e5e5f9; border-radius: 6px; padding: 1rem; margin-bottom: 1rem;">
+    <div style="border: 1px solid #e5e5f9; border-radius: 6px; padding: 1rem; margin-bottom: 8px;">
       <span class="tile-title text-bold">${encodeHTML(comment.ticket.holder_name)}</span>
       <br>
       <p class="tile-subtitle" style="margin-bottom: 0rem; margin-top: 1rem; line-height: 16px;">${encodeHTML(comment.text)}</p>

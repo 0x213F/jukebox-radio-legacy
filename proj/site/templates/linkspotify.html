@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/proj/play_bar.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/stream.css' %}">
+{% endblock %}
+
 {% block main %}
 
 <div class="main center-horizontal card">
@@ -8,19 +15,20 @@
 
     <!-- - - - - - - - --->
     <!--  WEBPAGE TITLE -->
-    <div class="card-header">
-      <div class="card-title h5">Jukebox Radio</div>
-    </div>
+    <div class="card-title h5" style="margin: 16px; margin-top: 0px; line-height: 40px; height: 40px; display: inline-block; color: #727e96;">Jukebox Radio</div>
 
     <!-- - - - - - - - - --->
     <!--  WEBPAGE CONTENT -->
+
+    <!--
     <div class="card-body">Link your Spotify to start listening.</div>
+    -->
 
     <!-- - - - - - - - --->
     <!--  WEBPAGE LINKS -->
     <div class="card-footer">
       <!-- localhost%3A8000 | jukeboxrad.io | jukebox.radio -->
-      <a class="btn btn-primary"
+      <a class="btn btn-secondary btn-lg rounded-button"
          href="https://accounts.spotify.com/authorize?client_id=133a25c7195344dbafd4f50d7450330f&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fconnect&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state">
          Authorize Spotify <i class="icon icon-link"></i>
       </a>

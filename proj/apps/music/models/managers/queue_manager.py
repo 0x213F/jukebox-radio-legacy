@@ -25,12 +25,11 @@ class QueueManager(BaseManager):
     pass
 
     def serialize(self, queue):
-        print('hello')
-        print(queue.record.__dict__)
         return {
             'id': queue.id,
             'stream_uuid': queue.stream.uuid,
             'record_id': queue.record_id,
             'record_name': queue.record.name,
+            'record_spotify_img': queue.record.spotify_img,
             'created_at': queue.created_at.isoformat(),
         }

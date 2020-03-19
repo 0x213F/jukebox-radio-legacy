@@ -1,14 +1,9 @@
 
-let AUTHORIZE_SPOTIFY = 'authorize-spotify';
-
-
-function show_section(class_name) {
-  if(class_name === SECTION_AUTHORIZE_SPOTIFY) {
-
-  }
-
-}
-
+let $PLAYBAR = $('#play-bar');
+var $PLAYBARQUEUE = $('#play-bar-queue');
+var $SEARCHRESULTS = $('#search-results');
+var $FAKESEARCHBAR = $('#search-menu-redirect');
+var $REALSEARCHFORM = $('.add-to-queue-form');
 
 function update_play_bar(payload) {
   let playback_data = payload.data[KEY_PLAYBACK]
@@ -38,10 +33,10 @@ function update_play_bar(payload) {
 $( document ).ready(function() {
 
   /////  NAVIGATE TO QUEUE
-  $('#go-to-queue').click(function(data) {
-    var $play_bar_queue = $('#play-bar-queue');
-    $('#play-bar-queue').show();
-  });
+  $('.go-to-queue').click(focus_queue);
+
+  ///// ON FOCUS SEARCHBAR
+  $('.fake-search-bar').click(focus_searchbar)
 
   ///// SEARCH TYPE SELECTOR
   var $chips_selector = $('.search-type');
@@ -50,15 +45,56 @@ $( document ).ready(function() {
     var value = $this.attr('value');
     $chips_selector.removeClass('active');
     $this.addClass('active');
-    $type_selector.val(value);
+    $('#search-library-type').val(value);
     $('#search-library').submit();
+    focus_searchbar();
   });
 
 });
 
 
+function focus_searchbar() {
+  $('#main-card').addClass('hidden');
+  $('#search-view').removeClass('hidden');
+  $('#play-bar').addClass('hidden');
+  $('#search-bar-input').focus();
+  $('#queue-view').addClass('hidden');
+}
+
+function defocus_searchbar() {
+  $('#main-card').removeClass('hidden');
+  $('#search-view').addClass('hidden');
+  $PLAYBAR.removeClass('hidden');
+  $('#search-bar-input').val('');
+  $SEARCHRESULTS.empty();
+  $SEARCHRESULTS.addClass('hidden');
+  $('#queue-view').addClass('hidden');
+}
+
+$('.exit-search-button').click(defocus_searchbar);
+
+
+function focus_queue() {
+  $('#main-card').addClass('hidden');
+  $('#queue-view').removeClass('hidden');
+  $('#play-bar').addClass('hidden');
+}
+
+function defocus_queue() {
+  $('#main-card').removeClass('hidden');
+  $('#queue-view').addClass('hidden');
+  $('#play-bar').removeClass('hidden');
+}
+
+
 function populate_queue(data) {
-  console.log(data)
+  $div = $('#queued-up');
+  $div.empty();
+  for(var queue of data.queue) {
+    $div.append(generate_queue(queue));
+  }
+  setup_ajax_forms();
+  $div.removeClass('hidden');
 }
 
 var last_searched = Date.now();
@@ -74,78 +110,80 @@ function validate_search_eligible() {
   }
 }
 
+
 function display_search_results(data) {
-  var type = data.type
-  var $search_results_container = $('#search-results-container');
-  $search_results_container.empty();
+  // some temp style changes needed
+  $SEARCHRESULTS.removeClass('hidden');
+
+  $SEARCHRESULTS.empty();
   for(var result of data.search_results) {
-    if(type === 'album') {
-      $search_results_container.append(`
-        <li class="menu-item" style="cursor: pointer;">
-          <a record-name="${result.record_name}" uri="${result.uri}" img="${result.record_img_640}">
-            <div class="tile tile-centered">
-              <div class="tile-icon" style="height: 40px;">
-                <img src="${result.record_img_640}" style="height: 40px;"/>
-              </div>
-              <div class="tile-content">
-                <div class="title" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">${result.record_name}</div>
-                <div class="artist" style="color: #727e96; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">${result.artist}</div>
-              </div>
-            </div>
-          </a>
-        </li>
-      `)
-    } else if(type === 'playlist') {
-      $search_results_container.append(`
-        <li class="menu-item" style="cursor: pointer;">
-          <a record-name="${result.record_name}" uri="${result.uri}" img="${result.record_img_640}">
-            <div class="tile tile-centered">
-              <div class="tile-icon" style="height: 40px;">
-                <img src="${result.record_img_640}" style="height: 40px;"/>
-              </div>
-              <div class="tile-content">
-                <div class="title" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">${result.record_name}</div>
-              </div>
-            </div>
-          </a>
-        </li>
-      `)
-    } else {  // type === 'track'
-      $search_results_container.append(`
-        <li class="menu-item" style="cursor: pointer;">
-          <a record-name="${result.record_name}" uri="${result.uri}" img="${result.record_img_640}">
-            <div class="tile tile-centered">
-              <div class="tile-icon" style="height: 40px;">
-                <img src="${result.record_img_640}" style="height: 40px;"/>
-              </div>
-              <div class="tile-content">
-                <div class="title" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">${result.record_name}</div>
-                <div class="artist" style="color: #727e96; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">${result.artist}</div>
-              </div>
-            </div>
-          </a>
-        </li>
-      `)
-    }
+    $SEARCHRESULTS.append(`
+      <div class="search-result"
+           type="button"
+           uri="${result.uri}"
+           img="${result.record_img_640}"
+           record-name="${result.record_name}">
+        <img src="${result.record_img_640}" />
+        <span class="record-name">${result.record_name}</span>
+        <span class="artist-name">${result.artist || ''}</span>
+      </div>
+    `)
   }
-  var $search_results = $('#search-library-results')
-  $search_results.removeClass('hidden');
-  $a_selectors = $('.menu-item > a');
-  $create_record = $('#create-record-submit');
-  $a_selectors.click(function() {
-    var $this = $(this);
-
-    var uri = $this.attr('uri');
-    var img = $this.attr('img');
-    var record_name = $this.attr('record-name');
-
-    $('#create-queue-record-name').val(record_name);
-    $('#create-queue-uri').val(uri);
-    $('#create-queue-img').val(img);
-
-    $a_selectors.removeClass('search-result-selected');
-    $(this).addClass('search-result-selected');
-    $create_record.attr('disabled', false);
-    focus_searchbar();
-  })
+  $('.search-result').click(add_to_queue);
 }
+
+
+function add_to_queue(e) {
+  var $this = $(this);
+
+  $.ajax({
+      url: '../../api/music/create_queue/',
+      type: 'post',
+      data: {
+        'record_name': $this.attr('record-name'),
+        'uri': $this.attr('uri'),
+        'img': $this.attr('img'),
+        'csrfmiddlewaretoken': CSRF_TOKEN,
+        'stream_uuid': STREAM_UUID,
+      },
+      error: function(e) {
+          $error.text(e.statusText);
+      },
+      success: function(e) {
+        $('#form-load-queue').submit();
+          defocus_searchbar();
+      }
+  });
+}
+
+/////  /////  /////
+/////  QUEUE  /////
+/////  /////  /////
+
+function display_queue() {
+  console.log(';D')
+  $('#play-bar-queue').show();
+}
+
+function generate_queue(queue) {
+  console.log(queue)
+  return `
+    <div class="queue-card">
+      <form class="ajax-form"
+            type="post"
+            url="../../../api/music/delete_queue/"
+            redirect="/stream/${STREAM_UUID}/">
+        <input class="hidden" type="text" name="queue_id" value="${queue.id}">
+
+        <div>
+          <img src="${queue.record_spotify_img}" />
+          <div class="record-name">${queue.record_name}</div>
+        </div>
+
+        <button class="btn btn-secondary btn-lg float-right" style="border-radius: 12px; min-width: 40px; margin: 15px;">
+          <i class="icon icon-cross"></i>
+        </button>
+      </form>
+    </div>
+  `
+  }

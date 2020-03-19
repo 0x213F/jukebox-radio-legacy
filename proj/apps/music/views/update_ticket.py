@@ -46,7 +46,8 @@ class UpdateTicketView(BaseView):
             ticket.stream.owner_name = holder_name
             ticket.stream.save()
 
-
+        print('JEY!', ticket.holder_name)
         ticket.save()
+        print(ticket.holder_name)
 
         return self.http_response({})

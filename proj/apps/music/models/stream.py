@@ -41,6 +41,8 @@ class Stream(BaseModel):
 
     title = models.CharField(max_length=128)  # name
 
+    unique_custom_id = models.CharField(max_length=64, unique=True, blank=True, null=True)
+
     current_record = models.ForeignKey(
         'music.Record',
         related_name='now_playing_at_streams',

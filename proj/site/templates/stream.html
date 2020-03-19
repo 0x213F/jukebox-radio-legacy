@@ -13,7 +13,7 @@
   <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
 </div>
 
-<div class="main center-horizontal card">
+<div id="main-card" class="main center-horizontal card">
 
   <div class="card-body" style="width: 100%;">
 
@@ -59,7 +59,7 @@
 
     </div>
 
-    <form id="create-stream" class="ajax-form card-body" type="websocket" onsuccess='display_messages'>
+    <form id="create-stream" class="ajax-form card-body" type="websocket" onsuccess='display_messages' style="margin-top: 8px;">
 
       {% csrf_token %}
 

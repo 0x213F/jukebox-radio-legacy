@@ -18,11 +18,11 @@ class StreamView(BaseView):
         try:
             ticket = (
                 Ticket.objects
-                .get(holder=request.user, stream__uuid=stream)
+                .get(holder=request.user, stream__unique_custom_id=stream)
             )
             stream = ticket.stream
         except Ticket.DoesNotExist:
-            stream = Stream.objects.get(uuid=stream)
+            stream = Stream.objects.get(unique_custom_id=stream)
             ticket = Ticket.objects.create(
                 holder=request.user,
                 stream=stream,
@@ -30,6 +30,8 @@ class StreamView(BaseView):
                 holder_name=request.user.profile.default_display_name or generate_username(1)[0],
                 holder_uuid=uuid.uuid4(),
             )
+
+        print('fff', ticket.holder_name)
 
         is_host = request.user == stream.owner
 

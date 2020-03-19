@@ -32,7 +32,6 @@ class CommentManager(BaseManager):
 
         now = datetime.utcnow()
 
-        status = payload["status"]
         text = payload["text"]
 
         cmt = None
@@ -53,7 +52,7 @@ class CommentManager(BaseManager):
             pass
 
         return await database_sync_to_async(Comment.objects.create)(
-            status=status,
+            status=Comment.STATUS_MID_HIGH,
             text=text,
             commenter=user,
             stream=stream,

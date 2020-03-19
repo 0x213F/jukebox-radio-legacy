@@ -42,6 +42,8 @@ class CreateStreamView(BaseView):
         holder_name = request.user.profile.default_display_name or generate_username(1)[0]
 
         stream = Stream.objects.create(title=stream_name, tags=tags, owner=request.user, owner_name=holder_name, last_status_change_at=now, status=Stream.STATUS_ACTIVATED)
+        stream.unique_custom_id = str(stream.uuid)
+        stream.save()
         Ticket.objects.create(
             holder=request.user,
             stream=stream,

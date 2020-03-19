@@ -40,6 +40,8 @@ function setup_ajax_forms() {
       } else {
         var $input = $("<input>").attr("name", "csrfmiddlewaretoken").val(CSRF_TOKEN).hide();
         $this.append($input);
+        console.log($this.serialize());
+        console.log($this.attr("url"));
         $.ajax({
             url: $this.attr("url"),
             type: $this.attr("type"),
