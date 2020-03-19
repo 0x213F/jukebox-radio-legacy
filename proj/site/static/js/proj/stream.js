@@ -63,7 +63,7 @@ function onmessage(event) {
 }
 
 var endpoint = (
-  'wss://' + window.location.host +
+  'ws://' + window.location.host +
   `/?uuid=${STREAM_UUID}&display_comments=true`
 )
 
