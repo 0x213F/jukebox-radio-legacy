@@ -13,6 +13,7 @@ class LinkSpotifyView(BaseView):
 
         stream_uuid = request.GET.get("stream_uuid", None)
 
+        is_new_user = False
         if not request.user.is_authenticated:
             uuid_str = str(uuid.uuid4())
             email = f'{uuid_str}@jukebox.radio'
@@ -26,8 +27,10 @@ class LinkSpotifyView(BaseView):
             )
 
             login(request, user)
+            is_new_user = True
 
-        return self.template_response(request, 'linkspotify.html', {
-            'should_display_chat_button': True,
-            'should_display_volume_button': False,
-        })
+        return self.template_response(
+            request,
+            'linkspotify.html',
+            {'is_new_user': is_new_user}
+        )

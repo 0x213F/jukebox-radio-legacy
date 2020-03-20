@@ -4,7 +4,7 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'css/proj/play_bar.css' %}">
-<link rel="stylesheet" href="{% static 'css/proj/stream.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
 {% endblock %}
 
 {% block main %}
@@ -19,20 +19,25 @@
 
 <div id="main-card" class="main center-horizontal card">
 
-  <div class="card-body" style="width: 100%;">
+  <div class="card-body">
 
-    <div class="stream-name">{{ stream.title }}</div>
+    <!-- - - - - -->
+    <!--  BANNER -->
+    <div class="jr-banner">
+      {{ stream.title }}
+    </div>
 
-    <div class="form-group" style="margin-bottom: 32px; height: 40px;" style="display: block;">
-  
+    <!-- - - - - --->
+    <!--  BUTTONS -->
+    <div>
+
       <form class="ajax-form" redirect="/">
-        <button class="btn btn-secondary btn-lg btn-icon" style="float: left;">
+        <button class="btn btn-lg btn-secondary jr-btn-sq">
           <i class="icon icon-2x icon-back"></i>
         </button>
       </form>
-
       <form class="ajax-form" redirect="/stream/{{ stream.unique_custom_id }}/manage">
-        <button class="btn btn-secondary btn-lg btn-icon" style="margin-left: 16px;">
+        <button class="btn btn-lg btn-secondary jr-btn-sq">
           <i class="gg-more" style="left: 8px;"></i>
         </button>
       </form>
@@ -41,31 +46,31 @@
 
     <!-- - - --->
     <!-- CHAT -->
-    <div class="card-body chat-container" style="height: calc(100vh - 312px); overflow-y: scroll;">
+    <div class="chat-container" style="height: calc(100vh - 312px); overflow-y: scroll;"></div>
 
+    <!-- - - - - - - - --->
+    <!-- CHAT INPUT BAR -->
+    <div>
+      <form class="ajax-form card-body" type="websocket">
+
+        <input class="hidden" name="stream_uuid" value="{{ stream.uuid }}" />
+        <input class="hidden" name="track_id" value="" />
+
+        <div class="input-group">
+          <input type="text"
+                 id="chat-input-main"
+                 class="form-input input-lg input-bar"
+                 placeholder=""
+                 name="text"
+                 autocomplete="off">
+          <button id="chat-submit"
+                  class="btn btn-primary btn-lg input-button">
+            <i class="icon icon-2x icon-message"></i>
+          </button>
+        </div>
+
+      </form>
     </div>
-
-    <form id="create-stream" class="ajax-form card-body" type="websocket" onsuccess='display_messages' style="margin-top: 8px;">
-
-      {% csrf_token %}
-
-      <input class="hidden" name="stream_uuid" value="{{ stream.uuid }}" />
-      <input class="hidden" name="track_id" value="" />
-
-      <div class="input-group">
-        <input type="text"
-               id="chat-input-main"
-               class="form-input input-lg input-bar"
-               placeholder=""
-               name="text"
-               autocomplete="off">
-        <button id="chat-submit"
-                class="btn btn-primary btn-lg input-button">
-          <i class="icon icon-2x icon-message"></i>
-        </button>
-      </div>
-
-    </form>
 
   </div>
 

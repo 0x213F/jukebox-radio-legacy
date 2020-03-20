@@ -18,6 +18,13 @@
   background-color: rgb(256, 256, 256, 0.95);
 }
 
+.jr-btn-sq {
+  min-width: 40px!important;
+  border-radius: 12px;
+  float: left;
+  margin-right: 16px;
+}
+
 .jr-btn.btn-secondary,
 .jr-btn-sq.btn-secondary {
   background-color: rgb(256, 256, 256, 0.95)!important;
@@ -38,11 +45,6 @@
   background-color: #4c59c2!important;
 }
 
-.jr-btn-sq {
-  min-width: 40px!important;
-  border-radius: 12px;
-}
-
 .jr-content {
   color: #727e96;
   margin-bottom: 40px;
@@ -54,4 +56,21 @@
   border: 1px solid #727e96;
   border-radius: 12px!important;
   box-shadow: none!important;
+}
+
+.jr-banner {
+  background: #3f4eba;
+  color: white;
+  width: 100%;
+  height: 48px;
+  font-size: 24px;
+  line-height: 20px;
+  letter-spacing: 4px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  padding: 15px 24px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

@@ -24,7 +24,6 @@ from proj.apps.music.models import Record
 from proj.apps.music.models import TrackListing
 from proj.core.resources import Spotify
 from proj.core.resources.cache import _get_or_fetch_from_cache
-from proj.core.fns import results
 
 
 class Consumer(AsyncConsumer):

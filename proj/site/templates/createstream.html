@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/proj/createstream.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
 {% endblock %}
 
 {% block main %}
@@ -16,7 +16,7 @@
     <!--  BACK BUTTON -->
     <div class="form-group card-body">
       <form class="ajax-form" redirect="/">
-        <button class="btn btn-secondary btn-lg btn-icon">
+        <button class="btn btn-secondary btn-lg jr-btn-sq">
           <i class="icon icon-2x icon-back"></i>
         </button>
       </form>
@@ -32,18 +32,18 @@
 
       <div class="form-group">
         <label class="form-label label-lg" for="name-create-stream" style="color: #727e96;">Name</label>
-        <input class="form-input input-lg" id="name-create-stream" type="text" name="name">
+        <input class="form-input input-lg jr-input" id="name-create-stream" type="text" name="name">
       </div>
 
       <div class="form-group">
         <label class="form-label label-lg" for="name-create-tags" style="color: #727e96;">Emojis</label>
-        <input class="form-input input-lg" id="name-create-tags" type="text" name="tags">
+        <input class="form-input input-lg jr-input" id="name-create-tags" type="text" name="tags">
       </div>
 
       <div class="form-group">
         <label class="form-label label-lg"></label>
-        <button type="submit" form="create-stream" class="btn btn-secondary btn-lg">Create Stream</button>
-        <span class="ajax-form-error" style="margin-left: 1.4em; color: red"><span>
+        <button type="submit" form="create-stream" class="btn btn-lg btn-secondary jr-btn">Create Stream</button>
+        <span class="ajax-form-error"><span>
       </div>
 
     </form>

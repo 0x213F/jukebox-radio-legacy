@@ -3,14 +3,13 @@
 {% load static %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/proj/list_streams.css' %}">
-<link rel="stylesheet" href="{% static 'css/proj/play_bar.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
 <link rel="stylesheet" href="{% static 'css/proj/home.css' %}">
 {% endblock %}
 
 {% block main %}
 
-<div class="main center-horizontal card">
+<div class="main center-horizontal card" style="height: calc(100vh - 24px);">
 
   <div class="card-body">
 
@@ -19,7 +18,7 @@
     {% if user_is_active %}
     <div id="create-stream-button">
       <form class="ajax-form" redirect="/createstream">
-        <button class="btn btn-lg" style="width: 100%; border-radius: 12px;">
+        <button class="btn btn-lg btn-secondary jr-btn" style="width: 100%;">
           Create Stream
         </button>
       </form>
@@ -31,7 +30,7 @@
     {% if not user_is_active %}
     <div id="create-stream-button" class="card-body" style="cursor: not-allowed;">
       <form>
-        <button class="btn btn-lg" style="width: 100%;" disabled>
+        <button class="btn btn-lg btn-secondary jr-btn" style="width: 100%;" disabled>
           Create Stream
         </button>
       </form>
@@ -39,7 +38,7 @@
 
     <div id="create-user-account" class="card-body">
       <form class="ajax-form" redirect="/signup">
-        <button class="btn btn-primary btn-lg" style="width: 100%;">
+        <button class="btn btn-lg tn-primary jr-btn" style="width: 100%;">
           Create Account
         </button>
       </form>
@@ -53,7 +52,7 @@
 
       <div id="create-stream-button" style="float: right; margin-top: 0px; margin-bottom: 16px;">
         <form class="ajax-form" redirect="/createstream">
-          <button class="btn btn-lg btn-icon">
+          <button class="btn btn-lg jr-btn-sq" style="margin-right: 0px;">
             <i class="icon icon-2x icon-plus"></i>
           </button>
         </form>

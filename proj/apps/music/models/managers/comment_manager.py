@@ -11,7 +11,6 @@ from django.conf import settings
 from channels.db import database_sync_to_async
 
 from proj.core.models.managers import BaseManager
-from proj.core.fns import results
 from proj.core.resources.cache import _set_cache
 from proj.core.resources.cache import _get_or_fetch_from_cache
 
