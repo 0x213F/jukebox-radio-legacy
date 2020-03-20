@@ -4,6 +4,10 @@ from django.db import models
 
 
 class BaseModel(models.Model):
+    '''
+    Inherits from Django Model.
+    '''
+
     class Meta:
         abstract = True
 

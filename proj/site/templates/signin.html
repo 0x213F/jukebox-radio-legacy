@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
+{% endblock %}
+
 {% block main %}
 
 <div class="main center-horizontal card">
@@ -8,15 +14,15 @@
 
     <!-- - - - - - - - --->
     <!--  WEBPAGE TITLE -->
-    <div class="card-header">
-      <div class="card-title h5">Jukebox Radio</div>
+    <div class="jr-flex-center jr-title no-select">
+      <span>Jukebox Radio</span>
     </div>
 
     <!-- - - - - - - --->
     <!--  BACK BUTTON -->
-    <div class="card-body" style="margin-bottom: 3.5rem;">
+    <div class="form-group card-body">
       <form class="ajax-form" redirect="/">
-        <button class="btn btn-secondary" style="float: left;">
+        <button class="btn btn-lg btn-secondary jr-btn-sq">
           <i class="icon icon-2x icon-back"></i>
         </button>
       </form>
@@ -31,18 +37,18 @@
           redirect="/">
 
       <div class="form-group">
-        <label class="form-label" for="email-signin">Email</label>
-        <input class="form-input" id="email-signin" type="email" name="username">
+        <label class="form-label label-lg" for="email-signin">Email</label>
+        <input class="form-input input-lg jr-input" id="email-signin" type="text" name="username">
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="password-signin">Password</label>
-        <input class="form-input" id="password-signin" type="password" name="password">
+        <label class="form-label label-lg" for="password-signin">Password</label>
+        <input class="form-input input-lg jr-input" id="password-signin" type="password" name="password">
       </div>
 
       <div class="form-group">
-        <button type="submit" form="log-in" class="btn btn-secondary">Log In</button>
-        <span class="text-info ajax-form-error" style="margin-left: 1.4em; color: red"><span>
+        <button type="submit" form="log-in" class="btn btn-lg btn-secondary jr-btn">Log In</button>
+        <span class="ajax-form-error"><span>
       </div>
 
     </form>

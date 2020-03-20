@@ -24,37 +24,19 @@
     <div class="stream-name">{{ stream.title }}</div>
 
     <div class="form-group" style="margin-bottom: 32px; height: 40px;" style="display: block;">
+  
       <form class="ajax-form" redirect="/">
         <button class="btn btn-secondary btn-lg btn-icon" style="float: left;">
           <i class="icon icon-2x icon-back"></i>
         </button>
       </form>
 
-      {% if is_host %}
-
-        <form class="ajax-form" redirect="/stream/{{ stream.unique_custom_id }}/manage">
-          <button class="btn btn-secondary btn-lg btn-icon" style="margin-left: 16px;">
-            <i class="gg-more" style="left: 8px;"></i>
-          </button>
-        </form>
-
-      {% elif ticket.is_administrator %}
-
-      <form class="ajax-form" redirect="/stream/{{ stream.unique_custom_id }}/displayname">
+      <form class="ajax-form" redirect="/stream/{{ stream.unique_custom_id }}/manage">
         <button class="btn btn-secondary btn-lg btn-icon" style="margin-left: 16px;">
           <i class="gg-more" style="left: 8px;"></i>
         </button>
       </form>
 
-      {% else %}
-
-      <form class="ajax-form" redirect="/stream/{{ stream.unique_custom_id }}/displayname">
-        <button class="btn btn-secondary btn-lg btn-icon" style="margin-left: 16px;">
-          <i class="gg-more" style="left: 8px;"></i>
-        </button>
-      </form>
-
-      {% endif %}
     </div>
 
     <!-- - - --->

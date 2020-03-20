@@ -17,14 +17,16 @@
     {% block basestyles %}
 
     <!-- imported styles -->
-    <link rel="stylesheet" href="{% static 'css/spectre/spectre.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/spectre/spectre-icons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/external/spectre/spectre.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/external/spectre/spectre-icons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/external/gg.css' %}">
     <link href="https://fonts.googleapis.com/css?family=Major+Mono+Display|Work+Sans:300,400,700,900&display=swap" rel="stylesheet">
     <link href="https://css.gg/c?=|music-speaker|comment|girl|music|layout-list|more|external" rel="stylesheet">
     <script src="https://kit.fontawesome.com/47f45af50e.js" crossorigin="anonymous"></script>
 
     <!-- custom styles -->
     <link rel="stylesheet" href="{% static 'css/proj/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/proj/jr.css' %}">
 
     {% endblock %}
 
@@ -54,10 +56,10 @@
     <div id="csrf-token" class="hidden">{% csrf_token %}</div>
 
     {% block basescripts %}
-    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/external/jquery.js' %}"></script>
+    <script src="{% static 'js/external/codepen/lavalamp.js' %}"></script>
     <script src="{% static 'js/proj/globals.js' %}"></script>
     <script src="{% static 'js/proj/main.js' %}"></script>
-    <script src="{% static 'js/lavalamp.js' %}"></script>
     {% endblock %}
 
     {% block scripts %}{% endblock %}

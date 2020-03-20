@@ -94,3 +94,8 @@ html, body {
   border-bottom-right-radius: 12px;
   border-left: 0px;
 }
+
+.ajax-form-error {
+  margin-left: 1.4em;
+  color: red;
+}

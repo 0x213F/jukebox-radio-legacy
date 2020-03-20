@@ -1,7 +1,5 @@
 from channels.db import database_sync_to_async
 
-from proj.core.fns.etc import noop
-
 
 def _set_cache(cache, key, value):
     """
@@ -11,7 +9,7 @@ def _set_cache(cache, key, value):
 
 
 async def _get_or_fetch_from_cache(
-    cache, key, *, fetch_func=noop, fetch_args=(), fetch_kwargs={}
+    cache, key, *, fetch_func=None, fetch_args=(), fetch_kwargs={}
 ):
     """
     Given a key and cache object, get or fetch that object.

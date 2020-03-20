@@ -9,7 +9,7 @@ from django.views import View
 
 class BaseView(View):
     """
-    TODO docstring
+    Inherits from Django View.
     """
 
     def http_response(self, response):
