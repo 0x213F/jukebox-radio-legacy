@@ -4,6 +4,7 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/home.css' %}">
 {% endblock %}
 
 {% block main %}
@@ -16,9 +17,9 @@
   <input type="text" name="stream_uuid" value="{{ stream.unique_custom_id }}">
 </div>
 
-<div class="main center-horizontal card">
+<div class="main center-horizontal card" style="height: calc(100vh - 24px);">
 
-  <div class="card-body" style="width: 100%;">
+  <div class="card-body">
 
     <!-- - - - - -->
     <!--  BANNER -->
@@ -70,8 +71,8 @@
         <label class="form-label label-lg" for="tags-create-stream">Custom URL</label>
 
         <div class="input-group">
-          <span class="url-base no-select input-group-addon">https://jukebox.radio/stream/</span>
-          <input class="form-input input-lg " id="tags-create-stream" type="text" name="unique_custom_id" value="{{ stream.unique_custom_id }}" onClick="this.setSelectionRange(0, this.value.length)">
+          <span class="url-base no-select">https://jukebox.radio/stream/</span>
+          <input class="form-input input-lg url-ext" id="tags-create-stream" type="text" name="unique_custom_id" value="{{ stream.unique_custom_id }}" onClick="this.setSelectionRange(0, this.value.length)">
         </div>
       </div>
 

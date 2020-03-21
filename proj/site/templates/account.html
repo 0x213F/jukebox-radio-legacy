@@ -1,8 +1,14 @@
 {% extends "base.html" %}
 
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
+{% endblock %}
+
 {% block main %}
 
-<div class="main center-horizontal card">
+<div class="main center-horizontal card" style="height: calc(100vh - 24px);">
 
   <div class="card-body">
 
@@ -10,7 +16,7 @@
     <!--  BACK BUTTON -->
     <div class="form-group card-body">
       <form class="ajax-form" redirect="/">
-        <button class="btn btn-primary btn-lg" style="float: left; width: 40px;">
+        <button class="btn btn-secondary btn-lg jr-btn-sq">
           <i class="icon icon-2x icon-back"></i>
         </button>
       </form>
@@ -24,10 +30,10 @@
           type="post"
           redirect="/">
 
-      <div class="form-group" style="margin-bottom: 16px; margin-top: 32px;">
-        <label class="form-label"
+      <div class="form-group">
+        <label class="form-label label-lg"
                for="update-account-display-name">Display Name</label>
-        <input class="form-input input-lg"
+        <input class="form-input input-lg jr-input"
                id="update-account-display-name"
                type="text"
                name="display_name"
@@ -35,13 +41,13 @@
       </div>
 
       <div class="form-group">
-        <div class="divider"></div>
+        <div class="divider" style="margin-top: 24px; margin-bottom: 14;"></div>
       </div>
 
       <div class="form-group">
-        <label class="form-label"
+        <label class="form-label label-lg"
                for="update-account-email">Email</label>
-        <input class="form-input input-lg"
+        <input class="form-input input-lg jr-input"
                id="update-account-email"
                type="email"
                name="email"
@@ -50,9 +56,9 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label"
+        <label class="form-label label-lg"
                for="update-account-first-name">First Name</label>
-        <input class="form-input input-lg"
+        <input class="form-input input-lg jr-input"
                id="update-account-first-name"
                type="text"
                name="first_name"
@@ -60,9 +66,9 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label"
+        <label class="form-label label-lg"
                for="update-account-last-name">Last Name</label>
-        <input class="form-input input-lg"
+        <input class="form-input input-lg jr-input"
                id="update-account-last-name"
                type="text"
                name="last_name"
@@ -70,10 +76,10 @@
       </div>
 
       <div class="form-group">
-        <button class="btn btn-secondary btn-lg"
+        <button class="btn btn-lg btn-secondary jr-btn"
                 type="submit"
                 form="update-account">Update</button>
-        <span class="ajax-form-error" style="margin-left: 1.4em; color: red"><span>
+        <span class="ajax-form-error"><span>
       </div>
 
     </form>
