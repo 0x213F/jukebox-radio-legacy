@@ -31,7 +31,7 @@ class Profile(BaseModel):
         settings.AUTH_USER_MODEL, related_name="profile", on_delete=models.DO_NOTHING,
     )
 
-    activated_stream_redirect = models.UUIDField(null=True, blank=True)
+    activated_stream_redirect = models.CharField(max_length=64, null=True, blank=True)
     activated_at = models.DateTimeField(null=True, blank=True)
 
     spotify_access_token = models.CharField(max_length=500, null=True, blank=True)
