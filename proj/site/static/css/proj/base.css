@@ -34,6 +34,12 @@ html, body {
     display: none;  // Safari and Chrome
 }
 
+.no-overflow {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .card .card-body, .card .card-footer, .card .card-header {
   padding: 0px;
 }

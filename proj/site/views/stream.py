@@ -13,7 +13,7 @@ class StreamView(BaseView):
         Ticket = apps.get_model('music', 'Ticket')
 
         if not request.user.is_authenticated:
-            return self.redirect_response(f'/linkspotify?stream_uuid={stream}')
+            return self.redirect_response(f'/linkspotify?stream={stream}')
 
         unique_custom_id = stream
         stream = Stream.objects.get(unique_custom_id=unique_custom_id)

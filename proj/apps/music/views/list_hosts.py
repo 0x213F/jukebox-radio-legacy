@@ -19,7 +19,7 @@ class ListHostsView(BaseView):
         tickets = Ticket.objects.filter(stream__uuid=stream_uuid, is_administrator=True)
 
         active_ticket = Ticket.objects.get(
-            holder=request.user, stream__uuid=stream_uuid,
+            email=request.user.email, stream__uuid=stream_uuid,
         )
 
         tickets_data = []

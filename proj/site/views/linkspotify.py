@@ -11,7 +11,7 @@ class LinkSpotifyView(BaseView):
     def get(self, request, **kwargs):
         Profile = apps.get_model('users', 'Profile')
 
-        stream_uuid = request.GET.get("stream_uuid", None)
+        stream_uuid = request.GET.get("stream", None)
 
         is_new_user = False
         if not request.user.is_authenticated:

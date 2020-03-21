@@ -85,18 +85,18 @@
 
     <!-- - - - --->
     <!-- FOOTER -->
-    <div class='card-footer'>
+    <div class='card-footer jr-flex-center' style="">
 
       {% if user_is_active %}
       <form class="ajax-form" redirect="/account">
-        <button class="btn btn-link btn-lg" style="margin-right: 1rem; float: left; margin-left: 35px;">
+        <button class="btn btn-lg btn-link jr-btn" style="margin-right: 12px; margin-top: 24px;">
           Account
         </button>
       </form>
       {% endif %}
 
       <form class="ajax-form" url="../api/user/logout/" type="post" redirect="/">
-        <button class="btn btn-link btn-lg" style="margin-left: 1rem;">
+        <button class="btn btn-lg btn-link jr-btn" style="margin-left: 12px; margin-top: 24px;">
           Logout
         </button>
       </form>

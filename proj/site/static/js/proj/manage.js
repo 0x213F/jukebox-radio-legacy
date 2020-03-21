@@ -21,7 +21,7 @@ function generate_host(ticket) {
             url="../../../api/music/update_ticket/"
             redirect="/stream/${STREAM_UNIQUE_CUSTOM_ID}/manage/">
 
-        <input class="hidden" type="text" name="holder_uuid" value="${ticket.holder_uuid}">
+        <input class="hidden" type="text" name="email" value="${ticket.email}">
         <input class="hidden" type="text" name="stream_uuid" value="${STREAM_UUID}">
         <input class="hidden" type="text" name="is_administrator" value="false">
 
@@ -32,7 +32,7 @@ function generate_host(ticket) {
         </button>
       </form>
 
-      ${ticket.holder_name}
+      ${ticket.email}
     </div>
   </div>
   `
@@ -41,6 +41,9 @@ function generate_host(ticket) {
 function display_hosts(data) {
   let list_tickets = data[KEY_TICKETS];
   let $hosts_container = $('.hosts-list');
+  if(!list_tickets.length) {
+    return;
+  }
   for(let ticket of list_tickets) {
     $hosts_container.append(generate_host(ticket));
   }

@@ -13,8 +13,8 @@ function update_play_bar(payload) {
     return;
   }
 
-  $('.play-bar > .content').hide();
-  $('.play-bar > .' + visible_section_class_name).show();
+  $('.play-bar > .content').addClass('hidden');
+  $('.play-bar > .' + visible_section_class_name).removeClass('hidden');
 
   let record_data = payload.data[KEY_RECORD];
   if(record_data) {

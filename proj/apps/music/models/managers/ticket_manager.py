@@ -13,4 +13,5 @@ class TicketManager(BaseManager):
             'holder_name': ticket.name,
             'holder_uuid': str(ticket.holder_uuid),
             'holder_is_subscribed': ticket.is_subscribed,
+            'email': ticket.email,
         }

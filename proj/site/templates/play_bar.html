@@ -68,8 +68,12 @@
 <div id="play-bar" class="play-bar center-horizontal">
 
   <!-- - - - - - - - - - --->
+  <!--  BLANK -->
+  <div class="content" style="width: 100%; height: 72px;"></div>
+
+  <!-- - - - - - - - - - --->
   <!--  AUTHORIZE SPOTIFY -->
-  <div class="content authorize-spotify">
+  <div class="content authorize-spotify hidden">
     <!-- localhost%3A8000 | jukeboxrad.io | jukebox.radio -->
     <div class="centered-button">
       <a class="btn btn-primary"
@@ -81,23 +85,21 @@
 
   <!-- - - - - - - - - - - - - - - - - - - - - - --->
   <!--  WAITING FOR STREAM TO START PLAYING MUSIC -->
-  <div class="content waiting-for-stream-to-start">
+  <div class="content waiting-for-stream-to-start hidden" style="padding: 18px;">
 
-    <div class="lds-dual-ring square-left" style="margin: 16px!important;"></div>
+    <div class="jr-spinning-record" style="float: left;"></div>
 
-    <span class="text">
-      Waiting for the stream to start playing music...
-    </span>
+    <span class="jr-bubble-left no-overflow">Waiting for host to play music</span>
 
   </div>
 
   <!-- - - - - - - - - - --->
   <!--  PLEASE PLAY MUSIC -->
-  <div class="content add-music-to-queue" style="padding: 16px; padding-right: 24px;">
+  <div class="content add-music-to-queue hidden" style="padding: 18px;">
 
-    <div class="lds-dual-ring square-left"></div>
+    <div class="jr-spinning-record" style="float: left;"></div>
 
-    <div class="input-group fake-search-bar">
+    <div class="input-group fake-search-bar" style="margin-left: 60px; margin-right: 6px;">
       <input class="form-input input-lg jr-input-left-half">
       <button type="button" class="btn btn-lg btn-secondary jr-btn-sq-right-half" style="min-width: 40px;">
         <i class="icon icon-2x icon-search"></i>
@@ -108,7 +110,7 @@
 
   <!-- - - - - - - - - - - - - - -->
   <!--  SPOTIFY CLIENT NOT FOUND -->
-  <div class="content spotify-streaming-client-not-found">
+  <div class="content spotify-streaming-client-not-found hidden">
 
     <span class="text">
       Start by streaming music on your device.
@@ -124,13 +126,15 @@
 
   <!-- - - - - - - - - - --->
   <!--  CURRENTLY PLAYING -->
-  <div class="content currently-playing">
+  <div class="content currently-playing hidden">
 
     <img class="album-art" draggable="false"/>
 
-    <button class="go-to-queue btn btn-lg square-right tooltip tooltip-left force-tooltip jr-btn-sq" data-tooltip="Manage the queue">
+    <button class="go-to-queue btn btn-lg square-right jr-btn-sq" style="float: right;">
       <i class="gg-layout-list" style="left: 6px;"></i>
     </button>
+
+    <span class="jr-bubble-right no-overflow">Manage the queue</span>
 
   </div>
 
