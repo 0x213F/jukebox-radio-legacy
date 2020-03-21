@@ -1,4 +1,4 @@
-import uuid
+import uuid as _uuid
 
 from django.conf import settings
 from django.db import models
@@ -10,6 +10,9 @@ from proj.core.models import BaseModel
 
 
 class Ticket(BaseModel):
+
+    STATUS_CREATED_STREAM = 'created_stream'
+    STATUS_ADDED_AS_HOST = 'added_as_host'
 
     # - - - - - - -
     # config model |
@@ -27,18 +30,27 @@ class Ticket(BaseModel):
     # fields |
     # - - - -
 
-    holder = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name='tickets', on_delete=models.DO_NOTHING,
-    )
-
-    is_administrator = models.BooleanField(default=False)
-    is_subscribed = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=False)
-
     stream = models.ForeignKey(
         'music.Stream', related_name='tickets', on_delete=models.DO_NOTHING,
     )
-    timestamp_join = models.DateTimeField(auto_now_add=True)
-    timestamp_last_active = models.DateTimeField(auto_now_add=True)
-    holder_name = models.CharField(max_length=32, editable=False)
-    holder_uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+
+    holder = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        related_name='tickets',
+        on_delete=models.DO_NOTHING,
+    )
+    email = models.CharField(max_length=64, editable=False)
+    name = models.CharField(max_length=32, editable=False)
+    uuid = models.UUIDField(default=_uuid.uuid4, editable=False)
+
+    is_administrator = models.BooleanField(default=False)
+    is_subscribed = models.BooleanField(default=False)
+    is_listed = models.BooleanField(default=False)
+
+    status = models.CharField(max_length=32, editable=False)
+    updated_at = models.DateTimeField(null=True, blank=False)
+
+    # to be removed later
+    holder_uuid = models.UUIDField(default=_uuid.uuid4, editable=False)
+    is_active = models.BooleanField(default=False)

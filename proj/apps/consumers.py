@@ -198,11 +198,11 @@ class Consumer(AsyncConsumer):
         comment = await (
             Comment.objects.create_from_payload_async(
                 self.scope["user"], payload,
-                stream=self._cache['stream'], ticket=self._cache['ticket']
+                stream=self.scope["stream"], ticket=self.scope["ticket"]
             )
         )
 
-        await self.channel_post_comment(self._cache['stream'], comment, self._cache['ticket'])
+        await self.channel_post_comment(self.scope["stream"], comment, self.scope["ticket"])
 
     # - - - - - - - - - - - -
     # broadcast

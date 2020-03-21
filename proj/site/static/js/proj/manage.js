@@ -47,30 +47,3 @@ function display_hosts(data) {
   setup_ajax_forms();
   $(".hosts-list").removeClass('hidden');
 }
-
-  /////  //////////  /////
- /////  WEBSOCKETS  /////
-/////  //////////  /////
-
-function onopen(event) {
-  // NOOP
-}
-
-function onmessage(event) {
-  let text = event.data;
-  let payload = JSON.parse(text);
-
-  update_play_bar(payload);
-}
-
-var url = window.location.href;
-var uuid = url.substring(url.length - 44, url.length - 8);
-
-var endpoint = (
-  'ws://' + window.location.host + window.location.pathname +
-  `?uuid=${uuid}`
-)
-
-window['SOCKET'] = new WebSocket(endpoint)
-window['SOCKET'].onopen = onopen
-window['SOCKET'].onmessage = onmessage

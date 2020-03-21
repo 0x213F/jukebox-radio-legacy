@@ -60,7 +60,7 @@ class Stream(BaseModel):
 
     tags = models.CharField(max_length=128)
 
-    vote_controlled = models.BooleanField(default=False)
+    is_private = models.BooleanField(default=False)
 
     showtime_actual = models.DateTimeField(null=True, blank=False)
 

@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.apps import apps
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.http import HttpResponse
@@ -30,6 +31,9 @@ def create_view(request):
         user.username = email
         user.set_password(password)
         user.save()
+
+        Ticket.objects.filter(email=email).update(holder=user)
+
         login(request, user)
         return HttpResponse(status=201)
 

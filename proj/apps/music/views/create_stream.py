@@ -1,12 +1,10 @@
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
-
 import uuid
-
 from datetime import datetime
 from random_username.generate import generate_username
 
 from django.apps import apps
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 from proj.core.views import BaseView
 
@@ -39,17 +37,31 @@ class CreateStreamView(BaseView):
             raise Exception('Must provide a stream name')
 
         now = datetime.now()
-        holder_name = request.user.profile.default_display_name or generate_username(1)[0]
+        holder_name = (
+            request.user.profile.default_display_name
+            or generate_username(1)[0]
+        )
 
-        stream = Stream.objects.create(title=stream_name, tags=tags, owner=request.user, owner_name=holder_name, last_status_change_at=now, status=Stream.STATUS_ACTIVATED)
+        stream = Stream.objects.create(
+            title=stream_name,
+            tags=tags,
+            owner=request.user,
+            owner_name=holder_name,
+            last_status_change_at=now,
+            status=Stream.STATUS_ACTIVATED,
+        )
         stream.unique_custom_id = str(stream.uuid)
         stream.save()
+
         Ticket.objects.create(
-            holder=request.user,
             stream=stream,
-            holder_name=holder_name,
-            holder_uuid=uuid.uuid4(),
+            holder=request.user,
+            email=request.user.email,
+            name=holder_name,
             is_administrator=True,
+            is_listed=True,
+            status=Ticket.STATUS_CREATED_STREAM,
+            updated_at=now,
         )
 
 

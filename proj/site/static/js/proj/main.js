@@ -69,5 +69,9 @@ $('.ajax-form').each(function (index, value) {
 
 // https://stackoverflow.com/questions/2794137/sanitizing-user-input-before-adding-it-to-the-dom-in-javascript
 function encodeHTML(s) {
+  if(s) {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+  } else {
+    return ''
+  }
 }

@@ -26,7 +26,7 @@ class StreamQuerySet(BaseQuerySet):
             Exists(
                 Ticket.objects.filter(
                     stream_id=OuterRef('id'),
-                    holder=user,
+                    email=user.email,
                     is_administrator=True,
                 )
             )
@@ -41,8 +41,8 @@ class StreamQuerySet(BaseQuerySet):
             Exists(
                 Ticket.objects.filter(
                     stream_id=OuterRef('id'),
-                    holder=user,
+                    email=user.email,
                     is_administrator=True,
                 )
             )
-        )
+        ).exclude(is_private=True)

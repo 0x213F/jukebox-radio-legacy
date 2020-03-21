@@ -29,6 +29,9 @@ function display_comment(comment) {
   } else {
     return;
   }
+  if(!comment.text) {
+    return;
+  }
   html = comment_wrapper(html)
   $CHAT_CONTAINER.append(html);
   $CHAT_CONTAINER.scrollTop($CHAT_CONTAINER[0].scrollHeight);

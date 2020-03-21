@@ -75,6 +75,14 @@
         </div>
       </div>
 
+      <div class="form-group" style="margin-bottom: 26px; margin-top: 24px;">
+        <label class="form-checkbox">
+          <input name="stream_is_private" type="checkbox" {% if stream.is_private %}checked{% endif %}>
+          <i class="form-icon" style="width: 18px; height: 18px;"></i>
+          <span style="padding-left: 8px; padding-top: 2px; font-size: 14px; line-height: 23px;">Only hosts can tune in</span>
+        </label>
+      </div>
+
       <div class="form-group">
         <button type="submit" form="update-stream" class="btn btn-lg btn-secondary jr-btn">Update</button>
         <span class="ajax-form-error"><span>
@@ -96,7 +104,7 @@
 
       <div class="form-group">
         <label class="form-label label-lg" for="change-display-name">Display Name</label>
-        <input class="form-input input-lg jr-input" id="change-display-name" type="text" name="display_name" value="{{ ticket.holder_name }}">
+        <input class="form-input input-lg jr-input" id="change-display-name" type="text" name="display_name" value="{{ ticket.name }}">
       </div>
 
       <input class="hidden" type="text" name="stream_uuid" value="{{ stream.uuid }}">
@@ -144,13 +152,8 @@
 
 </div>
 
-<!-- - - - - - -->
-<!--  PLAY BAR -->
-{% include "play_bar.html" %}
-
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static '/js/proj/play_bar.js' %}"></script>
 <script src="{% static '/js/proj/manage.js' %}"></script>
 {% endblock %}

@@ -15,23 +15,29 @@ class StreamView(BaseView):
         if not request.user.is_authenticated:
             return self.redirect_response(f'/linkspotify?stream_uuid={stream}')
 
-        try:
-            ticket = (
-                Ticket.objects
-                .get(holder=request.user, stream__unique_custom_id=stream)
-            )
-            stream = ticket.stream
-        except Ticket.DoesNotExist:
-            stream = Stream.objects.get(unique_custom_id=stream)
-            ticket = Ticket.objects.create(
-                holder=request.user,
-                stream=stream,
-                timestamp_last_active=datetime.utcnow(),
-                holder_name=request.user.profile.default_display_name or generate_username(1)[0],
-                holder_uuid=uuid.uuid4(),
-            )
+        unique_custom_id = stream
+        stream = Stream.objects.get(unique_custom_id=unique_custom_id)
 
-        print('fff', ticket.holder_name)
+        if stream.is_private:
+            try:
+                ticket = Ticket.objects.get(
+                    stream=stream,
+                    email=request.user.email,
+                    is_administrator=True,
+                )
+            except Ticket.DoesNotExist:
+                raise ValueError('User does not have access to private stream')
+        else:
+            ticket, _ = (
+                Ticket.objects.get_or_create(
+                    stream=stream,
+                    email=request.user.email,
+                    defaults={
+                        'holder': request.user,
+                        'name': request.user.profile.default_display_name or generate_username(1)[0],
+                    }
+                )
+            )
 
         is_host = request.user == stream.owner
 

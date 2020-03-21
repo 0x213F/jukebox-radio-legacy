@@ -1,7 +1,9 @@
+from django.apps import apps
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-from django.apps import apps
+from datetime import datetime
+from random_username.generate import generate_username
 
 from proj.core.views import BaseView
 
@@ -15,11 +17,11 @@ class UpdateTicketView(BaseView):
         '''
         Ticket = apps.get_model('music.Ticket')
 
-        holder_uuid = request.POST.get('holder_uuid', None)
-        email = request.POST.get('email', None)
         stream_uuid = request.POST.get('stream_uuid', None)
+        holder_uuid = request.POST.get('holder_uuid', None)
         holder_name = request.POST.get('display_name', None)
 
+        email = request.POST.get('email', None)
         is_administrator = request.POST.get('is_administrator', None)
         is_administrator = True if is_administrator == 'true' else False
 
@@ -30,24 +32,35 @@ class UpdateTicketView(BaseView):
 
         if email:
             assert ticket.stream.owner == request.user
+            assert email != request.user.email
 
-            ticket = Ticket.objects.get(
-                holder__email=email,
-                stream__uuid=stream_uuid,
+            name = (
+                request.user.profile.default_display_name
+                or generate_username(1)[0]
             )
-            if is_administrator and ticket.is_administrator:
-                raise Excpection('already an admin')
-            ticket.is_administrator = is_administrator
+            now = datetime.now()
+
+            upgrade_ticket, _ = Ticket.objects.get_or_create(
+                email=email,
+                defaults={
+                    'name': name,
+                    'stream': ticket.stream,
+                    'status': Ticket.STATUS_ADDED_AS_HOST,
+                    'updated_at': now,
+                }
+            )
+            if is_administrator and upgrade_ticket.is_administrator:
+                raise Exception('Already an admin')
+            upgrade_ticket.is_administrator = is_administrator
+            upgrade_ticket.save()
+            return self.http_response({})
 
         if holder_name:
-            ticket.holder_name = holder_name
+            ticket.name = holder_name
+            ticket.save()
 
         if ticket.stream.owner == request.user:
             ticket.stream.owner_name = holder_name
             ticket.stream.save()
-
-        print('JEY!', ticket.holder_name)
-        ticket.save()
-        print(ticket.holder_name)
 
         return self.http_response({})

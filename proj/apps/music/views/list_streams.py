@@ -21,13 +21,6 @@ class ListStreamsView(BaseView):
 
         streams = Stream.objects.list_tune_in_streams(request.user).order_by('id')
 
-        active_ticket = None
-        stream_uuid = request.user.profile.active_stream_uuid
-        if stream_uuid:
-            active_ticket = Ticket.objects.get(
-                holder=request.user, stream__uuid=stream_uuid,
-            )
-
         now = datetime.now()
 
         response = {
@@ -40,7 +33,7 @@ class ListStreamsView(BaseView):
             ],
             'user': (
                 Profile.objects.serialize_user(
-                    request.user, active_ticket=active_ticket
+                    request.user,
                 )
             ),
         }

@@ -19,7 +19,7 @@ class ManageView(BaseView):
             Ticket.objects
             .select_related('stream')
             .get(
-                holder=request.user,
+                email=request.user.email,
                 stream__unique_custom_id=stream,
             )
         )

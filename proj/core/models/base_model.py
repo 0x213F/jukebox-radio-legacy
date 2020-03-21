@@ -11,6 +11,7 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True
 
+    created_at = models.DateTimeField(auto_now_add=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
 
     def delete(self):

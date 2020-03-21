@@ -10,7 +10,7 @@ class TicketManager(BaseManager):
         if not ticket:
             return None
         return {
-            'holder_name': ticket.holder_name,
+            'holder_name': ticket.name,
             'holder_uuid': str(ticket.holder_uuid),
             'holder_is_subscribed': ticket.is_subscribed,
         }

@@ -38,7 +38,7 @@
 
       <div class="form-group">
         <label class="form-label label-lg" for="change-display-name">Display Name</label>
-        <input class="form-input input-lg jr-input" id="change-display-name" type="text" name="display_name" value="{{ ticket.holder_name }}">
+        <input class="form-input input-lg jr-input" id="change-display-name" type="text" name="display_name" value="{{ ticket.name }}">
       </div>
 
       <input class="hidden" type="text" name="stream_uuid" value="{{ stream.uuid }}">
@@ -55,13 +55,8 @@
 
 </div>
 
-<!-- - - - - - -->
-<!--  PLAY BAR -->
-{% include "play_bar.html" %}
-
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static '/js/proj/play_bar.js' %}"></script>
 <script src="{% static '/js/proj/displayname.js' %}"></script>
 {% endblock %}
