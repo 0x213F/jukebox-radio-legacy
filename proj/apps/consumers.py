@@ -90,10 +90,7 @@ class Consumer(AsyncConsumer):
             record_terminates_at and
             datetime.now() > record_terminates_at.replace(tzinfo=None)
         ) or not record_terminates_at:
-            if self.scope['ticket'].is_administrator:
-                await self.send_playback_status('add-music-to-queue')
-            else:
-                await self.send_playback_status('waiting-for-stream-to-start')
+            await self.send_waiting_status()
             return
 
         # [6]
@@ -326,6 +323,12 @@ class Consumer(AsyncConsumer):
                 }),
             },
         )
+
+    async def send_waiting_status(self, event=None):
+        if self.scope['ticket'].is_administrator:
+            await self.send_playback_status('add-music-to-queue')
+        else:
+            await self.send_playback_status('waiting-for-stream-to-start')
 
     async def send_playback_status(self, status):
         if status != 'authorize-spotify':

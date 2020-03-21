@@ -32,7 +32,7 @@ def schedule_spin(stream_id):
         async_to_sync(channel_layer.group_send)(
             stream.chat_room,
             {
-                "type": "broadcast",
+                "type": "send_waiting_status",
                 "text": json.dumps(
                     {
                         "source": {
