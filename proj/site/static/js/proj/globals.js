@@ -7,6 +7,9 @@ var STREAM_UNIQUE_CUSTOM_ID = $('#stream-unique-custom-id').children().first().v
 // global object to hold data for the view
 var VIEW = {}
 
+// application logic constants
+let DO_NOT_SUBMIT_FORM = 'do_not_submit_form';
+
 // reading data from an API response
 var KEY_COMMENTS = 'comments'
 var KEY_SHOWINGS = 'streams'

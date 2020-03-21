@@ -1,3 +1,11 @@
+function stream_updated(data) {
+  if(data.unique_custom_id) {
+    window.location.href = `/stream/${data.unique_custom_id}/`
+  } else {
+    window.location.href = `/stream/${STREAM_UNIQUE_CUSTOM_ID}/`
+  }
+}
+
 
   /////  /////  /////
  /////  HOSTS  /////

@@ -62,8 +62,8 @@ class CreateQueueView(BaseView):
             queue.played_at = now
             queue.save()
             next_play_time = (
-                stream.record_terminates_at.replace(tzinfo=None) +
-                timedelta(milliseconds=150)
+                stream.record_terminates_at.replace(tzinfo=None) # +
+                # timedelta(milliseconds=150)
             )
             tasks.schedule_spin.apply_async(eta=next_play_time, args=[stream.id])
 

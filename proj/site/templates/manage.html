@@ -52,7 +52,7 @@
           class="ajax-form card-body"
           url="../../../api/music/update_stream/"
           type="post"
-          redirect="/stream/{{ stream.unique_custom_id }}/">
+          onsuccess="stream_updated">
 
       <input class="hidden" type="text" name="stream_uuid" value="{{ stream.uuid }}">
 

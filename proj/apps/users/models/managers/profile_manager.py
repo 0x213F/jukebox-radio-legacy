@@ -13,8 +13,6 @@ from django.db.models import Value
 from django.db.models import When
 
 from proj.core.models.managers import BaseManager
-from proj.core.resources.cache import _set_cache
-from proj.core.resources.cache import _get_or_fetch_from_cache
 
 
 class ProfileManager(BaseManager):
@@ -46,7 +44,6 @@ class ProfileManager(BaseManager):
                 "active_stream_ticket": Ticket.objects.serialize(active_ticket),
                 "scopes": scopes,
                 "active_stream": Stream.objects.serialize(active_stream),
-                "last_active_stream_uuid": user.profile.last_active_stream_uuid,
                 "active_stream_uuid": user.profile.active_stream_uuid,
                 "default_name": user.profile.default_display_name,
             },
@@ -58,11 +55,10 @@ class ProfileManager(BaseManager):
         """
         Profile = self.model
         profile = await database_sync_to_async(Profile.objects.get)(user_id=user.id)
-        profile.last_active_stream_uuid = profile.active_stream_uuid
         profile.active_stream_uuid = None
         await database_sync_to_async(profile.save)()
 
-    async def join_stream_async(self, user, stream_uuid, *, _cache=None):
+    async def join_stream_async(self, user, stream_uuid):
         '''
         After getting the active stream by UUID:
 
@@ -73,40 +69,19 @@ class ProfileManager(BaseManager):
         Ticket = apps.get_model('music', 'Ticket')
         Profile = apps.get_model('users', 'Profile')
 
-        _cache = await _get_or_fetch_from_cache(
-            _cache,
-            'stream',
-            fetch_func=Stream.objects.select_related('current_record').get,
-            fetch_kwargs={'uuid': stream_uuid},
-        )
-        stream = _cache['stream']
-        _set_cache(_cache, 'stream', stream)
+        get_stream = Stream.objects.select_related('current_record').get
+        stream = await database_sync_to_async(get_stream)(uuid=stream_uuid)
 
-        profile = user.profile
-        profile.last_active_stream_uuid = stream.uuid
+        get_profile = Profile.objects.get
+        profile = await database_sync_to_async(get_profile)(user=user)
+
         profile.active_stream_uuid = stream.uuid
         await database_sync_to_async(profile.save)()
 
-        _cache = await _get_or_fetch_from_cache(
-            _cache,
-            'ticket',
-            fetch_func=Ticket.objects.get_or_create,
-            fetch_kwargs={
-                "holder": user,
-                "stream": stream,
-                "defaults": {
-                    "timestamp_last_active": datetime.utcnow(),
-                    "holder_name": profile.default_display_name
-                    or generate_username(1)[0],
-                    "holder_uuid": uuid.uuid4(),
-                },
-            },
-        )
-        ticket = _cache['ticket']
+        get_ticket = Ticket.objects.get
+        ticket = await database_sync_to_async(get_ticket)(holder=user, stream=stream)
 
         ticket.is_active = True
         await database_sync_to_async(ticket.save)()
 
-        _set_cache(_cache, 'ticket', ticket)
-
-        return _cache
+        return stream, ticket, profile

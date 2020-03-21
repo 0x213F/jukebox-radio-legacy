@@ -102,11 +102,11 @@ function validate_search_eligible() {
   var now = Date.now();
 
   if(!$('#search-bar-input').val()) {
-    throw "rate_limit_exceeded";
+    throw DO_NOT_SUBMIT_FORM;
   } else if(now - last_searched > 500) {
     last_searched = now;
   } else {
-    throw "rate_limit_exceeded";
+    throw DO_NOT_SUBMIT_FORM;
   }
 }
 

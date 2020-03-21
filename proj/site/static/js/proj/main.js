@@ -12,7 +12,7 @@ function setup_ajax_forms() {
           window[beforesubmit]()
         }
       } catch(error) {
-        if(error === 'rate_limit_exceeded') {
+        if(error === DO_NOT_SUBMIT_FORM) {
           return;
         } else {
           throw error;
@@ -40,8 +40,6 @@ function setup_ajax_forms() {
       } else {
         var $input = $("<input>").attr("name", "csrfmiddlewaretoken").val(CSRF_TOKEN).hide();
         $this.append($input);
-        console.log($this.serialize());
-        console.log($this.attr("url"));
         $.ajax({
             url: $this.attr("url"),
             type: $this.attr("type"),
@@ -50,6 +48,7 @@ function setup_ajax_forms() {
                 $error.text(e.statusText);
             },
             success: function(e) {
+                console.log(onsuccess)
                 if(onsuccess) window[onsuccess](e);
                 if(redirect) window.location = redirect;
             }

@@ -32,7 +32,7 @@ class CommentQuerySet(BaseQuerySet):
             self
             .select_related('commenter_ticket')
             .filter(
-                created_at__gte=now - timedelta(hours=24),
+                created_at__gte=now - timedelta(minutes=5),
                 stream__uuid=stream_uuid,
             )
             .order_by('created_at')

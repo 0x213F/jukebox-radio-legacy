@@ -34,4 +34,4 @@ class UpdateStreamView(BaseView):
 
         Stream.objects.filter(uuid=stream_uuid).update(title=stream_name, tags=stream_tags, **kwargs)
 
-        return self.http_response({})
+        return self.http_response({'unique_custom_id': unique_custom_id})

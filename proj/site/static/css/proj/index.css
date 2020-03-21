@@ -18,10 +18,18 @@
   background-color: rgb(256, 256, 256, 0.95);
 }
 
+.jr-btn-sq-right-half {
+  min-width: 40px!important;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-left: none!important;
+}
+
 .jr-btn-sq {
   min-width: 40px!important;
   border-radius: 12px;
-  float: left;
   margin-right: 16px;
 }
 
@@ -55,6 +63,18 @@
   color: #727e96;
   border: 1px solid #727e96;
   border-radius: 12px!important;
+  box-shadow: none!important;
+}
+
+.jr-input-left-half {
+  padding-left: 12px!important;
+  color: #727e96;
+  border: 1px solid #5764c6;
+  border-top-left-radius: 12px!important;
+  border-bottom-left-radius: 12px!important;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-right: none!important;
   box-shadow: none!important;
 }
 

@@ -77,24 +77,6 @@ html, body {
     display: none;  // Safari and Chrome
 }
 
-
-.input-bar {
-  padding-left: 12px;
-  border-color: #727e96;
-  color: #727e96;
-  border-top-left-radius: 12px;
-  border-bottom-left-radius: 12px;
-  box-shadow: none!important;
-  border-right: 0px;
-}
-
-.input-button {
-  width: 40px;
-  border-top-right-radius: 12px;
-  border-bottom-right-radius: 12px;
-  border-left: 0px;
-}
-
 .ajax-form-error {
   margin-left: 1.4em;
   color: red;

@@ -1,9 +1,9 @@
 import asyncio
+import requests_async
 from cryptography.fernet import Fernet
 from datetime import datetime
 from datetime import timedelta
 import json
-import requests
 import uuid
 from urllib import parse
 
@@ -23,7 +23,6 @@ from proj.apps.music.models import Stream
 from proj.apps.music.models import Record
 from proj.apps.music.models import TrackListing
 from proj.core.resources import Spotify
-from proj.core.resources.cache import _get_or_fetch_from_cache
 
 
 class Consumer(AsyncConsumer):
@@ -31,37 +30,6 @@ class Consumer(AsyncConsumer):
     # - - - -
     # helpers
     # - - - -
-
-    def initialize_cache(self):
-        '''
-        We attach any expensive data (typically from the DB) to the instance
-        '''
-        self._cache = {}
-
-    async def get_user(self):
-        '''
-        Gets the instance's users along with their profile
-        '''
-        try:
-            self._cache['profile']
-        except KeyError:
-            self._cache['profile'] = await database_sync_to_async(
-                Profile.objects.get
-            )(user=self.scope['user'])
-            self.scope['user'].profile = self._cache['profile']
-        finally:
-            return self.scope['user']
-
-    @property
-    def spotify(self):
-        try:
-            return self._spotify
-        except AttributeError:
-            self._spotify = Spotify(self.scope['user'])
-            return self._spotify
-
-    def get_spotify(self):
-        return Spotify(self.scope['user'])
 
     def get_data_from_ws_path(self):
         '''
@@ -77,71 +45,52 @@ class Consumer(AsyncConsumer):
     # - - - -
 
     async def websocket_connect(self, event):
-        self.initialize_cache()
-        _user = await self.get_user()
 
+        # accept connection
         await self.websocket_accept()
 
-        # [0]
-        # user needs to have Spotify linked before joining the stream/ channel
-        if not _user.profile.spotify_access_token:
+        # get user's profile
+        self.scope['profile'] = await database_sync_to_async(
+            Profile.objects.get
+        )(user=self.scope['user'])
+
+        # init spotify interface
+        self.scope['spotify'] = Spotify(
+            self.scope['user'], profile=self.scope['profile']
+        )
+
+        # verify the user has an active spotify token
+        try:
+            await self.scope['spotify'].get_user_info_async()
+        except Exception:
             await self.send_playback_status('authorize-spotify')
             return
 
         url_params = self.get_data_from_ws_path()
-        active_stream_uuid = url_params['uuid']
+        stream_uuid = url_params['uuid']
 
-        await Profile.objects.join_stream_async(
-            _user, active_stream_uuid, _cache=self._cache,
+        self.scope['stream'], self.scope['ticket'], self.scope['profile'] = await Profile.objects.join_stream_async(
+            self.scope['user'], stream_uuid,
         )
 
         await self.add_to_channel()
 
-        # [1]
-        # create record of joining
-        join_payload = {
-            "stream_uuid": active_stream_uuid,
-            "status": Comment.STATUS_JOINED,
-            "text": None,
-        }
-        comment = await (
-            Comment.objects.create_from_payload_async(
-                _user, join_payload, stream=self._cache['stream'], ticket=self._cache['ticket'],
-            )
-        )
-        self._cache['comment'] = comment
+        # get comments from the last 5 min
+        comments_qs = Comment.objects.recent(self.scope['stream'].uuid)
+        comments = await database_sync_to_async(list)(comments_qs)
 
-        # [2]
-        # tell the chatroom that the user has joined
-        await self.channel_post_comment(
-            self._cache['stream'],
-            self._cache['comment'],
-            self._cache['ticket'],
-        )
-
-        try:
-            display_comments = url_params['display_comments'] == 'true'
-        except KeyError:
-            display_comments = False
-        self._cache['display_comments'] = display_comments
-        if display_comments:
-            # [3]
-            # get comments from the last 30 min
-            comments_qs = Comment.objects.recent(active_stream_uuid)
-            comments = await database_sync_to_async(list)(comments_qs)
-
-            # [4]
-            # send comments just to the current user
-            await self.send_comments(comments)
+        # [4]
+        # send comments just to the current user
+        await self.send_comments(comments)
 
         # [5]
         # if no record is currently playing, return
-        record_terminates_at = self._cache['stream'].record_terminates_at
+        record_terminates_at = self.scope['stream'].record_terminates_at
         if (
             record_terminates_at and
             datetime.now() > record_terminates_at.replace(tzinfo=None)
         ) or not record_terminates_at:
-            if self._cache['ticket'].is_administrator:
+            if self.scope['ticket'].is_administrator:
                 await self.send_playback_status('add-music-to-queue')
             else:
                 await self.send_playback_status('waiting-for-stream-to-start')
@@ -154,7 +103,7 @@ class Consumer(AsyncConsumer):
                 Comment.objects.select_related('track', 'record')
                 .filter(
                     created_at__lte=datetime.now(),
-                    stream__uuid=active_stream_uuid,
+                    stream__uuid=self.scope['stream'].uuid,
                     status=Comment.STATUS_START,
                 )
                 .order_by("-created_at")
@@ -169,7 +118,7 @@ class Consumer(AsyncConsumer):
         # determine if the user's Spotify is already synced with the stream
         try:
             currently_playing_data = await (
-                self.spotify.get_currently_playing_async()
+                self.scope['spotify'].get_currently_playing_async()
             )
 
             spotify_track_duration_ms = currently_playing_data['spotify_ms']
@@ -205,7 +154,7 @@ class Consumer(AsyncConsumer):
         # [8]
         # get the track playing and tracks in the queue
         uris = (
-            self._cache['stream'].current_record.tracks_through
+            self.scope['stream'].current_record.tracks_through
             .order_by('number').values_list('track__spotify_uri', flat=True)
         )
         uris = await database_sync_to_async(list)(uris)
@@ -223,7 +172,6 @@ class Consumer(AsyncConsumer):
             datetime.now() - now_playing.created_at.replace(tzinfo=None)
         ).total_seconds() * 1000
         await self.play_tracks(
-            self.spotify.token,
             {
                 "action": "play",
                 "data": {
@@ -245,7 +193,7 @@ class Consumer(AsyncConsumer):
     async def websocket_receive(self, event):
         payload = json.loads(event["text"])
 
-        if not self.scope["user"].profile.activated_at:
+        if not self.scope["profile"].activated_at:
             # user must sign up before posting a comments
             return;
 
@@ -264,29 +212,22 @@ class Consumer(AsyncConsumer):
     # - - - - - - - - - - - -
 
     async def broadcast(self, event):
-        try:
-            payload = json.loads(event['text'])
-            if not self._cache['display_comments'] and payload['data']['comments']:
-                return
-        except KeyError:
-            pass
-
         await self.send({"type": "websocket.send", "text": event["text"]})
-
         try:
-            if bool(event["playback"]) and bool(self.spotify.token):
-                await self.play_tracks(self.spotify.token, event["playback"])
+            if bool(event["playback"]) and bool(self.scope['spotify'].token):
+                await self.play_tracks(event["playback"])
         except:
             pass
 
-    async def play_tracks(self, sat, playback):
+    async def play_tracks(self, playback):
+        token = self.scope['spotify'].token
         action = playback["action"]
         data = json.dumps(playback["data"]) or {}
-        response = requests.put(
+        response = await requests_async.put(
             f"https://api.spotify.com/v1/me/player/{action}",
             data=data,
             headers={
-                "Authorization": f"Bearer {sat}",
+                "Authorization": f"Bearer {token}",
                 "Content-Type": "application/json",
             },
         )
@@ -298,19 +239,9 @@ class Consumer(AsyncConsumer):
     async def websocket_disconnect(self, event):
 
         _user = self.scope["user"]
-        await Profile.objects.leave_stream_async(_user)
+        await Profile.objects.leave_stream_async(self.scope['user'])
 
-        url_params = self.get_data_from_ws_path()
-        active_stream_uuid = url_params['uuid']
-
-        # if there is no stream, then it failed to connect in the first place
-        try:
-            stream = self._cache["stream"]
-        except Exception as e:
-            print(e)
-            return
-
-        ticket = self._cache["ticket"]
+        ticket = self.scope['ticket']
 
         ticket.is_active = False
         await database_sync_to_async(ticket.save)()
@@ -319,23 +250,22 @@ class Consumer(AsyncConsumer):
 
         # Create record of comment.
         payload = {
-            "stream_uuid": active_stream_uuid,
+            "stream_uuid": self.scope['stream'].uuid,
             "status": Comment.STATUS_LEFT,
             "text": None,
         }
         comment = await (
-            Comment.objects.create_from_payload_async(_user, payload, stream=self._cache['stream'], ticket=self._cache['ticket'],)
+            Comment.objects.create_from_payload_async(self.scope['user'], payload, stream=self.scope['stream'], ticket=self.scope['ticket'])
         )
-        self._cache['comment'] = comment
 
         await self.channel_layer.group_send(  # TODO: put as manager method
-            self._cache["stream"].chat_room,
+            self.scope['stream'].chat_room,
             {
                 "type": "broadcast",
                 "text": json.dumps(
                     {
                         "data": {
-                            "comments": [Comment.objects.serialize(self._cache["comment"], ticket=ticket)]
+                            "comments": [Comment.objects.serialize(comment, ticket=ticket)]
                         }
                     }
                 ),
@@ -350,17 +280,32 @@ class Consumer(AsyncConsumer):
         await self.send({"type": "websocket.accept"})
 
     async def add_to_channel(self):
-        self._channel_name = self._cache['stream'].chat_room
         await (
-            self.channel_layer.group_add(self._channel_name, self.channel_name)
+            self.channel_layer.group_add(self.scope['stream'].chat_room, self.channel_name)
+        )
+
+        # create db log
+        join_payload = {
+            "stream_uuid": self.scope['stream'].uuid,
+            "status": Comment.STATUS_JOINED,
+            "text": None,
+        }
+        comment = await (
+            Comment.objects.create_from_payload_async(
+                self.scope['user'], join_payload, stream=self.scope['stream'], ticket=self.scope['ticket'],
+            )
+        )
+
+        await self.channel_post_comment(
+            self.scope['stream'],
+            comment,
+            self.scope['ticket'],
         )
 
     async def remove_from_channel(self):
-        assert self._channel_name
         await self.channel_layer.group_discard(
-            self._channel_name, self.channel_name
+            self.scope['stream'].chat_room, self.channel_name
         )
-        self._channel_name = None
 
     async def channel_post_comment(self, stream, comment, ticket):
         await self.channel_layer.group_send(
@@ -384,7 +329,7 @@ class Consumer(AsyncConsumer):
 
     async def send_playback_status(self, status):
         if status != 'authorize-spotify':
-            stream = Stream.objects.serialize(self._cache["stream"])
+            stream = Stream.objects.serialize(self.scope['stream'])
         else:
             stream = {}
         await self.send(

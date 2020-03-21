@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
+{% endblock %}
+
+{% block main %}
+
+<div class="main center-horizontal card">
+
+  <div class="card-body" style="width: 100%;">
+
+    <!-- - - - - -->
+    <!--  BANNER -->
+    <div class="jr-banner">
+      {{ stream.title }}
+    </div>
+
+    <!-- - - - - - - --->
+    <!--  BACK BUTTON -->
+    <div class="form-group">
+      <form class="ajax-form" redirect="/stream/{{ stream.unique_custom_id }}/">
+        <button class="btn btn-secondary btn-lg jr-btn-sq">
+          <i class="icon icon-2x icon-back"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- - - - - - - - - - - -->
+    <!-- UPDATE DISPLAY NAME -->
+    <form id="update-display-name"
+          class="ajax-form card-body"
+          url="../../../api/music/update_ticket/"
+          type="post"
+          redirect="/stream/{{ stream.unique_custom_id }}/">
+
+      <div class="form-group">
+        <label class="form-label label-lg" for="change-display-name">Display Name</label>
+        <input class="form-input input-lg jr-input" id="change-display-name" type="text" name="display_name" value="{{ ticket.holder_name }}">
+      </div>
+
+      <input class="hidden" type="text" name="stream_uuid" value="{{ stream.uuid }}">
+      <input class="hidden" type="text" name="ticket_holder_uuid" value="{{ ticket.holder_uuid }}">
+
+      <div class="form-group">
+        <button type="submit" form="update-display-name" class="btn btn-lg btn-secondary jr-btn">Update</button>
+        <span class="ajax-form-error"><span>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+<!-- - - - - - -->
+<!--  PLAY BAR -->
+{% include "play_bar.html" %}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static '/js/proj/play_bar.js' %}"></script>
+<script src="{% static '/js/proj/displayname.js' %}"></script>
+{% endblock %}

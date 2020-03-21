@@ -25,7 +25,6 @@ class Profile(BaseModel):
     # fields |
     # - - - -
 
-    last_active_stream_uuid = models.UUIDField(null=True, blank=True)
     active_stream_uuid = models.UUIDField(null=True, blank=True)
     default_display_name = models.CharField(max_length=32, null=True, blank=True)
     user = models.OneToOneField(
