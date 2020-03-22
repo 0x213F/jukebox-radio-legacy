@@ -23,5 +23,4 @@ urlpatterns = [
     path('signup/', SignUpView.as_view()),
     path('linkspotify/', LinkSpotifyView.as_view()),
     path('stream/<stream>/', StreamView.as_view()),
-    path('stream/<stream>/manage/', ManageView.as_view()),
 ]

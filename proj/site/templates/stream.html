@@ -5,17 +5,30 @@
 {% block styles %}
 <link rel="stylesheet" href="{% static 'css/proj/play_bar.css' %}">
 <link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/home.css' %}">
 {% endblock %}
 
 {% block main %}
 
 <div id="stream-uuid" class="hidden">
-  <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
+  <input type="text" value="{{ stream.uuid }}">
 </div>
 
 <div id="stream-unique-custom-id" class="hidden">
-  <input type="text" name="stream_uuid" value="{{ stream.unique_custom_id }}">
+  <input type="text" value="{{ stream.unique_custom_id }}">
 </div>
+
+<div id="is-stream-owner" class="hidden">
+  <input type="text" value="{{ is_host }}">
+</div>
+
+<!-- - - - - - -->
+<!--  PLAY BAR -->
+{% include "manage.html" %}
+
+<!-- - - - - - -->
+<!--  PLAY BAR -->
+{% include "displayname.html" %}
 
 <div id="main-card" class="main center-horizontal card">
 
@@ -36,8 +49,8 @@
           <i class="icon icon-2x icon-back"></i>
         </button>
       </form>
-      <form class="ajax-form" redirect="/stream/{{ stream.unique_custom_id }}/manage">
-        <button class="btn btn-lg btn-secondary jr-btn-sq">
+      <form>
+        <button type="button" id="go-to-manage" class="btn btn-lg btn-secondary jr-btn-sq">
           <i class="gg-more" style="left: 8px;"></i>
         </button>
       </form>
@@ -85,4 +98,6 @@
 {% block scripts %}
 <script src="{% static 'js/proj/play_bar.js' %}"></script>
 <script src="{% static 'js/proj/stream.js' %}"></script>
+<script src="{% static '/js/proj/displayname.js' %}"></script>
+<script src="{% static '/js/proj/manage.js' %}"></script>
 {% endblock %}

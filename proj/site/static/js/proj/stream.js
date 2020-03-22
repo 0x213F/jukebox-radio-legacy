@@ -1,3 +1,28 @@
+
+var IS_STREAM_OWNER = $('#is-stream-owner').children().first().val() === 'True'
+
+$('.exit-manage').click(exit_manage);
+function exit_manage() {
+  $('#manage-html').addClass('hidden');
+  $('#displayname-html').addClass('hidden');
+  $('#main-card').removeClass('hidden');
+}
+
+$('#go-to-manage').click(go_to_manage)
+function go_to_manage() {
+  if(IS_STREAM_OWNER) {
+    $('#manage-html').removeClass('hidden');
+    $('#displayname-html').addClass('hidden');
+    $('#main-card').addClass('hidden');
+  } else {
+    $('#manage-html').addClass('hidden');
+    $('#displayname-html').removeClass('hidden');
+    $('#main-card').addClass('hidden');
+  }
+}
+
+
+
   /////  ////////////   /////
  /////  CHAT HELPERS   /////
 /////  ////////////   /////

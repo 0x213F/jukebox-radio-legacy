@@ -1,23 +1,5 @@
-{% extends "base.html" %}
 
-{% load static %}
-
-{% block styles %}
-<link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
-<link rel="stylesheet" href="{% static 'css/proj/home.css' %}">
-{% endblock %}
-
-{% block main %}
-
-<div id="stream-uuid" class="hidden">
-  <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
-</div>
-
-<div id="stream-unique-custom-id" class="hidden">
-  <input type="text" name="stream_uuid" value="{{ stream.unique_custom_id }}">
-</div>
-
-<div class="main center-horizontal card" style="height: calc(100vh - 24px);">
+<div id="manage-html" class="main center-horizontal card hidden" style="height: calc(100vh - 24px);">
 
   <div class="card-body">
 
@@ -40,8 +22,8 @@
     <!-- - - - - - - --->
     <!--  BACK BUTTON -->
     <div class="form-group">
-      <form class="ajax-form" redirect="/stream/{{ stream.unique_custom_id }}/">
-        <button class="btn btn-secondary btn-lg jr-btn-sq">
+      <form>
+        <button type="button" class="btn btn-secondary btn-lg jr-btn-sq exit-manage">
           <i class="icon icon-2x icon-back"></i>
         </button>
       </form>
@@ -132,7 +114,7 @@
           class="ajax-form card-body"
           url="../../../api/music/update_ticket/"
           type="post"
-          redirect="/stream/{{ stream.unique_custom_id }}/manage/">
+          redirect="/stream/{{ stream.unique_custom_id }}/">
 
       <div class="form-group">
         <label class="form-label" for="email-signup">Email</label>
@@ -152,9 +134,3 @@
   </div>
 
 </div>
-
-{% endblock %}
-
-{% block scripts %}
-<script src="{% static '/js/proj/manage.js' %}"></script>
-{% endblock %}
