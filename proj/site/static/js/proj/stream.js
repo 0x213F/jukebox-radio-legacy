@@ -89,7 +89,7 @@ function onmessage(event) {
 
 var endpoint = (
   'wss://' + window.location.host +
-  `/?uuid=${STREAM_UUID}`
+  `/?uuid=${STREAM_UUID}&display_comments=true`
 )
 
 window['SOCKET'] = new WebSocket(endpoint)

@@ -76,13 +76,18 @@ class Consumer(AsyncConsumer):
 
         await self.add_to_channel()
 
-        # get comments from the last 5 min
-        comments_qs = Comment.objects.recent(self.scope['stream'].uuid)
-        comments = await database_sync_to_async(list)(comments_qs)
+        try:
+            should_display_comments = url_params['display_comments'] == 'true'
+            if should_display_comments:
+                # get comments from the last 5 min
+                comments_qs = Comment.objects.recent(self.scope['stream'].uuid)
+                comments = await database_sync_to_async(list)(comments_qs)
 
-        # [4]
-        # send comments just to the current user
-        await self.send_comments(comments)
+                # [4]
+                # send comments just to the current user
+                await self.send_comments(comments)
+        except Exception:
+            pass
 
         # [5]
         # if no record is currently playing, return
