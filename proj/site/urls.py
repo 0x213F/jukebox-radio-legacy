@@ -5,7 +5,6 @@ from django.urls import path
 from .views import AccountView
 from .views import ConnectView
 from .views import CreateStreamView
-from .views import ManageView
 from .views import IndexView
 from .views import LinkSpotifyView
 from .views import QueueView
