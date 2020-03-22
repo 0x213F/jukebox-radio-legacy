@@ -117,4 +117,4 @@ $(window).focus(function() {
   window['SOCKET'] = new WebSocket(endpoint)
   window['SOCKET'].onopen = onopen
   window['SOCKET'].onmessage = onmessage
-// });
+});
