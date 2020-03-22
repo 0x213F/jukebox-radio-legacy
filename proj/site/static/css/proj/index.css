@@ -58,7 +58,7 @@
 .jr-btn-sq.btn-link:hover,
 .jr-btn-sq.btn-link:focus,
 .jr-btn-sq.btn-link:active {
-  box-shadow: 0 0 0 2px #eaebf8!important;
+  box-shadow: 0 0 0 2px rgba(234, 235, 248, 0.5)!important;
 }
 
 .jr-btn.btn-secondary:focus,
