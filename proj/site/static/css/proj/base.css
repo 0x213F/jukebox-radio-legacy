@@ -87,3 +87,7 @@ html, body {
   margin-left: 1.4em;
   color: red;
 }
+
+.chip {
+  background-color: #eaebf8!important;
+}
