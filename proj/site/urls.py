@@ -7,7 +7,6 @@ from .views import ConnectView
 from .views import CreateStreamView
 from .views import IndexView
 from .views import LinkSpotifyView
-from .views import QueueView
 from .views import SignInView
 from .views import SignUpView
 from .views import StreamView
