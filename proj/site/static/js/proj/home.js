@@ -108,33 +108,3 @@ function onmessage(event) {
 
   update_play_bar(payload);
 }
-
-// on window focus, try re-connecting if Spotify is disconnected
-
-// var window_debouncer = Date.now();
-// $(window).focus(function() {
-//   var now = Date.now()
-//   if(now - window_debouncer < 500) {
-//     return;
-//   }
-//   window_debouncer = now;
-//   var $bar = $('.content.spotify-disconnected');
-//   if($bar.hasClass('hide')) {
-//     return;
-//   }
-//
-//   // TODO make an endpoint instead of resetting the connection
-//   var uuid = $('.card.active-stream').parent().attr('uuid');
-//   var endpoint = (
-//     'wss://' + window.location.host + window.location.pathname +
-//     `?uuid=${uuid}`
-//   )
-//
-//   if(window['SOCKET']) {
-//     window['SOCKET'].close()
-//   }
-//
-//   window['SOCKET'] = new WebSocket(endpoint)
-//   window['SOCKET'].onopen = onopen
-//   window['SOCKET'].onmessage = onmessage
-// });
