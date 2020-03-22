@@ -96,20 +96,8 @@ window['SOCKET'] = new WebSocket(endpoint)
 window['SOCKET'].onopen = onopen
 window['SOCKET'].onmessage = onmessage
 
-// on window focus, try re-connecting if Spotify is disconnected
-
-var window_debouncer = Date.now();
+// on window focus, try re-connecting to rejog Spotify
 $(window).focus(function() {
-  var now = Date.now()
-  if(now - window_debouncer < 500) {
-    return;
-  }
-  window_debouncer = now;
-  var $bar = $('.content.spotify-streaming-client-not-found');
-  if(!$bar.hasClass('hidden')) {
-    return;
-  }
-
   if(window['SOCKET']) {
     window['SOCKET'].close()
   }
