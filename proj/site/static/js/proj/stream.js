@@ -106,7 +106,7 @@ $(window).focus(function() {
   }
   window_debouncer = now;
   var $bar = $('.content.spotify-streaming-client-not-found');
-  if($bar.hasClass('hidden')) {
+  if(!$bar.hasClass('hidden')) {
     return;
   }
 
