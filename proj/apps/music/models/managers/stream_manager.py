@@ -47,7 +47,7 @@ class StreamManager(BaseManager):
             "unique_custom_id": stream.unique_custom_id,
             "name": stream.title,
             "status": stream.status,
-            "tags": stream.tags.split(', '),
+            "tags": stream.tags,
             "owner_name": stream.owner_name,
             "user_count": user_count,
         }

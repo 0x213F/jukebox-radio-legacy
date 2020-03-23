@@ -23,11 +23,6 @@ class UpdateStreamView(BaseView):
 
         is_private = stream_is_private == 'on'
 
-        if len(stream_tags) > 3:
-            raise ValueError('Too many emojis')
-
-        stream_tags = ', '.join([char for char in stream_tags])
-
         if not stream_name or not stream_tags:
             raise Exception('Missing required parameters')
 

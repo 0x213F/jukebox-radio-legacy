@@ -1,5 +1,6 @@
 from .create_queue import CreateQueueView
 from .create_stream import CreateStreamView
+from .delete_stream import DeleteStreamView
 from .delete_queue import DeleteQueueView
 from .list_broadcasting_streams import ListBroadcastingStreamsView
 from .list_hosts import ListHostsView

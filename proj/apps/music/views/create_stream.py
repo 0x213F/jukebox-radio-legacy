@@ -29,10 +29,6 @@ class CreateStreamView(BaseView):
         stream_name = request.POST.get('name', None)
         tags = request.POST.get('tags', None)
 
-        if len(tags) > 3:
-            raise ValueError('Too many emojis')
-
-        tags = ', '.join([char for char in tags])
         if not stream_name or not tags:
             raise Exception('Must provide a stream name')
 

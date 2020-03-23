@@ -18,14 +18,13 @@ class UpdateTicketView(BaseView):
         Ticket = apps.get_model('music.Ticket')
 
         stream_uuid = request.POST.get('stream_uuid', None)
-        holder_uuid = request.POST.get('holder_uuid', None)
         holder_name = request.POST.get('display_name', None)
 
         email = request.POST.get('email', None)
         is_administrator = request.POST.get('is_administrator', None)
         is_administrator = True if is_administrator == 'true' else False
 
-        ticket = Ticket.objects.select_related('stream', 'stream__owner').get(
+        ticket = Ticket.objects.select_related('stream').get(
             holder=request.user,
             stream__uuid=stream_uuid,
         )
@@ -59,7 +58,7 @@ class UpdateTicketView(BaseView):
             ticket.name = holder_name
             ticket.save()
 
-        if ticket.stream.owner == request.user:
+        if ticket.stream.owner_id == request.user.id:
             ticket.stream.owner_name = holder_name
             ticket.stream.save()
 

@@ -3,6 +3,18 @@
  /////  STREAMS  /////
 /////  ///////  /////
 
+var emojiStringToArray = function (str) {
+  split = str.split(/([\uD800-\uDBFF][\uDC00-\uDFFF])/);
+  arr = [];
+  for (var i=0; i<split.length; i++) {
+    char = split[i]
+    if (char !== "") {
+      arr.push(char);
+    }
+  }
+  return arr;
+};
+
 function generate_stream(stream, class_name) {
 
   var background_color = ''
@@ -13,7 +25,7 @@ function generate_stream(stream, class_name) {
   }
 
   var tags_html = ''
-  for(tag of stream.tags) {
+  for(tag of emojiStringToArray(stream.tags)) {
     tags_html += `<span class="chip" style="border-radius: 28px; margin-right: 8px; width: 28px; line-height: 28px; text-align: center; display: inline-block;">${tag}</span>`
   }
   var user_count = 3;

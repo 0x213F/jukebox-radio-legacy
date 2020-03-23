@@ -91,7 +91,6 @@
       </div>
 
       <input class="hidden" type="text" name="stream_uuid" value="{{ stream.uuid }}">
-      <input class="hidden" type="text" name="ticket_holder_uuid" value="{{ ticket.holder_uuid }}">
 
       <div class="form-group">
         <button type="submit" form="update-display-name" class="btn btn-secondary btn-lg jr-btn">Update</button>
@@ -128,6 +127,21 @@
         <button type="submit" form="add-host" class="btn btn-lg btn-secondary jr-btn">Add Host</button>
         <span class="ajax-form-error"><span>
       </div>
+
+    </form>
+
+    <div class="form-group">
+      <div class="divider" style="margin-top: 24px; margin-bottom: 24px;"></div>
+    </div>
+
+    <form id="delete-stream"
+          class="ajax-form card-body"
+          url="../../../api/music/delete_stream/"
+          type="post"
+          redirect="/">
+      <input class="hidden" type="text" name="stream_uuid" value="{{ stream.uuid }}">
+
+      <button class="btn btn-lg btn-primary jr-btn-primary">Delete Stream</button>
 
     </form>
 

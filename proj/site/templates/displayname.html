@@ -20,22 +20,21 @@
 
     <!-- - - - - - - - - - - -->
     <!-- UPDATE DISPLAY NAME -->
-    <form id="update-display-name"
+    <form id="update-display-name-dn"
           class="ajax-form card-body"
           url="../../../api/music/update_ticket/"
           type="post"
           redirect="/stream/{{ stream.unique_custom_id }}/">
 
       <div class="form-group">
-        <label class="form-label label-lg" for="change-display-name">Display Name</label>
-        <input class="form-input input-lg jr-input" id="change-display-name" type="text" name="display_name" value="{{ ticket.name }}">
+        <label class="form-label label-lg" for="change-display-name-dn">Display Name</label>
+        <input class="form-input input-lg jr-input" id="change-display-name-dn" type="text" name="display_name" value="{{ ticket.name }}">
       </div>
 
       <input class="hidden" type="text" name="stream_uuid" value="{{ stream.uuid }}">
-      <input class="hidden" type="text" name="ticket_holder_uuid" value="{{ ticket.holder_uuid }}">
 
       <div class="form-group">
-        <button type="submit" form="update-display-name" class="btn btn-lg btn-secondary jr-btn">Update</button>
+        <button type="submit" form="update-display-name-dn" class="btn btn-lg btn-secondary jr-btn">Update</button>
         <span class="ajax-form-error"><span>
       </div>
 
