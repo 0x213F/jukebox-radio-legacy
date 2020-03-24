@@ -37,7 +37,7 @@
 
 #search-view,
 #queue-view {
-  height: calc(100vh - 24px)!important;
+  height: calc(100% - 24px)!important;
 }
 
 .search-back-button {
@@ -189,7 +189,7 @@
 /* SEARCH RESULTS  */
 #search-results {
   margin-top: 16px;
-  max-height: calc(100vh - 176px);
+  max-height: calc(100% - 176px);
   overflow-y: auto;
   border: 1px solid #727e96;
   border-radius: 12px;

@@ -65,7 +65,7 @@ html, body {
     width: calc(100% - 24px);
     min-width: 310px;
     max-width: 400px;
-    height: calc(100vh - 96px);
+    height: calc(100% - 96px);
     border: 0px!important;
     margin-top: 12px;
     border-radius: 20px;

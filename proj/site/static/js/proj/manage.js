@@ -50,3 +50,16 @@ function display_hosts(data) {
   setup_ajax_forms();
   $(".hosts-list").removeClass('hidden');
 }
+
+$('.share-link').click(share_website)
+
+function share_website() {
+  if (navigator.share) {
+    navigator.share({
+      text: 'Let\'s listen to music together\n',
+      url: `https://jukebox.radio/stream/${STREAM_UNIQUE_CUSTOM_ID}/`,
+    })
+      .then(() => console.log('Successful share'))
+      .catch((error) => console.log('Error sharing', error));
+  }
+}

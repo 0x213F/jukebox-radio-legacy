@@ -30,26 +30,34 @@ function go_to_manage() {
 let $CHAT_CONTAINER = $('.chat-container')
 
 function display_text(comment) {
-  return `
-    <div style="border: 1px solid #e5e5f9; border-radius: 6px; padding: 1rem; margin-bottom: 8px;">
-      <span class="tile-title text-bold">${encodeHTML(comment.ticket.holder_name)}</span>
-      <br>
-      <p class="tile-subtitle" style="margin-bottom: 0rem; margin-top: 1rem; line-height: 16px;">${encodeHTML(comment.text)}</p>
-    </div>
-  `
-}
-
-function comment_wrapper(html, comment) {
-  return `
-    <div class="comment" >
-      ${html}
-    </div>
-  `
+  var holder_uuid = comment.ticket.holder_uuid
+  var last_holder_uuid = $CHAT_CONTAINER.children().last().attr('holder-uuid')
+  if(holder_uuid === last_holder_uuid) {
+    return `
+      <div class="comment" holder-uuid="${comment.ticket.holder_uuid}">
+        <span class="c-text">${encodeHTML(comment.text)}</span>
+      </div>
+    `
+  } else if(!last_holder_uuid) {
+    return `
+      <div class="comment" holder-uuid="${comment.ticket.holder_uuid}" style="margin-top: 0px!important;">
+        <span class="c-commenter" style="margin-top: 0px!important;">${encodeHTML(comment.ticket.holder_name)}</span>
+        <span class="c-text">${encodeHTML(comment.text)}</span>
+      </div>
+    `
+  } else {
+    return `
+      <div class="comment" holder-uuid="${comment.ticket.holder_uuid}">
+        <span class="c-commenter">${encodeHTML(comment.ticket.holder_name)}</span>
+        <span class="c-text">${encodeHTML(comment.text)}</span>
+      </div>
+    `
+  }
 }
 
 function display_comment(comment) {
   var html = '';
-  if(comment.status === 'mid_high' || comment.status === 'mid_low' || comment.status === 'high') {
+  if(comment.status === 'mid_high') {
     html = display_text(comment);
   } else {
     return;
@@ -57,9 +65,7 @@ function display_comment(comment) {
   if(!comment.text) {
     return;
   }
-  html = comment_wrapper(html)
   $CHAT_CONTAINER.append(html);
-  $CHAT_CONTAINER.scrollTop($CHAT_CONTAINER[0].scrollHeight);
 }
 
   /////  //////////  /////
@@ -67,7 +73,7 @@ function display_comment(comment) {
 /////  //////////  /////
 
 function onopen(event) {
-  // NOOP
+
 }
 
 function display_comments(payload) {
@@ -76,6 +82,8 @@ function display_comments(payload) {
     for(comment of comments) {
       display_comment(comment);
     }
+    console.log(comment);
+    $CHAT_CONTAINER.scrollTop($CHAT_CONTAINER[0].scrollHeight);
   }
 }
 
@@ -101,6 +109,11 @@ $(window).focus(function() {
   if(window['SOCKET']) {
     window['SOCKET'].close()
   }
+
+  var endpoint = (
+    'ws://' + window.location.host +
+    `/?uuid=${STREAM_UUID}&display_comments=false`
+  )
 
   window['SOCKET'] = new WebSocket(endpoint)
   window['SOCKET'].onopen = onopen

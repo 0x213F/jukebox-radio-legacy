@@ -68,7 +68,6 @@ class Consumer(AsyncConsumer):
 
         url_params = self.get_data_from_ws_path()
         stream_uuid = url_params['uuid']
-        print(url_params)
 
         self.scope['stream'], self.scope['ticket'], self.scope['profile'] = await Profile.objects.join_stream_async(
             self.scope['user'], stream_uuid,
