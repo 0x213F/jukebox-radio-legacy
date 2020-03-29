@@ -243,7 +243,7 @@ window.lavaAnimation = (function() {
       },
       a = i.screen.init("lamp-anim", null, !0),
       o = a.ctx;
-    a.resize(), (t = new e(a.width, a.height, 6, "#3f4eba", "#3f4eba"));
+    a.resize(), (t = new e(a.width, a.height, 6, "#F8A41D", "#384182"));
   }
   return { run: n };
 })();
