@@ -28,6 +28,14 @@ from proj.core.resources import Spotify
 class Consumer(AsyncConsumer):
 
     # - - - -
+    # constants
+    # - - - -
+
+    PLAY_BAR_AUTHORIZE_SPOITFY = 'authorize-spotify'
+
+    ACTION_COMMENT = 'comment'
+
+    # - - - -
     # helpers
     # - - - -
 
@@ -49,6 +57,10 @@ class Consumer(AsyncConsumer):
         # accept connection
         await self.websocket_accept()
 
+        # parse data from WSS URL
+        url_params = self.get_data_from_ws_path()
+        stream_uuid = url_params['uuid']
+
         # get user's profile
         self.scope['profile'] = await database_sync_to_async(
             Profile.objects.get
@@ -59,43 +71,232 @@ class Consumer(AsyncConsumer):
             self.scope['user'], profile=self.scope['profile']
         )
 
-        # verify the user has an active spotify token
-        try:
-            await self.scope['spotify'].get_user_info_async()
-        except Exception:
-            await self.send_playback_status('authorize-spotify')
-            return
-
-        url_params = self.get_data_from_ws_path()
-        stream_uuid = url_params['uuid']
-
+        # join stream, grab stuff from DB
         self.scope['stream'], self.scope['ticket'], self.scope['profile'] = await Profile.objects.join_stream_async(
             self.scope['user'], stream_uuid,
         )
 
+        print(self.scope['ticket'].name)
+
+        # add to channel
         await self.add_to_channel()
 
-        try:
-            should_display_comments = url_params['display_comments'] == 'true'
-            if should_display_comments:
-                # get comments from the last 5 min
-                comments_qs = Comment.objects.recent(self.scope['stream'].uuid)
-                comments = await database_sync_to_async(list)(comments_qs)
+        # send back recent chat activity
+        should_display_comments = url_params['display_comments'] == 'true'
+        if should_display_comments:
+            comments_qs = Comment.objects.recent(self.scope['stream'])
+            comments = await database_sync_to_async(list)(comments_qs)
+            await self.send_comments(comments)
 
-                # [4]
-                # send comments just to the current user
-                await self.send_comments(comments)
-        except Exception:
+        # verify the user has an active spotify token
+        try:
+            await self.scope['spotify'].get_user_info_async()
+        except requests_async.exceptions.HTTPError:
+            await self.update_playbar(self.PLAY_BAR_AUTHORIZE_SPOITFY)
+            return
+
+        # sync playback
+        await self.sync_playback(onload=True)
+
+    # - - - - -
+    # receieve
+    # - - - - -
+
+    async def websocket_receive(self, event):
+        payload = json.loads(event["text"])
+        # action = payload['action']
+
+        # create comment in DB
+        # if action == self.ACTION_COMMENT:
+        comment = await (
+            Comment.objects.create_from_payload_async(
+                self.scope["user"], payload,
+                stream=self.scope["stream"], ticket=self.scope["ticket"]
+            )
+        )
+        await self.channel_post_comment(comment)
+
+        # if action == self.ACTION_DISCONNECT:
+        #     pass
+
+    # - - - - - -
+    # disconnect
+    # - - - - - -
+
+    async def websocket_disconnect(self, event):
+
+        _user = self.scope["user"]
+        await Profile.objects.leave_stream_async(self.scope['user'])
+
+        ticket = self.scope['ticket']
+
+        ticket.is_active = False
+        await database_sync_to_async(Ticket.objects.filter(id=ticket.id).update)(is_active=False)
+
+        await self.remove_from_channel()
+
+        # Create record of comment.
+        payload = {
+            "stream_uuid": self.scope['stream'].uuid,
+            "status": Comment.STATUS_LEFT,
+            "text": None,
+        }
+        comment = await (
+            Comment.objects.create_from_payload_async(self.scope['user'], payload, stream=self.scope['stream'], ticket=self.scope['ticket'])
+        )
+
+        await self.channel_layer.group_send(  # TODO: put as manager method
+            self.scope['stream'].chat_room,
+            {
+                "type": "broadcast",
+                "text": json.dumps(
+                    {
+                        "data": {
+                            "comments": [Comment.objects.serialize(comment, ticket=ticket)]
+                        }
+                    }
+                ),
+            },
+        )
+
+    # - - - - - - - - - - - -
+    # broadcast
+    # - - - - - - - - - - - -
+
+    async def broadcast(self, event):
+        await self.send({"type": "websocket.send", "text": event["text"]})
+        try:
+            if bool(event["playback"]) and bool(self.scope['spotify'].token):
+                await self.play_tracks(event["playback"])
+        except:
             pass
 
-        # [5]
-        # if no record is currently playing, return
+    async def play_tracks(self, playback):
+        token = self.scope['spotify'].token
+        action = playback["action"]
+        data = json.dumps(playback["data"]) or {}
+        response = await requests_async.put(
+            f"https://api.spotify.com/v1/me/player/{action}",
+            data=data,
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json",
+            },
+        )
+
+    # - - - - - - - - - - - - - -
+    #          HELPERS           |
+    # - - - - - - - - - - - - - -
+
+    async def websocket_accept(self):
+        await self.send({"type": "websocket.accept"})
+
+    async def add_to_channel(self):
+        await (
+            self.channel_layer.group_add(self.scope['stream'].chat_room, self.channel_name)
+        )
+
+        # create db log
+        join_payload = {
+            "stream_uuid": self.scope['stream'].uuid,
+            "status": Comment.STATUS_JOINED,
+            "text": None,
+        }
+        comment = await (
+            Comment.objects.create_from_payload_async(
+                self.scope['user'], join_payload, stream=self.scope['stream'], ticket=self.scope['ticket'],
+            )
+        )
+
+        await self.channel_post_comment(comment)
+
+    async def remove_from_channel(self):
+        await self.channel_layer.group_discard(
+            self.scope['stream'].chat_room, self.channel_name
+        )
+
+    async def channel_post_comment(self, comment):
+        await self.channel_layer.group_send(
+            self.scope['stream'].chat_room,
+            {
+                "type": "broadcast",
+                "text": json.dumps({
+                    "data": {
+                        "comments": [
+                            Comment.objects.serialize(
+                                comment, ticket=self.scope['ticket']
+                            )
+                        ],
+                        "playback": {
+                            'next_step': 'noop',
+                        }
+                    }
+                }),
+            },
+        )
+
+    async def update_playbar(self, status):
+        stream = Stream.objects.serialize(self.scope['stream'])
+        await self.send(
+            {
+                "type": "websocket.send",
+                "text": json.dumps({
+                    "data": {
+                        "stream": stream,
+                        "playback": {
+                            "next_step": status,
+                        }
+                    }
+                }),
+            }
+        )
+
+    async def send_comments(self, comments, ticket=None):
+        await self.send(
+            {
+                "type": "websocket.send",
+                "text": json.dumps({
+                    "data": {
+                        "comments": [
+                            Comment.objects.serialize(c, ticket=ticket)
+                            for c in comments
+                        ],
+                        "playback": {
+                            'next_step': 'noop',
+                        }
+                    }
+                }),
+            }
+        )
+
+    async def send_record(self, record):
+        await self.send(
+            {
+                "type": "websocket.send",
+                "text": json.dumps({
+                    "data": {
+                        "record": Record.objects.serialize(record),
+                        "playback": {
+                            "next_step": 'currently-playing',
+                        }
+                    }
+                }),
+            }
+        )
+
+    #############################
+
+    async def sync_playback(self, onload=False):
+        self.scope['stream'] = await database_sync_to_async(
+            Stream.objects.select_related('current_record').get
+        )(id=self.scope['stream'].id)
+
         record_terminates_at = self.scope['stream'].record_terminates_at
         if (
             record_terminates_at and
             datetime.now() > record_terminates_at.replace(tzinfo=None)
-        ) or not record_terminates_at:
-            await self.send_waiting_status()
+        ):
+            await self.update_playbar('waiting-for-stream-to-start')
             return
 
         # [6]
@@ -113,7 +314,7 @@ class Consumer(AsyncConsumer):
             )()
             assert now_playing
         except Exception as e:
-            await self.send_playback_status('waiting-for-stream-to-start')
+            await self.update_playbar('waiting-for-stream-to-start')
             return
 
         # [7]
@@ -148,7 +349,7 @@ class Consumer(AsyncConsumer):
         except Exception as e:
             # assuming everything is behaving as expected, we assume that the
             # user's Spotify client is disconnected
-            await self.send_playback_status(
+            await self.update_playbar(
                 'spotify-streaming-client-not-found'
             )
             return
@@ -187,209 +388,3 @@ class Consumer(AsyncConsumer):
         # update the front-end with playback status
         record = now_playing.record
         await self.send_record(record)
-
-    # - - - - -
-    # receieve
-    # - - - - -
-
-    async def websocket_receive(self, event):
-        payload = json.loads(event["text"])
-
-        if not self.scope["profile"].activated_at:
-            # user must sign up before posting a comments
-            return;
-
-        # create comment in DB
-        comment = await (
-            Comment.objects.create_from_payload_async(
-                self.scope["user"], payload,
-                stream=self.scope["stream"], ticket=self.scope["ticket"]
-            )
-        )
-
-        await self.channel_post_comment(self.scope["stream"], comment, self.scope["ticket"])
-
-    # - - - - - - - - - - - -
-    # broadcast
-    # - - - - - - - - - - - -
-
-    async def broadcast(self, event):
-        await self.send({"type": "websocket.send", "text": event["text"]})
-        try:
-            if bool(event["playback"]) and bool(self.scope['spotify'].token):
-                await self.play_tracks(event["playback"])
-        except:
-            pass
-
-    async def play_tracks(self, playback):
-        token = self.scope['spotify'].token
-        action = playback["action"]
-        data = json.dumps(playback["data"]) or {}
-        response = await requests_async.put(
-            f"https://api.spotify.com/v1/me/player/{action}",
-            data=data,
-            headers={
-                "Authorization": f"Bearer {token}",
-                "Content-Type": "application/json",
-            },
-        )
-
-    # - - - - - -
-    # disconnect
-    # - - - - - -
-
-    async def websocket_disconnect(self, event):
-
-        _user = self.scope["user"]
-        await Profile.objects.leave_stream_async(self.scope['user'])
-
-        ticket = self.scope['ticket']
-
-        ticket.is_active = False
-        await database_sync_to_async(ticket.save)()
-
-        await self.remove_from_channel()
-
-        # Create record of comment.
-        payload = {
-            "stream_uuid": self.scope['stream'].uuid,
-            "status": Comment.STATUS_LEFT,
-            "text": None,
-        }
-        comment = await (
-            Comment.objects.create_from_payload_async(self.scope['user'], payload, stream=self.scope['stream'], ticket=self.scope['ticket'])
-        )
-
-        await self.channel_layer.group_send(  # TODO: put as manager method
-            self.scope['stream'].chat_room,
-            {
-                "type": "broadcast",
-                "text": json.dumps(
-                    {
-                        "data": {
-                            "comments": [Comment.objects.serialize(comment, ticket=ticket)]
-                        }
-                    }
-                ),
-            },
-        )
-
-    # - - - - - - - - - - - - - -
-    #          HELPERS           |
-    # - - - - - - - - - - - - - -
-
-    async def websocket_accept(self):
-        await self.send({"type": "websocket.accept"})
-
-    async def add_to_channel(self):
-        await (
-            self.channel_layer.group_add(self.scope['stream'].chat_room, self.channel_name)
-        )
-
-        # create db log
-        join_payload = {
-            "stream_uuid": self.scope['stream'].uuid,
-            "status": Comment.STATUS_JOINED,
-            "text": None,
-        }
-        comment = await (
-            Comment.objects.create_from_payload_async(
-                self.scope['user'], join_payload, stream=self.scope['stream'], ticket=self.scope['ticket'],
-            )
-        )
-
-        await self.channel_post_comment(
-            self.scope['stream'],
-            comment,
-            self.scope['ticket'],
-        )
-
-    async def remove_from_channel(self):
-        await self.channel_layer.group_discard(
-            self.scope['stream'].chat_room, self.channel_name
-        )
-
-    async def channel_post_comment(self, stream, comment, ticket):
-        await self.channel_layer.group_send(
-            stream.chat_room,
-            {
-                "type": "broadcast",
-                "text": json.dumps({
-                    "data": {
-                        "comments": [
-                            Comment.objects.serialize(
-                                comment, ticket=ticket
-                            )
-                        ],
-                        "playback": {
-                            'next_step': 'noop',
-                        }
-                    }
-                }),
-            },
-        )
-
-    async def send_waiting_status(self, event=None):
-        if self.scope['ticket'].is_administrator:
-            await self.send_playback_status('add-music-to-queue')
-        else:
-            await self.send_playback_status('waiting-for-stream-to-start')
-
-    async def send_playback_status(self, status):
-        if status != 'authorize-spotify':
-            stream = Stream.objects.serialize(self.scope['stream'])
-        else:
-            stream = {}
-        await self.send(
-            {
-                "type": "websocket.send",
-                "text": json.dumps({
-                    "data": {
-                        "stream": stream,
-                        "playback": {
-                            "next_step": status,
-                        }
-                    }
-                }),
-            }
-        )
-
-    async def send_comments(self, comments, ticket=None):
-        await self.send(
-            {
-                "type": "websocket.send",
-                "text": json.dumps({
-                    "data": {
-                        "comments": [
-                            Comment.objects.serialize(c, ticket=ticket)
-                            for c in comments
-                        ],
-                        "playback": {
-                            'next_step': 'noop',
-                        }
-                    }
-                }),
-            }
-        )
-
-    async def send_record(self, record):
-        qs = TrackListing.objects.select_related('track').filter(record=record)
-        tracklistings = await database_sync_to_async(list)(qs)
-
-        await self.send(
-            {
-                "type": "websocket.send",
-                "text": json.dumps({
-                    "data": {
-                        "record": Record.objects.serialize(record),
-                        "tracklistings": [
-                            TrackListing.objects.serialize(tracklisting)
-                            for tracklisting in tracklistings
-                        ],
-                        "playback": {
-                            "next_step": 'currently-playing',
-                        }
-                    }
-                }),
-            }
-        )

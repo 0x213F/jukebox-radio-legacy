@@ -34,7 +34,10 @@ class StreamView(BaseView):
                     email=request.user.email,
                     defaults={
                         'holder': request.user,
-                        'name': request.user.profile.default_display_name or generate_username(1)[0],
+                        'name': (
+                            request.user.profile.default_display_name
+                            or generate_username(1)[0]
+                        ),
                     }
                 )
             )

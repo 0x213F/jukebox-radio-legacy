@@ -27,7 +27,8 @@
                class="form-input input-lg search-input-bar"
                type="text"
                name="query"
-               autocomplete="off">
+               autocomplete="off"
+               spellcheck="false">
         <button type="submit"
                 form="search-library"
                 class="hidden">
@@ -46,20 +47,21 @@
 <div id="queue-view" class="main center-horizontal card hidden">
   <div class="card-body" style="width: 100%;">
 
-    <button type="button" class="exit-search-button btn btn-secondary btn-lg search-back-button" style="margin-bottom: 16px;">
-      <i class="icon icon-2x icon-back"></i>
-    </button>
+    <div style="display: table-row;">
+      <button type="button" class="exit-search-button btn btn-secondary btn-lg search-back-button" style="margin-bottom: 16px; float: left;">
+        <i class="icon icon-2x icon-back"></i>
+      </button>
+
+      <img class="album-art" draggable="false" style="width: calc(100% - 128px); float: left; margin-left: 24px;"/>
+
+      <button class="btn btn-lg btn-secondary jr-btn-sq fake-search-bar" style="margin-right: 0px; background-color: rgb(256, 256, 256, 0.95)!important; float: right;">
+        <i class="icon icon-2x icon-plus"></i>
+      </button>
+    </div>
 
     <div id="play-bar-queue" class="content queue">
 
-      <div id="queued-up"></div>
-    </div>
-
-    <div class="input-group fake-search-bar">
-      <input class="form-input input-lg  jr-input-left-half">
-      <button type="button" class="btn btn-lg btn-secondary jr-btn-sq-right-half">
-        <i class="icon icon-2x icon-search"></i>
-      </button>
+      <div id="queued-up" style="margin-top: 24px;"></div>
     </div>
 
   </div>
@@ -75,36 +77,18 @@
   <!--  AUTHORIZE SPOTIFY -->
   <div class="content authorize-spotify hidden">
     <!-- localhost%3A8000 | jukeboxrad.io | jukebox.radio -->
-    <div class="centered-button">
-      <a class="btn btn-primary"
-         href="https://accounts.spotify.com/authorize?client_id=133a25c7195344dbafd4f50d7450330f&response_type=code&redirect_uri=https%3A%2F%2Fjukebox.radio%2Fconnect&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state">
-         Authorize Spotify <i class="icon icon-link"></i>
-      </a>
-    </div>
+    <form class="ajax-form" redirect="https://accounts.spotify.com/authorize?client_id=133a25c7195344dbafd4f50d7450330f&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fconnect&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state">
+      <button class="btn btn-lg btn-secondary jr-btn">
+        Authorize Spotify <i class="icon icon-link"></i>
+      </button>
+    </form>
   </div>
 
   <!-- - - - - - - - - - - - - - - - - - - - - - --->
   <!--  WAITING FOR STREAM TO START PLAYING MUSIC -->
   <div class="content waiting-for-stream-to-start hidden" style="padding: 18px;">
 
-    <div class="jr-spinning-record" style="float: left;"></div>
-
-    <span class="jr-bubble-left no-overflow">Waiting for host to play music</span>
-
-  </div>
-
-  <!-- - - - - - - - - - --->
-  <!--  PLEASE PLAY MUSIC -->
-  <div class="content add-music-to-queue hidden" style="padding: 18px;">
-
-    <div class="jr-spinning-record" style="float: left;"></div>
-
-    <div class="input-group fake-search-bar" style="margin-left: 60px; margin-right: 6px;">
-      <input class="form-input input-lg jr-input-left-half">
-      <button type="button" class="btn btn-lg btn-secondary jr-btn-sq-right-half" style="min-width: 40px;">
-        <i class="icon icon-2x icon-search"></i>
-      </button>
-    </div>
+    <div class="jr-spinning-record jr-flex-center"></div>
 
   </div>
 
@@ -129,12 +113,6 @@
   <div class="content currently-playing hidden">
 
     <img class="album-art" draggable="false"/>
-
-    <button class="go-to-queue btn btn-lg square-right jr-btn-sq" style="float: right;">
-      <i class="gg-layout-list" style="left: 6px;"></i>
-    </button>
-
-    <span class="jr-bubble-right no-overflow">Manage the queue</span>
 
   </div>
 

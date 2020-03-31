@@ -8,6 +8,10 @@
   background-color: rgb(256, 256, 256, 0.95);
 }
 
+.queue-card:last-child {
+  margin-bottom: 0px!important;
+}
+
 .queue-card > form > div > img {
   width: 48px;
   height: 48px;
@@ -29,7 +33,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 
-  max-width: 210px;
+  max-width: calc(100% - 142px);
 }
 
 /* * * * * * * * * * * *  */
@@ -189,7 +193,7 @@
 /* SEARCH RESULTS  */
 #search-results {
   margin-top: 16px;
-  max-height: calc(100% - 176px);
+  max-height: calc(100% - 104px);
   overflow-y: auto;
   border: 1px solid #727e96;
   border-radius: 12px;
@@ -209,17 +213,16 @@
   transition: all 0.2s ease;
 }
 
-#search-results > .search-result:hover {
+#search-results > .search-result:hover,
+#search-results > .search-result.active {
   background-color: #f0f1f4;
 }
 
 #search-results > .search-result:active {
   border-color: #5764c6;
-}
-
-#search-results > .search-result:active {
   background-color: #f0f1f4;
 }
+
 
 #search-results > .search-result > img {
   height: 48px;

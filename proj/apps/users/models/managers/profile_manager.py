@@ -80,6 +80,8 @@ class ProfileManager(BaseManager):
 
         get_ticket = Ticket.objects.get
         ticket = await database_sync_to_async(get_ticket)(email=user.email, stream=stream)
+        print('!!!!')
+        print(ticket.name)
 
         ticket.is_active = True
         await database_sync_to_async(ticket.save)()

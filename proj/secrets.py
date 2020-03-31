@@ -1,11 +1,11 @@
 SERVER_IP = '138.197.220.117'
-SERVER_URL = 'jukeboxrad.io'
+SERVER_URL = 'jukebox.radio'
 
 DB_HOST_URL = 'localhost'
 DB_HOST_PORT = ''
-DB_NAME = 'chess'
-DB_USER = 'dev'
-DB_PASSWORD = 'password'
+DB_NAME = 'jukeboxradio'
+DB_USER = 'postgres'
+DB_PASSWORD = 'AJ:Mmzf`6VzF^xEL'
 
 REDIS_HOST_URL = 'localhost'
 REDIS_HOST_PORT = 6379

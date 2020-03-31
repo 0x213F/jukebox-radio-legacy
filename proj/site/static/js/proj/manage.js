@@ -58,8 +58,7 @@ function share_website() {
     navigator.share({
       text: 'Let\'s listen to music together\n',
       url: `https://jukebox.radio/stream/${STREAM_UNIQUE_CUSTOM_ID}/`,
-    })
-      .then(() => console.log('Successful share'))
-      .catch((error) => console.log('Error sharing', error));
+    });
   }
+  $(this).blur();
 }

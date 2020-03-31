@@ -101,16 +101,16 @@ class StreamManager(BaseManager):
         """
         Spin the record.
         """
-        from proj.apps.music.models import Ticket
-        from proj.apps.music.models import Comment
         Stream = apps.get_model('music', 'Stream')
         Record = apps.get_model('music', 'Record')
+        Ticket = apps.get_model('music', 'Ticket')
+        Comment = apps.get_model('music', 'Comment')
 
         now = datetime.now()
         now_str = now.isoformat()
 
         track_timestamp = now
-        for tl in record.tracks_through.all().order_by("number"):
+        for tl in record.tracks_through.select_related('track').all().order_by('number'):
             track = tl.track
             Comment.objects.create(
                 created_at=track_timestamp,
@@ -148,27 +148,7 @@ class StreamManager(BaseManager):
         async_to_sync(channel_layer.group_send)(
             stream.chat_room,
             {
-                "type": "broadcast",
-                "playback": {"action": "play", "data": {"uris": uris},},
-                "text": json.dumps(
-                    {
-                        "source": {
-                            "type": "system",
-                            "display_name": None,
-                            "uuid": None,
-                        },
-                        "data": {
-                            "created_at": now_str,
-                            "status": None,
-                            "text": None,
-                            "stream": Stream.objects.serialize(stream),
-                            "playback": {
-                                "next_step": 'currently-playing',
-                            },
-                            "record": Record.objects.serialize(record),
-                        },
-                    }
-                ),
+                "type": "sync_playback",
             },
         )
 

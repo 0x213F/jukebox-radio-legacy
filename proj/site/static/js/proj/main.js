@@ -53,6 +53,7 @@ function setup_ajax_forms() {
                 if(redirect) window.location = redirect;
             }
         });
+        $this.find('button').blur();
       }
   });
 }

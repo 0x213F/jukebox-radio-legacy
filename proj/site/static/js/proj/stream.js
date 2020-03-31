@@ -82,7 +82,6 @@ function display_comments(payload) {
     for(comment of comments) {
       display_comment(comment);
     }
-    console.log(comment);
     $CHAT_CONTAINER.scrollTop($CHAT_CONTAINER[0].scrollHeight);
   }
 }
@@ -96,7 +95,7 @@ function onmessage(event) {
 }
 
 var endpoint = (
-  'wss://' + window.location.host +
+  'ws://' + window.location.host +
   `/?uuid=${STREAM_UUID}&display_comments=true`
 )
 

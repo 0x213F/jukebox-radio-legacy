@@ -18,7 +18,7 @@ function update_play_bar(payload) {
 
   let record_data = payload.data[KEY_RECORD];
   if(record_data) {
-    $('.play-bar > .content > .album-art').attr('src', record_data.img);
+    $('.album-art').attr('src', record_data.img);
     try { $('#form-load-queue').submit(); } catch(error) {};
   }
 
@@ -30,6 +30,29 @@ function update_play_bar(payload) {
  /////  INIT  /////
 /////  ////  /////
 
+var $chips_selector = $('.search-type');
+
+function click_chip() {
+  var $this = $(this);
+  var value = $this.attr('value');
+  $chips_selector.removeClass('active');
+  $this.addClass('active');
+  $('#search-library-type').val(value);
+  $('#search-library').submit();
+  focus_searchbar();
+}
+
+$('#search-bar-input').click(focus_searchbar);
+
+$('#search-bar-input').keypress(function (e) {
+  if (e.which == 13) {
+    $('#search-library').submit();
+    return false;    //<---- Add this line
+                     // Essentially, "return false" is the same as calling
+                     // e.preventDefault and e.stopPropagation()
+  }
+});
+
 $( document ).ready(function() {
 
   /////  NAVIGATE TO QUEUE
@@ -39,16 +62,7 @@ $( document ).ready(function() {
   $('.fake-search-bar').click(focus_searchbar)
 
   ///// SEARCH TYPE SELECTOR
-  var $chips_selector = $('.search-type');
-  $chips_selector.click(function() {
-    var $this = $(this);
-    var value = $this.attr('value');
-    $chips_selector.removeClass('active');
-    $this.addClass('active');
-    $('#search-library-type').val(value);
-    $('#search-library').submit();
-    focus_searchbar();
-  });
+  $chips_selector.click(click_chip);
 
 });
 
@@ -75,9 +89,13 @@ $('.exit-search-button').click(defocus_searchbar);
 
 
 function focus_queue() {
-  $('#main-card').addClass('hidden');
-  $('#queue-view').removeClass('hidden');
-  $('#play-bar').addClass('hidden');
+  if ($('#queued-up').children().length) {
+    $('#main-card').addClass('hidden');
+    $('#queue-view').removeClass('hidden');
+    $('#play-bar').addClass('hidden');
+  } else {
+    focus_searchbar();
+  }
 }
 
 function defocus_queue() {
@@ -97,15 +115,8 @@ function populate_queue(data) {
   $div.removeClass('hidden');
 }
 
-var last_searched = Date.now();
 function validate_search_eligible() {
-  var now = Date.now();
-
   if(!$('#search-bar-input').val()) {
-    throw DO_NOT_SUBMIT_FORM;
-  } else if(now - last_searched > 500) {
-    last_searched = now;
-  } else {
     throw DO_NOT_SUBMIT_FORM;
   }
 }
@@ -187,3 +198,112 @@ function generate_queue(queue) {
     </div>
   `
   }
+
+
+///////////////////////////////////
+ /////////////// THE KEYBOARD PART
+
+var timer;
+var doneTypingInterval = 1000; // wait 1 second
+var $input = $('#search-bar-input');
+
+$input.on('keyup', function () {
+ clearTimeout(timer);
+ timer = setTimeout(doneTyping, doneTypingInterval);
+});
+
+$input.on('keydown', function () {
+ clearTimeout(timer);
+});
+
+function doneTyping () {
+ if($SEARCHRESULTS.children().length) {
+   return;
+ }
+ $('#search-library').submit();
+}
+
+var shifted;
+$(document).on('keyup keydown', function(e){shifted = e.shiftKey} );
+
+
+$(document).keydown(function(event) {
+  var $search_types = $('#search-type-choices');
+  var $current = $('.search-type.active');
+  var $prev = $current.prev();
+  var $next = $current.next();
+
+  var LEFT_KEY_CODE = 37
+  var RIGHT_KEY_CODE = 39
+  var DOWN_KEY_CODE = 40
+  var UP_KEY_CODE = 38
+  var ENTER_KEY_CODE = 13
+  var key_code = event.keyCode
+  console.log(key_code)
+
+  var $search_results = $('#search-results');
+
+  if(shifted && (key_code === LEFT_KEY_CODE || key_code === RIGHT_KEY_CODE)) {
+
+    event.preventDefault();
+
+    if (key_code === LEFT_KEY_CODE) {
+      if ($prev.length) {
+          $prev.click();
+      } else {
+        $search_types.children().last().click();
+      }
+    } else if (key_code === RIGHT_KEY_CODE) {
+      if ($next.length) {
+          $next.click();
+      } else {
+        $search_types.children().first().click();
+      }
+    }
+
+  }
+
+  if(key_code === DOWN_KEY_CODE || key_code === UP_KEY_CODE) {
+    if(!$search_results.children().length) {
+      return;
+    }
+    var $first = $search_results.children().first();
+    var $last = $search_results.children().last();
+    var $active = $search_results.find('.search-result.active');
+    var $next = $active.next();
+    var $prev = $active.prev();
+    if(key_code === DOWN_KEY_CODE) {
+      if(!$active.length) {
+        $input.blur();
+        $first.addClass('active');
+      } else if($next.length) {
+        $active.removeClass('active');
+        $next.addClass('active');
+      } else {
+        $input.focus();
+        $active.removeClass('active');
+      }
+    } else { // UP
+      if(!$active.length) {
+        $input.blur();
+        $last.addClass('active');
+      } else if($prev.length) {
+        $active.removeClass('active');
+        $prev.addClass('active');
+      } else {
+        $input.focus();
+        $active.removeClass('active');
+      }
+    }
+  } else if(key_code === ENTER_KEY_CODE) {
+    if(!$search_results.children().length) {
+      return;
+    }
+    var $active = $search_results.find('.search-result.active');
+    if(!$active.length) {
+      return;
+    }
+    $active.click();
+  }
+
+});

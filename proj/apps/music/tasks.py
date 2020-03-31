@@ -32,22 +32,7 @@ def schedule_spin(stream_id):
         async_to_sync(channel_layer.group_send)(
             stream.chat_room,
             {
-                "type": "send_waiting_status",
-                "text": json.dumps(
-                    {
-                        "source": {
-                            "type": "system",
-                            "display_name": None,
-                            "uuid": None,
-                        },
-                        "data": {
-                            "stream": Stream.objects.serialize(stream),
-                            "playback": {
-                                "status": 'waiting-for-stream-to-start',
-                            },
-                        },
-                    }
-                ),
+                "type": "sync_playback",
             },
         )
         return
@@ -55,6 +40,13 @@ def schedule_spin(stream_id):
     record = queue.record
 
     Stream.objects.spin(record, stream)
+
+    async_to_sync(channel_layer.group_send)(
+        stream.chat_room,
+        {
+            "type": "sync_playback",
+        },
+    )
 
     now = datetime.now()
     queue.played_at = now

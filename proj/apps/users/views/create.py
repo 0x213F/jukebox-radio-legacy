@@ -24,6 +24,7 @@ def create_view(request):
     # - - - - - - - -
     if request.user.is_authenticated:
         user = request.user
+        old_email = user.email
         if user.profile.activated_at:
             raise ValueError('cannot change login of active user')
         user.profile.activated_at = datetime.now()
@@ -33,7 +34,7 @@ def create_view(request):
         user.set_password(password)
         user.save()
 
-        Ticket.objects.filter(email=email).update(holder=user)
+        Ticket.objects.filter(email=old_email).update(holder=user, email=email)
 
         login(request, user)
         return HttpResponse(status=201)
