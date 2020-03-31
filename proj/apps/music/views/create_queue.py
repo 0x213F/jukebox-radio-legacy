@@ -13,6 +13,13 @@ from django.apps import apps
 from proj.core.views import BaseView
 from proj.apps.music import tasks
 
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+
+
+channel_layer = get_channel_layer()
+
+
 
 @method_decorator(login_required, name='dispatch')
 class CreateQueueView(BaseView):
@@ -24,6 +31,7 @@ class CreateQueueView(BaseView):
         Queue = apps.get_model('music.Queue')
         Record = apps.get_model('music.Record')
         Stream = apps.get_model('music.Stream')
+        Ticket = apps.get_model('music.Ticket')
 
         spotify_uri = request.POST.get('uri', None)
         img = request.POST.get('img', None)
@@ -66,5 +74,18 @@ class CreateQueueView(BaseView):
                 # timedelta(milliseconds=150)
             )
             tasks.schedule_spin.apply_async(eta=next_play_time, args=[stream.id])
+        else:
+            tickets = Ticket.objects.filter(
+                stream=stream,
+                is_administrator=True
+            )
+            for ticket in tickets:
+                user_id = ticket.holder_id
+                async_to_sync(channel_layer.group_send)(
+                    f'user-{user_id}',
+                    {
+                        "type": "update_queue",
+                    },
+                )
 
         return self.http_response(Queue.objects.serialize(queue))

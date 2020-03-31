@@ -76,18 +76,15 @@ class Consumer(AsyncConsumer):
             self.scope['user'], stream_uuid,
         )
 
-        print(self.scope['ticket'].name)
-
         # add to channel
         await self.add_to_channel()
         user_id = self.scope['user'].id
-        print('USER ID!!', user_id, f'user-{user_id}')
         await self.channel_layer.group_add(f'user-{user_id}', self.channel_name)
 
         # send back recent chat activity
         should_display_comments = url_params['display_comments'] == 'true'
         if should_display_comments:
-            comments_qs = Comment.objects.recent(self.scope['stream'])
+            comments_qs = Comment.objects.select_related('commenter_ticket').recent(self.scope['stream'])
             comments = await database_sync_to_async(list)(comments_qs)
             await self.send_comments(comments)
 
@@ -108,6 +105,10 @@ class Consumer(AsyncConsumer):
     async def websocket_receive(self, event):
         payload = json.loads(event["text"])
         # action = payload['action']
+
+        if 'resync' in payload:
+            await self.sync_playback()
+            return
 
         # create comment in DB
         # if action == self.ACTION_COMMENT:
@@ -215,6 +216,21 @@ class Consumer(AsyncConsumer):
             }
         )
 
+    async def update_queue(self, event):
+        await self.send(
+            {
+                "type": "websocket.send",
+                "text": json.dumps({
+                    "data": {
+                        "update_queue": True,
+                    }
+                }),
+            }
+        )
+
+    async def update_name(self, event):
+        await self.send({"type": "websocket.send", "text": event["text"]})
+
     # - - - - - - - - - - - - - -
     #          HELPERS           |
     # - - - - - - - - - - - - - -
@@ -282,14 +298,14 @@ class Consumer(AsyncConsumer):
             }
         )
 
-    async def send_comments(self, comments, ticket=None):
+    async def send_comments(self, comments):
         await self.send(
             {
                 "type": "websocket.send",
                 "text": json.dumps({
                     "data": {
                         "comments": [
-                            Comment.objects.serialize(c, ticket=ticket)
+                            Comment.objects.serialize(c, ticket=c.commenter_ticket)
                             for c in comments
                         ],
                         "playback": {
@@ -374,7 +390,8 @@ class Consumer(AsyncConsumer):
 
             if user_is_already_in_sync:
                 record = now_playing.record
-                await self.send_record(record)
+                if onload:
+                    await self.send_record(record)
                 return
 
         except Exception as e:

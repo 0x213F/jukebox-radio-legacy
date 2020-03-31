@@ -94,7 +94,17 @@ function onmessage(event) {
       $('#go-to-queue-top').removeClass('hidden');
     } else {
       $('#go-to-queue-top').addClass('hidden');
+      $('#main-card').removeClass('hidden');
+      $('#search-view').addClass('hidden');
+      $('#queue-view').addClass('hidden');
+      $('#play-bar').removeClass('hidden');
     }
+  } else if(payload.data && 'update_queue' in payload.data) {
+    $('#form-load-queue').submit();
+  } else if(payload.data && 'holder_uuid' in payload.data) {
+    console.log('heyyo!')
+    console.log(`.comment[holder-uuid='${payload.data.holder_uuid}'] > .c-commenter`)
+    $( `.comment[holder-uuid='${payload.data.holder_uuid}'] > .c-commenter` ).text(payload.data.holder_name);
   } else {
     update_play_bar(payload);
     display_comments(payload);
@@ -112,16 +122,7 @@ window['SOCKET'].onmessage = onmessage
 
 // on window focus, try re-connecting to rejog Spotify
 $(window).focus(function() {
-  if(window['SOCKET']) {
-    window['SOCKET'].close()
-  }
-
-  var endpoint = (
-    'ws://' + window.location.host +
-    `/?uuid=${STREAM_UUID}&display_comments=false`
-  )
-
-  window['SOCKET'] = new WebSocket(endpoint)
-  window['SOCKET'].onopen = onopen
-  window['SOCKET'].onmessage = onmessage
+  let data = {'resync': 'resync'};
+  let msg = JSON.stringify(data);
+  window['SOCKET'].send(msg);
 });
