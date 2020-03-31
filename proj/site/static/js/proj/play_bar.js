@@ -239,7 +239,6 @@ $(document).keydown(function(event) {
   var UP_KEY_CODE = 38
   var ENTER_KEY_CODE = 13
   var key_code = event.keyCode
-  console.log(key_code)
 
   var $search_results = $('#search-results');
 

@@ -52,51 +52,6 @@ class StreamManager(BaseManager):
             "user_count": user_count,
         }
 
-    def change_status(self, stream, status):
-        """
-        """
-        Comment = apps.get_model("music.Comment")
-        Record = apps.get_model("music.Record")
-        Stream = apps.get_model("music.Stream")
-        Track = apps.get_model("music.Track")
-
-        now = datetime.now()
-        now_str = now.isoformat()
-
-        stream.status = status
-        stream.last_status_change_at = datetime.now()
-        stream.save()
-
-        Comment.objects.create(
-            status=status,
-            text=None,
-            commenter=None,
-            stream=stream,
-            track=None,
-            commenter_ticket=None,
-        )
-
-        async_to_sync(channel_layer.group_send)(
-            stream.chat_room,
-            {
-                "type": "broadcast",
-                "text": json.dumps(
-                    {
-                        "source": {
-                            "type": "system",
-                            "display_name": None,
-                            "uuid": None,
-                        },
-                        "data": {
-                            "created_at": now_str,
-                            "status": status,
-                            "text": None,
-                        },
-                    }
-                ),
-            },
-        )
-
     def spin(self, record, stream):
         """
         Spin the record.

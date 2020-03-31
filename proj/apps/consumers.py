@@ -80,6 +80,9 @@ class Consumer(AsyncConsumer):
 
         # add to channel
         await self.add_to_channel()
+        user_id = self.scope['user'].id
+        print('USER ID!!', user_id, f'user-{user_id}')
+        await self.channel_layer.group_add(f'user-{user_id}', self.channel_name)
 
         # send back recent chat activity
         should_display_comments = url_params['display_comments'] == 'true'
@@ -134,6 +137,10 @@ class Consumer(AsyncConsumer):
         await database_sync_to_async(Ticket.objects.filter(id=ticket.id).update)(is_active=False)
 
         await self.remove_from_channel()
+        user_id = self.scope['user'].id
+        await self.channel_layer.group_discard(
+            f'user-{user_id}', self.channel_name
+        )
 
         # Create record of comment.
         payload = {
@@ -182,6 +189,30 @@ class Consumer(AsyncConsumer):
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "application/json",
             },
+        )
+
+    async def promote_to_host(self, event):
+        await self.send(
+            {
+                "type": "websocket.send",
+                "text": json.dumps({
+                    "data": {
+                        "promote_to_host": True,
+                    }
+                }),
+            }
+        )
+
+    async def demote_from_host(self, event):
+        await self.send(
+            {
+                "type": "websocket.send",
+                "text": json.dumps({
+                    "data": {
+                        "promote_to_host": False,
+                    }
+                }),
+            }
         )
 
     # - - - - - - - - - - - - - -

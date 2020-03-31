@@ -159,39 +159,6 @@ class StreamAdmin(admin.ModelAdmin):
             "</button>"
         )
 
-    # - - - - -
-    # actions
-    # - - - - -
-
-    actions = [
-        "activate_selected_stream",
-        "idle_selected_stream",
-    ]
-
-    def activate_selected_stream(self, request, queryset):
-        scheduled = queryset.filter(status__in=(Stream.STATUS_IDLE,))
-        if queryset.count() != scheduled.count():
-            self.message_user(
-                request, "Make sure all streams are scheduled.", level=messages.ERROR,
-            )
-            return
-        for stream in queryset:
-            Stream.objects.change_status(stream, Stream.STATUS_ACTIVATED)
-
-    activate_selected_stream.short_description = "Activate selected stream"
-
-    def idle_selected_stream(self, request, queryset):
-        scheduled = queryset.filter(status__in=(Stream.STATUS_ACTIVATED))
-        if queryset.count() != scheduled.count():
-            self.message_user(
-                request, "Make sure all streams are activated.", level=messages.ERROR,
-            )
-            return
-        for stream in queryset:
-            Stream.objects.change_status(stream, Stream.STATUS_IDLE)
-
-    idle_selected_stream.short_description = "Idle selected stream"
-
     # - - -
     # save
     # - - -

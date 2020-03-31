@@ -1,4 +1,12 @@
 from proj.core.models.managers import BaseManager
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from django.contrib.auth.models import User
+from datetime import datetime
+from random_username.generate import generate_username
+
+
+channel_layer = get_channel_layer()
 
 
 class TicketManager(BaseManager):
@@ -9,7 +17,6 @@ class TicketManager(BaseManager):
     def serialize(self, ticket):
         if not ticket:
             return None
-        print(ticket.name)
         return {
             'holder_name': ticket.name,
             'holder_uuid': str(ticket.holder_uuid),
@@ -18,6 +25,8 @@ class TicketManager(BaseManager):
         }
 
     def promote_to_host(self, email, stream):
+        Ticket = self.model
+
         ticket, _ = Ticket.objects.get_or_create(
             stream=stream,
             email=email,
@@ -30,6 +39,24 @@ class TicketManager(BaseManager):
         )
         ticket.is_administrator = True
         ticket.save()
+        user = User.objects.get(email__iexact=email)
+        print('ok we are going somewhere', user.id, f'user-{user.id}')
+        async_to_sync(channel_layer.group_send)(
+            f'user-{user.id}',
+            {
+                "type": "promote_to_host",
+            },
+        )
 
-    def demote_from_host(self, email):
+    def demote_from_host(self, email, stream):
+        Ticket = self.model
+        print('- - - - - - - ')
+        print(Ticket.objects.filter(stream=stream, email=email).count())
         Ticket.objects.filter(stream=stream, email=email).update(is_administrator=False)
+        user = User.objects.get(email__iexact=email)
+        async_to_sync(channel_layer.group_send)(
+            f'user-{user.id}',
+            {
+                "type": "demote_from_host",
+            },
+        )

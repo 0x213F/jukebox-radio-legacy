@@ -20,6 +20,7 @@ class UpdateTicketView(BaseView):
         email = request.POST.get('email', None)
         holder_name = request.POST.get('display_name', None)
         is_administrator = request.POST.get('is_administrator', None)
+        is_administrator = is_administrator == 'true'
         stream_uuid = request.POST.get('stream_uuid', None)
 
         ticket = Ticket.objects.select_related('stream').get(
@@ -45,7 +46,5 @@ class UpdateTicketView(BaseView):
             if ticket.stream.owner_id == request.user.id:
                 ticket.stream.owner_name = holder_name
                 ticket.stream.save()
-
-        print(ticket.name)
 
         return self.http_response({})
