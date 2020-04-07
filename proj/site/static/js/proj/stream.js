@@ -89,6 +89,7 @@ function display_comments(payload) {
 function onmessage(event) {
   let text = event.data;
   let payload = JSON.parse(text);
+  console.log(payload)
   if(payload.data && 'promote_to_host' in payload.data) {
     if(payload.data.promote_to_host) {
       $('#go-to-queue-top').removeClass('hidden');

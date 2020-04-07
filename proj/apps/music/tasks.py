@@ -20,6 +20,13 @@ def schedule_spin(stream_id):
 
     stream = Stream.objects.get(id=stream_id)
 
+    if stream.paused_at:
+        return
+
+    now = datetime.now()
+    if now < stream.tracklisting_terminates_at.replace(tzinfo=None):
+        return
+
     queue = (
         Queue
         .objects
@@ -28,7 +35,11 @@ def schedule_spin(stream_id):
         .order_by("created_at")
         .first()
     )
+
     if not queue:
+        stream.current_record = None
+        stream.current_tracklisting = None
+        stream.save()
         async_to_sync(channel_layer.group_send)(
             stream.chat_room,
             {
@@ -37,21 +48,4 @@ def schedule_spin(stream_id):
         )
         return
 
-    record = queue.record
-
-    Stream.objects.spin(record, stream)
-
-    async_to_sync(channel_layer.group_send)(
-        stream.chat_room,
-        {
-            "type": "sync_playback",
-        },
-    )
-
-    now = datetime.now()
-    queue.played_at = now
-    queue.save()
-
-    next_play = now + timedelta(milliseconds=(record.duration_ms))  # + 250
-
-    schedule_spin.apply_async(eta=next_play, args=[stream_id])
+    Stream.objects.spin(queue, stream)

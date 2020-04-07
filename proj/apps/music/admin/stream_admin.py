@@ -158,34 +158,3 @@ class StreamAdmin(admin.ModelAdmin):
             "</a>"
             "</button>"
         )
-
-    # - - -
-    # save
-    # - - -
-
-    def save_model(self, request, stream, form, change):
-        """
-        Cache data from Spotify API.
-        """
-        now = datetime.now()
-        try:
-            pre_save_stream = Stream.objects.get(id=stream.id)
-            if pre_save_stream.current_record and pre_save_stream.record_terminates_at:
-                if now < pre_save_stream.record_terminates_at.replace(tzinfo=None):
-                    self.message_user(
-                        request,
-                        "The record cannot be changed since one is still playing.",
-                        level=messages.ERROR,
-                    )
-                    return
-        except Stream.DoesNotExist:
-            pass
-
-        next_record = form.cleaned_data["next_record"]
-
-        super().save_model(request, stream, form, change)
-
-        if not next_record:
-            return
-
-        Stream.objects.spin(next_record, stream)

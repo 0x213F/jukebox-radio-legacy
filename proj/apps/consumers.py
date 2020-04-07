@@ -335,7 +335,7 @@ class Consumer(AsyncConsumer):
 
     async def sync_playback(self, onload=False):
         self.scope['stream'] = await database_sync_to_async(
-            Stream.objects.select_related('current_record').get
+            Stream.objects.select_related('current_record', 'current_tracklisting', 'current_tracklisting__track').get
         )(id=self.scope['stream'].id)
 
         record_terminates_at = self.scope['stream'].record_terminates_at
@@ -346,23 +346,6 @@ class Consumer(AsyncConsumer):
             await self.update_playbar('waiting-for-stream-to-start')
             return
 
-        # [6]
-        # get the now playing target progress in ms
-        try:
-            now_playing = await database_sync_to_async(
-                Comment.objects.select_related('track', 'record')
-                .filter(
-                    created_at__lte=datetime.now(),
-                    stream__uuid=self.scope['stream'].uuid,
-                    status=Comment.STATUS_START,
-                )
-                .order_by("-created_at")
-                .first
-            )()
-            assert now_playing
-        except Exception as e:
-            await self.update_playbar('waiting-for-stream-to-start')
-            return
 
         # [7]
         # determine if the user's Spotify is already synced with the stream
@@ -376,7 +359,7 @@ class Consumer(AsyncConsumer):
             spotify_is_playing = currently_playing_data['spotify_is_playing']
 
             ms_since_track_was_played = (
-                datetime.now() - now_playing.created_at.replace(tzinfo=None)
+                datetime.now() - self.scope['stream'].tracklisting_begun_at.replace(tzinfo=None)
             ).total_seconds() * 1000
             offsync_ms = abs(
                 ms_since_track_was_played - spotify_track_duration_ms
@@ -384,12 +367,12 @@ class Consumer(AsyncConsumer):
 
             user_is_already_in_sync = (
                 spotify_is_playing
-                and spotify_uri == now_playing.track.spotify_uri
+                and spotify_uri == self.scope['stream'].current_tracklisting.track.spotify_uri
                 and offsync_ms < 5000
             )
 
             if user_is_already_in_sync:
-                record = now_playing.record
+                record = self.scope['stream'].current_record
                 if onload:
                     await self.send_record(record)
                 return
@@ -405,14 +388,10 @@ class Consumer(AsyncConsumer):
         # [8]
         # get the track playing and tracks in the queue
         uris = (
-            self.scope['stream'].current_record.tracks_through
+            self.scope['stream'].current_record.tracks_through.filter(number__gte=self.scope['stream'].current_tracklisting.number)
             .order_by('number').values_list('track__spotify_uri', flat=True)
         )
         uris = await database_sync_to_async(list)(uris)
-        while uris:  # TODO: BUG!
-            if uris[0] == now_playing.track.spotify_uri:
-                break
-            uris = uris[1:]
 
         if not uris:
             return
@@ -420,7 +399,7 @@ class Consumer(AsyncConsumer):
         # [9]
         # sync the user's playback with the stream
         ms_since_track_was_played = (
-            datetime.now() - now_playing.created_at.replace(tzinfo=None)
+            datetime.now() - self.scope['stream'].tracklisting_begun_at.replace(tzinfo=None)
         ).total_seconds() * 1000
         await self.play_tracks(
             {
@@ -434,5 +413,5 @@ class Consumer(AsyncConsumer):
 
         # [A]
         # update the front-end with playback status
-        record = now_playing.record
+        record = self.scope['stream'].current_record
         await self.send_record(record)

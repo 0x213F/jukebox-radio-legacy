@@ -51,6 +51,17 @@ class Stream(BaseModel):
         blank=False,
     )
 
+    tracklisting_begun_at = models.DateTimeField(null=True, blank=False)
+    tracklisting_terminates_at = models.DateTimeField(null=True, blank=False)
+    paused_at = models.DateTimeField(null=True, blank=False)
+    current_tracklisting = models.ForeignKey(
+        'music.TrackListing',
+        related_name='now_playing_tracklisting',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=False,
+    )
+
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='owned_streams',

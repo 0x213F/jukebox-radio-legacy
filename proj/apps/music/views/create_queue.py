@@ -63,17 +63,7 @@ class CreateQueueView(BaseView):
             should_play_song = True
 
         if should_play_song:
-            stream.last_status_change_at = now
-            stream.status = Stream.STATUS_ACTIVATED
-            stream.save()
-            Stream.objects.spin(record, stream)
-            queue.played_at = now
-            queue.save()
-            next_play_time = (
-                stream.record_terminates_at.replace(tzinfo=None) # +
-                # timedelta(milliseconds=150)
-            )
-            tasks.schedule_spin.apply_async(eta=next_play_time, args=[stream.id])
+            stream, queue = Stream.objects.spin(queue, stream)
         else:
             tickets = Ticket.objects.filter(
                 stream=stream,

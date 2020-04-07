@@ -21,6 +21,9 @@ from datetime import timedelta
 from proj.core.models.managers import BaseManager
 
 from django.contrib.auth.models import User
+from django.db.models import Sum
+
+from proj.apps.music import tasks
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -52,7 +55,7 @@ class StreamManager(BaseManager):
             "user_count": user_count,
         }
 
-    def spin(self, record, stream):
+    def spin(self, queue, stream):
         """
         Spin the record.
         """
@@ -61,44 +64,24 @@ class StreamManager(BaseManager):
         Ticket = apps.get_model('music', 'Ticket')
         Comment = apps.get_model('music', 'Comment')
 
+        record = queue.record
+
+        current_tracklisting = record.tracks_through.select_related('track').order_by('number').first()
+        stream.current_tracklisting = current_tracklisting
         now = datetime.now()
-        now_str = now.isoformat()
-
-        track_timestamp = now
-        for tl in record.tracks_through.select_related('track').all().order_by('number'):
-            track = tl.track
-            Comment.objects.create(
-                created_at=track_timestamp,
-                status=Comment.STATUS_START,
-                text=None,
-                commenter=None,
-                stream=stream,
-                track=track,
-                record=record,
-                commenter_ticket=None,
-            )
-            track_timestamp += timedelta(milliseconds=track.spotify_duration_ms)
-
+        stream.last_status_change_at = now
+        stream.status = Stream.STATUS_ACTIVATED
+        stream.tracklisting_begun_at = now
+        stream.tracklisting_terminates_at = now + timedelta(milliseconds=current_tracklisting.track.spotify_duration_ms)
+        stream.paused_at = None
         stream.current_record = record
-        stream.record_terminates_at = track_timestamp
-        stream.save()
-
-        Comment.objects.create(
-            created_at=now,
-            status=Comment.STATUS_SPIN,
-            text=None,
-            commenter=None,
-            stream=stream,
-            track=None,
-            record=record,
-            commenter_ticket=None,
-        )
-
-        uris = list(
+        record_length = (
             record.tracks_through.all()
-            .order_by("number")
-            .values_list("track__spotify_uri", flat=True)
+            .aggregate(Sum('track__spotify_duration_ms'))
+            ['track__spotify_duration_ms__sum']
         )
+        stream.record_terminates_at = now + timedelta(milliseconds=record_length)
+        stream.save()
 
         async_to_sync(channel_layer.group_send)(
             stream.chat_room,
@@ -106,6 +89,16 @@ class StreamManager(BaseManager):
                 "type": "sync_playback",
             },
         )
+
+        next_play_time = stream.record_terminates_at.replace(tzinfo=None)
+        tasks.schedule_spin.apply_async(
+            eta=next_play_time, args=[stream.id]
+        )
+
+        queue.played_at = now
+        queue.save()
+
+        return stream, queue
 
     def play(self, record):
         """
