@@ -22,9 +22,11 @@ class QueueManager(BaseManager):
     """
     Django Manager used to manage Queue objects.
     """
-    pass
 
-    def serialize(self, queue):
+    def serialize(self, queue, prev_end_dt=None):
+        playing_at = None if not prev_end_dt else (prev_end_dt + timedelta(milliseconds=queue.record.duration_ms))
+        print(playing_at)
+        playing_at_val = prev_end_dt.isoformat() if playing_at else None
         return {
             'id': queue.id,
             'stream_uuid': queue.stream.uuid,
@@ -32,4 +34,16 @@ class QueueManager(BaseManager):
             'record_name': queue.record.name,
             'record_spotify_img': queue.record.spotify_img,
             'created_at': queue.created_at.isoformat(),
-        }
+            'playing_at': playing_at_val,
+        }, playing_at
+
+    def serialize_list(self, stream, queue_list):
+        arr = []
+
+        print(stream.record_terminates_at)
+        end_dt = stream.record_terminates_at
+        for queue in queue_list:
+            queue_obj, end_dt = self.serialize(queue, prev_end_dt=end_dt)
+            arr.append(queue_obj)
+
+        return arr

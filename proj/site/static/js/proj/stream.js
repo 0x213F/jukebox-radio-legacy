@@ -103,8 +103,6 @@ function onmessage(event) {
   } else if(payload.data && 'update_queue' in payload.data) {
     $('#form-load-queue').submit();
   } else if(payload.data && 'holder_uuid' in payload.data) {
-    console.log('heyyo!')
-    console.log(`.comment[holder-uuid='${payload.data.holder_uuid}'] > .c-commenter`)
     $( `.comment[holder-uuid='${payload.data.holder_uuid}'] > .c-commenter` ).text(payload.data.holder_name);
   } else {
     update_play_bar(payload);

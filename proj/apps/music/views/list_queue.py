@@ -12,19 +12,20 @@ class ListQueueView(BaseView):
         List all of the stream objects that a user can access.
         '''
         Queue = apps.get_model('music', 'Queue')
+        Stream = apps.get_model('music', 'Stream')
 
         stream_uuid = request.GET.get('stream_uuid', None)
+        stream = Stream.objects.get(uuid=stream_uuid)
 
         queue_qs = (
             Queue.objects
             .select_related('record')
-            .filter(stream__uuid=stream_uuid, played_at__isnull=True)
+            .filter(stream=stream, played_at__isnull=True)
             .order_by('created_at')
         )
 
         response = {
-            'queue': [Queue.objects.serialize(q) for q in queue_qs],
+            'queue': Queue.objects.serialize_list(stream, queue_qs),
         }
-        print('s')
-        print(response)
+
         return self.http_response(response)

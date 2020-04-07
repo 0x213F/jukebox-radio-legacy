@@ -36,6 +36,19 @@
   max-width: calc(100% - 142px);
 }
 
+.queue-card > form > div > .play-time {
+  position: absolute;
+  float: left;
+  padding-left: 86px;
+  padding-top: 38px;
+  padding-right: 12px;
+
+  text-align: left;
+  font-size: 14px;
+
+  max-width: calc(100% - 142px);
+}
+
 /* * * * * * * * * * * *  */
 /* TOOLTIP SQUARE CONTENT */
 

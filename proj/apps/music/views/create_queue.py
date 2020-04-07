@@ -78,4 +78,5 @@ class CreateQueueView(BaseView):
                     },
                 )
 
-        return self.http_response(Queue.objects.serialize(queue))
+        resp, _ = Queue.objects.serialize(queue)
+        return self.http_response(resp)

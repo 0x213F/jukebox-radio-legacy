@@ -172,12 +172,17 @@ function add_to_queue(e) {
 /////  /////  /////
 
 function display_queue() {
-  console.log(';D')
   $('#play-bar-queue').show();
 }
 
+function parseISOString(s) {
+  return new Date(s);
+}
+
 function generate_queue(queue) {
-  console.log(queue)
+  display_time = parseISOString(queue.playing_at).toLocaleTimeString(
+    'en-US', { hour12: true, hour: "numeric", minute: "numeric"}
+  )
   return `
     <div class="queue-card">
       <form class="ajax-form"
@@ -189,6 +194,7 @@ function generate_queue(queue) {
         <div>
           <img src="${queue.record_spotify_img}" />
           <div class="record-name">${queue.record_name}</div>
+          <div class="play-time">${display_time}</div>
         </div>
 
         <button class="btn btn-secondary btn-lg float-right" style="border-radius: 12px; min-width: 40px; margin: 15px;">
