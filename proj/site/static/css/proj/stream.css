@@ -4,7 +4,7 @@
 
 .comment > .c-commenter {
   background-color: rgb(256, 256, 256, 0.95)!important;
-  color: #727e96;
+  color: #8F87D2;
   margin-top: 8px;
   display: inline-block;
   margin-bottom: 8px;
@@ -16,7 +16,7 @@
 
 .comment > .c-text {
   background-color: rgba(234, 235, 248, 0.5)!important;
-  color: #727e96;
+  color: #8F87D2;
   border-radius: 12px;
   padding: 7px 12px;
   display: table-cell;
