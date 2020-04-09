@@ -365,8 +365,8 @@ class Consumer(AsyncConsumer):
         # sync the user's playback with the stream
         ms_since_track_was_played = (
             datetime.now()
-            - self.scope["stream"].tracklisting_begun_at.replace(tzinfo=None)
-        ).total_seconds() * 1000
+            - self.scope["stream"].record_begun_at.replace(tzinfo=None)
+        ).total_seconds() * 1000 - elapsed_track_duration
         await self.play_tracks(
             {
                 "action": "play",
