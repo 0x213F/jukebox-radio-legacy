@@ -30,7 +30,7 @@ class Record(BaseModel):
 
     spotify_uri = models.CharField(max_length=128)  # TODO make unique
     spotify_name = models.CharField(max_length=128)
-    spotify_duration_ms = models.PositiveIntegerField()
+    spotify_duration_ms = models.PositiveIntegerField(null=True, blank=True)
     spotify_img = models.CharField(max_length=256)
 
     @property
