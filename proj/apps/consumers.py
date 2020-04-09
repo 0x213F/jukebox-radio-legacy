@@ -304,37 +304,45 @@ class Consumer(AsyncConsumer):
             spotify_uri = currently_playing_data["spotify_uri"]
             spotify_is_playing = currently_playing_data["spotify_is_playing"]
 
+            ms_since_record_was_played = (
+                datetime.now()
+                - self.scope["stream"].record_begun_at.replace(tzinfo=None)
+            ).total_seconds() * 1000
+
             try:
                 current_tracklisting = await database_sync_to_async(
-                    self.scope["stream"].current_record.tracks_through.get
-                )(track__spotify_uri=spotify_uri)
-                elapsed_track_duration = (
-                    self.scope["stream"]
-                    .current_record.tracks_through.filter(
-                        number__lt=current_tracklisting.number
-                    )
-                    .order_by("number")
-                    .values_list("track__spotify_duration_ms", flat=True)
-                )
-                elapsed_track_duration = sum(elapsed_track_duration)
+                    self.scope["stream"].current_record.tracks_through.select_related('track').filter(
+                        relative_duration__lte=ms_since_record_was_played
+                    ).order_by('relative_duration').last
+                )()
+                if current_tracklisting:
+                    elapsed_track_duration = current_tracklisting.relative_duration
+                    current_spotify_uri = current_tracklisting.track.spotify_uri
+                else:
+                    elapsed_track_duration = -1
+                    current_spotify_uri = None
             except Exception:
                 elapsed_track_duration = -1
+                current_spotify_uri = None
+
+            print(ms_since_record_was_played)
+            print(elapsed_track_duration)
 
             ms_since_track_was_played = (
                 datetime.now()
                 - self.scope["stream"].record_begun_at.replace(tzinfo=None)
-            ).total_seconds() * 1000 - elapsed_track_duration
-            offsync_ms = abs(ms_since_track_was_played - spotify_track_duration_ms)
+            ).total_seconds() * 1000
+            offsync_ms = abs(ms_since_track_was_played - spotify_track_duration_ms - elapsed_track_duration)
 
             user_is_already_in_sync = (
                 elapsed_track_duration != -1 and
-                spotify_is_playing
-                and spotify_uri
-                == self.scope["stream"].current_tracklisting.track.spotify_uri
-                and offsync_ms < 5000
+                current_spotify_uri and
+                spotify_is_playing and
+                current_spotify_uri == spotify_uri and
+                offsync_ms < 5000
             )
 
-            if False:
+            if user_is_already_in_sync:
                 record = self.scope["stream"].current_record
                 if onload:
                     await self.send_record(record)

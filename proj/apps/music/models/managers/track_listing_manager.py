@@ -25,8 +25,15 @@ class TrackListingManager(BaseManager):
         tls = []
 
         number = 1
+        relative_duration = 0
         for track in tracks:
-            tl = TrackListing(record=record, track=track, number=number,)
+            tl = TrackListing(
+                record=record,
+                track=track,
+                number=number,
+                relative_duration=relative_duration,
+            )
             tls.append(tl)
             number += 1
+            relative_duration += track.spotify_duration_ms
         TrackListing.objects.bulk_create(tls)

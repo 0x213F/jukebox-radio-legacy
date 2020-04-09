@@ -34,3 +34,4 @@ class TrackListing(BaseModel):
     )
 
     number = models.PositiveIntegerField()
+    relative_duration = models.PositiveIntegerField()
