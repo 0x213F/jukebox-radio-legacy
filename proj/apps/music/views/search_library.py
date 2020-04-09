@@ -7,7 +7,6 @@ from proj.core.resources import Spotify
 
 @method_decorator(login_required, name='dispatch')
 class SearchLibraryView(BaseView):
-
     def get(self, request, **kwargs):
         '''
         Search the user's library.
@@ -18,7 +17,4 @@ class SearchLibraryView(BaseView):
         spotify = Spotify(request.user)
         search_results = spotify.search_library(query, type)
 
-        return self.http_response({
-            'search_results': search_results,
-            'type': type,
-        })
+        return self.http_response({'search_results': search_results, 'type': type,})

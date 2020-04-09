@@ -105,7 +105,11 @@ function onmessage(event) {
   } else if(payload.data && 'holder_uuid' in payload.data) {
     $( `.comment[holder-uuid='${payload.data.holder_uuid}'] > .c-commenter` ).text(payload.data.holder_name);
   } else {
-    update_play_bar(payload);
+    try {
+      update_play_bar(payload);
+    } catch(e) {
+      
+    }
     display_comments(payload);
   }
 }

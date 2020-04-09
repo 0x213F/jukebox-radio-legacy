@@ -1,14 +1,12 @@
+from django.apps import apps
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-
-from django.apps import apps
 
 from proj.core.views import BaseView
 
 
 @method_decorator(login_required, name='dispatch')
 class UpdateStreamView(BaseView):
-
     def post(self, request, **kwargs):
         '''
         Update the user's account information.
@@ -30,6 +28,8 @@ class UpdateStreamView(BaseView):
         if unique_custom_id:
             kwargs['unique_custom_id'] = unique_custom_id
 
-        Stream.objects.filter(uuid=stream_uuid).update(title=stream_name, tags=stream_tags, is_private=is_private, **kwargs)
+        Stream.objects.filter(uuid=stream_uuid).update(
+            title=stream_name, tags=stream_tags, is_private=is_private, **kwargs
+        )
 
         return self.http_response({'unique_custom_id': unique_custom_id})

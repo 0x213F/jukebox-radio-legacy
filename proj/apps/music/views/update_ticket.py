@@ -1,15 +1,12 @@
 import json
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+
 from django.apps import apps
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-from datetime import datetime
-from random_username.generate import generate_username
-
 from proj.core.views import BaseView
-
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
 
 
 channel_layer = get_channel_layer()
@@ -17,7 +14,6 @@ channel_layer = get_channel_layer()
 
 @method_decorator(login_required, name='dispatch')
 class UpdateTicketView(BaseView):
-
     def post(self, request, **kwargs):
         '''
         Update the user's account information.
@@ -31,8 +27,7 @@ class UpdateTicketView(BaseView):
         stream_uuid = request.POST.get('stream_uuid', None)
 
         ticket = Ticket.objects.select_related('stream').get(
-            email=request.user.email,
-            stream__uuid=stream_uuid,
+            email=request.user.email, stream__uuid=stream_uuid,
         )
         stream = ticket.stream
 
@@ -53,11 +48,11 @@ class UpdateTicketView(BaseView):
                 async_to_sync(channel_layer.group_send)(
                     stream.chat_room,
                     {
-                        "type": "update_name",
-                        "text": json.dumps(
+                        'type': 'update_name',
+                        'text': json.dumps(
                             {
-                                "data": {
-                                    "holder_uuid": str(ticket.uuid),
+                                'data': {
+                                    'holder_uuid': str(ticket.uuid),
                                     'holder_name': holder_name,
                                 },
                             }

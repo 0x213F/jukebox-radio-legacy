@@ -1,5 +1,4 @@
 import uuid
-
 from datetime import datetime
 
 from django.conf import settings
@@ -7,7 +6,6 @@ from django.db import models
 
 from proj.apps.music.models.managers import StreamManager
 from proj.apps.music.models.querysets import StreamQuerySet
-
 from proj.core.models import BaseModel
 
 
@@ -31,36 +29,21 @@ class Stream(BaseModel):
     objects = StreamManager.from_queryset(StreamQuerySet)()
 
     def __str__(self):
-        return self.title
+        checked = 'x' if self.status == self.STATUS_ACTIVATED else ' '
+        return f'[{checked}] {self.title}'
 
     # - - - -
     # fields |
     # - - - -
 
+    unique_custom_id = models.CharField(
+        max_length=64, unique=True, blank=True, null=True
+    )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
 
-    title = models.CharField(max_length=128)  # name
-
-    unique_custom_id = models.CharField(max_length=64, unique=True, blank=True, null=True)
-
-    current_record = models.ForeignKey(
-        'music.Record',
-        related_name='now_playing_at_streams',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=False,
-    )
-
-    tracklisting_begun_at = models.DateTimeField(null=True, blank=False)
-    tracklisting_terminates_at = models.DateTimeField(null=True, blank=False)
-    paused_at = models.DateTimeField(null=True, blank=False)
-    current_tracklisting = models.ForeignKey(
-        'music.TrackListing',
-        related_name='now_playing_tracklisting',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=False,
-    )
+    status = models.CharField(max_length=128, default=STATUS_IDLE)
+    title = models.CharField(max_length=128)
+    tags = models.CharField(max_length=128)
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -69,16 +52,29 @@ class Stream(BaseModel):
     )
     owner_name = models.CharField(max_length=128)
 
-    tags = models.CharField(max_length=128)
-
     is_private = models.BooleanField(default=False)
 
-    showtime_actual = models.DateTimeField(null=True, blank=False)
+    current_record = models.ForeignKey(
+        'music.Record',
+        related_name='now_playing_at_streams',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=False,
+    )
+    current_tracklisting = models.ForeignKey(
+        'music.TrackListing',
+        related_name='now_playing_tracklisting',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=False,
+    )
 
-    last_status_change_at = models.DateTimeField(null=True, blank=True)
+    tracklisting_begun_at = models.DateTimeField(null=True, blank=False)
+    tracklisting_terminates_at = models.DateTimeField(null=True, blank=False)
+    paused_at = models.DateTimeField(null=True, blank=False)
     record_terminates_at = models.DateTimeField(null=True, blank=False)
 
-    status = models.CharField(max_length=128, default=STATUS_IDLE)
+    last_status_change_at = models.DateTimeField(null=True, blank=True)
 
     # - - - - - -
     # properties |

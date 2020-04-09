@@ -24,33 +24,29 @@ class Ticket(BaseModel):
     objects = TicketManager.from_queryset(TicketQuerySet)()
 
     def __str__(self):
-        return f'User ({self.holder_id}) @ {self.stream}'
+        return f'({self.holder}) @ {self.stream}'
 
     # - - - -
     # fields |
     # - - - -
 
+    uuid = models.UUIDField(default=_uuid.uuid4, editable=False)
+
     stream = models.ForeignKey(
         'music.Stream', related_name='tickets', on_delete=models.DO_NOTHING,
     )
 
+    email = models.CharField(max_length=64, editable=False)
     holder = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,
         related_name='tickets',
         on_delete=models.DO_NOTHING,
     )
-    email = models.CharField(max_length=64, editable=False)
+
     name = models.CharField(max_length=32, editable=False)
-    uuid = models.UUIDField(default=_uuid.uuid4, editable=False)
-
-    is_administrator = models.BooleanField(default=False)
-    is_subscribed = models.BooleanField(default=False)
-    is_listed = models.BooleanField(default=False)
-
     status = models.CharField(max_length=32, editable=False)
-    updated_at = models.DateTimeField(null=True, blank=False)
-
-    # to be removed later
-    holder_uuid = models.UUIDField(default=_uuid.uuid4, editable=False)
     is_active = models.BooleanField(default=False)
+    is_administrator = models.BooleanField(default=False)
+
+    updated_at = models.DateTimeField(null=True, blank=False)

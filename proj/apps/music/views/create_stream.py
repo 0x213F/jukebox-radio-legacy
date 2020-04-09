@@ -1,4 +1,3 @@
-import uuid
 from datetime import datetime
 from random_username.generate import generate_username
 
@@ -15,7 +14,6 @@ UNSUBSCRIBED = 'unsubscribed'
 
 @method_decorator(login_required, name='dispatch')
 class CreateStreamView(BaseView):
-
     def post(self, request, **kwargs):
         '''
         Update the user's account information.
@@ -34,8 +32,7 @@ class CreateStreamView(BaseView):
 
         now = datetime.now()
         holder_name = (
-            request.user.profile.default_display_name
-            or generate_username(1)[0]
+            request.user.profile.default_display_name or generate_username(1)[0]
         )
 
         stream = Stream.objects.create(
@@ -55,10 +52,8 @@ class CreateStreamView(BaseView):
             email=request.user.email,
             name=holder_name,
             is_administrator=True,
-            is_listed=True,
             status=Ticket.STATUS_CREATED_STREAM,
             updated_at=now,
         )
-
 
         return self.http_response({})

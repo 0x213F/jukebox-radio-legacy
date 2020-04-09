@@ -1,16 +1,7 @@
-import json
-import requests
-
-import urllib.parse as urlparse
-from urllib.parse import urlencode
-
-from datetime import datetime
-from datetime import timedelta
+from django.apps import apps
 
 from proj.core.models.managers import BaseManager
 from proj.core.resources import Spotify
-
-from django.apps import apps
 
 
 class RecordManager(BaseManager):
@@ -19,8 +10,10 @@ class RecordManager(BaseManager):
     '''
 
     def serialize(self, record):
+        '''
+        Make a Queue object JSON serializable.
+        '''
         return {
-            'id': record.id,
             'name': record.name,
             'img': record.spotify_img,
         }
@@ -46,10 +39,7 @@ class RecordManager(BaseManager):
             tracks = Track.objects.bulk_create_from_album_info(album_info)
 
         record = Record.objects.create(
-            name=record_name,
-            user=user,
-            spotify_uri=uri,
-            spotify_img=img,
+            name=record_name, spotify_uri=uri, spotify_img=img,
         )
 
         TrackListing.objects.add_to_record(record, tracks)

@@ -26,9 +26,7 @@ class TrackListingManager(BaseManager):
 
         number = 1
         for track in tracks:
-            tl = TrackListing(
-                record=record, track=track, number=number,
-            )
+            tl = TrackListing(record=record, track=track, number=number,)
             tls.append(tl)
             number += 1
         TrackListing.objects.bulk_create(tls)

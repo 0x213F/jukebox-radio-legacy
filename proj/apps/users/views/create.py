@@ -11,7 +11,7 @@ from proj.apps.users.models import Profile
 
 @csrf_protect
 def create_view(request):
-    Ticket = apps.get_model('music', 'Ticket')
+    Ticket = apps.get_model("music", "Ticket")
 
     # form validation
     # - - - - - - - -
@@ -26,7 +26,7 @@ def create_view(request):
         user = request.user
         old_email = user.email
         if user.profile.activated_at:
-            raise ValueError('cannot change login of active user')
+            raise ValueError("cannot change login of active user")
         user.profile.activated_at = datetime.now()
         user.profile.save()
         user.email = email

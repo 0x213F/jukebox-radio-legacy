@@ -19,7 +19,7 @@ class TrackListing(BaseModel):
     objects = TrackListingManager.from_queryset(TrackListingQuerySet)()
 
     def __str__(self):
-        return f'[{self.number}] {self.record}: {self.track}'
+        return f'({self.number}) {self.record}: {self.track}'
 
     # - - - -
     # fields |

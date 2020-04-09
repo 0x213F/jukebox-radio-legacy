@@ -1,29 +1,19 @@
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from datetime import datetime
-from datetime import timedelta
 
 from django.apps import apps
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-from datetime import datetime
-from random_username.generate import generate_username
-
-from django.apps import apps
-
 from proj.core.views import BaseView
-from proj.apps.music import tasks
-
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
 
 
 channel_layer = get_channel_layer()
 
 
-
 @method_decorator(login_required, name='dispatch')
 class CreateQueueView(BaseView):
-
     def post(self, request, **kwargs):
         '''
         Update the user's account information.
@@ -40,42 +30,27 @@ class CreateQueueView(BaseView):
         stream_uuid = request.POST.get('stream_uuid', None)
 
         record = Record.objects.get_or_create_from_uri(
-            spotify_uri,
-            record_name=record_name,
-            img=img,
-            user=request.user,
+            spotify_uri, record_name=record_name, img=img, user=request.user,
         )
         stream = Stream.objects.get(uuid=stream_uuid)
 
-        queue = Queue.objects.create(
-            record=record,
-            stream=stream,
-            user=request.user,
-        )
+        queue = Queue.objects.create(record=record, stream=stream, user=request.user,)
 
         now = datetime.now()
 
         try:
-            should_play_song = (
-                now > stream.record_terminates_at.replace(tzinfo=None)
-            )
+            should_play_song = now > stream.record_terminates_at.replace(tzinfo=None)
         except Exception:
             should_play_song = True
 
         if should_play_song:
             stream, queue = Stream.objects.spin(queue, stream)
         else:
-            tickets = Ticket.objects.filter(
-                stream=stream,
-                is_administrator=True
-            )
+            tickets = Ticket.objects.filter(stream=stream, is_administrator=True)
             for ticket in tickets:
                 user_id = ticket.holder_id
                 async_to_sync(channel_layer.group_send)(
-                    f'user-{user_id}',
-                    {
-                        "type": "update_queue",
-                    },
+                    f'user-{user_id}', {'type': 'update_queue',},
                 )
 
         resp, _ = Queue.objects.serialize(queue)

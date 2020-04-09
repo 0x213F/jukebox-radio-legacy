@@ -59,17 +59,19 @@ class ProfileManager(BaseManager):
         await database_sync_to_async(profile.save)()
 
     async def join_stream_async(self, user, stream_uuid):
-        '''
+        """
         After getting the active stream by UUID:
 
         - Update the user's active stream on their profile.
         - Create or create a ticket record for the user.
-        '''
-        Stream = apps.get_model('music', 'Stream')
-        Ticket = apps.get_model('music', 'Ticket')
-        Profile = apps.get_model('users', 'Profile')
+        """
+        Stream = apps.get_model("music", "Stream")
+        Ticket = apps.get_model("music", "Ticket")
+        Profile = apps.get_model("users", "Profile")
 
-        get_stream = Stream.objects.select_related('current_record').get
+        get_stream = Stream.objects.select_related(
+            "current_record", "current_tracklisting", "current_tracklisting__track"
+        ).get
         stream = await database_sync_to_async(get_stream)(uuid=stream_uuid)
 
         get_profile = Profile.objects.get
@@ -79,8 +81,10 @@ class ProfileManager(BaseManager):
         await database_sync_to_async(profile.save)()
 
         get_ticket = Ticket.objects.get
-        ticket = await database_sync_to_async(get_ticket)(email=user.email, stream=stream)
-        print('!!!!')
+        ticket = await database_sync_to_async(get_ticket)(
+            email=user.email, stream=stream
+        )
+        print("!!!!")
         print(ticket.name)
 
         ticket.is_active = True

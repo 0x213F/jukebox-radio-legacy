@@ -1,16 +1,14 @@
 import json
-import requests
-import uuid
-from cryptography.fernet import Fernet
-
+from channels.db import database_sync_to_async
+from channels.layers import get_channel_layer
 from datetime import datetime
 
 from django.apps import apps
-from django.conf import settings
-
-from channels.db import database_sync_to_async
 
 from proj.core.models.managers import BaseManager
+
+
+channel_layer = get_channel_layer()
 
 
 class CommentManager(BaseManager):
@@ -18,62 +16,63 @@ class CommentManager(BaseManager):
     Django Manager used to manage Comment objects.
     '''
 
-    async def create_from_payload_async(self, user, payload, *, _cache=None, stream=None, ticket=None):
+    async def create_and_share_comment(
+        self, user, stream, ticket, text=None, status=None
+    ):
         '''
-        Create a comment from a user's channels payload.
+        Create a record of the user's comment and broadcast it to the stream.
         '''
         Comment = apps.get_model('music', 'Comment')
-        Stream = apps.get_model('music', 'Stream')
-        Ticket = apps.get_model('music', 'Ticket')
-        Profile = apps.get_model('users', 'Profile')
 
         now = datetime.utcnow()
-
-        text = payload["text"]
-
-        cmt = None
-        track = None
-        track_timestamp = None
         try:
-            cmt = await database_sync_to_async(
-                Comment.objects.select_related("track")
-                .filter(
-                    created_at__lte=now, stream=stream, status=Comment.STATUS_START,
-                )
-                .order_by("-created_at")
-                .first
-            )()
-            track = cmt.track
-            track_timestamp = now - cmt.created_at.replace(tzinfo=None)
-        except Exception as e:
-            pass
+            track = stream.current_tracklisting.track
+            track_timestamp = now - stream.tracklisting_begun_at.replace(tzinfo=None)
+        except AttributeError:
+            track = None
+            track_timestamp = None
 
-        return await database_sync_to_async(Comment.objects.create)(
-            status=Comment.STATUS_MID_HIGH,
+        comment = await database_sync_to_async(Comment.objects.create)(
+            status=status or Comment.STATUS_MID_HIGH,
             text=text,
             commenter=user,
-            stream=stream,
-            track=track,  # TODO
-            track_timestamp=track_timestamp,
             commenter_ticket=ticket,
+            stream=stream,
+            record=stream.current_record,
+            track=track,
+            track_timestamp=track_timestamp,
+        )
+
+        await channel_layer.group_send(
+            stream.chat_room,
+            {
+                'type': 'broadcast',
+                'text': json.dumps(
+                    {
+                        'data': {
+                            'comments': [
+                                Comment.objects.serialize(comment, ticket=ticket)
+                            ]
+                        }
+                    }
+                ),
+            },
         )
 
     def serialize(self, comment, ticket=None):
-        Stream = apps.get_model('music', 'Stream')
+        '''
+        Make a Comment object JSON serializable.
+        '''
         Ticket = apps.get_model('music', 'Ticket')
-        Track = apps.get_model('music', 'Track')
 
         if not ticket:
             ticket = comment.commenter_ticket
 
         return {
-            "id": comment.id,
-            "created_at": comment.created_at.isoformat(),
-            "status": comment.status,
-            "text": comment.text,
-            "stream": comment.stream_id,  # Stream.objects.serialize(comment.stream),
-            "track": comment.track_id,  # Track.objects.serialize(comment.track),
-            "ticket": Ticket.objects.serialize(
-                ticket
-            ),
+            'created_at': comment.created_at.isoformat(),
+            'status': comment.status,
+            'text': comment.text,
+            'stream': comment.stream_id,
+            'track': comment.track_id,
+            'ticket': Ticket.objects.serialize(ticket),
         }

@@ -5,4 +5,6 @@ class TrackListingQuerySet(BaseQuerySet):
     '''
     Django QuerySet used to query Track objects.
     '''
-    pass
+
+    def from_record(self, record):
+        return self.filter(record=record).order_by('number')

@@ -21,24 +21,22 @@ class Queue(BaseModel):
     objects = QueueManager.from_queryset(QueueQuerySet)()
 
     def __str__(self):
-        return self.name
+        return f'[{self.user}] {self.record}'
 
     # - - - -
     # fields |
     # - - - -
 
-    stream = models.ForeignKey(
-        "music.Stream", related_name="queued", on_delete=models.DO_NOTHING,
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='queued', on_delete=models.DO_NOTHING,
     )
 
     record = models.ForeignKey(
-        "music.Record", related_name="queued", on_delete=models.DO_NOTHING,
+        'music.Record', related_name='queued', on_delete=models.DO_NOTHING,
     )
 
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        related_name="queued",
-        on_delete=models.DO_NOTHING,
+    stream = models.ForeignKey(
+        'music.Stream', related_name='queued', on_delete=models.DO_NOTHING,
     )
 
     created_at = models.DateTimeField(default=datetime.now, blank=True)

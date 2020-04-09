@@ -18,8 +18,7 @@ class ListQueueView(BaseView):
         stream = Stream.objects.get(uuid=stream_uuid)
 
         queue_qs = (
-            Queue.objects
-            .select_related('record')
+            Queue.objects.select_related('record')
             .filter(stream=stream, played_at__isnull=True)
             .order_by('created_at')
         )

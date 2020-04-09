@@ -25,9 +25,7 @@ class StreamQuerySet(BaseQuerySet):
         return self.filter(
             Exists(
                 Ticket.objects.filter(
-                    stream_id=OuterRef('id'),
-                    email=user.email,
-                    is_administrator=True,
+                    stream_id=OuterRef('id'), email=user.email, is_administrator=True,
                 )
             )
         )
@@ -37,12 +35,16 @@ class StreamQuerySet(BaseQuerySet):
         QuerySet of stream objects that a user can access.
         '''
         Ticket = apps.get_model('music', 'Ticket')
-        return self.list_streams().exclude(
-            Exists(
-                Ticket.objects.filter(
-                    stream_id=OuterRef('id'),
-                    email=user.email,
-                    is_administrator=True,
+        return (
+            self.list_streams()
+            .exclude(
+                Exists(
+                    Ticket.objects.filter(
+                        stream_id=OuterRef('id'),
+                        email=user.email,
+                        is_administrator=True,
+                    )
                 )
             )
-        ).exclude(is_private=True)
+            .exclude(is_private=True)
+        )

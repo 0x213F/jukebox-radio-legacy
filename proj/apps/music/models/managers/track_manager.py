@@ -1,6 +1,7 @@
 from proj.core.models.managers import BaseManager
 from proj.core.resources import Spotify
 
+
 class TrackManager(BaseManager):
     '''
     Django Manager used to manage Track objects.
@@ -22,10 +23,7 @@ class TrackManager(BaseManager):
             pass
         spotify = Spotify(user)
         track_info = spotify.get_track_info(uri)
-        return Track.objects.create(
-            spotify_uri=uri,
-            **track_info,
-        )
+        return Track.objects.create(spotify_uri=uri, **track_info,)
 
     def bulk_create_from_album_info(self, album_info):
         '''
@@ -36,9 +34,7 @@ class TrackManager(BaseManager):
         # don't re-create tracks that already exist
         spotify_uris = [i['spotify_uri'] for i in album_info]
         tracks_from_db = Track.objects.filter(spotify_uri__in=spotify_uris)
-        existing_spotify_uris = (
-            tracks_from_db.values_list('spotify_uri', flat=True)
-        )
+        existing_spotify_uris = tracks_from_db.values_list('spotify_uri', flat=True)
 
         tracks = []
         for info in album_info:

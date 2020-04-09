@@ -8,7 +8,6 @@ from proj.core.views import BaseView
 
 @method_decorator(login_required, name='dispatch')
 class DeleteStreamView(BaseView):
-
     def post(self, request, **kwargs):
         '''
         Update the user's account information.

@@ -16,9 +16,9 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    '138.197.220.117',
-    'jukebox.radio',
-    'jukeboxrad.io',
+    "138.197.220.117",
+    "jukebox.radio",
+    "jukeboxrad.io",
 ]
 
 
@@ -53,7 +53,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "proj.urls"
@@ -121,14 +121,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 
 # /root/album_party/proj/site/static/
 # /Users/josh/Developer/jukebox-radio/proj/site/static/
 # STATIC_ROOT = "/Users/josh/Developer/jukebox-radio/proj/site/static/"
-STATICFILES_DIRS = [
-    '/Users/josh/Developer/jukebox-radio/proj/site/static/'
-]
+STATICFILES_DIRS = ["/Users/josh/Developer/jukebox-radio/proj/site/static/"]
 
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 

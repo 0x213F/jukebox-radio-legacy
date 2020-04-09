@@ -5,4 +5,5 @@ class TrackQuerySet(BaseQuerySet):
     '''
     Django QuerySet used to query Track objects.
     '''
+
     pass

@@ -1,8 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-from random_username.generate import generate_username
-
 from django.apps import apps
 
 from proj.core.views import BaseView
@@ -16,7 +14,6 @@ channel_layer = get_channel_layer()
 
 @method_decorator(login_required, name='dispatch')
 class DeleteQueueView(BaseView):
-
     def post(self, request, **kwargs):
         '''
         Update the user's account information.
@@ -29,17 +26,11 @@ class DeleteQueueView(BaseView):
         queue = Queue.objects.select_related('stream').get(id=queue_id)
         queue.delete()
 
-        tickets = Ticket.objects.filter(
-            stream=queue.stream,
-            is_administrator=True
-        )
+        tickets = Ticket.objects.filter(stream=queue.stream, is_administrator=True)
         for ticket in tickets:
             user_id = ticket.holder_id
             async_to_sync(channel_layer.group_send)(
-                f'user-{user_id}',
-                {
-                    "type": "update_queue",
-                },
+                f'user-{user_id}', {'type': 'update_queue',},
             )
 
         return self.http_response({})

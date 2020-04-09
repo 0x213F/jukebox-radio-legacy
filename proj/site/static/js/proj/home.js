@@ -105,18 +105,3 @@ function activate_stream() {
 
   window.location.href = `/stream/${unique_custom_id}`
 }
-
-  /////  //////////  /////
- /////  WEBSOCKETS  /////
-/////  //////////  /////
-
-function onopen(event) {
-  // NOOP
-}
-
-function onmessage(event) {
-  let text = event.data;
-  let payload = JSON.parse(text);
-
-  update_play_bar(payload);
-}

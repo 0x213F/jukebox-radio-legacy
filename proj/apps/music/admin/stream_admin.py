@@ -45,51 +45,7 @@ class StreamAdmin(admin.ModelAdmin):
         "comments",
     )
 
-    list_filter = (
-        # for related fields
-        ("status", DropdownFilter),
-    )
-
-    def get_form(self, request, obj=None, **kwargs):
-        if not obj:
-            self.fields = ("title",)
-            self.readonly_fields = ("",)
-        elif obj.status == Stream.STATUS_IDLE:
-            self.fields = ("title", "vote_controlled")
-            self.readonly_fields = ("",)
-        elif obj.status == Stream.STATUS_ACTIVATED:
-            if obj.time_left_on_current_record:
-                self.fields = (
-                    "title",
-                    "link_to_record",
-                    "tracks",
-                    "time_left",
-                    "record_terminates_at",
-                )
-                self.readonly_fields = (
-                    "link_to_record",
-                    "tracks",
-                    "time_left",
-                    "record_terminates_at",
-                )
-            else:
-                self.fields = (
-                    "title",
-                    "next_record",
-                    "time_left",
-                    "record_terminates_at",
-                )
-                self.readonly_fields = (
-                    "title",
-                    "link_to_record",
-                    "time_left",
-                    "record_terminates_at",
-                )
-        return super().get_form(request, obj, **kwargs)
-
-    # inlines = [
-    #     RecordInline,
-    # ]
+    list_filter = (("status", DropdownFilter),)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

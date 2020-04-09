@@ -8,7 +8,6 @@ from django.contrib.sites.shortcuts import get_current_site
 
 
 class Spotify(object):
-
     def __init__(self, user, profile=None, async_mode=False):
         self.user = user
         self.profile = profile
@@ -19,13 +18,17 @@ class Spotify(object):
 
     def store_access_token(self, access_token):
         profile = self.profile or self.user.profile
-        cipher_spotify_access_token = self._cipher_suite.encrypt(access_token.encode('utf-8')).decode('utf-8')
+        cipher_spotify_access_token = self._cipher_suite.encrypt(
+            access_token.encode("utf-8")
+        ).decode("utf-8")
         profile.spotify_access_token = cipher_spotify_access_token
         profile.save()
 
     def store_refresh_token(self, refresh_token):
         profile = self.profile or self.user.profile
-        cipher_spotify_refresh_token = self._cipher_suite.encrypt(refresh_token.encode('utf-8')).decode('utf-8')
+        cipher_spotify_refresh_token = self._cipher_suite.encrypt(
+            refresh_token.encode("utf-8")
+        ).decode("utf-8")
         profile.spotify_refresh_token = cipher_spotify_refresh_token
         profile.save()
 
@@ -63,11 +66,11 @@ class Spotify(object):
 
     def search_library(self, query, type):
         data = {
-            'q': query,
-            'type': type,
+            "q": query,
+            "type": type,
         }
         response = requests.get(
-            f'https://api.spotify.com/v1/search',
+            f"https://api.spotify.com/v1/search",
             params=data,
             headers={
                 "Authorization": f"Bearer {self.token}",
@@ -76,31 +79,34 @@ class Spotify(object):
         )
         response_json = response.json()
 
-        if type == 'album':
+        if type == "album":
             return [
                 {
-                    'artist': ', '.join([a['name'] for a in data['artists']]),
-                    'record_name': data['name'],
-                    'uri': data['uri'],
-                    'record_img_640': data['images'][0]['url'],
-                } for data in response_json['albums']['items']
+                    "artist": ", ".join([a["name"] for a in data["artists"]]),
+                    "record_name": data["name"],
+                    "uri": data["uri"],
+                    "record_img_640": data["images"][0]["url"],
+                }
+                for data in response_json["albums"]["items"]
             ]
-        elif type == 'playlist':
+        elif type == "playlist":
             return [
                 {
-                    'record_name': data['name'],
-                    'uri': data['uri'],
-                    'record_img_640': data['images'][0]['url'],
-                } for data in response_json['playlists']['items']
+                    "record_name": data["name"],
+                    "uri": data["uri"],
+                    "record_img_640": data["images"][0]["url"],
+                }
+                for data in response_json["playlists"]["items"]
             ]
         else:
             return [
                 {
-                    'artist': ', '.join([a['name'] for a in data['artists']]),
-                    'record_name': data['name'],
-                    'uri': data['uri'],
-                    'record_img_640': data['album']['images'][0]['url'],
-                } for data in response_json['tracks']['items']
+                    "artist": ", ".join([a["name"] for a in data["artists"]]),
+                    "record_name": data["name"],
+                    "uri": data["uri"],
+                    "record_img_640": data["album"]["images"][0]["url"],
+                }
+                for data in response_json["tracks"]["items"]
             ]
 
     def get_track_info(self, spotify_uri):
@@ -115,14 +121,14 @@ class Spotify(object):
         response_json = response.json()
 
         return {
-            'spotify_duration_ms': response_json["duration_ms"],
-            'spotify_name': response_json["name"][:32],
+            "spotify_duration_ms": response_json["duration_ms"],
+            "spotify_name": response_json["name"][:32],
         }
 
     def get_album_info(self, spotify_uri):
         spotify_id = spotify_uri[14:]
         response = requests.get(
-            f'https://api.spotify.com/v1/albums/{spotify_id}/tracks',
+            f"https://api.spotify.com/v1/albums/{spotify_id}/tracks",
             headers={
                 "Authorization": f"Bearer {self.token}",
                 "Content-Type": "application/json",
@@ -132,17 +138,17 @@ class Spotify(object):
 
         return [
             {
-                'spotify_uri': track['uri'],
-                'spotify_duration_ms': track['duration_ms'],
-                'spotify_name': track['name'],
-            } for track in response_json['items']
+                "spotify_uri": track["uri"],
+                "spotify_duration_ms": track["duration_ms"],
+                "spotify_name": track["name"],
+            }
+            for track in response_json["items"]
         ]
-
 
     def get_playlist_info(self, spotify_uri):
         spotify_id = spotify_uri[17:]
         response = requests.get(
-            f'https://api.spotify.com/v1/playlists/{spotify_id}',
+            f"https://api.spotify.com/v1/playlists/{spotify_id}",
             headers={
                 "Authorization": f"Bearer {self.token}",
                 "Content-Type": "application/json",
@@ -152,15 +158,16 @@ class Spotify(object):
 
         return [
             {
-                'spotify_uri': track['track']['uri'],
-                'spotify_duration_ms': track['track']['duration_ms'],
-                'spotify_name': track['track']['name'],
-            } for track in response_json['tracks']['items']
+                "spotify_uri": track["track"]["uri"],
+                "spotify_duration_ms": track["track"]["duration_ms"],
+                "spotify_name": track["track"]["name"],
+            }
+            for track in response_json["tracks"]["items"]
         ]
 
     async def get_user_info_async(self):
         response = await requests_async.get(
-            'https://api.spotify.com/v1/me',
+            "https://api.spotify.com/v1/me",
             headers={
                 "Authorization": f"Bearer {self.token}",
                 "Content-Type": "application/json",
@@ -179,7 +186,7 @@ class Spotify(object):
         )
         response_json = response.json()
         return {
-            'spotify_ms': response_json['progress_ms'],
-            'spotify_uri': response_json['item']['uri'],
-            'spotify_is_playing': response_json['is_playing'],
+            "spotify_ms": response_json["progress_ms"],
+            "spotify_uri": response_json["item"]["uri"],
+            "spotify_is_playing": response_json["is_playing"],
         }

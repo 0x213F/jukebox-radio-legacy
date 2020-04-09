@@ -15,26 +15,7 @@ class CommentQuerySet(BaseQuerySet):
         '''
         now = datetime.now()
         return (
-            self
-            .select_related('commenter_ticket')
-            .filter(
-                created_at__gte=now - timedelta(hours=2),
-                stream=stream,
-            )
+            self.select_related('commenter_ticket')
+            .filter(created_at__gte=now - timedelta(hours=2), stream=stream,)
             .order_by('created_at')
         )
-
-    def latest_comment(self, user, stream):
-        '''
-        Get a user's latest comment in a stream.
-        '''
-        Comment = self.model
-
-        latest_comment = (
-            self.filter(stream_id=stream.id).order_by('-created_at').first()
-        )
-
-        if not latest_comment:
-            raise Comment.DoesNotExist
-
-        return latest_comment
