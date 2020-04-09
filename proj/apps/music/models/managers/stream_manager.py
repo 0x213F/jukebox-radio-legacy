@@ -61,6 +61,7 @@ class StreamManager(BaseManager):
             Sum('track__spotify_duration_ms')
         )['track__spotify_duration_ms__sum']
         stream.record_terminates_at = now + timedelta(milliseconds=record_length)
+        stream.record_begun_at = now
         stream.save()
 
         async_to_sync(channel_layer.group_send)(

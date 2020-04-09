@@ -72,6 +72,7 @@ class Stream(BaseModel):
     tracklisting_begun_at = models.DateTimeField(null=True, blank=False)
     tracklisting_terminates_at = models.DateTimeField(null=True, blank=False)
     paused_at = models.DateTimeField(null=True, blank=False)
+    record_begun_at = models.DateTimeField(null=True, blank=False)
     record_terminates_at = models.DateTimeField(null=True, blank=False)
 
     last_status_change_at = models.DateTimeField(null=True, blank=True)
