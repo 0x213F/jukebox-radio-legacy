@@ -126,7 +126,9 @@ STATIC_URL = "/static/"
 # /root/album_party/proj/site/static/
 # /Users/josh/Developer/jukebox-radio/proj/site/static/
 STATIC_ROOT = "/root/album_party/proj/site/static/"
-STATICFILES_DIRS = ["/root/album_party/proj/site/static/"]
+STATICFILES_DIRS = [
+    # "/root/album_party/proj/site/static/"
+]
 
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 

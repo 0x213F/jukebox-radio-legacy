@@ -5,7 +5,7 @@ DB_HOST_URL = 'localhost'
 DB_HOST_PORT = ''
 DB_NAME = 'jukeboxradio'
 DB_USER = 'postgres'
-DB_PASSWORD = 'AJ:Mmzf`6VzF^xEL'
+DB_PASSWORD = 'postgresF3s8wxoaJJ'
 
 REDIS_HOST_URL = 'localhost'
 REDIS_HOST_PORT = 6379
