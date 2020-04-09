@@ -1,27 +1,15 @@
-import asyncio
-import requests_async
-from cryptography.fernet import Fernet
-from datetime import datetime
-from datetime import timedelta
 import json
-import uuid
-from urllib import parse
-
-from django.conf import settings
-from django.contrib.auth import get_user_model
-from django.core.serializers import serialize
-
+import requests_async
 from channels.consumer import AsyncConsumer
 from channels.db import database_sync_to_async
-from urllib.parse import urlparse
+from datetime import datetime
+from urllib import parse
 
-
-from proj.apps.music.models import Ticket
 from proj.apps.music.models import Comment
-from proj.apps.users.models import Profile
-from proj.apps.music.models import Stream
 from proj.apps.music.models import Record
-from proj.apps.music.models import TrackListing
+from proj.apps.music.models import Stream
+from proj.apps.music.models import Ticket
+from proj.apps.users.models import Profile
 from proj.core.resources import Spotify
 
 
@@ -32,8 +20,6 @@ class Consumer(AsyncConsumer):
     # - - - -
 
     PLAY_BAR_AUTHORIZE_SPOITFY = "authorize-spotify"
-
-    ACTION_COMMENT = "comment"
 
     # - - - -
     # helpers
@@ -125,7 +111,6 @@ class Consumer(AsyncConsumer):
 
     async def websocket_disconnect(self, event):
 
-        _user = self.scope["user"]
         await Profile.objects.leave_stream_async(self.scope["user"])
 
         ticket = self.scope["ticket"]
@@ -140,11 +125,6 @@ class Consumer(AsyncConsumer):
         await self.channel_layer.group_discard(f"user-{user_id}", self.channel_name)
 
         # Create record of comment.
-        payload = {
-            "stream_uuid": self.scope["stream"].uuid,
-            "status": Comment.STATUS_LEFT,
-            "text": None,
-        }
         await Comment.objects.create_and_share_comment(
             self.scope["user"],
             self.scope["stream"],
@@ -161,14 +141,14 @@ class Consumer(AsyncConsumer):
         try:
             if bool(event["playback"]) and bool(self.scope["spotify"].token):
                 await self.play_tracks(event["playback"])
-        except:
+        except Exception:
             pass
 
     async def play_tracks(self, playback):
         token = self.scope["spotify"].token
         action = playback["action"]
         data = json.dumps(playback["data"]) or {}
-        response = await requests_async.put(
+        await requests_async.put(
             f"https://api.spotify.com/v1/me/player/{action}",
             data=data,
             headers={
@@ -219,11 +199,6 @@ class Consumer(AsyncConsumer):
         )
 
         # create db log
-        join_payload = {
-            "stream_uuid": self.scope["stream"].uuid,
-            "status": Comment.STATUS_JOINED,
-            "text": None,
-        }
         await Comment.objects.create_and_share_comment(
             self.scope["user"],
             self.scope["stream"],
@@ -348,7 +323,7 @@ class Consumer(AsyncConsumer):
                     await self.send_record(record)
                 return
 
-        except Exception as e:
+        except Exception:
             # assuming everything is behaving as expected, we assume that the
             # user's Spotify client is disconnected
             await self.update_playbar("spotify-streaming-client-not-found")

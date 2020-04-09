@@ -63,12 +63,6 @@ function display_tune_in_streams(data) {
   $(".tune-in-streams").removeClass('hidden');
 
   $('.card.stream').click(activate_stream)
-
-  // var last_active_stream_uuid = data[KEY_USER].profile.last_active_stream_uuid;
-  // if(last_active_stream_uuid) {
-  //   // we assume this stream is still active
-  //   $(`[uuid='${last_active_stream_uuid}']`).find('.card').click()
-  // }
 }
 
 function display_broadcasting_streams(data) {
@@ -87,12 +81,6 @@ function display_broadcasting_streams(data) {
   $('#broadcasting-and-create-stream').removeClass('hidden');
 
   $('.card.stream').click(activate_stream)
-
-  // var last_active_stream_uuid = data[KEY_USER].profile.last_active_stream_uuid;
-  // if(last_active_stream_uuid) {
-  //   // we assume this stream is still active
-  //   $(`[uuid='${last_active_stream_uuid}']`).find('.card').click()
-  // }
 }
 
 // we need this inside play_bar.js so we can display a dialog to tell the user

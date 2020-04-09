@@ -1,16 +1,6 @@
-import json
-import uuid
-
-from datetime import datetime
-
 from channels.db import database_sync_to_async
 
-from random_username.generate import generate_username
-
 from django.apps import apps
-from django.db.models import Case
-from django.db.models import Value
-from django.db.models import When
 
 from proj.core.models.managers import BaseManager
 
@@ -44,7 +34,6 @@ class ProfileManager(BaseManager):
                 "active_stream_ticket": Ticket.objects.serialize(active_ticket),
                 "scopes": scopes,
                 "active_stream": Stream.objects.serialize(active_stream),
-                "active_stream_uuid": user.profile.active_stream_uuid,
                 "default_name": user.profile.default_display_name,
             },
         }
@@ -55,7 +44,6 @@ class ProfileManager(BaseManager):
         """
         Profile = self.model
         profile = await database_sync_to_async(Profile.objects.get)(user_id=user.id)
-        profile.active_stream_uuid = None
         await database_sync_to_async(profile.save)()
 
     async def join_stream_async(self, user, stream_uuid):
@@ -77,7 +65,6 @@ class ProfileManager(BaseManager):
         get_profile = Profile.objects.get
         profile = await database_sync_to_async(get_profile)(user=user)
 
-        profile.active_stream_uuid = stream.uuid
         await database_sync_to_async(profile.save)()
 
         get_ticket = Ticket.objects.get
