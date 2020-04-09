@@ -21,6 +21,6 @@ class ListBroadcastingStreamsView(BaseView):
                 )
                 for s in streams
             ],
-            'user': (Profile.objects.serialize_user(request.user,)),
+            'user': Profile.objects.serialize_user(request.user,),
         }
-        return self.http_response(response)
+        return self.http_response_200(response)

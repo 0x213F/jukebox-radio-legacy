@@ -8,10 +8,6 @@ from django.utils.decorators import method_decorator
 from proj.core.views import BaseView
 
 
-SUBSCRIBED = 'subscribed'
-UNSUBSCRIBED = 'unsubscribed'
-
-
 @method_decorator(login_required, name='dispatch')
 class CreateStreamView(BaseView):
     def post(self, request, **kwargs):
@@ -22,13 +18,12 @@ class CreateStreamView(BaseView):
         Ticket = apps.get_model('music.Ticket')
 
         if not request.user.profile.activated_at:
-            raise Exception('come on now!')
+            self.http_response_403('Not permitted')
 
         stream_name = request.POST.get('name', None)
         tags = request.POST.get('tags', None)
-
         if not stream_name or not tags:
-            raise Exception('Must provide a stream name')
+            self.http_response_400('Missing data')
 
         now = datetime.now()
         holder_name = (
@@ -56,4 +51,4 @@ class CreateStreamView(BaseView):
             updated_at=now,
         )
 
-        return self.http_response({})
+        return self.http_response_200({})

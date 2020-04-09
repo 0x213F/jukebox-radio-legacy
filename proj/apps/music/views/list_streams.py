@@ -25,4 +25,4 @@ class ListStreamsView(BaseView):
             ],
             'user': (Profile.objects.serialize_user(request.user,)),
         }
-        return self.http_response(response)
+        return self.http_response_200(response)

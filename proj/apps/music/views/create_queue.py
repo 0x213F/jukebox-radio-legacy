@@ -53,5 +53,4 @@ class CreateQueueView(BaseView):
                     f'user-{user_id}', {'type': 'update_queue',},
                 )
 
-        resp, _ = Queue.objects.serialize(queue)
-        return self.http_response(resp)
+        return self.http_response_200({})

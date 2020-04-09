@@ -33,10 +33,7 @@ class UpdateTicketView(BaseView):
 
         if email:
             if not stream.owner == request.user:
-                raise ValueError(
-                    'Authenticated user is not stream owner and is not '
-                    'allowed to promote another user to host.'
-                )
+                self.http_response_403('Not permitted')
             if is_administrator:
                 Ticket.objects.promote_to_host(email, stream)
             else:
@@ -63,4 +60,4 @@ class UpdateTicketView(BaseView):
                 ticket.stream.owner_name = holder_name
                 ticket.stream.save()
 
-        return self.http_response({})
+        return self.http_response_200({})

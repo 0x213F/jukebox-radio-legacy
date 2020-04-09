@@ -34,6 +34,7 @@ class TicketManager(BaseManager):
             defaults={
                 'name': generate_username(1)[0],
                 'stream': stream,
+                'status': Ticket.STATUS_ADDED_AS_HOST,
                 'updated_at': datetime.now(),
             },
         )

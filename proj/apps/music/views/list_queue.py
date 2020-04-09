@@ -26,5 +26,4 @@ class ListQueueView(BaseView):
         response = {
             'queue': Queue.objects.serialize_list(stream, queue_qs),
         }
-
-        return self.http_response(response)
+        return self.http_response_200(response)

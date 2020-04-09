@@ -22,7 +22,7 @@ class UpdateStreamView(BaseView):
         is_private = stream_is_private == 'on'
 
         if not stream_name or not stream_tags:
-            raise Exception('Missing required parameters')
+            self.http_response_400('Missing data')
 
         kwargs = {}
         if unique_custom_id:
@@ -32,4 +32,4 @@ class UpdateStreamView(BaseView):
             title=stream_name, tags=stream_tags, is_private=is_private, **kwargs
         )
 
-        return self.http_response({'unique_custom_id': unique_custom_id})
+        return self.http_response_200({'unique_custom_id': unique_custom_id})

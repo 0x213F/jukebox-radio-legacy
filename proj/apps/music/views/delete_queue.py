@@ -33,4 +33,4 @@ class DeleteQueueView(BaseView):
                 f'user-{user_id}', {'type': 'update_queue',},
             )
 
-        return self.http_response({})
+        return self.http_response_200({})

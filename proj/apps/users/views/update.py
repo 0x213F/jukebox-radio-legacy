@@ -23,4 +23,4 @@ class UpdateView(BaseView):
             if last_name:
                 request.user.last_name = last_name
             request.user.save()
-        return self.http_response({})
+        return self.http_response_200({})

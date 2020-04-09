@@ -18,8 +18,9 @@ class DeleteStreamView(BaseView):
 
         stream = Stream.objects.get(uuid=stream_uuid)
 
-        assert stream.owner == request.user
+        if stream.owner != request.user:
+            self.http_response_403('Not permitted')
 
         stream.delete()
 
-        return self.http_response({})
+        return self.http_response_200({})
