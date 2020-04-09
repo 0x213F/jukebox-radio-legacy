@@ -11,7 +11,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "(&t)o93xlj#71p_m@u#4iymmi*+xcopurz1=209mgrt#&(p2wn"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -125,8 +125,8 @@ STATIC_URL = "/static/"
 
 # /root/album_party/proj/site/static/
 # /Users/josh/Developer/jukebox-radio/proj/site/static/
-# STATIC_ROOT = "/Users/josh/Developer/jukebox-radio/proj/site/static/"
-STATICFILES_DIRS = ["/Users/josh/Developer/jukebox-radio/proj/site/static/"]
+STATIC_ROOT = "/root/album_party/proj/site/static/"
+STATICFILES_DIRS = ["/root/album_party/proj/site/static/"]
 
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 

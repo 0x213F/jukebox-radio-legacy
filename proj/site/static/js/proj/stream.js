@@ -108,14 +108,14 @@ function onmessage(event) {
     try {
       update_play_bar(payload);
     } catch(e) {
-      
+
     }
     display_comments(payload);
   }
 }
 
 var endpoint = (
-  'ws://' + window.location.host +
+  'wss://' + window.location.host +
   `/?uuid=${STREAM_UUID}&display_comments=true`
 )
 
