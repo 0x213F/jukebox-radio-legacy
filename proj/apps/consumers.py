@@ -344,6 +344,7 @@ class Consumer(AsyncConsumer):
                 offsync_ms < 5000
             )
 
+            print(f'User already in sync? {user_is_already_in_sync}')
             if user_is_already_in_sync:
                 record = self.scope["stream"].current_record
                 if onload:
@@ -361,7 +362,7 @@ class Consumer(AsyncConsumer):
         uris = (
             self.scope["stream"]
             .current_record.tracks_through.filter(
-                number__gte=self.scope["stream"].current_tracklisting.number
+                number__gte=current_tracklisting.number
             )
             .order_by("number")
             .values_list("track__spotify_uri", flat=True)
