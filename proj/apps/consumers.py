@@ -316,6 +316,8 @@ class Consumer(AsyncConsumer):
                     ).order_by('relative_duration').last
                 )()
                 if current_tracklisting:
+                    print('- - - - -')
+                    print(current_tracklisting.track.spotify_name)
                     elapsed_track_duration = current_tracklisting.relative_duration
                     current_spotify_uri = current_tracklisting.track.spotify_uri
                 else:
@@ -326,7 +328,7 @@ class Consumer(AsyncConsumer):
                 current_spotify_uri = None
 
             print(ms_since_record_was_played)
-            print(elapsed_track_duration)
+            print(elapsed_track_duration + spotify_track_duration_ms, elapsed_track_duration, spotify_track_duration_ms)
 
             ms_since_track_was_played = (
                 datetime.now()
@@ -358,7 +360,9 @@ class Consumer(AsyncConsumer):
         # get the track playing and tracks in the queue
         uris = (
             self.scope["stream"]
-            .current_record.tracks_through.all()
+            .current_record.tracks_through.filter(
+                number__gte=self.scope["stream"].current_tracklisting.number
+            )
             .order_by("number")
             .values_list("track__spotify_uri", flat=True)
         )
@@ -372,7 +376,7 @@ class Consumer(AsyncConsumer):
         ms_since_track_was_played = (
             datetime.now()
             - self.scope["stream"].record_begun_at.replace(tzinfo=None)
-        ).total_seconds() * 1000
+        ).total_seconds() * 1000 - elapsed_track_duration
         await self.play_tracks(
             {
                 "action": "play",
