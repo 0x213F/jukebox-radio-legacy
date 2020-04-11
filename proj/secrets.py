@@ -11,7 +11,7 @@ REDIS_HOST_URL = 'localhost'
 REDIS_HOST_PORT = 6379
 
 SECURITY_KEY = '(&t)o93xlj#71p_m@u#4iymmi*+xcopurz1=209mgrt#&(p2wn'
-DEBUG = False
+DEBUG = True
 
 SENTRY_SECRET = 'https://799457e098f64288b8e1be59be59465d@sentry.io/1871862'
 

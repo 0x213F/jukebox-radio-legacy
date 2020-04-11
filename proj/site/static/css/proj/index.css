@@ -32,7 +32,6 @@
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
   border-left: none!important;
-  background-color: rgb(256, 256, 256, 0.95)!important;
 }
 
 .jr-btn-sq {
@@ -43,12 +42,14 @@
 }
 
 .jr-btn.btn-secondary,
-.jr-btn-sq.btn-secondary {
+.jr-btn-sq.btn-secondary,
+.jr-btn-sq-right-half {
   background-color: rgb(256, 256, 256, 0.95)!important;
 }
 
 .jr-btn.btn-secondary:hover,
-.jr-btn-sq.btn-secondary:hover {
+.jr-btn-sq.btn-secondary:hover,
+.jr-btn-sq-right-half:hover {
   background-color: #5764c6!important;
 }
 
@@ -57,17 +58,22 @@
 .jr-btn.btn-link:active,
 .jr-btn-sq.btn-link:hover,
 .jr-btn-sq.btn-link:focus,
-.jr-btn-sq.btn-link:active {
+.jr-btn-sq.btn-link:active,
+.jr-btn-sq-right-half:hover,
+.jr-btn-sq-right-half:focus,
+.jr-btn-sq-right-half:active {
   box-shadow: 0 0 0 2px rgba(234, 235, 248, 0.5)!important;
 }
 
 .jr-btn.btn-secondary:focus,
-.jr-btn-sq.btn-secondary:focus {
+.jr-btn-sq.btn-secondary:focus,
+.jr-btn-sq-right-half:focus {
   background-color: #fbfbfe!important;
 }
 
 .jr-btn.btn-secondary:active,
-.jr-btn-sq.btn-secondary:active {
+.jr-btn-sq.btn-secondary:active,
+.jr-btn-sq-right-half:active {
   background-color: #4c59c2!important;
 }
 
