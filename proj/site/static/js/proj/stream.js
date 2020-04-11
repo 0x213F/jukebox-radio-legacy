@@ -114,8 +114,14 @@ function onmessage(event) {
   }
 }
 
+if (location.protocol === 'https:') {
+  var prefix = 'wss://';
+} else {
+  var prefix = 'ws://'
+}
+
 var endpoint = (
-  'wss://' + window.location.host +
+  prefix + window.location.host +
   `/?uuid=${STREAM_UUID}&display_comments=true`
 )
 

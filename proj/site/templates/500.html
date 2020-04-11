@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
+{% endblock %}
+
+{% block main %}
+
+<div class="main center-horizontal card" style="height: calc(100% - 24px);">
+
+  <div class="card-body">
+
+    <!-- - - - - - - - --->
+    <!--  WEBPAGE TITLE -->
+    <div class="jr-flex-center jr-title no-select">
+      <span>Server Error</span>
+    </div>
+
+    <!-- - - - - - - - --->
+    <!--  WEBPAGE LINKS -->
+    <div class="jr-flex-center">
+      <a class="btn btn-lg btn-primary jr-btn-primary" href="/">Return Home</a>
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}

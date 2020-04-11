@@ -1,3 +1,4 @@
+
 from django.conf import settings
 from django.contrib import admin
 from django.conf.urls.static import static
@@ -15,3 +16,7 @@ urlpatterns = [
     path("", include("proj.site.urls")),
     path("admin/", admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+
+handler404 = 'proj.core.views.handler_404.handler_404'
+handler500 = 'proj.core.views.handler_500.handler_500'
