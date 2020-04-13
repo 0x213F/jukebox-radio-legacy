@@ -7,7 +7,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib import messages
 
-import proj.secrets as secrets
+from proj import secrets
 from proj.core.views import BaseView
 from proj.core.resources import Spotify
 

@@ -4,6 +4,7 @@ from random_username.generate import generate_username
 
 from django.apps import apps
 
+from proj import secrets
 from proj.core.views import BaseView
 
 
@@ -48,5 +49,6 @@ class StreamView(BaseView):
                 "ticket": ticket,
                 "is_host": is_host,
                 "should_display_queue_button": True,
+                'secrets': secrets,
             },
         )
