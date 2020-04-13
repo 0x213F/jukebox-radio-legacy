@@ -5,6 +5,7 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 
 from proj.core.views import BaseView
+from proj import secrets
 
 
 class LinkSpotifyView(BaseView):
@@ -28,5 +29,5 @@ class LinkSpotifyView(BaseView):
             is_new_user = True
 
         return self.template_response(
-            request, "linkspotify.html", {"is_new_user": is_new_user}
+            request, "linkspotify.html", {"is_new_user": is_new_user, 'secrets': secrets}
         )

@@ -1,11 +1,3 @@
-function stream_updated(data) {
-  if(data.unique_custom_id) {
-    window.location.href = `/stream/${data.unique_custom_id}/`
-  } else {
-    window.location.href = `/stream/${STREAM_UNIQUE_CUSTOM_ID}/`
-  }
-}
-
 
   /////  /////  /////
  /////  HOSTS  /////
@@ -19,7 +11,7 @@ function generate_host(ticket) {
       <form class="ajax-form"
             type="post"
             url="../../../api/music/update_ticket/"
-            redirect="/stream/${STREAM_UNIQUE_CUSTOM_ID}/">
+            onsuccess="refresh_hosts">
 
         <input class="hidden" type="text" name="email" value="${ticket.email}">
         <input class="hidden" type="text" name="stream_uuid" value="${STREAM_UUID}">
@@ -41,6 +33,7 @@ function generate_host(ticket) {
 function display_hosts(data) {
   let list_tickets = data[KEY_TICKETS];
   let $hosts_container = $('.hosts-list');
+  $hosts_container.empty();
   if(!list_tickets.length) {
     return;
   }
@@ -61,4 +54,19 @@ function share_website() {
     });
   }
   $(this).blur();
+}
+
+function list_hosts() {
+  $('#list-hosts-form').submit();
+  $('#add-host-status').addClass('success');
+  $('#add-host-status').removeClass('error');
+  $('#add-host-status').text('Success');
+  setTimeout(function() {
+    $('#add-host-status').removeClass('success');
+    $('#add-host-status').text('');
+  }, 1200)
+}
+
+function refresh_hosts() {
+  $('#list-hosts-form').submit();
 }

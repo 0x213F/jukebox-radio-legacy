@@ -11,7 +11,8 @@
 
     <!-- - - - - - - - - - - - - -->
     <!--  LOAD PAGE (LIST HOSTS) -->
-    <form class="ajax-form hidden"
+    <form id="list-hosts-form"
+          class="ajax-form hidden"
           type="get"
           url="../../../api/music/list_hosts/"
           submit="onload"
@@ -38,7 +39,7 @@
           class="ajax-form card-body"
           url="../../../api/music/update_stream/"
           type="post"
-          onsuccess="stream_updated">
+          onsuccess="display_status_success">
 
       <input class="hidden" type="text" name="stream_uuid" value="{{ stream.uuid }}">
 
@@ -71,7 +72,7 @@
 
       <div class="form-group">
         <button type="submit" form="update-stream" class="btn btn-lg btn-secondary jr-btn">Update</button>
-        <span class="ajax-form-error"><span>
+        <span class="ajax-form-status"><span>
       </div>
 
     </form>
@@ -85,7 +86,8 @@
     <form id="update-display-name"
           class="ajax-form card-body"
           url="../../../api/music/update_ticket/"
-          type="post">
+          type="post"
+          onsuccess="display_status_success">
 
       <div class="form-group">
         <label class="form-label label-lg" for="change-display-name">Display Name</label>
@@ -96,7 +98,7 @@
 
       <div class="form-group">
         <button type="submit" form="update-display-name" class="btn btn-secondary btn-lg jr-btn">Update</button>
-        <span class="ajax-form-error"><span>
+        <span class="ajax-form-status"><span>
       </div>
 
     </form>
@@ -115,7 +117,7 @@
           class="ajax-form card-body"
           url="../../../api/music/update_ticket/"
           type="post"
-          redirect="/stream/{{ stream.unique_custom_id }}/">
+          onsuccess="list_hosts">
 
       <div class="form-group">
         <label class="form-label" for="email-signup">Email</label>
@@ -127,7 +129,7 @@
 
       <div class="form-group">
         <button type="submit" form="add-host" class="btn btn-lg btn-secondary jr-btn">Add Host</button>
-        <span class="ajax-form-error"><span>
+        <span id="add-host-status" class="ajax-form-status"><span>
       </div>
 
     </form>

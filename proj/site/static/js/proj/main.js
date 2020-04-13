@@ -20,7 +20,7 @@ function setup_ajax_forms() {
       }
 
       let url = $this.attr("url")
-      $error = $this.find(".ajax-form-error");
+      $status = $this.find(".ajax-form-status");
       redirect = $this.attr("redirect");
       let onsuccess = $this.attr("onsuccess");
       if($this.attr("type") === "websocket") {
@@ -45,10 +45,12 @@ function setup_ajax_forms() {
             type: $this.attr("type"),
             data: $this.serialize(),
             error: function(e) {
-                $error.text(e.statusText);
+                $status.text(e.statusText);
+                $status.addClass('error');
+                $status.removeClass('success');
             },
             success: function(e) {
-                if(onsuccess) window[onsuccess](e);
+                if(onsuccess) window[onsuccess](e, $status);
                 if(redirect) window.location = redirect;
             }
         });
@@ -74,4 +76,15 @@ function encodeHTML(s) {
   } else {
     return ''
   }
+}
+
+function display_status_success(event, $status) {
+  $status.addClass('success');
+  $status.removeClass('error');
+  $status.text('Success');
+
+  setTimeout(function() {
+    $status.removeClass('success');
+    $status.text('');
+  }, 1200)
 }

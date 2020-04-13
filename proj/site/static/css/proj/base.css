@@ -83,9 +83,16 @@ html, body {
     display: none;  // Safari and Chrome
 }
 
-.ajax-form-error {
+.ajax-form-status {
   margin-left: 1.4em;
+}
+
+.ajax-form-status.error {
   color: red;
+}
+
+.ajax-form-status.success {
+  color: green;
 }
 
 .chip {

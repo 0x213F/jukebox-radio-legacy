@@ -41,17 +41,23 @@ class TicketManager(BaseManager):
         ticket.is_administrator = True
         ticket.save()
 
-        user = User.objects.get(email__iexact=email)
-        async_to_sync(channel_layer.group_send)(
-            f'user-{user.id}', {'type': 'promote_to_host',},
-        )
+        try:
+            user = User.objects.get(email__iexact=email)
+            async_to_sync(channel_layer.group_send)(
+                f'user-{user.id}', {'type': 'promote_to_host',},
+            )
+        except User.DoesNotExist:
+            pass
 
     def demote_from_host(self, email, stream):
         Ticket = self.model
 
         Ticket.objects.filter(stream=stream, email=email).update(is_administrator=False)
 
-        user = User.objects.get(email__iexact=email)
-        async_to_sync(channel_layer.group_send)(
-            f'user-{user.id}', {'type': 'demote_from_host',},
-        )
+        try:
+            user = User.objects.get(email__iexact=email)
+            async_to_sync(channel_layer.group_send)(
+                f'user-{user.id}', {'type': 'demote_from_host',},
+            )
+        except User.DoesNotExist:
+            pass
