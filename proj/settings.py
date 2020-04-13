@@ -43,6 +43,7 @@ CHANNEL_LAYERS = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -121,9 +122,17 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-STATICFILES_DIRS = [f'{BASE_DIR}/proj/site/static/']
 
-DATABASE_ENCRYPTION_KEY = "wL-8K4RlFSlmcMaHiSKsGiudPljrVkK_v11wq-Y9-vE=".encode("utf-8")
+STATIC_ROOT = f'{BASE_DIR}/proj/site/static/'
+STATICFILES_DIRS = [f'{BASE_DIR}/proj/site/static/']
+# STATIC_ROOT = "/root/album_party/proj/site/static/"
+# STATICFILES_DIRS = ["/root/album_party/proj/site/static/"]
+
+
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+DATABASE_ENCRYPTION_KEY = secrets.DATABASE_ENCRYPTION_KEY.encode("utf-8")
 
 
 # Error reporting

@@ -1,0 +1,24 @@
+.comment {
+  margin-bottom: 6px;
+}
+
+.comment > .c-commenter {
+  background-color: rgb(256, 256, 256, 0.95)!important;
+  color: #727e96;
+  margin-top: 8px;
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  padding-left: 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.comment > .c-text {
+  background-color: rgba(234, 235, 248, 0.5)!important;
+  color: #727e96;
+  border-radius: 12px;
+  padding: 7px 12px;
+  display: table-cell;
+  font-size: 16px;
+}
