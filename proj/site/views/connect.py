@@ -27,8 +27,8 @@ class ConnectView(BaseView):
                 "grant_type": "authorization_code",
                 "code": code,
                 "redirect_uri": f"{secrets.SPOTIFY_HTTP}://{current_site}/connect",
-                "client_id": "133a25c7195344dbafd4f50d7450330f",
-                "client_secret": "4029f523ad8a46cb86e29b9dd54cc257",
+                "client_id": secrets.SPOTIFY_CLIENT_ID,
+                "client_secret": secrets.SPOITFY_CLIENT_SECRET,
             },
         )
         response_json = response.json()

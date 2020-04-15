@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 
+from proj import secrets
 from proj.core.resources import Spotify
 
 
@@ -28,8 +29,8 @@ class Command(BaseCommand):
                     data={
                         "grant_type": "refresh_token",
                         "refresh_token": spotify_refresh_token,
-                        "client_id": "133a25c7195344dbafd4f50d7450330f",
-                        "client_secret": "4029f523ad8a46cb86e29b9dd54cc257",
+                        "client_id": secrets.SPOTIFY_CLIENT_ID,
+                        "client_secret": secrets.SPOITFY_CLIENT_SECRET,
                     },
                 )
                 response_json = response.json()
