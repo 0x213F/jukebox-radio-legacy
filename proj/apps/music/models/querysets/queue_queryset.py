@@ -6,4 +6,8 @@ class QueueQuerySet(BaseQuerySet):
     Django QuerySet used to query Queue objects.
     '''
 
-    pass
+    def get_up_next(self, stream):
+        return (
+            self.filter(stream=stream, played_at__isnull=True)
+            .order_by('created_at').first()
+        )

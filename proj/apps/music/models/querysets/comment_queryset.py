@@ -16,6 +16,6 @@ class CommentQuerySet(BaseQuerySet):
         now = datetime.now()
         return (
             self.select_related('commenter_ticket')
-            .filter(created_at__gte=now - timedelta(hours=2), stream=stream,)
+            .filter(created_at__gte=now - timedelta(minutes=30), stream=stream)
             .order_by('created_at')
         )

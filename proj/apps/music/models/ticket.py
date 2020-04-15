@@ -14,6 +14,11 @@ class Ticket(BaseModel):
     STATUS_CREATED_STREAM = 'created_stream'
     STATUS_ADDED_AS_HOST = 'added_as_host'
 
+    STATUS_CHOICES = [
+        (STATUS_CREATED_STREAM, 'Created stream'),
+        (STATUS_ADDED_AS_HOST, 'Added as host'),
+    ]
+
     # - - - - - - -
     # config model |
     # - - - - - - -
@@ -45,8 +50,6 @@ class Ticket(BaseModel):
     )
 
     name = models.CharField(max_length=32, editable=False)
-    status = models.CharField(max_length=32, editable=False)
+    status = models.CharField(choices=STATUS_CHOICES, max_length=32)
     is_active = models.BooleanField(default=False)
     is_administrator = models.BooleanField(default=False)
-
-    updated_at = models.DateTimeField(null=True, blank=False)

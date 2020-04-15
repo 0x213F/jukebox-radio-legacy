@@ -26,7 +26,6 @@ class CreateQueueView(BaseView):
         spotify_uri = request.POST.get('uri', None)
         img = request.POST.get('img', None)
         record_name = request.POST.get('record_name', None)
-
         stream_uuid = request.POST.get('stream_uuid', None)
 
         record = Record.objects.get_or_create_from_uri(
@@ -37,20 +36,26 @@ class CreateQueueView(BaseView):
         queue = Queue.objects.create(record=record, stream=stream, user=request.user,)
 
         now = datetime.now()
-
-        try:
+        if stream.record_terminates_at:
             should_play_song = now > stream.record_terminates_at.replace(tzinfo=None)
-        except Exception:
+        else:
             should_play_song = True
 
         if should_play_song:
             stream, queue = Stream.objects.spin(queue, stream)
         else:
-            tickets = Ticket.objects.filter(stream=stream, is_administrator=True)
-            for ticket in tickets:
+            payload = {
+                'type': 'send_update',
+                'text': {
+                    'updated': {
+                        'queues': [Queue.objects.serialize(queue)],
+                    }
+                }
+            }
+            for ticket in Ticket.objects.administrators(stream):
                 user_id = ticket.holder_id
                 async_to_sync(channel_layer.group_send)(
-                    f'user-{user_id}', {'type': 'update_queue',},
+                    f'user-{user.id}', payload
                 )
 
         return self.http_response_200({})

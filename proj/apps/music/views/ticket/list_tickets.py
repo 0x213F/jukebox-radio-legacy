@@ -7,10 +7,10 @@ from proj.apps.users.models import Profile
 
 
 @method_decorator(login_required, name='dispatch')
-class ListHostsView(BaseView):
+class ListTicketsView(BaseView):
     def get(self, request, **kwargs):
         '''
-        List all of the stream objects that a user can access.
+        List all of the ticket objects which are hosts.
         '''
         stream_uuid = request.GET.get('stream_uuid', None)
 

@@ -8,6 +8,9 @@ class TrackManager(BaseManager):
     '''
 
     def serialize(self, track):
+        '''
+        Make a Track object JSON serializable.
+        '''
         if not track:
             return None
         return {
@@ -15,15 +18,15 @@ class TrackManager(BaseManager):
             'spotify_uri': track.spotify_uri,
         }
 
-    def get_or_create_from_uri(self, uri, user=None):
+    def get_or_create_from_uri(self, spotify_uri, user=None):
         Track = self.model
         try:
-            return Track.objects.get(spotify_uri=uri)
+            return Track.objects.get(spotify_uri=spotify_uri)
         except Track.DoesNotExist:
             pass
         spotify = Spotify(user)
-        track_info = spotify.get_track_info(uri)
-        return Track.objects.create(spotify_uri=uri, **track_info,)
+        track_info = spotify.get_track_info(spotify_uri)
+        return Track.objects.create(spotify_uri=spotify_uri, **track_info)
 
     def bulk_create_from_album_info(self, album_info):
         '''

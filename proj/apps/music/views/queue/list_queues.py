@@ -6,23 +6,24 @@ from proj.core.views import BaseView
 
 
 @method_decorator(login_required, name='dispatch')
-class ListStreamsView(BaseView):
+class ListQueuesView(BaseView):
     def get(self, request, **kwargs):
         '''
         List all of the stream objects that a user can access.
         '''
+        Queue = apps.get_model('music', 'Queue')
         Stream = apps.get_model('music', 'Stream')
-        Profile = apps.get_model('users', 'Profile')
 
-        streams = Stream.objects.list_tune_in_streams(request.user).order_by('id')
+        stream_uuid = request.GET.get('stream_uuid', None)
+        stream = Stream.objects.get(uuid=stream_uuid)
+
+        queue_qs = (
+            Queue.objects.select_related('record')
+            .filter(stream=stream, played_at__isnull=True)
+            .order_by('created_at')
+        )
 
         response = {
-            'streams': [
-                Stream.objects.serialize(
-                    s, active_users=s.tickets.filter(is_active=True)
-                )
-                for s in streams
-            ],
-            'user': (Profile.objects.serialize_user(request.user,)),
+            'queue': Queue.objects.serialize_list(stream, queue_qs),
         }
         return self.http_response_200(response)

@@ -19,6 +19,9 @@ class StreamManager(BaseManager):
     '''
 
     def serialize(self, stream, active_users=None):
+        '''
+        Make a Stream object JSON serializable.
+        '''
         if not stream:
             return None
 
@@ -41,6 +44,15 @@ class StreamManager(BaseManager):
         Spin the record.
         '''
         Stream = apps.get_model('music', 'Stream')
+
+        if not queue:
+            stream.current_record = None
+            stream.current_tracklisting = None
+            stream.save()
+            async_to_sync(channel_layer.group_send)(
+                stream.chat_room, {'type': 'sync_playback'},
+            )
+            return
 
         record = queue.record
 

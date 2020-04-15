@@ -7,6 +7,9 @@ class TrackListingManager(BaseManager):
     '''
 
     def serialize(self, tracklisting):
+        '''
+        Make a TrackListing object JSON serializable.
+        '''
         return {
             'track': {
                 'spotify_name': tracklisting.track.spotify_name,

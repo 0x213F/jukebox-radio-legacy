@@ -16,49 +16,6 @@ class CommentManager(BaseManager):
     Django Manager used to manage Comment objects.
     '''
 
-    async def create_and_share_comment(
-        self, user, stream, ticket, text=None, status=None
-    ):
-        '''
-        Create a record of the user's comment and broadcast it to the stream.
-        '''
-        Comment = apps.get_model('music', 'Comment')
-
-        now = datetime.utcnow()
-        try:
-            track = stream.current_tracklisting.track
-            track_timestamp = now - stream.tracklisting_begun_at.replace(tzinfo=None)
-        except AttributeError:
-            track = None
-            track_timestamp = None
-
-        comment = await database_sync_to_async(Comment.objects.create)(
-            status=status or Comment.STATUS_MID_HIGH,
-            text=text,
-            commenter=user,
-            commenter_ticket=ticket,
-            stream=stream,
-            record=stream.current_record,
-            track=track,
-            track_timestamp=track_timestamp,
-        )
-
-        await channel_layer.group_send(
-            stream.chat_room,
-            {
-                'type': 'broadcast',
-                'text': json.dumps(
-                    {
-                        'data': {
-                            'comments': [
-                                Comment.objects.serialize(comment, ticket=ticket)
-                            ]
-                        }
-                    }
-                ),
-            },
-        )
-
     def serialize(self, comment, ticket=None):
         '''
         Make a Comment object JSON serializable.
@@ -76,3 +33,44 @@ class CommentManager(BaseManager):
             'track': comment.track_id,
             'ticket': Ticket.objects.serialize(ticket),
         }
+
+    async def create_and_share_comment_async(
+        self, user, stream, ticket, text=None, status=None
+    ):
+        '''
+        Create a record of the user's comment and broadcast it to the stream.
+        '''
+        Comment = apps.get_model('music', 'Comment')
+
+        now = datetime.utcnow()
+        try:
+            track = stream.current_tracklisting.track
+            track_timestamp = now - stream.tracklisting_begun_at.replace(tzinfo=None)
+        except AttributeError:
+            track = None
+            track_timestamp = None
+
+        comment = await database_sync_to_async(Comment.objects.create)(
+            status=status or Comment.STATUS_COMMENTED,
+            text=text,
+            commenter=user,
+            commenter_ticket=ticket,
+            stream=stream,
+            record=stream.current_record,
+            track=track,
+            track_timestamp=track_timestamp,
+        )
+
+        async_to_sync(channel_layer.group_send)(
+            stream.chat_room,
+            {
+                'type': 'send_update',
+                'text': {
+                    'created': {
+                        'comments': [
+                            Comment.objects.serialize(comment, ticket=ticket)
+                        ]
+                    }
+                }
+            },
+        )

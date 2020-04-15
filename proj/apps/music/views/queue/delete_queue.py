@@ -26,11 +26,18 @@ class DeleteQueueView(BaseView):
         queue = Queue.objects.select_related('stream').get(id=queue_id)
         queue.delete()
 
-        tickets = Ticket.objects.filter(stream=queue.stream, is_administrator=True)
-        for ticket in tickets:
+        payload = {
+            'type': 'send_update',
+            'text': {
+                'deleted': {
+                    'queues': [Queue.objects.serialize(queue)],
+                }
+            }
+        }
+
+        queue.stream
+        for ticket in Ticket.objects.administrators(stream=queue.stream):
             user_id = ticket.holder_id
-            async_to_sync(channel_layer.group_send)(
-                f'user-{user_id}', {'type': 'update_queue',},
-            )
+            async_to_sync(channel_layer.group_send)(f'user-{user.id}', payload)
 
         return self.http_response_200({})

@@ -64,8 +64,6 @@ class Consumer(AsyncConsumer):
 
         # add to channel
         await self.add_to_channel()
-        user_id = self.scope["user"].id
-        await self.channel_layer.group_add(f"user-{user_id}", self.channel_name)
 
         # send back recent chat activity
         should_display_comments = url_params["display_comments"] == "true"
@@ -98,7 +96,7 @@ class Consumer(AsyncConsumer):
             await self.sync_playback()
             return
 
-        await Comment.objects.create_and_share_comment(
+        await Comment.objects.create_and_share_comment_async(
             self.scope["user"],
             self.scope["stream"],
             self.scope["ticket"],
@@ -110,31 +108,23 @@ class Consumer(AsyncConsumer):
     # - - - - - -
 
     async def websocket_disconnect(self, event):
-
-        await Profile.objects.leave_stream_async(self.scope["user"])
-
-        ticket = self.scope["ticket"]
-
-        ticket.is_active = False
-        await database_sync_to_async(Ticket.objects.filter(id=ticket.id).update)(
-            is_active=False
+        await Profile.objects.leave_stream_async(
+            self.scope["user"], self.scope["ticket"]
         )
-
         await self.remove_from_channel()
-        user_id = self.scope["user"].id
-        await self.channel_layer.group_discard(f"user-{user_id}", self.channel_name)
-
-        # Create record of comment.
-        await Comment.objects.create_and_share_comment(
-            self.scope["user"],
-            self.scope["stream"],
-            self.scope["ticket"],
-            status=Comment.STATUS_LEFT,
-        )
 
     # - - - - - - - - - - - -
     # broadcast
     # - - - - - - - - - - - -
+
+    async def send_update(self, data):
+        await self.send({
+            'type': 'websocket.send',
+            'text': json.dumps({
+                'type': 'update',
+                'data': data,
+            })
+        })
 
     async def broadcast(self, event):
         await self.send({"type": "websocket.send", "text": event["text"]})
@@ -192,14 +182,19 @@ class Consumer(AsyncConsumer):
         await self.send({"type": "websocket.accept"})
 
     async def add_to_channel(self):
-        await (
-            self.channel_layer.group_add(
-                self.scope["stream"].chat_room, self.channel_name
-            )
+        # add to group channel
+        await self.channel_layer.group_add(
+            self.scope["stream"].chat_room, self.channel_name
+        )
+
+        # add to individual channel
+        user_id = self.scope['user'].id
+        await self.channel_layer.group_add(
+            f'user-{user_id}', self.channel_name
         )
 
         # create db log
-        await Comment.objects.create_and_share_comment(
+        await Comment.objects.create_and_share_comment_async(
             self.scope["user"],
             self.scope["stream"],
             self.scope["ticket"],
@@ -207,8 +202,23 @@ class Consumer(AsyncConsumer):
         )
 
     async def remove_from_channel(self):
+        # remove from group channel
         await self.channel_layer.group_discard(
-            self.scope["stream"].chat_room, self.channel_name
+            self.scope['stream'].chat_room, self.channel_name
+        )
+
+        # remove from individual channel
+        user_id = self.scope['user'].id
+        await self.channel_layer.group_discard(
+            f'user-{user_id}', self.channel_name
+        )
+
+        # create db log
+        await Comment.objects.create_and_share_comment_async(
+            self.scope["user"],
+            self.scope["stream"],
+            self.scope["ticket"],
+            status=Comment.STATUS_LEFT,
         )
 
     async def channel_post_comment(self, comment):

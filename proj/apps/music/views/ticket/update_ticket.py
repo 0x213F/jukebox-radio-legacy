@@ -42,22 +42,22 @@ class UpdateTicketView(BaseView):
             if holder_name:
                 ticket.name = holder_name
                 ticket.save()
+                user = ticket.holder
                 async_to_sync(channel_layer.group_send)(
-                    stream.chat_room,
+                    f'user-{user_id}',
                     {
-                        'type': 'update_name',
-                        'text': json.dumps(
-                            {
-                                'data': {
-                                    'holder_uuid': str(ticket.uuid),
-                                    'holder_name': holder_name,
-                                },
+                        'type': 'send_update',
+                        'text': {
+                            'updated': {
+                                'users': [Profile.objects.serialize_user(
+                                    user, active_ticket=ticket
+                                )],
                             }
-                        ),
+                        }
                     },
                 )
-            if ticket.stream.owner_id == request.user.id:
-                ticket.stream.owner_name = holder_name
-                ticket.stream.save()
+            if stream.owner_id == request.user.id:
+                stream.owner_name = holder_name
+                stream.save()
 
         return self.http_response_200({})

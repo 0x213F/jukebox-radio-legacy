@@ -6,10 +6,10 @@ from proj.core.resources import Spotify
 
 
 @method_decorator(login_required, name='dispatch')
-class SearchLibraryView(BaseView):
+class SearchSpotifyView(BaseView):
     def get(self, request, **kwargs):
         '''
-        Search the user's library.
+        Search a user's library using the Spotify API.
         '''
         query = request.GET.get('query', None)
         type = request.GET.get('type', None)

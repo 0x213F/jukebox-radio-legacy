@@ -51,4 +51,17 @@ class CreateStreamView(BaseView):
             updated_at=now,
         )
 
+        async_to_sync(channel_layer.group_send)(
+            'homepage',
+            {
+                'type': 'send_update',
+                'text': {
+                    'created': {
+                        'stream': [Stream.objects.serialize(stream)],
+                    }
+                }
+            },
+        )
+
+
         return self.http_response_200({})
