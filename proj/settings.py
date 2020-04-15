@@ -124,7 +124,7 @@ STATIC_URL = "/static/"
 
 
 STATIC_ROOT = f'{BASE_DIR}/proj/site/static/'
-STATICFILES_DIRS = [f'{BASE_DIR}/proj/site/static/']
+# STATICFILES_DIRS = [f'{BASE_DIR}/proj/site/static/']
 # STATIC_ROOT = "/root/album_party/proj/site/static/"
 # STATICFILES_DIRS = ["/root/album_party/proj/site/static/"]
 
