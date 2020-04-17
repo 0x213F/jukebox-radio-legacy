@@ -123,13 +123,10 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 
-STATIC_ROOT = f'{BASE_DIR}/proj/site/static/'
-# STATICFILES_DIRS = [f'{BASE_DIR}/proj/site/static/']
-# STATIC_ROOT = "/root/album_party/proj/site/static/"
-# STATICFILES_DIRS = ["/root/album_party/proj/site/static/"]
-
-
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+if not secrets.DEBUG:
+    STATIC_ROOT = f'{BASE_DIR}/proj/site/static/'
+else:
+    STATICFILES_DIRS = [f'{BASE_DIR}/proj/site/static/']
 
 
 DATABASE_ENCRYPTION_KEY = secrets.DATABASE_ENCRYPTION_KEY.encode("utf-8")

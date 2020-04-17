@@ -10,7 +10,7 @@ function generate_host(ticket) {
 
       <form class="ajax-form"
             type="post"
-            url="../../../api/music/update_ticket/"
+            url="../../../api/music/ticket/update/"
             onsuccess="refresh_hosts">
 
         <input class="hidden" type="text" name="email" value="${ticket.email}">

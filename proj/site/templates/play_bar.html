@@ -3,7 +3,7 @@
 
     <form id="search-library"
           class="ajax-form"
-          url="../../../api/music/search_library/"
+          url="../../../api/music/search/spotify/"
           type="get"
           beforesubmit="validate_search_eligible"
           onsuccess="display_search_results">
@@ -123,7 +123,7 @@
 <form id="form-load-queue"
       class="ajax-form hidden"
       type="get"
-      url="../../../api/music/list_queue/"
+      url="../../../api/music/queue/list/"
       submit="onload"
       onsuccess='populate_queue'>
   <input type="text" name="stream_uuid" value="{{ stream.uuid }}">

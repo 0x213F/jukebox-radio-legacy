@@ -14,7 +14,7 @@
     <form id="list-hosts-form"
           class="ajax-form hidden"
           type="get"
-          url="../../../api/music/list_hosts/"
+          url="../../../api/music/ticket/list"
           submit="onload"
           onsuccess='display_hosts'>
           <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
@@ -37,7 +37,7 @@
     <!--  UPDATE STREAM  -->
     <form id="update-stream"
           class="ajax-form card-body"
-          url="../../../api/music/update_stream/"
+          url="../../../api/music/stream/update/"
           type="post"
           onsuccess="display_status_success">
 
@@ -85,7 +85,7 @@
     <!--  UPDATE TICKET  -->
     <form id="update-display-name"
           class="ajax-form card-body"
-          url="../../../api/music/update_ticket/"
+          url="../../../api/music/ticket/update/"
           type="post"
           onsuccess="display_status_success">
 
@@ -115,7 +115,7 @@
     <!--  ADD HOST   -->
     <form id="add-host"
           class="ajax-form card-body"
-          url="../../../api/music/update_ticket/"
+          url="../../../api/music/ticket/update/"
           type="post"
           onsuccess="list_hosts">
 
@@ -140,7 +140,7 @@
 
     <form id="delete-stream"
           class="ajax-form card-body"
-          url="../../../api/music/delete_stream/"
+          url="../../../api/music/stream/delete/"
           type="post"
           redirect="/">
       <input class="hidden" type="text" name="stream_uuid" value="{{ stream.uuid }}">

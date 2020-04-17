@@ -16,7 +16,7 @@ class ListStreamsView(BaseView):
 
         stream_type = request.GET.get('stream_type', None)
 
-        if stream_type == 'broadcasting':
+        if stream_type == 'hosting':
             streams = Stream.objects.list_broadcasting_streams(request.user).order_by('id')
         else:
             streams = Stream.objects.list_tune_in_streams(request.user).order_by('id')

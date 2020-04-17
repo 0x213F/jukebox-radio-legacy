@@ -19,6 +19,7 @@ class UpdateTicketView(BaseView):
         Update the user's account information.
         '''
         Ticket = apps.get_model('music.Ticket')
+        Profile = apps.get_model('users.Profile')
 
         email = request.POST.get('email', None)
         holder_name = request.POST.get('display_name', None)
@@ -44,7 +45,7 @@ class UpdateTicketView(BaseView):
                 ticket.save()
                 user = ticket.holder
                 async_to_sync(channel_layer.group_send)(
-                    f'user-{user_id}',
+                    f'user-{user.id}',
                     {
                         'type': 'send_update',
                         'text': {

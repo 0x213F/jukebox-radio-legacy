@@ -1,3 +1,4 @@
+from asgiref.sync import async_to_sync
 import json
 from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
@@ -61,7 +62,7 @@ class CommentManager(BaseManager):
             track_timestamp=track_timestamp,
         )
 
-        async_to_sync(channel_layer.group_send)(
+        await channel_layer.group_send(
             stream.chat_room,
             {
                 'type': 'send_update',

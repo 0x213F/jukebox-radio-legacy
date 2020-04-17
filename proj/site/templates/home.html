@@ -13,8 +13,8 @@
 
   <div class="card-body">
 
-    <!-- - - - - - - - --->
-    <!--  CREATE STREAM -->
+    <!-- - - - - - - - - -->
+    <!--  CREATE STREAM  -->
     {% if user_is_active %}
     <div id="create-stream-button">
       <form class="ajax-form" redirect="/createstream">
@@ -25,8 +25,8 @@
     </div>
     {% endif %}
 
-    <!-- - - - - - - - - - - - - --->
-    <!--  COMPLETE ACCOUNT SIGNUP -->
+    <!-- - - - - - - - - - - - - - -->
+    <!--  COMPLETE ACCOUNT SIGNUP  -->
     {% if not user_is_active %}
     <div id="create-stream-button" class="card-body" style="cursor: not-allowed;">
       <form>
@@ -45,8 +45,8 @@
     </div>
     {% endif %}
 
-    <!-- - - - - - - - - - - - -->
-    <!--  BROADCASTING STREAMS -->
+    <!-- - - - - - - --->
+    <!--  MY STREAMS  -->
     <div id="broadcasting-and-create-stream" class="card-header hidden">
       <div class="card-title h5" style="margin: 16px; margin-top: 0px; line-height: 40px; height: 40px; display: inline-block; color: #727e96;">My Streams</div>
 
@@ -61,24 +61,26 @@
 
     <form class="ajax-form hidden"
           type="get"
-          url="../api/music/list_broadcasting_streams/"
+          url="../api/music/stream/list/"
           submit="onload"
           onsuccess='display_broadcasting_streams'>
+        <input class="display: none;" type="text" name="stream_type" value="hosting">
     </form>
 
     <div class="broadcasting-streams hidden"></div>
 
-    <!-- - - - - - - - - --->
-    <!--  TUNE IN STREAMS -->
+    <!-- - - - - - -->
+    <!--  EXPLORE  -->
     <div class="card-header">
       <div class="card-title h5" style="margin: 16px; margin-top: 32px; color: #727e96;">Explore</div>
     </div>
 
     <form class="ajax-form hidden"
           type="get"
-          url="../api/music/list_streams/"
+          url="../api/music/stream/list/"
           submit="onload"
           onsuccess='display_tune_in_streams'>
+        <input class="display: none;" type="text" name="stream_type" value="explore">
     </form>
 
     <div class="tune-in-streams hidden"></div>
@@ -95,7 +97,7 @@
       </form>
       {% endif %}
 
-      <form class="ajax-form" url="../api/user/logout/" type="post" redirect="/">
+      <form class="ajax-form" url="../api/user/signout/" type="post" redirect="/">
         <button class="btn btn-lg btn-link jr-btn" style="margin-left: 12px; margin-top: 24px;">
           Logout
         </button>

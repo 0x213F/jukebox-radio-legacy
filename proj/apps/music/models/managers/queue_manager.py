@@ -25,7 +25,7 @@ class QueueManager(BaseManager):
         return (
             {
                 'id': queue.id,
-                'stream_uuid': queue.stream.uuid,
+                'stream_uuid': str(queue.stream.uuid),
                 'record_id': queue.record_id,
                 'record_name': queue.record.name,
                 'record_spotify_img': queue.record.spotify_img,

@@ -1,9 +1,14 @@
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
 from django.apps import apps
 
 from proj.core.views import BaseView
+
+
+channel_layer = get_channel_layer()
 
 
 @method_decorator(login_required, name='dispatch')

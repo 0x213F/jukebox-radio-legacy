@@ -2,6 +2,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from datetime import datetime
 from random_username.generate import generate_username
+from django.apps import apps
 
 from django.contrib.auth.models import User
 
@@ -86,8 +87,8 @@ class TicketManager(BaseManager):
         ticket.is_administrator = False
         ticket.save()
 
-        try:
-            user = ticket.holder
+        user = ticket.holder
+        if user:
             async_to_sync(channel_layer.group_send)(
                 f'user-{user.id}',
                 {
@@ -101,5 +102,3 @@ class TicketManager(BaseManager):
                     }
                 },
             )
-        except User.DoesNotExist:
-            pass

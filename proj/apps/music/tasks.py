@@ -15,6 +15,6 @@ def schedule_spin(stream_id):
 
     stream = Stream.objects.get(id=stream_id)
 
-    queue = Queue.objects.select_related('stream', 'record').get_up_next()
+    queue = Queue.objects.select_related('stream', 'record').get_up_next(stream)
 
     Stream.objects.spin(queue, stream)

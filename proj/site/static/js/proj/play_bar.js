@@ -148,7 +148,7 @@ function add_to_queue(e) {
   var $this = $(this);
 
   $.ajax({
-      url: '../../api/music/create_queue/',
+      url: '../../api/music/queue/create/',
       type: 'post',
       data: {
         'record_name': $this.attr('record-name'),
@@ -187,7 +187,7 @@ function generate_queue(queue) {
     <div class="queue-card">
       <form class="ajax-form"
             type="post"
-            url="../../../api/music/delete_queue/"
+            url="../../../api/music/queue/delete/"
             redirect="/stream/${STREAM_UNIQUE_CUSTOM_ID}/">
         <input class="hidden" type="text" name="queue_id" value="${queue.id}">
 

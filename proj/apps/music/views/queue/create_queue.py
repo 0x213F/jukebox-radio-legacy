@@ -55,7 +55,7 @@ class CreateQueueView(BaseView):
             for ticket in Ticket.objects.administrators(stream):
                 user_id = ticket.holder_id
                 async_to_sync(channel_layer.group_send)(
-                    f'user-{user.id}', payload
+                    f'user-{user_id}', payload
                 )
 
         return self.http_response_200({})

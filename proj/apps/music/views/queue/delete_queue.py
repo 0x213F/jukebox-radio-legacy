@@ -38,6 +38,6 @@ class DeleteQueueView(BaseView):
         queue.stream
         for ticket in Ticket.objects.administrators(stream=queue.stream):
             user_id = ticket.holder_id
-            async_to_sync(channel_layer.group_send)(f'user-{user.id}', payload)
+            async_to_sync(channel_layer.group_send)(f'user-{user_id}', payload)
 
         return self.http_response_200({})

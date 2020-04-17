@@ -22,7 +22,7 @@ urlpatterns = [
     path('stream/create/', CreateStreamView.as_view()),
     path('stream/delete/', DeleteStreamView.as_view()),
     path('stream/list/', ListStreamsView.as_view()),
-    path('stream/create/', UpdateStreamView.as_view()),
+    path('stream/update/', UpdateStreamView.as_view()),
 
     path('ticket/list/', ListTicketsView.as_view()),
     path('ticket/update/', UpdateTicketView.as_view()),

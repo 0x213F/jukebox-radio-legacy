@@ -10,7 +10,7 @@ from proj.apps.users.models import Profile
 
 
 @csrf_protect
-def create_view(request):
+def signup_view(request):
     Ticket = apps.get_model("music", "Ticket")
 
     # form validation

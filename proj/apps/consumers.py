@@ -109,7 +109,7 @@ class Consumer(AsyncConsumer):
 
     async def websocket_disconnect(self, event):
         await Profile.objects.leave_stream_async(
-            self.scope["user"], self.scope["ticket"]
+            self.scope["user"], self.scope["ticket"], self.scope["stream"]
         )
         await self.remove_from_channel()
 
@@ -120,10 +120,7 @@ class Consumer(AsyncConsumer):
     async def send_update(self, data):
         await self.send({
             'type': 'websocket.send',
-            'text': json.dumps({
-                'type': 'update',
-                'data': data,
-            })
+            'text': json.dumps(data),
         })
 
     async def broadcast(self, event):

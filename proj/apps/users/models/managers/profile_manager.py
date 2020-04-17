@@ -43,7 +43,8 @@ class ProfileManager(BaseManager):
         - Update the user's active stream on their profile.
         '''
         Profile = self.model
-        
+        Ticket = apps.get_model('music', 'Ticket')
+
         ticket.is_active = False
         await database_sync_to_async(Ticket.objects.filter(id=ticket.id).update)(
             is_active=False

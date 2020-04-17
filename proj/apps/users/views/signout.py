@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_protect
 
 
 @csrf_protect
-def logout_view(request):
+def signout_view(request):
 
     # If you press logout you get forgotten.
     #   -- Saba
