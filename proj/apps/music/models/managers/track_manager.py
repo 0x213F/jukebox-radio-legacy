@@ -16,6 +16,7 @@ class TrackManager(BaseManager):
         return {
             'spotify_name': track.spotify_name,
             'spotify_uri': track.spotify_uri,
+            'spotify_duration_ms': track.spotify_duration_ms,
         }
 
     def get_or_create_from_uri(self, spotify_uri, user=None):

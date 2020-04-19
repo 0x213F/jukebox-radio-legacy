@@ -62,7 +62,7 @@ class ProfileManager(BaseManager):
         Profile = apps.get_model('users', 'Profile')
 
         get_stream = Stream.objects.select_related(
-            'current_record', 'current_tracklisting', 'current_tracklisting__track'
+            'current_queue', 'current_queue__record', 'current_tracklisting', 'current_tracklisting__track'
         ).get
         stream = await database_sync_to_async(get_stream)(uuid=stream_uuid)
 

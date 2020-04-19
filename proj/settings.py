@@ -128,6 +128,10 @@ if not secrets.DEBUG:
 else:
     STATICFILES_DIRS = [f'{BASE_DIR}/proj/site/static/']
 
+    # Disable OAuthlib's HTTPS verification when running locally.
+    # *DO NOT* leave this option enabled in production.
+    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
 
 DATABASE_ENCRYPTION_KEY = secrets.DATABASE_ENCRYPTION_KEY.encode("utf-8")
 

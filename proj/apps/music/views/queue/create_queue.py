@@ -18,22 +18,19 @@ class CreateQueueView(BaseView):
         '''
         Update the user's account information.
         '''
-        Queue = apps.get_model('music.Queue')
-        Record = apps.get_model('music.Record')
         Stream = apps.get_model('music.Stream')
-        Ticket = apps.get_model('music.Ticket')
 
         spotify_uri = request.POST.get('uri', None)
-        img = request.POST.get('img', None)
-        record_name = request.POST.get('record_name', None)
         stream_uuid = request.POST.get('stream_uuid', None)
 
-        record = Record.objects.get_or_create_from_uri(
-            spotify_uri, record_name=record_name, img=img, user=request.user,
-        )
         stream = Stream.objects.get(uuid=stream_uuid)
 
-        queue = Queue.objects.create(record=record, stream=stream, user=request.user,)
+        if spotify_uri:
+            queue = self.create_spotify_queue(request, stream)
+        elif youtube_id:
+            queue = self.create_youtube_queue(request, stream)
+        else:
+            raise ValueError('Needs ID')
 
         now = datetime.now()
         if stream.record_terminates_at:
@@ -59,3 +56,40 @@ class CreateQueueView(BaseView):
                 )
 
         return self.http_response_200({})
+
+
+def create_spotify_queue(request, stream):
+    QueueListing = apps.get_model('music', 'QueueListing')
+    Queue = apps.get_model('music.Queue')
+    Record = apps.get_model('music.Record')
+    Ticket = apps.get_model('music.Ticket')
+
+    spotify_uri = request.POST.get('uri', None)
+    img = request.POST.get('img', None)
+    record_name = request.POST.get('record_name', None)
+
+    record = Record.objects.get_or_create_from_uri(
+        spotify_uri, record_name=record_name, img=img, user=request.user,
+    )
+
+    queue = Queue.objects.create(record=record, stream=stream, user=request.user)
+
+    return record, queue
+
+
+def create_youtube_queue(request, stream):
+    Queue = apps.get_model('music.Queue')
+    Record = apps.get_model('music.Record')
+    Stream = apps.get_model('music.Stream')
+
+    youtube_id = request.POST.get('youtube_id', None)
+
+    record = Record.objects.get_or_create_from_youtube_id(youtube_id)
+
+    queue = Queue.objects.create(
+        record=record,
+        stream=stream,
+        user=request.user,
+    )
+
+    return record, queue

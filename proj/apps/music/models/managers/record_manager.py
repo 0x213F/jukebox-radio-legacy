@@ -2,6 +2,7 @@ from django.apps import apps
 
 from proj.core.models.managers import BaseManager
 from proj.core.resources import Spotify
+from proj.core.resources import YouTube
 
 
 class RecordManager(BaseManager):
@@ -14,8 +15,9 @@ class RecordManager(BaseManager):
         Make a Queue object JSON serializable.
         '''
         return {
-            'name': record.name,
+            'spotify_name': record.spotify_name,
             'img': record.spotify_img,
+            'spotify_uri': record.spotify_uri,
         }
 
     def get_or_create_from_uri(self, uri, record_name, img, user=None):
@@ -39,9 +41,30 @@ class RecordManager(BaseManager):
             tracks = Track.objects.bulk_create_from_album_info(album_info)
 
         record = Record.objects.create(
-            name=record_name, spotify_uri=uri, spotify_img=img,
+            spotify_name=record_name, spotify_uri=uri, spotify_img=img,
         )
 
         TrackListing.objects.add_to_record(record, tracks)
+
+        return record
+
+    def get_or_create_from_youtube_id(self, youtube_id):
+        Record = apps.get_model('music', 'Record')
+        Track = apps.get_model('music', 'Track')
+        TrackListing = apps.get_model('music', 'TrackListing')
+        try:
+            # assume the record is finalized
+            return Record.objects.get(youtube_id=youtube_id)
+        except Record.DoesNotExist:
+            pass
+
+        video_info = YouTube.get_info(youtube_id)
+
+        record = Record.objects.create(
+            youtube_id=video_info['youtube_id'],
+            youtube_name=video_info['youtube_name'],
+            youtube_duration_ms=video_info['youtube_duration_ms'],
+            youtube_img_high=video_info['youtube_img_high'],
+        )
 
         return record

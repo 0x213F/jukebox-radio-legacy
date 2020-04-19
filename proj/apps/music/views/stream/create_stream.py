@@ -40,7 +40,6 @@ class CreateStreamView(BaseView):
             tags=tags,
             owner=request.user,
             owner_name=holder_name,
-            last_status_change_at=now,
             status=Stream.STATUS_ACTIVATED,
         )
         stream.unique_custom_id = str(stream.uuid)

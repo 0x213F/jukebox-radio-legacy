@@ -16,7 +16,7 @@ class RecordAdmin(admin.ModelAdmin):
     )
 
     list_display = (
-        'name',
+        'spotify_name',
     )
 
     def get_queryset(self, request):

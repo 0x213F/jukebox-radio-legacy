@@ -1,4 +1,5 @@
 from .comment_queryset import CommentQuerySet
+from .queue_listing_queryset import QueueListingQuerySet
 from .queue_queryset import QueueQuerySet
 from .record_queryset import RecordQuerySet
 from .stream_queryset import StreamQuerySet

@@ -16,7 +16,6 @@ var emojiStringToArray = function (str) {
 };
 
 function generate_stream(stream, class_name) {
-
   var background_color = ''
   if(stream.status === 'activated') {
     background_color = '#32b643';
@@ -28,7 +27,7 @@ function generate_stream(stream, class_name) {
   for(tag of emojiStringToArray(stream.tags)) {
     tags_html += `<span class="chip" style="border-radius: 28px; margin-right: 8px; width: 28px; line-height: 28px; text-align: center; display: inline-block;">${tag}</span>`
   }
-  var user_count = 3;
+
   return `
   <div class="card stream ${class_name}" uuid="${stream.uuid}" unique_custom_id="${stream.unique_custom_id}" style="cursor: pointer;">
     <div class="card-body" style="width: 100%;">

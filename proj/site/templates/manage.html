@@ -49,16 +49,16 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label label-lg" for="tags-create-stream">Emojis</label>
-        <input class="form-input input-lg jr-input" id="tags-create-stream" type="text" name="stream_tags" placeholder="Dance, Uplifting, ..."  value="{{ stream.tags }}">
+        <label class="form-label label-lg" for="emojis-create-stream">Emojis</label>
+        <input class="form-input input-lg jr-input" id="emojis-create-stream" type="text" name="stream_tags" placeholder="Dance, Uplifting, ..."  value="{{ stream.tags }}">
       </div>
 
       <div class="form-group">
-        <label class="form-label label-lg" for="tags-create-stream">Custom URL</label>
+        <label class="form-label label-lg" for="custom-url-create-stream">Custom URL</label>
 
         <div class="input-group">
           <span class="url-base no-select">https://jukebox.radio/stream/</span>
-          <input class="form-input input-lg url-ext" id="tags-create-stream" type="text" name="unique_custom_id" value="{{ stream.unique_custom_id }}" onClick="this.setSelectionRange(0, this.value.length)">
+          <input class="form-input input-lg url-ext" id="custom-url-create-stream" type="text" name="unique_custom_id" value="{{ stream.unique_custom_id }}" onClick="this.setSelectionRange(0, this.value.length)">
         </div>
       </div>
 

@@ -92,7 +92,7 @@ html, body {
 }
 
 .ajax-form-status.success {
-  color: green;
+  color: #32b643;
 }
 
 .chip {

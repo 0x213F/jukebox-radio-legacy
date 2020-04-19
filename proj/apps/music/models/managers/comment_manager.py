@@ -57,7 +57,7 @@ class CommentManager(BaseManager):
             commenter=user,
             commenter_ticket=ticket,
             stream=stream,
-            record=stream.current_record,
+            record=stream.current_queue and stream.current_queue.record,
             track=track,
             track_timestamp=track_timestamp,
         )

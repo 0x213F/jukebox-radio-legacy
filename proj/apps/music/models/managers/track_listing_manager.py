@@ -1,3 +1,5 @@
+from django.apps import apps
+
 from proj.core.models.managers import BaseManager
 
 
@@ -10,12 +12,9 @@ class TrackListingManager(BaseManager):
         '''
         Make a TrackListing object JSON serializable.
         '''
+        Track = apps.get_model('music', 'Track')
         return {
-            'track': {
-                'spotify_name': tracklisting.track.spotify_name,
-                'spotify_uri': tracklisting.track.spotify_uri,
-                'spotify_duration_ms': tracklisting.track.spotify_duration_ms,
-            }
+            'track': Track.objects.serialize(tracklisting.track),
         }
 
     def add_to_record(self, record, tracks):
@@ -28,15 +27,12 @@ class TrackListingManager(BaseManager):
         tls = []
 
         number = 1
-        relative_duration = 0
         for track in tracks:
             tl = TrackListing(
                 record=record,
                 track=track,
                 number=number,
-                relative_duration=relative_duration,
             )
             tls.append(tl)
             number += 1
-            relative_duration += track.spotify_duration_ms
         TrackListing.objects.bulk_create(tls)

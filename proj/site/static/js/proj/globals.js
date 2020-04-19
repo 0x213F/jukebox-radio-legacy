@@ -11,12 +11,10 @@ var VIEW = {}
 let DO_NOT_SUBMIT_FORM = 'do_not_submit_form';
 
 // reading data from an API response
-var KEY_COMMENTS = 'comments'
-var KEY_SHOWINGS = 'streams'
 var KEY_USER = 'user'
+var KEY_COMMENTS = 'comments'
+var KEY_STREAMS = 'streams'
 var KEY_TICKETS = 'tickets'
-var KEY_QUEUE = 'queue'
-var KEY_STREAM = 'stream'
-var KEY_RECORD = 'record'
-var KEY_TRACKLISTINGS = 'tracklistings'
-var KEY_PLAYBACK = 'playback'
+var KEY_QUEUES = 'queues'
+var KEY_RECORDS = 'records'
+var KEY_PLAYBACKS = 'playbacks'

@@ -4,7 +4,6 @@ from datetime import datetime
 from datetime import timedelta
 
 from django.apps import apps
-from django.db.models import Sum
 
 from proj.apps.music import tasks
 from proj.core.models.managers import BaseManager
@@ -29,6 +28,10 @@ class StreamManager(BaseManager):
         if active_users:
             user_count = active_users.count()
 
+        played_at = None
+        if stream.played_at:
+            played_at = stream.played_at.isoformat()
+
         return {
             'uuid': str(stream.uuid),
             'unique_custom_id': stream.unique_custom_id,
@@ -37,17 +40,20 @@ class StreamManager(BaseManager):
             'tags': stream.tags,
             'owner_name': stream.owner_name,
             'user_count': user_count,
+            'played_at': played_at,
         }
 
-    def spin(self, queue, stream):
+    def spin(self, queue, stream, first_spin=False):
         '''
         Spin the record.
         '''
+        QueueListing = apps.get_model('music', 'QueueListing')
         Stream = apps.get_model('music', 'Stream')
 
         if not queue:
-            stream.current_record = None
-            stream.current_tracklisting = None
+            stream.current_queue = None
+            stream.record_terminates_at = None
+            stream.played_at = None
             stream.save()
             async_to_sync(channel_layer.group_send)(
                 stream.chat_room, {'type': 'sync_playback'},
@@ -56,31 +62,47 @@ class StreamManager(BaseManager):
 
         record = queue.record
 
-        current_tracklisting = (
-            record.tracks_through.select_related('track').order_by('number').first()
-        )
-        stream.current_tracklisting = current_tracklisting
         now = datetime.now()
-        stream.last_status_change_at = now
+        if not stream.record_terminates_at:
+            # The base case where we play something to start playback.
+            spin_at = now + timedelta(seconds=3)
+        elif now < stream.record_terminates_at.replace(tzinfo=None):
+            # The likely case where we play something that was queued up.
+            spin_at = stream.record_terminates_at.replace(tzinfo=None)
+        else:
+            # The error case where we do "catch up." If we encounter this case,
+            # it's likely that the celery queue has gotten backed up.
+            spin_at = now
+
         stream.status = Stream.STATUS_ACTIVATED
-        stream.tracklisting_begun_at = now
-        stream.tracklisting_terminates_at = now + timedelta(
-            milliseconds=current_tracklisting.track.spotify_duration_ms
-        )
-        stream.paused_at = None
-        stream.current_record = record
-        record_length = record.tracks_through.all().aggregate(
-            Sum('track__spotify_duration_ms')
-        )['track__spotify_duration_ms__sum']
-        stream.record_terminates_at = now + timedelta(milliseconds=record_length)
-        stream.record_begun_at = now
+        stream.current_queue = queue
+        stream.record_begun_at = spin_at
+        record_length = record.tracks_through.all().duration()
+        stream.record_terminates_at = spin_at + timedelta(milliseconds=record_length)
+        stream.played_at = spin_at
         stream.save()
 
+        played_at = spin_at
+        qls = []
+        for track_listing in record.tracks_through.all().order_by('number'):
+            duration = track_listing.track.spotify_duration_ms
+            ql = QueueListing(
+                queue=queue,
+                track_listing=track_listing,
+                start_at_ms=0,
+                end_at_ms=duration,
+                played_at=played_at,
+            )
+            qls.append(ql)
+            played_at += timedelta(milliseconds=duration)
+
+        QueueListing.objects.bulk_create(qls)
+
         async_to_sync(channel_layer.group_send)(
-            stream.chat_room, {'type': 'sync_playback',},
+            stream.chat_room, {'type': 'sync_playback'},
         )
 
-        next_play_time = stream.record_terminates_at.replace(tzinfo=None)
+        next_play_time = stream.record_terminates_at.replace(tzinfo=None) - timedelta(seconds=3)
         tasks.schedule_spin.apply_async(eta=next_play_time, args=[stream.id])
 
         queue.played_at = now

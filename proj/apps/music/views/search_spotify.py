@@ -17,4 +17,8 @@ class SearchSpotifyView(BaseView):
         spotify = Spotify(request.user)
         search_results = spotify.search_library(query, type)
 
-        return self.http_response_200({'search_results': search_results, 'type': type,})
+        return self.http_response_200({
+            'search_results': search_results,
+            'type': type,
+            'provider': 'spotify',
+        })

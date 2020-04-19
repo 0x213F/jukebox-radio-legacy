@@ -54,9 +54,9 @@ class Stream(BaseModel):
 
     is_private = models.BooleanField(default=False)
 
-    current_record = models.ForeignKey(
-        'music.Record',
-        related_name='now_playing_at_streams',
+    current_queue = models.OneToOneField(
+        'music.Queue',
+        related_name='active_stream',
         on_delete=models.SET_NULL,
         null=True,
         blank=False,
@@ -69,13 +69,11 @@ class Stream(BaseModel):
         blank=False,
     )
 
-    tracklisting_begun_at = models.DateTimeField(null=True, blank=False)
-    tracklisting_terminates_at = models.DateTimeField(null=True, blank=False)
-    paused_at = models.DateTimeField(null=True, blank=False)
     record_begun_at = models.DateTimeField(null=True, blank=False)
     record_terminates_at = models.DateTimeField(null=True, blank=False)
 
-    last_status_change_at = models.DateTimeField(null=True, blank=True)
+    played_at = models.DateTimeField(null=True, blank=False)
+    paused_at = models.DateTimeField(null=True, blank=False)
 
     # - - - - - -
     # properties |
