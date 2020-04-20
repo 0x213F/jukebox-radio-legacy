@@ -3,8 +3,9 @@ var $MAIN_CARD = $('#main-card');
 var $PLAY_BAR = $('#play-bar');
 var $QUEUE_VIEW = $('#queue-view');
 
+var $SEARCH_LIBRARY_FORM = $('#search-library');
 var $SEARCH_CHIPS = $('.search-type');
-
+var $SEARCH_TYPE_YOUTUBE = $('#search-type-youtube');
 var $SEARCH_RESULTS = $('#search-results');
 var $SEARCH_BAR_INPUT = $('#search-bar-input');
 var $SEARCH_VIEW = $('#search-view');
@@ -44,28 +45,59 @@ function validate_search_eligible() {
   if(!$SEARCH_BAR_INPUT.val()) {
     throw DO_NOT_SUBMIT_FORM;
   }
-  // TODO change URL if YouTube search
+  if($SEARCH_TYPE_YOUTUBE.hasClass('active')) {
+    $SEARCH_LIBRARY_FORM.attr('url', '../../../api/music/search/youtube/');
+  } else {
+    $SEARCH_LIBRARY_FORM.attr('url', '../../../api/music/search/spotify/');
+  }
 }
 
 function display_search_results(data) {
-  // some temp style changes needed
-  $SEARCH_RESULTS.removeClass('hidden');
+  console.log(data);
 
   $SEARCH_RESULTS.empty();
   for(var result of data.search_results) {
     $SEARCH_RESULTS.append(`
       <div class="search-result"
            type="button"
-           uri="${result.uri}"
-           img="${result.record_img_640}"
+           spotify-uri="${result.uri}"
+           youtube-id="${result.youtube_id}"
+           img="${result.record_thumbnail}"
            record-name="${result.record_name}">
-        <img src="${result.record_img_640}" />
+        <img src="${result.record_thumbnail}"/>
         <span class="record-name">${result.record_name}</span>
-        <span class="artist-name">${result.artist || ''}</span>
+        <span class="artist-name">${result.record_artist || ''}</span>
       </div>
     `)
   }
+
   $('.search-result').click(add_to_queue);
+
+  $SEARCH_RESULTS.removeClass('hidden');
+}
+
+function add_to_queue(e) {
+  var $this = $(this);
+
+  $.ajax({
+      url: '../../api/music/queue/create/',
+      type: 'post',
+      data: {
+        'record_name': $this.attr('record-name'),
+        'spotify_uri': $this.attr('spotify-uri'),
+        'youtube_id': $this.attr('youtube-id'),
+        'img': $this.attr('img'),
+        'csrfmiddlewaretoken': CSRF_TOKEN,
+        'stream_uuid': STREAM_UUID,
+      },
+      error: function(e) {
+          $error.text(e.statusText);
+      },
+      success: function(e) {
+        $('#form-load-queue').submit();
+          defocus_searchbar();
+      }
+  });
 }
 
 ////////////////////////////////////
@@ -87,7 +119,7 @@ function doneTyping () {
  if($SEARCH_RESULTS.children().length) {
    return;
  }
- $('#search-library').submit();
+ $SEARCH_LIBRARY_FORM.submit();
 }
 
 var shifted;
@@ -186,7 +218,7 @@ function click_chip() {
   $SEARCH_CHIPS.removeClass('active');
   $this.addClass('active');
   $('#search-library-type').val(value);
-  $('#search-library').submit();
+  $SEARCH_LIBRARY_FORM.submit();
   focus_searchbar();
 }
 
@@ -194,7 +226,7 @@ $SEARCH_BAR_INPUT.click(focus_searchbar);
 
 $SEARCH_BAR_INPUT.keypress(function (e) {
   if (e.which == 13) {
-    $('#search-library').submit();
+    $SEARCH_LIBRARY_FORM.submit();
     return false;    //<---- Add this line
                      // Essentially, "return false" is the same as calling
                      // e.preventDefault and e.stopPropagation()

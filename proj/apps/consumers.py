@@ -240,17 +240,26 @@ class Consumer(AsyncConsumer):
         current_queue = self.scope['stream'].current_queue
         record = current_queue.record
 
-        current_queue_listing = await QueueListing.objects.select_related('track_listing', 'track_listing__track').now_playing_async(current_queue)
-        up_next_qls = await QueueListing.objects.select_related('track_listing', 'track_listing__track').up_next_async(current_queue)
-        qls = [QueueListing.objects.serialize(current_queue_listing)]
-        qls.extend([QueueListing.objects.serialize(ql) for ql in up_next_qls])
+        if not record.youtube_id:
+            current_queue_listing = await QueueListing.objects.select_related('track_listing', 'track_listing__track').now_playing_async(current_queue)
+            up_next_qls = await QueueListing.objects.select_related('track_listing', 'track_listing__track').up_next_async(current_queue)
+            qls = [QueueListing.objects.serialize(current_queue_listing)]
+            qls.extend([QueueListing.objects.serialize(ql) for ql in up_next_qls])
 
-        playback_data = {
-            'record': Record.objects.serialize(record),
-            'queuelistings': qls,
-            'stream': Stream.objects.serialize(self.scope['stream']),
-            'status': 'playing_and_synced',
-        }
+            playback_data = {
+                'record': Record.objects.serialize(record),
+                'queuelistings': qls,
+                'stream': Stream.objects.serialize(self.scope['stream']),
+                'status': 'playing_and_synced',
+            }
+        else:
+            playback_data = {
+                'record': Record.objects.serialize(record),
+                'queuelistings': [],
+                'stream': Stream.objects.serialize(self.scope['stream']),
+                'status': 'playing_and_synced',
+            }
+
         payload = {
             'read': {'playback': [playback_data]},
         }

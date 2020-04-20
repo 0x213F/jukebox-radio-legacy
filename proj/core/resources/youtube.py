@@ -27,6 +27,7 @@ class YouTube(object):
             'part': 'snippet',
             'q': query,
             'key': secrets.GOOGLE_API_KEY,
+            'type': 'video',
         }
 
         response = requests.get(
@@ -36,7 +37,23 @@ class YouTube(object):
                 "Content-Type": "application/json",
             },
         )
-        return response.json()
+        response_json = response.json()
+
+        response_data = []
+        for item in response_json['items']:
+            youtube_id = item['id']['videoId']
+            youtube_channel = item['snippet']['channelTitle']
+            youtube_name = item['snippet']['title']
+            youtube_img = item['snippet']['thumbnails']['high']['url']
+            response_data.append({
+                'youtube_id': youtube_id,
+                'record_artist': youtube_channel,
+                'record_name': youtube_name,
+                'record_thumbnail': youtube_img,
+            })
+
+        return response_data
+
 
     @classmethod
     def get_info(cls, youtube_id):
@@ -58,8 +75,9 @@ class YouTube(object):
 
         # clean duration
         duration_raw = response_json['items'][0]['contentDetails']['duration']
-        duration_minutes_raw = duration_raw[2:].split('M')[0]
-        duration_seconds_raw = duration_raw.split('M')[1][:-1]
+        print(duration_raw)
+        duration_minutes_raw = duration_raw[2:].split('M')[0] if 'M' in duration_raw else 0
+        duration_seconds_raw = duration_raw.split('M')[1][:-1] if 'M' in duration_raw else duration_raw[2:][:-1]
         duration_ms = (
             (60 * 1000 * int(duration_minutes_raw)) +
             (1000 * int(duration_seconds_raw))

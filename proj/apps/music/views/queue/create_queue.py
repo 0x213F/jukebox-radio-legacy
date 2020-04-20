@@ -22,14 +22,15 @@ class CreateQueueView(BaseView):
         Stream = apps.get_model('music', 'Stream')
         Ticket = apps.get_model('music', 'Ticket')
 
-        spotify_uri = request.POST.get('uri', None)
+        spotify_uri = request.POST.get('spotify_uri', None)
+        youtube_id = request.POST.get('youtube_id', None)
         stream_uuid = request.POST.get('stream_uuid', None)
 
         stream = Stream.objects.get(uuid=stream_uuid)
 
-        if spotify_uri:
+        if spotify_uri and spotify_uri != 'undefined':
             record, queue = self.create_spotify_queue(request, stream)
-        elif youtube_id:
+        elif youtube_id and youtube_id != 'undefined':
             record, queue = self.create_youtube_queue(request, stream)
         else:
             raise ValueError('Needs ID')

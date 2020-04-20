@@ -60,29 +60,6 @@ function populate_queue(data) {
   $div.removeClass('hidden');
 }
 
-function add_to_queue(e) {
-  var $this = $(this);
-
-  $.ajax({
-      url: '../../api/music/queue/create/',
-      type: 'post',
-      data: {
-        'record_name': $this.attr('record-name'),
-        'uri': $this.attr('uri'),
-        'img': $this.attr('img'),
-        'csrfmiddlewaretoken': CSRF_TOKEN,
-        'stream_uuid': STREAM_UUID,
-      },
-      error: function(e) {
-          $error.text(e.statusText);
-      },
-      success: function(e) {
-        $('#form-load-queue').submit();
-          defocus_searchbar();
-      }
-  });
-}
-
 /////  /////  /////
 /////  QUEUE  /////
 /////  /////  /////

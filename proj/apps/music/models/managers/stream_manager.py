@@ -30,7 +30,15 @@ class StreamManager(BaseManager):
 
         played_at = None
         if stream.played_at:
-            played_at = stream.played_at.isoformat()
+            played_at = stream.played_at.isoformat()\
+
+        paused_at = None
+        if stream.paused_at:
+            paused_at = stream.paused_at.isoformat()
+
+        record_terminates_at = None
+        if stream.record_terminates_at:
+            record_terminates_at = stream.record_terminates_at.isoformat()
 
         return {
             'uuid': str(stream.uuid),
@@ -41,6 +49,8 @@ class StreamManager(BaseManager):
             'owner_name': stream.owner_name,
             'user_count': user_count,
             'played_at': played_at,
+            'paused_at': paused_at,
+            'record_terminates_at': record_terminates_at,
         }
 
     def spin(self, queue, stream, first_spin=False):
@@ -54,6 +64,7 @@ class StreamManager(BaseManager):
             stream.current_queue = None
             stream.record_terminates_at = None
             stream.played_at = None
+            stream.paused_at = datetime.now()
             stream.save()
             async_to_sync(channel_layer.group_send)(
                 stream.chat_room, {'type': 'sync_playback'},
@@ -77,9 +88,13 @@ class StreamManager(BaseManager):
         stream.status = Stream.STATUS_ACTIVATED
         stream.current_queue = queue
         stream.record_begun_at = spin_at
-        record_length = record.tracks_through.all().duration()
+        if record.youtube_id:
+            record_length = record.youtube_duration_ms
+        else:
+            record_length = record.tracks_through.all().duration()
         stream.record_terminates_at = spin_at + timedelta(milliseconds=record_length)
         stream.played_at = spin_at
+        stream.paused_at = None
         stream.save()
 
         played_at = spin_at
