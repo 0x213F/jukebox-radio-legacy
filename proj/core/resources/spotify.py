@@ -82,10 +82,10 @@ class Spotify(object):
         if type == "album":
             return [
                 {
-                    "artist": ", ".join([a["name"] for a in data["artists"]]),
+                    "record_artist": ", ".join([a["name"] for a in data["artists"]]),
                     "record_name": data["name"],
-                    "uri": data["uri"],
-                    "record_img_640": data["images"][0]["url"],
+                    "spotify_uri": data["uri"],
+                    "record_thumbnail": data["images"][0]["url"],
                 }
                 for data in response_json["albums"]["items"]
             ]
@@ -94,17 +94,17 @@ class Spotify(object):
                 {
                     "record_name": data["name"],
                     "uri": data["uri"],
-                    "record_img_640": data["images"][0]["url"],
+                    "record_thumbnail": data["images"][0]["url"],
                 }
                 for data in response_json["playlists"]["items"]
             ]
         else:
             return [
                 {
-                    "artist": ", ".join([a["name"] for a in data["artists"]]),
+                    "record_artist": ", ".join([a["name"] for a in data["artists"]]),
                     "record_name": data["name"],
-                    "uri": data["uri"],
-                    "record_img_640": data["album"]["images"][0]["url"],
+                    "spotify_uri": data["uri"],
+                    "record_thumbnail": data["album"]["images"][0]["url"],
                 }
                 for data in response_json["tracks"]["items"]
             ]

@@ -20,7 +20,6 @@ function focus_searchbar() {
   $QUEUE_VIEW.addClass('hidden');
 
   $SEARCH_VIEW.removeClass('hidden');
-  $SEARCH_RESULTS.removeClass('hidden');
   $SEARCH_BAR_INPUT.focus();
 }
 
@@ -53,14 +52,18 @@ function validate_search_eligible() {
 }
 
 function display_search_results(data) {
-  console.log(data);
+  if(!data.search_results.length) {
+    $SEARCH_RESULTS.addClass('hidden');
+    // TODO: display zero state
+    return;
+  }
 
   $SEARCH_RESULTS.empty();
   for(var result of data.search_results) {
     $SEARCH_RESULTS.append(`
       <div class="search-result"
            type="button"
-           spotify-uri="${result.uri}"
+           spotify-uri="${result.spotify_uri}"
            youtube-id="${result.youtube_id}"
            img="${result.record_thumbnail}"
            record-name="${result.record_name}">
