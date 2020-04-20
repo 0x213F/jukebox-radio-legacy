@@ -40,3 +40,5 @@ class Queue(BaseModel):
     )
 
     played_at = models.DateTimeField(blank=True, null=True)
+
+    scheduled_at = models.DateTimeField()

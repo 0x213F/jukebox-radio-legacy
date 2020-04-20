@@ -3,6 +3,7 @@
 var CSRF_TOKEN = $('#csrf-token').children().first().val();
 var STREAM_UUID = $('#stream-uuid').children().first().val();
 var STREAM_UNIQUE_CUSTOM_ID = $('#stream-unique-custom-id').children().first().val();
+var IS_STREAM_OWNER = $('#is-stream-owner').children().first().val() === 'True';
 
 // global object to hold data for the view
 var VIEW = {}

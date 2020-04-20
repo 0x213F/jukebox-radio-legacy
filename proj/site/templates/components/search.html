@@ -1,0 +1,48 @@
+
+{% load static %}
+
+<div id="search-view" class="main center-horizontal card hidden">
+  <div class="card-body" style="width: 100%;">
+
+    <form id="search-library"
+          class="ajax-form"
+          url="../../../api/music/search/spotify/"
+          type="get"
+          beforesubmit="validate_search_eligible"
+          onsuccess="display_search_results">
+
+      <!-- TABS TO SELECT TYPE -->
+      <input id="search-library-type" class="hidden" name="type" value="track">
+      <div id="search-type-choices" class="filter-nav" style="margin-bottom: 16px;">
+        <div class="search-type active" value="track">Track</div>
+        <div class="search-type" value="album">Album</div>
+        <div class="search-type" value="playlist">Playlist</div>
+        <div class="search-type" value="youtube"><img src="{% static 'img/yt_icon_mono_light.png' %}" style="height: 16px; margin-top: 4px;" /></div>
+      </div>
+
+      <!-- INLINE SEARCH BAR -->
+      <div class="input-group search-group">
+
+        <button type="button" class="exit-search-button btn btn-secondary btn-lg search-back-button">
+          <i class="icon icon-2x icon-back"></i>
+        </button>
+
+        <input id="search-bar-input"
+               class="form-input input-lg search-input-bar"
+               type="text"
+               name="query"
+               autocomplete="off"
+               spellcheck="false">
+        <button type="submit"
+                form="search-library"
+                class="hidden">
+          <i class="icon icon-2x icon-search"></i>
+        </button>
+      </div>
+
+    </form>
+
+    <div id="search-results" class="no-scrollbar hidden"></div>
+
+  </div>
+</div>

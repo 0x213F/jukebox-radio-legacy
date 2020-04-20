@@ -135,6 +135,8 @@ class Consumer(AsyncConsumer):
     # - - - - - - - - - - - -
 
     async def send_update(self, data):
+        if set(['type', 'text']) == set(data.keys()):
+            data = data['text']
         await self.send({
             'type': 'websocket.send',
             'text': json.dumps(data),

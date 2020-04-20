@@ -15,9 +15,14 @@ class RecordManager(BaseManager):
         Make a Queue object JSON serializable.
         '''
         return {
-            'spotify_name': record.spotify_name,
-            'img': record.spotify_img,
             'spotify_uri': record.spotify_uri,
+            'spotify_name': record.spotify_name,
+            'spotify_duration_ms': record.spotify_duration_ms,
+            'spotify_img': record.spotify_img,
+            'youtube_id': record.youtube_id,
+            'youtube_name': record.youtube_name,
+            'youtube_duration_ms': record.youtube_duration_ms,
+            'youtube_img_high': record.youtube_img_high,
         }
 
     def get_or_create_from_uri(self, uri, record_name, img, user=None):

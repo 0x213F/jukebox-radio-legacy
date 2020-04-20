@@ -1,0 +1,62 @@
+
+<div id="play-bar" class="play-bar center-horizontal">
+
+  <!-- - - - - - - - - - --->
+  <!--  BLANK -->
+  <div class="content" style="width: 100%; height: 72px;"></div>
+
+  <!-- - - - - - - - - - --->
+  <!--  AUTHORIZE SPOTIFY -->
+  <div class="content authorize-spotify hidden">
+    <!-- localhost%3A8000 | jukeboxrad.io | jukebox.radio -->
+    <form class="ajax-form" redirect="https://accounts.spotify.com/authorize?client_id={{ secrets.SPOTIFY_CLIENT_ID }}&response_type=code&redirect_uri={{ secrets.SPOTIFY_HTTP }}%3A%2F%2F{{ secrets.SPOTIFY_DOMAIN }}%2Fconnect&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state">
+      <button class="btn btn-lg btn-secondary jr-btn">
+        Authorize Spotify <i class="icon icon-link"></i>
+      </button>
+    </form>
+  </div>
+
+  <!-- - - - - - - - - - - - - - - - - - - - - - --->
+  <!--  WAITING FOR STREAM TO START PLAYING MUSIC -->
+  <div class="content waiting-for-stream-to-start hidden" style="padding: 18px;">
+
+    <div class="jr-spinning-record jr-flex-center"></div>
+
+  </div>
+
+  <!-- - - - - - - - - - - - - - -->
+  <!--  SPOTIFY CLIENT NOT FOUND -->
+  <div class="content spotify-streaming-client-not-found hidden">
+
+    <span class="text">
+      Launch Spotify, play any song, then return here.
+    </span>
+
+    <a href="spotify:open">
+      <button class="btn btn-lg btn-secondary square-right jr-btn-sq">
+        <i class="gg-external" style="right: -7px; top: -1px;"></i>
+      </button>
+    </a>
+
+  </div>
+
+  <!-- - - - - - - - - - --->
+  <!--  CURRENTLY PLAYING -->
+  <div class="content currently-playing hidden">
+
+    <img class="album-art" draggable="false"/>
+
+  </div>
+
+</div>
+
+<!-- - - - - - - - - - - - - -->
+<!--  LOAD QUEUE             -->
+<form id="form-load-queue"
+      class="ajax-form hidden"
+      type="get"
+      url="../../../api/music/queue/list/"
+      submit="onload"
+      onsuccess='populate_queue'>
+  <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
+</form>

@@ -53,7 +53,7 @@ function generate_stream(stream, class_name) {
 }
 
 function display_tune_in_streams(data) {
-  let list_streams = data[KEY_SHOWINGS];
+  let list_streams = data[KEY_STREAMS];
   let $streams_container = $('.tune-in-streams');
   for(let stream of list_streams) {
     $streams_container.append(generate_stream(stream, 'tune-in'));
@@ -65,7 +65,7 @@ function display_tune_in_streams(data) {
 }
 
 function display_broadcasting_streams(data) {
-  let list_streams = data[KEY_SHOWINGS];
+  let list_streams = data[KEY_STREAMS];
   if(!list_streams.length) {
     return;
   }
@@ -81,10 +81,6 @@ function display_broadcasting_streams(data) {
 
   $('.card.stream').click(activate_stream)
 }
-
-// we need this inside play_bar.js so we can display a dialog to tell the user
-// to start playing music
-var IS_BROADCASTING = false;
 
 function activate_stream() {
   var $this = $(this);

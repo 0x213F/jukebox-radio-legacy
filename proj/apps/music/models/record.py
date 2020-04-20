@@ -39,6 +39,10 @@ class Record(BaseModel):
     @property
     def duration_ms(self):
         TrackListing = apps.get_model('music.TrackListing')
+
+        if self.youtube_duration_ms:
+            return self.youtube_duration_ms
+
         track_durations_ms = TrackListing.objects.from_record(self).values_list(
             'track__spotify_duration_ms', flat=True
         )

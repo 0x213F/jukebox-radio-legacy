@@ -96,16 +96,32 @@
 
 </div>
 
+<!-- - - - - - - - -->
+<!--  QUEUE SCREEN -->
+{% include "components/queue.html" %}
+
+<!-- - - - - - - - --->
+<!--  SEARCH SCREEN -->
+{% include "components/search.html" %}
+
 <!-- - - - - - -->
 <!--  PLAY BAR -->
-{% include "play_bar.html" %}
+{% include "components/play_bar.html" %}
 
 {% endblock %}
 
 {% block scripts %}
 <script src="https://sdk.scdn.co/spotify-player.js"></script>
-<script src="{% static 'js/proj/youtube.js' %}"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
+
 <script src="{% static 'js/proj/play_bar.js' %}"></script>
 <script src="{% static 'js/proj/stream.js' %}"></script>
-<script src="{% static '/js/proj/manage.js' %}"></script>
+
+<script src="{% static 'js/proj/components/chat.js' %}"></script>
+<script src="{% static 'js/proj/components/hosts.js' %}"></script>
+<script src="{% static 'js/proj/components/search.js' %}"></script>
+<script src="{% static 'js/proj/components/share.js' %}"></script>
+
+<script src="{% static 'js/proj/components/playback/spotify.js' %}"></script>
+<script src="{% static 'js/proj/components/playback/youtube.js' %}"></script>
 {% endblock %}
