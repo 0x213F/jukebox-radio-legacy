@@ -44,7 +44,7 @@ window['SOCKET'].onmessage = onmessage
 
 // on window focus, try re-syncing playback
 $(window).focus(function() {
-  console.log('TODO: on window focus, try re-syncing playback')
+  syncSpotifyPlayback();
 });
 
   /////  /////////////////  /////
@@ -59,8 +59,8 @@ function onmessage(event) {
   console.log(payload)
 
   if(payload.read.playback.length && payload.read.playback[0].status === 'playing_and_synced') {
-    console.log(payload.read.playback[0].spotify_token)
-    playTracks([payload.read.playback[0].record.spotify_uri], payload.read.playback[0].spotify_token)
+    PLAYBACK = payload.read.playback[0];
+    syncSpotifyPlayback();
   }
   // TODO...
 }
