@@ -53,7 +53,7 @@ function defocus_queue() {
 function populate_queue(data) {
   $div = $('#queued-up');
   $div.empty();
-  for(var queue of data.queue) {
+  for(var queue of data.queues) {
     $div.append(generate_queue(queue));
   }
   setup_ajax_forms();
@@ -73,9 +73,17 @@ function parseISOString(s) {
 }
 
 function generate_queue(queue) {
-  display_time = parseISOString(queue.playing_at).toLocaleTimeString(
+  var display_time = parseISOString(queue.scheduled_at).toLocaleTimeString(
     'en-US', { hour12: true, hour: "numeric", minute: "numeric"}
   )
+  if(queue.record.youtube_img_high) {
+    var display_img = queue.record.youtube_img_high;
+    var display_name = queue.record.youtube_name;
+  } else {
+    var display_img = queue.record.spotify_img;
+    var display_name = queue.record.spotify_name;
+  }
+
   return `
     <div class="queue-card">
       <form class="ajax-form"
@@ -85,8 +93,8 @@ function generate_queue(queue) {
         <input class="hidden" type="text" name="queue_id" value="${queue.id}">
 
         <div>
-          <img src="${queue.record_spotify_img}" />
-          <div class="record-name">${queue.record_name}</div>
+          <img src="${display_img}" />
+          <div class="record-name">${display_name}</div>
           <div class="play-time">${display_time}</div>
         </div>
 

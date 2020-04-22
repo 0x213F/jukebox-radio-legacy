@@ -67,7 +67,7 @@ class CreateQueueView(BaseView):
         Record = apps.get_model('music.Record')
         Ticket = apps.get_model('music.Ticket')
 
-        spotify_uri = request.POST.get('uri', None)
+        spotify_uri = request.POST.get('spotify_uri', None)
         img = request.POST.get('img', None)
         record_name = request.POST.get('record_name', None)
 

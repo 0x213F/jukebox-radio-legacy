@@ -229,6 +229,7 @@ class Consumer(AsyncConsumer):
                 'queuelistings': None,
                 'stream': Stream.objects.serialize(self.scope['stream']),
                 'status': 'waiting-for-stream-to-start',
+                'spotify_token': self.scope["spotify"].token,
             }
             payload = {
                 'read': {'playback': [playback_data]},
@@ -251,6 +252,7 @@ class Consumer(AsyncConsumer):
                 'queuelistings': qls,
                 'stream': Stream.objects.serialize(self.scope['stream']),
                 'status': 'playing_and_synced',
+                'spotify_token': self.scope["spotify"].token,
             }
         else:
             playback_data = {
@@ -258,6 +260,7 @@ class Consumer(AsyncConsumer):
                 'queuelistings': [],
                 'stream': Stream.objects.serialize(self.scope['stream']),
                 'status': 'playing_and_synced',
+                'spotify_token': self.scope["spotify"].token,
             }
 
         payload = {

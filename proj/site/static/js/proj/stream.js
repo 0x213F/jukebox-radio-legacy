@@ -57,5 +57,10 @@ function onmessage(event) {
   let text = event.data;
   let payload = JSON.parse(text);
   console.log(payload)
+
+  if(payload.read.playback.length && payload.read.playback[0].status === 'playing_and_synced') {
+    console.log(payload.read.playback[0].spotify_token)
+    playTracks([payload.read.playback[0].record.spotify_uri], payload.read.playback[0].spotify_token)
+  }
   // TODO...
 }
