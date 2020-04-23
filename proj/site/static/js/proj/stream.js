@@ -44,7 +44,7 @@ window['SOCKET'].onmessage = onmessage
 
 // on window focus, try re-syncing playback
 $(window).focus(function() {
-  syncSpotifyPlayback();
+  // syncSpotifyPlayback();
 });
 
   /////  /////////////////  /////
@@ -58,9 +58,14 @@ function onmessage(event) {
   let payload = JSON.parse(text);
   console.log(payload)
 
-  if(payload.read.playback.length && payload.read.playback[0].status === 'playing_and_synced') {
+  if(payload.read && payload.read.playback && payload.read.playback.length && payload.read.playback[0].status === 'playing_and_synced') {
     PLAYBACK = payload.read.playback[0];
-    syncSpotifyPlayback();
+    if(PLAYBACK.record.youtube_id) {
+      console.log(':D')
+      syncYouTubePlayback();
+    } else {
+      syncSpotifyPlayback();
+    }
   }
   // TODO...
 }

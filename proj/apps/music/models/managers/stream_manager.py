@@ -30,7 +30,8 @@ class StreamManager(BaseManager):
 
         played_at = None
         if stream.played_at:
-            played_at = stream.played_at.isoformat()\
+            epoch = datetime.utcfromtimestamp(0)
+            played_at = (stream.played_at.replace(tzinfo=None) - epoch).total_seconds() * 1000.0,
 
         paused_at = None
         if stream.paused_at:

@@ -1,27 +1,88 @@
 
 // create an <iframe> (and YouTube player) after the API code downloads.
 var YOUTUBE_PLAYER;
+var YOUTUBE_PLAYER_2;
+
+var ACTIVE_YOUTUBE_PLAYER;
 function onYouTubeIframeAPIReady() {
   // <div id="youtube-video-player"></div>
+}
+
+function syncYouTubePlayback() {
+  var now = Date.now()
+  var offset = now - PLAYBACK.stream.played_at
+  if(offset < 0) {
+    setTimeout(syncYouTubePlayback, -offset);
+    return;
+  }
+
+  if(!YOUTUBE_PLAYER || !YOUTUBE_PLAYER_2) {
+    setTimeout(syncYouTubePlayback, 2);
+    return;
+  } else if(!YOUTUBE_PLAYER.loadVideoById || !YOUTUBE_PLAYER_2.loadVideoById) {
+    setTimeout(syncYouTubePlayback, 1);
+    return;
+  }
+
+  var player = getYouTubePlayer();
+  player.loadVideoById({
+    videoId: PLAYBACK.record.youtube_id,
+    startSeconds: Math.floor(offset / 1000),
+    endSeconds: PLAYBACK.record.youtube_duration_ms,
+  });
+}
+
+function syncYouTubePlaybackDelay() {
+  PLAY_NOW = true;
+  onPlayerReady({});
+}
+
+
+var is_one = true;
+function getYouTubePlayer() {
+  if(is_one) {
+    is_one = false;
+    $('#youtube-video-player').removeClass('hidden');
+    $('#youtube-video-player-2').addClass('hidden');
+    console.log('!')
+    console.log(YOUTUBE_PLAYER)
+    return YOUTUBE_PLAYER;
+  } else {
+    is_one = true;
+    $('#youtube-video-player').addClass('hidden');
+    $('#youtube-video-player-2').removeClass('hidden');
+    return YOUTUBE_PLAYER_2;
+  }
+}
+
+function onYouTubeIframeAPIReady() {
+  $('#youtube-video-player').addClass('hidden');
   YOUTUBE_PLAYER = new YT.Player('youtube-video-player', {
     height: '198',
     width: '352',
-    videoId: 'M7lc1UVf-VE',
     events: {
       'onReady': onPlayerReady,
-      'onStateChange': onPlayerStateChange
+      'onStateChange': onPlayerStateChange2,
+    }
+  });
+  $('#youtube-video-player-2').addClass('hidden');
+  YOUTUBE_PLAYER_2 = new YT.Player('youtube-video-player-2', {
+    height: '198',
+    width: '352',
+    events: {
+      'onReady': onPlayerReady2,
+      'onStateChange': onPlayerStateChange2,
     }
   });
 }
 
-function youtube_resync_audio() {
-
-}
-
 // The API will call this function when the video player is ready.
 function onPlayerReady(event) {
-  // event.target.playVideo();
-  youtube_resync_audio();
+  //
+}
+
+function onPlayerReady2(event) {
+  //
 }
 
 // The API calls this function when the player's state changes.
@@ -32,6 +93,6 @@ function onPlayerStateChange(event) {
   //
 }
 
-function stopVideo() {
-  // YOUTUBE_PLAYER.stopVideo();
+function onPlayerStateChange2(event) {
+  //
 }

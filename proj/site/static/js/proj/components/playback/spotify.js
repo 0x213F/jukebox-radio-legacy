@@ -8,10 +8,12 @@ function onSpotifyWebPlaybackSDKReady() {
 
 var PLAYBACK;
 function syncSpotifyPlayback() {
+  $('#youtube-video-player').addClass('hidden');
+  $('#youtube-video-player-2').addClass('hidden');
   var playback = PLAYBACK;
   var now = Date.now()
   var spotify_uris = [];
-  var offset;
+  var offset = -1;
   var last_queue_listing;
 
   var isFirst = true;
@@ -22,20 +24,26 @@ function syncSpotifyPlayback() {
       time_until_queue_listing = 0
     }
 
-    if(time_until_queue_listing > 0) {
-      if(isFirst) {
-        setTimeout(syncSpotifyPlayback, time_until_queue_listing);
-        return;
-      }
-      spotify_uris.push(queue_listing.spotify_uri);
-      break;
+    if(isFirst && time_until_queue_listing > 0) {
+      setTimeout(syncSpotifyPlayback, time_until_queue_listing);
+      return;
     }
-
     isFirst = false;
-    if(!offset) {
-      offset = -time_until_queue_listing
+
+    if(time_until_queue_listing >= 0) {
+      if(offset < 0) {
+        offset = -time_until_queue_listing
+        if(last_queue_listing) {
+          offset = now - last_queue_listing.played_at
+          spotify_uris.push(last_queue_listing.tracklisting.track.spotify_uri);
+        } else {
+          offset = -time_until_queue_listing
+        }
+      }
+      spotify_uris.push(queue_listing.tracklisting.track.spotify_uri);
+      continue;
     }
-    spotify_uris.push(queue_listing.tracklisting.track.spotify_uri);
+    last_queue_listing = queue_listing;
   }
 
   fetch(`https://api.spotify.com/v1/me/player/play`, {
