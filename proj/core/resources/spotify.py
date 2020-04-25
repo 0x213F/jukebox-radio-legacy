@@ -165,6 +165,16 @@ class Spotify(object):
             for track in response_json["tracks"]["items"]
         ]
 
+    def get_me(self):
+        response = requests.get(
+            'https://api.spotify.com/v1/me/',
+            headers={
+                'Authorization': f'Bearer {self.token}',
+                'Content-Type': 'application/json',
+            },
+        )
+        return response.json()
+
     async def get_user_info_async(self):
         response = await requests_async.get(
             "https://api.spotify.com/v1/me",

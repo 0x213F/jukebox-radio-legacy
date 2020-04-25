@@ -63,9 +63,9 @@
   background-color: rgb(256, 256, 256, 0.95)!important;
 }
 
-.search-back-button:hover {
+/* .search-back-button:hover {
   background-color: #5764c6!important;
-}
+} */
 
 .search-input-bar {
   margin-left: 16px!important;

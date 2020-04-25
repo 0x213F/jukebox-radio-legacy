@@ -25,18 +25,18 @@ function generate_stream(stream, class_name) {
 
   var tags_html = ''
   for(tag of emojiStringToArray(stream.tags)) {
-    tags_html += `<span class="chip" style="border-radius: 28px; margin-right: 8px; width: 28px; line-height: 28px; text-align: center; display: inline-block;">${tag}</span>`
+    tags_html += `<span class="chip" style="border-radius: 28px; margin-right: 8px; width: 28px; line-height: 28px; text-align: center; display: inline-block;">${encodeHTML(tag)}</span>`
   }
 
   return `
   <div class="card stream ${class_name}" uuid="${stream.uuid}" unique_custom_id="${stream.unique_custom_id}" style="cursor: pointer;">
     <div class="card-body" style="width: 100%;">
 
-      <h3 class="stream-name">${stream.name}</h5>
+      <h3 class="stream-name">${encodeHTML(stream.name)}</h5>
 
       <div class="form-group" style="line-height: 36px;">
         <div class="chip" style="border-radius: 28px">
-          <figure class="avatar avatar-sm" data-initial="" style="background-color: ${background_color};"></figure>${stream.owner_name}
+          <figure class="avatar avatar-sm" data-initial="" style="background-color: ${background_color};"></figure>${encodeHTML(stream.owner_name)}
         </div>
         ${tags_html}
       </div>

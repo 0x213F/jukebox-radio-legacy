@@ -2,6 +2,10 @@
 <div id="search-view" class="main center-horizontal card hidden">
   <div class="card-body" style="width: 100%;">
 
+    <!-- - - - - -->
+    <!--  BANNER -->
+    <div class="jr-banner"></div>
+
     <form id="search-library"
           class="ajax-form"
           url="../../../api/music/search/spotify/"
@@ -9,20 +13,11 @@
           beforesubmit="validate_search_eligible"
           onsuccess="display_search_results">
 
-      <!-- TABS TO SELECT TYPE -->
-      <input id="search-library-type" class="hidden" name="type" value="track">
-      <div id="search-type-choices" class="filter-nav" style="margin-bottom: 16px;">
-        <div class="search-type active" value="track">Track</div>
-        <div class="search-type" value="album">Album</div>
-        <div class="search-type" value="playlist">Playlist</div>
-        <div id="search-type-youtube" class="search-type" value="youtube"><i class="fab fa-youtube"></i></div>
-      </div>
-
       <!-- INLINE SEARCH BAR -->
       <div class="input-group search-group">
 
-        <button type="button" class="exit-search-button btn btn-secondary btn-lg search-back-button">
-          <i class="icon icon-2x icon-back"></i>
+        <button type="button" class="exit-search-button btn btn-link btn-lg search-back-button">
+          <i class="gg-arrow-bottom-left-o" style="bottom: 1px;"></i>
         </button>
 
         <input id="search-bar-input"
@@ -36,6 +31,18 @@
                 class="hidden">
           <i class="icon icon-2x icon-search"></i>
         </button>
+      </div>
+
+      <!-- TABS TO SELECT TYPE -->
+      <input id="search-library-type" class="hidden" name="type" value="track">
+      <div id="search-type-choices" class="filter-nav" style="margin-bottom: 16px;">
+        <div id="search-type-spotify" class="search-type" value="youtube"><i class="fab fa-spotify"></i></div>
+        <div id="search-type-youtube" class="search-type" value="youtube"><i class="fab fa-youtube"></i></div>
+      </div>
+      <div id="search-type-choices" class="filter-nav" style="margin-bottom: 16px;">
+        <div class="search-type active" value="track">Track</div>
+        <div class="search-type" value="album">Album</div>
+        <div class="search-type" value="playlist">Playlist</div>
       </div>
 
     </form>

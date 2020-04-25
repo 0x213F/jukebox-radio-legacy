@@ -37,6 +37,12 @@ class ConnectView(BaseView):
         spotify.store_access_token(response_json["access_token"])
         spotify.store_refresh_token(response_json["refresh_token"])
 
+        if not request.user.profile.default_display_name:
+            response_json = spotify.get_me()
+            my_name = response_json['display_name']
+            request.user.profile.default_display_name = my_name
+            request.user.profile.save()
+
         if request.user.profile.activated_stream_redirect:
             stream_uuid_str = str(request.user.profile.activated_stream_redirect)
             request.user.profile.activated_stream_redirect = None
