@@ -40,27 +40,29 @@
 
     <!-- - - - - -->
     <!--  BANNER -->
-    <div class="jr-banner">
-      {{ stream.title }}
-    </div>
+    <div class="jr-banner"></div>
 
     <!-- - - - - --->
     <!--  BUTTONS -->
     <div style="width: 100%; height: 40px;">
 
       <form class="ajax-form" redirect="/" style="float: left;">
-        <button class="btn btn-lg btn-secondary jr-btn-sq">
-          <i class="icon icon-2x icon-back"></i>
+        <button class="btn btn-lg btn-link jr-btn-sq">
+          <i class="gg-arrow-left-o" style="bottom: 1px;"></i>
         </button>
       </form>
       <form style="float: left;">
-        <button type="button" id="go-to-manage" class="btn btn-lg btn-secondary jr-btn-sq">
-          <i class="icon icon-2x icon-people"></i>
+        <button type="button" id="go-to-manage" class="btn btn-lg btn-link jr-btn-sq">
+          <i class="gg-profile" style="bottom: 1px;"></i>
         </button>
       </form>
 
-      <button id="go-to-queue-top" class="btn btn-lg btn-secondary jr-btn-sq go-to-queue {% if not ticket.is_administrator %}hidden{% endif %}" style="float: right; margin-right: 0px;">
-        <i class="gg-layout-list" style="left: 6px;"></i>
+      <button class="btn btn-lg btn-link jr-btn-sq" style="float: right; margin-right: 0px;">
+        <i class="gg-info" style="left: 1px;"></i>
+      </button>
+
+      <button id="go-to-queue-top" class="btn btn-lg btn-link jr-btn-sq go-to-queue {% if not ticket.is_administrator %}hidden{% endif %}" style="float: right;">
+        <i class="gg-play-list-add" style="left: 5px;"></i>
       </button>
 
     </div>

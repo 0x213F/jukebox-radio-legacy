@@ -44,7 +44,7 @@ class UpdateStreamView(BaseView):
                 'type': 'send_update',
                 'text': {
                     'updated': {
-                        'stream': [Stream.objects.serialize(stream)],
+                        'streams': [Stream.objects.serialize(stream)],
                     }
                 }
             },

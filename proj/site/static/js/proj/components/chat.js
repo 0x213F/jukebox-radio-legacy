@@ -2,48 +2,53 @@
  /////  DISPLAY COMMENTS   /////
 /////  ////////////////   /////
 
-function display_comments(comments) {
+let $CHAT_CONTAINER = $('.chat-container');
+
+function displayComments(payload) {
+  var comments;
+  if(payload.read && payload.read.comments && payload.read.comments.length) {
+    comments = payload.read.comments;
+  } else if(payload.created && payload.created.comments && payload.created.comments.length) {
+    comments = payload.created.comments;
+  }
+
+  if(!comments || !comments.length) {
+    return;
+  }
+
   for(comment of comments) {
     display_comment(comment);
   }
   $CHAT_CONTAINER.scrollTop($CHAT_CONTAINER[0].scrollHeight);
 }
 
-let $CHAT_CONTAINER = $('.chat-container');
-
 function display_comment(comment) {
-  var html = '';
-  if(comment.status === 'mid_high') {
-    html = display_text(comment);
-  } else {
+  if(comment.status != 'comment') {
     return;
   }
-  if(!comment.text) {
-    return;
-  }
-  $CHAT_CONTAINER.append(html);
+  $CHAT_CONTAINER.append(display_text(comment));
 }
 
 function display_text(comment) {
-  var holder_uuid = comment.ticket.holder_uuid;
+  var holder_uuid = comment.ticket.uuid;
   var last_holder_uuid = $CHAT_CONTAINER.children().last().attr('holder-uuid');
   if(holder_uuid === last_holder_uuid) {
     return `
-      <div class="comment" holder-uuid="${comment.ticket.holder_uuid}">
+      <div class="comment" holder-uuid="${comment.ticket.uuid}">
         <span class="c-text">${encodeHTML(comment.text)}</span>
       </div>
     `;
   } else if(!last_holder_uuid) {
     return `
-      <div class="comment" holder-uuid="${comment.ticket.holder_uuid}" style="margin-top: 0px!important;">
-        <span class="c-commenter" style="margin-top: 0px!important;">${encodeHTML(comment.ticket.holder_name)}</span>
+      <div class="comment" holder-uuid="${comment.ticket.uuid}" style="margin-top: 0px!important;">
+        <span class="c-commenter" style="margin-top: 0px!important;">${encodeHTML(comment.ticket.name)}</span>
         <span class="c-text">${encodeHTML(comment.text)}</span>
       </div>
     `;
   } else {
     return `
-      <div class="comment" holder-uuid="${comment.ticket.holder_uuid}">
-        <span class="c-commenter">${encodeHTML(comment.ticket.holder_name)}</span>
+      <div class="comment" holder-uuid="${comment.ticket.uuid}">
+        <span class="c-commenter">${encodeHTML(comment.ticket.name)}</span>
         <span class="c-text">${encodeHTML(comment.text)}</span>
       </div>
     `;

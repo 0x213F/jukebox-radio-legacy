@@ -67,6 +67,12 @@ class Consumer(AsyncConsumer):
         # add to channel
         await self.add_to_channel()
 
+        await self.send_update({
+            'read': {
+                'streams': [Stream.objects.serialize(self.scope["stream"])]
+            }
+        })
+
         # send back recent chat activity
         should_display_comments = url_params["display_comments"] == "true"
         if should_display_comments:

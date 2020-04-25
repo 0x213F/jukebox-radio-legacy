@@ -2,7 +2,15 @@
  /////  SHARE  /////
 /////  /////  /////
 
-$('.share-link').click(share_website)
+var $SHARE_LINK_BUTTONS = $('.share-link');
+var $MANAGE_BACK_BUTTON = $('#manage-back');
+
+if(navigator.share) {
+  $SHARE_LINK_BUTTONS.click(share_website);
+} else {
+  $SHARE_LINK_BUTTONS.addClass('hidden');
+  $MANAGE_BACK_BUTTON.css('float', '');
+}
 
 function share_website() {
   if (navigator.share) {
