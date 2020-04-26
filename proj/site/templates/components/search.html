@@ -41,16 +41,28 @@
         <div class="search-provider" value="youtube" style="float: right;">
           <i class="fab fa-youtube"></i>
         </div>
+        <div class="search-provider" value="file" style="float: right;">
+          <i class="gg-software-upload" style="top: 8px;"></i>
+        </div>
       </div>
 
       <!-- TABS TO SELECT SEARCH TYPE -->
-      <input id="search-library-type" class="hidden" name="type" value="track"> 
+      <input id="search-library-type" class="hidden" name="type" value="track">
       <div id="search-types" class="filter-nav" style="margin-top: 6px; margin-bottom: 6px; height: 32px;">
         <div class="search-type active" value="track" style="float: right; margin-right: 0px;">Track</div>
         <div class="search-type" value="album" style="float: right;">Album</div>
         <div class="search-type" value="playlist" style="float: right;">Playlist</div>
       </div>
 
+    </form>
+
+    <form id="upload-file-form" class="hidden" style="margin-top: 16px;">
+      <input name="file" type="file" />
+      <input class="hidden" name="provider" type="text" value="file" />
+      {% csrf_token %}
+
+      <input class="hidden" name="stream_uuid" type="text" value="{{ stream.uuid }}">
+      <button id="file-upload-button" class="btn btn-lg btn-secondary jr-btn" style="margin-top: 16px;">Submit</button>
     </form>
 
     <div id="search-results" class="no-scrollbar hidden"></div>

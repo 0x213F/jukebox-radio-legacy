@@ -47,8 +47,10 @@ function updatePlayback(payload) {
     PLAYBACK = payload.read.playback[0];
     if(PLAYBACK.record.youtube_id) {
       syncYouTubePlayback();
-    } else {
+    } else if(PLAYBACK.record.spotify_uri) {
       syncSpotifyPlayback();
+    } else {
+      syncStoragePlayback();
     }
   }
 }

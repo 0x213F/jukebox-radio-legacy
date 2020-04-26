@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'proj.apps.users',
     'channels',
     'django_admin_listfilter_dropdown',
+    'storages',
 ]
 
 
@@ -119,6 +120,27 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10*1024*1024 * 128
+
+AWS_S3_REGION_NAME = 'sfo2'
+
+AWS_ACCESS_KEY_ID = 'V6ZQRTKVNKFIHCHZSPMF'
+AWS_SECRET_ACCESS_KEY = 'iH+3g1oRgK6MQFScbBYRfrTH4G2eHreR1Cu70gkeLw4'
+
+if not secrets.DEBUG:
+# if True:
+    AWS_STORAGE_BUCKET_NAME = 'jukebox-radio-space'
+    AWS_S3_ENDPOINT_URL = f'https://{AWS_S3_REGION_NAME}.digitaloceanspaces.com'
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+    AWS_LOCATION = 'jukebox-radio-space'
+
+    STATIC_URL = 'https://%s/%s/' % (AWS_S3_ENDPOINT_URL, AWS_LOCATION)
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 STATIC_URL = "/static/"
 

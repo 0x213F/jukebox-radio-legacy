@@ -22,16 +22,17 @@ class CreateQueueView(BaseView):
         Stream = apps.get_model('music', 'Stream')
         Ticket = apps.get_model('music', 'Ticket')
 
-        spotify_uri = request.POST.get('spotify_uri', None)
-        youtube_id = request.POST.get('youtube_id', None)
         stream_uuid = request.POST.get('stream_uuid', None)
+        provider = request.POST.get('provider', None)
 
         stream = Stream.objects.get(uuid=stream_uuid)
 
-        if spotify_uri and spotify_uri != 'undefined':
+        if provider == 'spotify':
             record, queue = self.create_spotify_queue(request, stream)
-        elif youtube_id and youtube_id != 'undefined':
+        elif provider == 'youtube':
             record, queue = self.create_youtube_queue(request, stream)
+        elif provider == 'file':
+            record, queue = self.create_file_queue(request, stream)
         else:
             raise ValueError('Needs ID')
 
@@ -85,11 +86,26 @@ class CreateQueueView(BaseView):
     def create_youtube_queue(self, request, stream):
         Queue = apps.get_model('music.Queue')
         Record = apps.get_model('music.Record')
-        Stream = apps.get_model('music.Stream')
 
         youtube_id = request.POST.get('youtube_id', None)
 
         record = Record.objects.get_or_create_from_youtube_id(youtube_id)
+
+        queue = Queue.objects.create(
+            record=record,
+            stream=stream,
+            user=request.user,
+        )
+
+        return record, queue
+
+    def create_file_queue(self, request, stream):
+        Record = apps.get_model('music.Record')
+        Queue = apps.get_model('music.Queue')
+
+        file = request.FILES['file']
+
+        record = Record.objects.create_from_file(file)
 
         queue = Queue.objects.create(
             record=record,

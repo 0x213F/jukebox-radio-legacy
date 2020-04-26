@@ -1,5 +1,8 @@
+import uuid
 from django.apps import apps
+from boto3 import session
 
+from django.conf import settings
 from proj.core.models.managers import BaseManager
 from proj.core.resources import Spotify
 from proj.core.resources import YouTube
@@ -19,10 +22,15 @@ class RecordManager(BaseManager):
             'spotify_name': record.spotify_name,
             'spotify_duration_ms': record.spotify_duration_ms,
             'spotify_img': record.spotify_img,
+
             'youtube_id': record.youtube_id,
             'youtube_name': record.youtube_name,
             'youtube_duration_ms': record.youtube_duration_ms,
             'youtube_img_high': record.youtube_img_high,
+
+            'storage_id': record.storage_id,
+            'storage_name': record.storage_name,
+            'storage_duration_ms': record.storage_duration_ms,
         }
 
     def get_or_create_from_uri(self, uri, record_name, img, user=None):
@@ -70,6 +78,36 @@ class RecordManager(BaseManager):
             youtube_name=video_info['youtube_name'],
             youtube_duration_ms=video_info['youtube_duration_ms'],
             youtube_img_high=video_info['youtube_img_high'],
+        )
+
+        return record
+
+
+    def create_from_file(self, file):
+        Record = apps.get_model('music', 'Record')
+        Track = apps.get_model('music', 'Track')
+        TrackListing = apps.get_model('music', 'TrackListing')
+
+        session2 = session.Session()
+        client = session2.client('s3',
+            region_name=settings.AWS_S3_REGION_NAME,
+            endpoint_url=f'https://{settings.AWS_S3_REGION_NAME}.digitaloceanspaces.com',
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        )
+
+        storage_filename = f'uploads/{str(uuid.uuid4())}.mp3'
+
+        client.upload_fileobj(file, 'jukebox-radio-space', storage_filename)
+
+        from mutagen.mp3 import MP3
+        audio = MP3(file)
+
+        record = Record.objects.create(
+            storage_id=str(uuid.uuid4()),
+            storage_filename=storage_filename,
+            storage_name=file.name,
+            storage_duration_ms=audio.info.length * 1000,
         )
 
         return record

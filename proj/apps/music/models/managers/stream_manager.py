@@ -91,8 +91,10 @@ class StreamManager(BaseManager):
         stream.record_begun_at = spin_at
         if record.youtube_id:
             record_length = record.youtube_duration_ms
-        else:
+        elif record.spotify_uri:
             record_length = record.tracks_through.all().duration()
+        elif record.storage_duration_ms:
+            record_length = record.storage_duration_ms
         stream.record_terminates_at = spin_at + timedelta(milliseconds=record_length)
         stream.played_at = spin_at
         stream.paused_at = None

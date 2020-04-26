@@ -5,6 +5,7 @@ var $QUEUE_VIEW = $('#queue-view');
 
 var $PROVIDER_CHIPS = $('#search-providers > .search-provider');
 var $TYPE_CHIPS = $('#search-types > .search-type');
+var $SEARCH_TYPES = $('#search-types');
 
 var $SEARCH_LIBRARY_FORM = $('#search-library');
 var $SEARCH_TYPE_YOUTUBE = $('#search-type-youtube');
@@ -12,6 +13,8 @@ var $SEARCH_RESULTS = $('#search-results');
 var $SEARCH_BAR_INPUT = $('#search-bar-input');
 var $SEARCH_VIEW = $('#search-view');
 var $SEARCH_EXIT_BUTTON = $('.exit-search-button');
+
+var $FILE_UPLOAD_FORM = $('#upload-file-form');
 
 /////////////////////////////////////////////////////
 ////////////////// FOCUS BEHAVIOR
@@ -79,14 +82,26 @@ function display_search_results(data) {
 function add_to_queue(e) {
   var $this = $(this);
 
+  var provider;
+  var spotify_uri;
+  var youtube_id;
+  if($this.attr('spotify-uri') !== 'undefined') {
+    provider = 'spotify';
+    spotify_uri = $this.attr('spotify-uri');
+  } else if($this.attr('youtube-id')) {
+    provider = 'youtube';
+    youtube_id = $this.attr('youtube-id');
+  }
+
   $.ajax({
       url: '../../api/music/queue/create/',
       type: 'post',
       data: {
         'record_name': $this.attr('record-name'),
-        'spotify_uri': $this.attr('spotify-uri'),
-        'youtube_id': $this.attr('youtube-id'),
+        'spotify_uri': spotify_uri,
+        'youtube_id': youtube_id,
         'img': $this.attr('img'),
+        'provider': provider,
         'csrfmiddlewaretoken': CSRF_TOKEN,
         'stream_uuid': STREAM_UUID,
       },
@@ -96,6 +111,45 @@ function add_to_queue(e) {
       success: function(e) {
         $('#form-load-queue').submit();
           defocus_searchbar();
+      }
+  });
+}
+
+$('#file-upload-button').click(file_upload_to_queue);
+
+function file_upload_to_queue(e) {
+  var $this = $(this);
+
+  provider = 'file';
+
+  $.ajax({
+      url: '../../api/music/queue/create/',
+      type: 'POST',
+
+      // Form data
+      data: new FormData($('#upload-file-form')[0]),
+
+      // Tell jQuery not to process data or worry about content-type
+      // You *must* include these options!
+      cache: false,
+      contentType: false,
+      processData: false,
+
+      // Custom XMLHttpRequest
+      xhr: function () {
+        var myXhr = $.ajaxSettings.xhr();
+        if (myXhr.upload) {
+          // For handling the progress of the upload
+          myXhr.upload.addEventListener('progress', function (e) {
+            if (e.lengthComputable) {
+              $('progress').attr({
+                value: e.loaded,
+                max: e.total,
+              });
+            }
+          }, false);
+        }
+        return myXhr;
       }
   });
 }
@@ -138,26 +192,6 @@ $(document).keydown(function(event) {
   var UP_KEY_CODE = 38
   var ENTER_KEY_CODE = 13
   var key_code = event.keyCode
-
-  if(shifted && (key_code === LEFT_KEY_CODE || key_code === RIGHT_KEY_CODE)) {
-
-    event.preventDefault();
-
-    if (key_code === LEFT_KEY_CODE) {
-      if ($prev.length) {
-          $prev.click();
-      } else {
-        $search_types.children().last().click();
-      }
-    } else if (key_code === RIGHT_KEY_CODE) {
-      if ($next.length) {
-          $next.click();
-      } else {
-        $search_types.children().first().click();
-      }
-    }
-
-  }
 
   if(key_code === DOWN_KEY_CODE || key_code === UP_KEY_CODE) {
     if(!$SEARCH_RESULTS.children().length) {
@@ -219,9 +253,18 @@ function click_provider_chip() {
   $this.addClass('active');
   $('#search-library-provider').val(value);
   if(value === 'youtube') {
-    $TYPE_CHIPS.addClass('hidden');
-  } else {
-    $TYPE_CHIPS.removeClass('hidden');
+    $SEARCH_TYPES.addClass('hidden');
+    $FILE_UPLOAD_FORM.addClass('hidden');
+    $SEARCH_BAR_INPUT.attr('disabled', false);
+  } else if(value === 'spotify') {
+    $SEARCH_TYPES.removeClass('hidden');
+    $FILE_UPLOAD_FORM.addClass('hidden');
+    $SEARCH_BAR_INPUT.attr('disabled', false);
+  } else if(value === 'file') {
+    $SEARCH_TYPES.addClass('hidden');
+    $SEARCH_RESULTS.addClass('hidden');
+    $FILE_UPLOAD_FORM.removeClass('hidden');
+    $SEARCH_BAR_INPUT.attr('disabled', true);
   }
   $SEARCH_LIBRARY_FORM.submit();
   focus_searchbar();

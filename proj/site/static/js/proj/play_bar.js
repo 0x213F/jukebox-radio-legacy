@@ -79,9 +79,12 @@ function generate_queue(queue) {
   if(queue.record.youtube_img_high) {
     var display_img = queue.record.youtube_img_high;
     var display_name = queue.record.youtube_name;
-  } else {
+  } else if(queue.record.spotify_uri) {
     var display_img = queue.record.spotify_img;
     var display_name = queue.record.spotify_name;
+  } else {
+    var display_img = null;
+    var display_name = queue.record.storage_name;
   }
 
   return `
