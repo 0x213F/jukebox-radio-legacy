@@ -1,5 +1,5 @@
 import os
-import proj.secrets as secrets
+import secrets as secrets
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
