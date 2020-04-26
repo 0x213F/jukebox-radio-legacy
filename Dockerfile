@@ -26,16 +26,17 @@ RUN apt-get install -y python3.8 python3-pip curl r-base \
 RUN mkdir -p /opt/jukeboxradio
 RUN chmod 777 /opt/jukeboxradio
 
-COPY requirements.txt requirements.txt
-COPY manage.py manage.py
-COPY proj proj/
+COPY requirements.txt /opt/jukeboxradio/requirements.txt
+COPY manage.py /opt/jukeboxradio/manage.py
+COPY . /opt/jukeboxradio
+
+WORKDIR /opt/jukeboxradio
 
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
 
 RUN export PYTHONPATH=`which python3`
-WORKDIR /opt/jukeboxradio
 
 EXPOSE 80
-
+RUN export PYTHONPATH=.
 CMD ["python3", "manage.py", "runserver"]
