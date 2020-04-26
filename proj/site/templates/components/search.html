@@ -29,20 +29,26 @@
         <button type="submit"
                 form="search-library"
                 class="hidden">
-          <i class="icon icon-2x icon-search"></i>
         </button>
       </div>
 
-      <!-- TABS TO SELECT TYPE -->
-      <input id="search-library-type" class="hidden" name="type" value="track">
-      <div id="search-type-choices" class="filter-nav" style="margin-bottom: 16px;">
-        <div id="search-type-spotify" class="search-type" value="youtube"><i class="fab fa-spotify"></i></div>
-        <div id="search-type-youtube" class="search-type" value="youtube"><i class="fab fa-youtube"></i></div>
+      <!-- TABS TO SELECT SEARCH PROVIDER -->
+      <input id="search-library-provider" class="hidden" name="provider">
+      <div id="search-providers" class="filter-nav" style="margin-top: 16px; margin-bottom: 16px; height: 32px;">
+        <div id="search-type-spotify" class="search-type active" value="spotify" style="float: right; margin-right: 0px;">
+          <i class="fab fa-spotify"></i>
+        </div>
+        <div id="search-type-youtube" class="search-type" value="youtube" style="float: right;">
+          <i class="fab fa-youtube"></i>
+        </div>
       </div>
-      <div id="search-type-choices" class="filter-nav" style="margin-bottom: 16px;">
-        <div class="search-type active" value="track">Track</div>
-        <div class="search-type" value="album">Album</div>
-        <div class="search-type" value="playlist">Playlist</div>
+
+      <!-- TABS TO SELECT SEARCH TYPE -->
+      <input id="search-library-type" class="hidden" name="type">
+      <div id="search-type-choices" class="filter-nav" style="margin-top: 16px; margin-bottom: 16px;">
+        <div class="search-type" value="playlist" style="float: right; margin-right: 0px;">Playlist</div>
+        <div class="search-type" value="album" style="float: right;">Album</div>
+        <div class="search-type active" value="track" style="float: right;">Track</div>
       </div>
 
     </form>

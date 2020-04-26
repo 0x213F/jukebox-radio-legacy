@@ -3,7 +3,7 @@
 /////  /////  /////
 
 var $SHARE_LINK_BUTTONS = $('.share-link');
-var $MANAGE_BACK_BUTTON = $('#manage-back');
+var $MANAGE_BACK_BUTTON = $('.exit-manage');
 
 if(navigator.share) {
   $SHARE_LINK_BUTTONS.click(share_website);
