@@ -53,6 +53,20 @@ function updatePlayback(payload) {
   }
 }
 
+function updateURL(payload) {
+  if(payload.updated && payload.updated.streams && payload.updated.streams.length) {
+    var currSite = window.location.href;
+    currSite = currSite.substring(currSite.indexOf('/stream/')+1);
+
+    var stream = payload.updated.streams[0];
+    if('stream/' + stream.unique_custom_id + '/' !== currSite) {
+      window.location.href = '/stream/' + stream.unique_custom_id;
+    }
+  }
+
+  console.log(currSite);
+}
+
   /////  //////////  /////
  /////  NAVIGATION  /////
 /////  //////////  /////
@@ -111,6 +125,8 @@ function onmessage(event) {
   let text = event.data;
   let payload = JSON.parse(text);
   console.log(payload)
+
+  updateURL(payload);
 
   updateStreamTitle(payload);
   updatePlayBar(payload);

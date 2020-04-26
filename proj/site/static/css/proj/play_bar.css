@@ -161,7 +161,8 @@
 /* * * * * */
 /* SEARCH  */
 
-.search-type {
+.search-type,
+.search-provider {
   font-size: 14px;
   height: 32px;
   line-height: 30px;
@@ -180,13 +181,15 @@
   cursor: pointer;
 }
 
-.search-type:hover {
+.search-type:hover,
+.search-provider:hover {
   background-color: #5764c6;
   color: #fff;
   border: 1px solid #4c59c2;
 }
 
-.search-type.active {
+.search-type.active,
+.search-provider.active {
   background-color: #5764c6;
   color: #fff;
   border: 1px solid #4c59c2;

@@ -236,6 +236,7 @@ class Consumer(AsyncConsumer):
                 'stream': Stream.objects.serialize(self.scope['stream']),
                 'status': 'waiting-for-stream-to-start',
                 'spotify_token': self.scope["spotify"].token,
+                'ticket': Ticket.objects.serialize(self.scope['ticket']),
             }
             payload = {
                 'read': {'playback': [playback_data]},
@@ -259,6 +260,7 @@ class Consumer(AsyncConsumer):
                 'stream': Stream.objects.serialize(self.scope['stream']),
                 'status': 'playing_and_synced',
                 'spotify_token': self.scope["spotify"].token,
+                'ticket': Ticket.objects.serialize(self.scope['ticket']),
             }
         else:
             playback_data = {
@@ -267,6 +269,7 @@ class Consumer(AsyncConsumer):
                 'stream': Stream.objects.serialize(self.scope['stream']),
                 'status': 'playing_and_synced',
                 'spotify_token': self.scope["spotify"].token,
+                'ticket': Ticket.objects.serialize(self.scope['ticket']),
             }
 
         payload = {

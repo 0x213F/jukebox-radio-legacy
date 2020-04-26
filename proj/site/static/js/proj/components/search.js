@@ -3,8 +3,10 @@ var $MAIN_CARD = $('#main-card');
 var $PLAY_BAR = $('#play-bar');
 var $QUEUE_VIEW = $('#queue-view');
 
+var $PROVIDER_CHIPS = $('#search-providers > .search-provider');
+var $TYPE_CHIPS = $('#search-types > .search-type');
+
 var $SEARCH_LIBRARY_FORM = $('#search-library');
-var $SEARCH_CHIPS = $('.search-type');
 var $SEARCH_TYPE_YOUTUBE = $('#search-type-youtube');
 var $SEARCH_RESULTS = $('#search-results');
 var $SEARCH_BAR_INPUT = $('#search-bar-input');
@@ -43,11 +45,6 @@ $SEARCH_EXIT_BUTTON.click(defocus_searchbar);
 function validate_search_eligible() {
   if(!$SEARCH_BAR_INPUT.val()) {
     throw DO_NOT_SUBMIT_FORM;
-  }
-  if($SEARCH_TYPE_YOUTUBE.hasClass('active')) {
-    $SEARCH_LIBRARY_FORM.attr('url', '../../../api/music/search/youtube/');
-  } else {
-    $SEARCH_LIBRARY_FORM.attr('url', '../../../api/music/search/spotify/');
   }
 }
 
@@ -215,10 +212,25 @@ $(document).keydown(function(event) {
  /////  INIT  /////
 /////  ////  /////
 
-function click_chip() {
+function click_provider_chip() {
   var $this = $(this);
   var value = $this.attr('value');
-  $SEARCH_CHIPS.removeClass('active');
+  $PROVIDER_CHIPS.removeClass('active');
+  $this.addClass('active');
+  $('#search-library-provider').val(value);
+  if(value === 'youtube') {
+    $TYPE_CHIPS.addClass('hidden');
+  } else {
+    $TYPE_CHIPS.removeClass('hidden');
+  }
+  $SEARCH_LIBRARY_FORM.submit();
+  focus_searchbar();
+}
+
+function click_type_chip() {
+  var $this = $(this);
+  var value = $this.attr('value');
+  $TYPE_CHIPS.removeClass('active');
   $this.addClass('active');
   $('#search-library-type').val(value);
   $SEARCH_LIBRARY_FORM.submit();
@@ -237,5 +249,6 @@ $SEARCH_BAR_INPUT.keypress(function (e) {
 });
 
 $(document).ready(function() {
-  $SEARCH_CHIPS.click(click_chip);
+  $TYPE_CHIPS.click(click_type_chip);
+  $PROVIDER_CHIPS.click(click_provider_chip);
 });

@@ -34,7 +34,7 @@ class UpdateStreamView(BaseView):
         stream.tags = stream_tags
         stream.is_private = is_private
         if unique_custom_id:
-            streamunique_custom_id = unique_custom_id
+            stream.unique_custom_id = unique_custom_id
 
         stream.save()
 
