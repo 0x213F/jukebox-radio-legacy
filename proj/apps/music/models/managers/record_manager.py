@@ -29,6 +29,7 @@ class RecordManager(BaseManager):
             'youtube_img_high': record.youtube_img_high,
 
             'storage_id': record.storage_id,
+            'storage_filename': record.storage_filename,
             'storage_name': record.storage_name,
             'storage_duration_ms': record.storage_duration_ms,
         }
@@ -96,7 +97,8 @@ class RecordManager(BaseManager):
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         )
 
-        storage_filename = f'uploads/{str(uuid.uuid4())}.mp3'
+        storage_id = str(uuid.uuid4())
+        storage_filename = f'uploads/{storage_id}.mp3'
 
         client.upload_fileobj(file, 'jukebox-radio-space', storage_filename)
 
@@ -104,7 +106,7 @@ class RecordManager(BaseManager):
         audio = MP3(file)
 
         record = Record.objects.create(
-            storage_id=str(uuid.uuid4()),
+            storage_id=storage_id,
             storage_filename=storage_filename,
             storage_name=file.name,
             storage_duration_ms=audio.info.length * 1000,

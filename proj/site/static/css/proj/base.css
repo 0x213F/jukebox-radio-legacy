@@ -73,6 +73,20 @@ html, body {
     backdrop-filter: blur(12px);
 }
 
+.main.top {
+  border-top-left-radius: 0px!important;
+  border-top-right-radius: 0px!important;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.main.bottom {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 0px!important;
+  border-bottom-right-radius: 0px!important;
+}
+
 .main.card > .card-body {
   width: 100%;
   overflow-y: auto;

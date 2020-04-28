@@ -44,8 +44,6 @@ function getYouTubePlayer() {
     is_one = false;
     $('#youtube-video-player').removeClass('hidden');
     $('#youtube-video-player-2').addClass('hidden');
-    console.log('!')
-    console.log(YOUTUBE_PLAYER)
     return YOUTUBE_PLAYER;
   } else {
     is_one = true;

@@ -16,7 +16,7 @@
       <!-- INLINE SEARCH BAR -->
       <div class="input-group search-group">
 
-        <button type="button" class="exit-search-button btn btn-link btn-lg search-back-button">
+        <button type="button" class="exit-search-button btn btn-link btn-lg jr-btn-sq">
           <i class="gg-arrow-bottom-left-o" style="bottom: 1px;"></i>
         </button>
 
@@ -35,14 +35,17 @@
       <!-- TABS TO SELECT SEARCH PROVIDER -->
       <input id="search-library-provider" class="hidden" name="provider" value="spotify">
       <div id="search-providers" class="filter-nav" style="margin-top: 16px; margin-bottom: 6px; height: 32px;">
-        <div class="search-provider active" value="spotify" style="float: right; margin-right: 0px;">
+        <div class="search-provider active" value="spotify" style="float: right; margin-right: 0px; width: 60px; text-align: center;">
           <i class="fab fa-spotify"></i>
         </div>
-        <div class="search-provider" value="youtube" style="float: right;">
+        <div class="search-provider" value="youtube" style="float: right; width: 60px; text-align: center;">
           <i class="fab fa-youtube"></i>
         </div>
-        <div class="search-provider" value="file" style="float: right;">
-          <i class="gg-software-upload" style="top: 8px;"></i>
+        <!-- <div class="search-provider" value="soundcloud" style="float: right; width: 60px; text-align: center;" disabled>
+          <i class="fab fa-soundcloud"></i>
+        </div> -->
+        <div class="search-provider" value="file" style="float: right; width: 60px; text-align: center;">
+          <i class="fas fa-file-upload"></i>
         </div>
       </div>
 
@@ -57,12 +60,18 @@
     </form>
 
     <form id="upload-file-form" class="hidden" style="margin-top: 16px;">
-      <input name="file" type="file" />
+      <input name="file" type="file" disabled />
       <input class="hidden" name="provider" type="text" value="file" />
       {% csrf_token %}
 
       <input class="hidden" name="stream_uuid" type="text" value="{{ stream.uuid }}">
-      <button id="file-upload-button" class="btn btn-lg btn-secondary jr-btn" style="margin-top: 16px;">Submit</button>
+      <button id="file-upload-button" class="btn btn-lg btn-secondary jr-btn" style="margin-top: 16px; margin-bottom: 16px;" type="" disabled>Submit</button>
+
+      <mark style="border-radius: 8px;">
+        <p style="margin: 8px 12px;">
+          This feature allows you to upload a file. It is currently only available to music educators and professional musicians. Email us at support@jukebox.radio to request access to this feature.
+        </p>
+      </mark>
     </form>
 
     <div id="search-results" class="no-scrollbar hidden"></div>

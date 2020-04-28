@@ -1,4 +1,5 @@
 
+var $AUDIO = $('#source-stream');
 
 function syncStoragePlayback() {
   var now = Date.now()
@@ -8,12 +9,15 @@ function syncStoragePlayback() {
     return;
   }
 
-  
+  var storage_id = PLAYBACK.record.storage_id;
 
-  var player = getYouTubePlayer();
-  player.loadVideoById({
-    videoId: PLAYBACK.record.youtube_id,
-    startSeconds: Math.floor(offset / 1000),
-    endSeconds: PLAYBACK.record.youtube_duration_ms,
-  });
+  var $audio_el = $AUDIO.children().first()
+  var audio_el = $audio_el[0]
+
+  if(offset < 10) {
+    offset = 0;
+  }
+
+  audio_el.currentTime = offset / 1000;
+  audio_el.play();
 }

@@ -32,6 +32,7 @@ class CreateQueueView(BaseView):
         elif provider == 'youtube':
             record, queue = self.create_youtube_queue(request, stream)
         elif provider == 'file':
+            print('create_file_queue')
             record, queue = self.create_file_queue(request, stream)
         else:
             raise ValueError('Needs ID')
@@ -46,12 +47,7 @@ class CreateQueueView(BaseView):
             stream, queue = Stream.objects.spin(queue, stream)
         else:
             payload = {
-                'type': 'send_update',
-                'text': {
-                    'created': {
-                        'queues': [Queue.objects.serialize(queue)],
-                    }
-                }
+                'type': 'sync_playback',
             }
             for ticket in Ticket.objects.administrators(stream):
                 user_id = ticket.holder_id

@@ -28,6 +28,7 @@ class YouTube(object):
             'q': query,
             'key': secrets.GOOGLE_API_KEY,
             'type': 'video',
+            'maxResults': 16,
         }
 
         response = requests.get(

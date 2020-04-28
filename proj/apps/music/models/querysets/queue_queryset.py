@@ -11,3 +11,6 @@ class QueueQuerySet(BaseQuerySet):
             self.filter(stream=stream, played_at__isnull=True)
             .order_by('created_at').first()
         )
+
+    def in_stream(self, stream):
+        return self.filter(played_at__isnull=True, stream=stream).order_by('created_at')

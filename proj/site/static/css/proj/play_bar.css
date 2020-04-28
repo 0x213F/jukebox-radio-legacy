@@ -57,18 +57,7 @@
   height: calc(100% - 24px)!important;
 }
 
-.search-back-button {
-  min-width: 40px;
-  border-radius: 12px;
-  background-color: rgb(256, 256, 256, 0.95)!important;
-}
-
-/* .search-back-button:hover {
-  background-color: #5764c6!important;
-} */
-
 .search-input-bar {
-  margin-left: 16px!important;
   padding-left: 12px!important;
   color: #727e96;
   border: 1px solid #727e96;
@@ -203,73 +192,4 @@
 .search-button {
   width: 40px;
   height: 40px;
-}
-
-/* * * * * * * * * */
-/* SEARCH RESULTS  */
-#search-results {
-  margin-top: 16px;
-  max-height: calc(100% - 104px);
-  overflow-y: auto;
-  border: 1px solid #727e96;
-  border-radius: 12px;
-}
-
-#search-results > .search-result {
-  height: 72px;
-  width: calc(100% - 16px);
-
-  margin: 8px;
-  border: 1px solid rgba(0,0,0,0);
-  border-radius: 10px;
-
-  cursor: pointer;
-  outline: none;
-
-  transition: all 0.2s ease;
-}
-
-#search-results > .search-result:hover,
-#search-results > .search-result.active {
-  background-color: #f0f1f4;
-}
-
-#search-results > .search-result:active {
-  border-color: #5764c6;
-  background-color: #f0f1f4;
-}
-
-
-#search-results > .search-result > img {
-  height: 48px;
-
-  margin: 11px;
-
-  float: left;
-}
-
-#search-results > .search-result > .record-name {
-  display: block;
-
-  padding-left: 16px;
-  padding-top: 14px;
-  padding-right: 12px;
-
-  text-align: left;
-  font-size: 16px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-#search-results > .search-result > .artist-name {
-  display: block;
-
-  padding-left: 16px;
-  padding-right: 12px;
-
-  text-align: left;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }

@@ -6,6 +6,7 @@ from datetime import datetime
 from urllib import parse
 
 from proj.apps.music.models import Comment
+from proj.apps.music.models import Queue
 from proj.apps.music.models import QueueListing
 from proj.apps.music.models import Record
 from proj.apps.music.models import Stream
@@ -248,6 +249,9 @@ class Consumer(AsyncConsumer):
         current_queue = self.scope['stream'].current_queue
         record = current_queue.record
 
+        queue_qs = Queue.objects.select_related('stream', 'record').in_stream(self.scope['stream'])
+        queues = await database_sync_to_async(list)(queue_qs)
+
         if record.spotify_uri:
             current_queue_listing = await QueueListing.objects.select_related('track_listing', 'track_listing__track').now_playing_async(current_queue)
             up_next_qls = await QueueListing.objects.select_related('track_listing', 'track_listing__track').up_next_async(current_queue)
@@ -261,6 +265,7 @@ class Consumer(AsyncConsumer):
                 'status': 'playing_and_synced',
                 'spotify_token': self.scope["spotify"].token,
                 'ticket': Ticket.objects.serialize(self.scope['ticket']),
+                'up_next': [Queue.objects.serialize(q) for q in queues],
             }
         else:
             playback_data = {
@@ -270,6 +275,7 @@ class Consumer(AsyncConsumer):
                 'status': 'playing_and_synced',
                 'spotify_token': self.scope["spotify"].token,
                 'ticket': Ticket.objects.serialize(self.scope['ticket']),
+                'up_next': [Queue.objects.serialize(q) for q in queues],
             }
 
         payload = {

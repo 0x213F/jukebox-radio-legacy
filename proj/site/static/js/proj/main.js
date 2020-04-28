@@ -50,7 +50,10 @@ function setup_ajax_forms() {
                 $status.removeClass('success');
             },
             success: function(e) {
-                if(onsuccess) window[onsuccess](e, $status);
+                if(onsuccess) {
+                  console.log(onsuccess)
+                  window[onsuccess](e, $status);
+                }
                 if(redirect) window.location = redirect;
             }
         });

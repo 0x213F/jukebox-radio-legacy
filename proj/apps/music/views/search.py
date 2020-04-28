@@ -33,3 +33,11 @@ class SearchView(BaseView):
                     'search_results': search_results,
                     'provider': 'youtube',
             })
+
+        if provider == 'soundcloud':
+            search_results = SoundCloud.search_library(query)
+
+            return self.http_response_200({
+                    'search_results': search_results,
+                    'provider': 'youtube',
+            })

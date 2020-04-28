@@ -2,7 +2,8 @@ from django.apps import apps
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-from django.http import StreamingHttpResponse
+from io import BytesIO
+from django.http import FileResponse
 from boto3 import session
 
 from django.conf import settings
@@ -32,7 +33,7 @@ class StreamView(BaseView):
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         )
         obj = client.get_object(
-            Bucket='jukebox-radio-storage', Key=record.storage_filename
+            Bucket='jukebox-radio-space', Key=record.storage_filename
         )
 
-        return StreamingHttpResponse(obj)
+        return FileResponse(BytesIO(obj['Body'].read()))

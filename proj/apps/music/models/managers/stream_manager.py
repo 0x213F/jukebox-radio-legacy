@@ -52,6 +52,7 @@ class StreamManager(BaseManager):
             'played_at': played_at,
             'paused_at': paused_at,
             'record_terminates_at': record_terminates_at,
+            'is_private': stream.is_private,
         }
 
     def spin(self, queue, stream, first_spin=False):

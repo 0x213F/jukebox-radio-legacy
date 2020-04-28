@@ -16,43 +16,51 @@ function updateStreamTitle(payload) {
   $('.jr-banner').text(stream.name);
 }
 
-function updatePlayBar(payload) {
+var IS_PAGE_LOAD_PLAYBACK_UPDATE = true;
+function updatePlaybackData(payload) {
+  if(payload.read && payload.read.playback && payload.read.playback.length) {
 
-  if(!payload.read || !payload.read.playback || !payload.read.playback.length) {
-    return;
+    PLAYBACK = payload.read.playback[0];
+
+    if(PLAYBACK.ticket.is_administrator) {
+      console.log('!!!!!!!!!!')
+      var $GO_TO_QUEUE_BUTTON = $('#go-to-queue-top');
+      $GO_TO_QUEUE_BUTTON.removeClass('hidden');
+      $GO_TO_QUEUE_BUTTON.empty()
+      if(!PLAYBACK.up_next || !PLAYBACK.up_next.length) {
+        $GO_TO_QUEUE_BUTTON.append('<i class="gg-play-list-add" style="left: 5px;"></i>')
+      } else {
+        $GO_TO_QUEUE_BUTTON.append('<i class="gg-play-list-search" style="left: 5px;"></i>')
+      }
+    }
+
+    if(payload.read.playback[0].status === 'playing_and_synced') {
+      if(PLAYBACK.record.storage_id) {
+        var storage_filename = PLAYBACK.record.storage_filename;
+        $AUDIO.html(`<audio><source src="https://jukebox-radio-space.sfo2.digitaloceanspaces.com/${storage_filename}"></audio>`);
+        if(IS_PAGE_LOAD_PLAYBACK_UPDATE) {
+          $('#sync-playback').removeClass('hidden');
+        }
+      } else {
+        updatePlayback();
+      }
+    }
+
+    IS_PAGE_LOAD_PLAYBACK_UPDATE = false;
   }
-
-  let playback_data = payload.read.playback[0];
-  let visible_section_class_name = playback_data.next_step;
-
-  if(visible_section_class_name === 'noop') {
-    return;
-  }
-
-  $('.play-bar > .content').addClass('hidden');
-  $('.play-bar > .' + visible_section_class_name).removeClass('hidden');
-
-  let record_data = playback_data.record;
-  if(record_data) {
-    $('.album-art').attr('src', record_data.img);
-    try { $('#form-load-queue').submit(); } catch(error) {};
-  }
-
-  var $playBar = $('#play-bar');
-  $playBar.removeClass('hide-under-view');
 }
 
-function updatePlayback(payload) {
-  if(payload.read && payload.read.playback && payload.read.playback.length && payload.read.playback[0].status === 'playing_and_synced') {
-    PLAYBACK = payload.read.playback[0];
-    if(PLAYBACK.record.youtube_id) {
-      syncYouTubePlayback();
-    } else if(PLAYBACK.record.spotify_uri) {
-      syncSpotifyPlayback();
-    } else {
-      syncStoragePlayback();
-    }
+$('#sync-playback').click(updatePlayback)
+
+function updatePlayback() {
+  if(PLAYBACK.record.youtube_id) {
+    syncYouTubePlayback();
+  } else if(PLAYBACK.record.spotify_uri) {
+    syncSpotifyPlayback();
+  } else {
+    syncStoragePlayback();
   }
+  $('#sync-playback').addClass('hidden');
 }
 
 function updateURL(payload) {
@@ -61,12 +69,15 @@ function updateURL(payload) {
     currSite = currSite.substring(currSite.indexOf('/stream/')+1);
 
     var stream = payload.updated.streams[0];
+
+    if(stream.is_private && !PLAYBACK.ticket.is_administrator) {
+      window.location.href = '/'
+    }
+
     if('stream/' + stream.unique_custom_id + '/' !== currSite) {
       window.location.href = '/stream/' + stream.unique_custom_id;
     }
   }
-
-  console.log(currSite);
 }
 
   /////  //////////  /////
@@ -131,7 +142,7 @@ function onmessage(event) {
   updateURL(payload);
 
   updateStreamTitle(payload);
-  updatePlayBar(payload);
   displayComments(payload);
-  updatePlayback(payload);
+  updatePlaybackData(payload);
+  refreshQueue(payload);
 }

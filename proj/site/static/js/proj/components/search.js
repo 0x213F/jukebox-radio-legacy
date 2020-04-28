@@ -37,7 +37,6 @@ function defocus_searchbar() {
   $SEARCH_RESULTS.empty();
 
   $MAIN_CARD.removeClass('hidden');
-  $PLAYBAR.removeClass('hidden');
 }
 
 $SEARCH_EXIT_BUTTON.click(defocus_searchbar);
@@ -56,6 +55,13 @@ function display_search_results(data) {
     $SEARCH_RESULTS.addClass('hidden');
     // TODO: display zero state
     return;
+  }
+
+  var result = data.search_results[0]
+  if(result.spotify_uri) {
+    $SEARCH_RESULTS.css('max-height', 'calc(100% - 194px)');
+  } else if(result.youtube_id) {
+    $SEARCH_RESULTS.css('max-height', 'calc(100% - 160px)');
   }
 
   $SEARCH_RESULTS.empty();
@@ -118,6 +124,8 @@ function add_to_queue(e) {
 $('#file-upload-button').click(file_upload_to_queue);
 
 function file_upload_to_queue(e) {
+  e.preventDefault();
+
   var $this = $(this);
 
   provider = 'file';
@@ -250,6 +258,7 @@ function click_provider_chip() {
   var $this = $(this);
   var value = $this.attr('value');
   $PROVIDER_CHIPS.removeClass('active');
+  $SEARCH_RESULTS.addClass('hidden');
   $this.addClass('active');
   $('#search-library-provider').val(value);
   if(value === 'youtube') {
@@ -265,6 +274,10 @@ function click_provider_chip() {
     $SEARCH_RESULTS.addClass('hidden');
     $FILE_UPLOAD_FORM.removeClass('hidden');
     $SEARCH_BAR_INPUT.attr('disabled', true);
+  } else if(value === 'soundcloud') {
+    $SEARCH_TYPES.addClass('hidden');
+    $FILE_UPLOAD_FORM.addClass('hidden');
+    $SEARCH_BAR_INPUT.attr('disabled', false);
   }
   $SEARCH_LIBRARY_FORM.submit();
   focus_searchbar();
