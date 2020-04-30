@@ -70,7 +70,7 @@ function updateHostButton(payload) {
           defocus_searchbar();
         }
       }
-      
+
     }
   }
 }
@@ -80,10 +80,15 @@ $('#sync-playback').click(updatePlayback)
 function updatePlayback() {
   if(PLAYBACK.record.youtube_id) {
     syncYouTubePlayback();
+    $('#info-album-art').attr('src', PLAYBACK.record.youtube_img_high);
+    $('#info-record-name').text(PLAYBACK.record.youtube_name);
   } else if(PLAYBACK.record.spotify_uri) {
     syncSpotifyPlayback();
+    $('#info-album-art').attr('src', PLAYBACK.record.spotify_img_high);
+    $('#info-record-name').text(PLAYBACK.record.spotify_name);
   } else {
     syncStoragePlayback();
+    $('#info-record-name').text(PLAYBACK.record.storage_name);
   }
   $('#sync-playback').addClass('hidden');
 }
@@ -113,6 +118,7 @@ $('.exit-manage').click(exit_manage);
 function exit_manage() {
   $('#manage-html').addClass('hidden');
   $('#displayname-html').addClass('hidden');
+  $('#info-view').addClass('hidden');
   $('#main-card').removeClass('hidden');
 }
 

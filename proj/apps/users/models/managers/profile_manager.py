@@ -30,6 +30,7 @@ class ProfileManager(BaseManager):
             'first_name': user.first_name,
             'last_name': user.last_name,
             'email': user.email,
+            'is_staff': user.is_staff,
             'profile': {
                 'active_stream_ticket': Ticket.objects.serialize(active_ticket),
                 'scopes': scopes,

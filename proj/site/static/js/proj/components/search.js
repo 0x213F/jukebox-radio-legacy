@@ -23,6 +23,7 @@ function focus_searchbar() {
   $MAIN_CARD.addClass('hidden');
   $PLAY_BAR.addClass('hidden');
   $QUEUE_VIEW.addClass('hidden');
+  $('#info-view').addClass('hidden');
 
   $SEARCH_VIEW.removeClass('hidden');
   $SEARCH_BAR_INPUT.focus();

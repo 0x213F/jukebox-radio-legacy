@@ -14,6 +14,7 @@ $( document ).ready(function() {
 function focus_queue() {
   if ($('#queued-up').children().length) {
     $('#main-card').addClass('hidden');
+    $('#info-view').addClass('hidden');
     $('#queue-view').removeClass('hidden');
     $('#play-bar').addClass('hidden');
   } else {
