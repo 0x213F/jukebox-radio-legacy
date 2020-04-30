@@ -23,7 +23,6 @@ function updatePlaybackData(payload) {
     PLAYBACK = payload.read.playback[0];
 
     if(PLAYBACK.ticket.is_administrator) {
-      console.log('!!!!!!!!!!')
       var $GO_TO_QUEUE_BUTTON = $('#go-to-queue-top');
       $GO_TO_QUEUE_BUTTON.removeClass('hidden');
       $GO_TO_QUEUE_BUTTON.empty()
@@ -47,6 +46,32 @@ function updatePlaybackData(payload) {
     }
 
     IS_PAGE_LOAD_PLAYBACK_UPDATE = false;
+  }
+}
+
+function updateHostButton(payload) {
+  if(payload.updated && payload.updated.users && payload.updated.users.length) {
+    var user = payload.updated.users[0];
+    console.log(user.profile.active_stream_ticket.uuid, PLAYBACK.ticket.uuid)
+    if(user.profile.active_stream_ticket.uuid === PLAYBACK.ticket.uuid) {
+
+      var $GO_TO_QUEUE_BUTTON = $('#go-to-queue-top');
+      if(user.profile.active_stream_ticket.is_administrator) {
+        $GO_TO_QUEUE_BUTTON.removeClass('hidden');
+        $GO_TO_QUEUE_BUTTON.empty()
+        if(!PLAYBACK.up_next || !PLAYBACK.up_next.length) {
+          $GO_TO_QUEUE_BUTTON.append('<i class="gg-play-list-add" style="left: 5px;"></i>')
+        } else {
+          $GO_TO_QUEUE_BUTTON.append('<i class="gg-play-list-search" style="left: 5px;"></i>')
+        }
+      } else {
+        $GO_TO_QUEUE_BUTTON.addClass('hidden');
+        if(!$QUEUE_VIEW.hasClass('hidden') || !$SEARCH_VIEW.hasClass('hidden')) {
+          defocus_searchbar();
+        }
+      }
+      
+    }
   }
 }
 
@@ -145,4 +170,5 @@ function onmessage(event) {
   displayComments(payload);
   updatePlaybackData(payload);
   refreshQueue(payload);
+  updateHostButton(payload);
 }

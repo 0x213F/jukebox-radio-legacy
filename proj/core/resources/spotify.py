@@ -80,34 +80,37 @@ class Spotify(object):
         response_json = response.json()
 
         if type == "album":
-            return [
-                {
-                    "record_artist": ", ".join([a["name"] for a in data["artists"]]),
-                    "record_name": data["name"],
-                    "spotify_uri": data["uri"],
-                    "record_thumbnail": data["images"][0]["url"],
-                }
-                for data in response_json["albums"]["items"]
-            ]
+            data = []
+            items = response_json["albums"]["items"]
+            for item in items:
+                data.append({
+                    "record_artist": ", ".join([a["name"] for a in item["artists"]]),
+                    "record_name": item["name"],
+                    "spotify_uri": item["uri"],
+                    "record_thumbnail": item["images"][0]["url"],
+                })
+            return data
         elif type == "playlist":
-            return [
-                {
-                    "record_name": data["name"],
-                    "uri": data["uri"],
-                    "record_thumbnail": data["images"][0]["url"],
-                }
-                for data in response_json["playlists"]["items"]
-            ]
+            data = []
+            items = response_json["playlists"]["items"]
+            for item in items:
+                data.append({
+                    "record_name": item["name"],
+                    "uri": item["uri"],
+                    "record_thumbnail": item["images"][0]["url"],
+                })
+            return data
         else:
-            return [
-                {
-                    "record_artist": ", ".join([a["name"] for a in data["artists"]]),
-                    "record_name": data["name"],
-                    "spotify_uri": data["uri"],
-                    "record_thumbnail": data["album"]["images"][0]["url"],
-                }
-                for data in response_json["tracks"]["items"]
-            ]
+            data = []
+            items = response_json["tracks"]["items"]
+            for item in items:
+                data.append({
+                    "record_artist": ", ".join([a["name"] for a in item["artists"]]),
+                    "record_name": item["name"],
+                    "spotify_uri": item["uri"],
+                    "record_thumbnail": item["album"]["images"][0]["url"],
+                })
+            return data
 
     def get_track_info(self, spotify_uri):
         spotify_id = spotify_uri[14:]
@@ -136,14 +139,15 @@ class Spotify(object):
         )
         response_json = response.json()
 
-        return [
-            {
-                "spotify_uri": track["uri"],
-                "spotify_duration_ms": track["duration_ms"],
-                "spotify_name": track["name"],
-            }
-            for track in response_json["items"]
-        ]
+        items = response_json["items"]
+        data = []
+        for item in items:
+            data.append({
+                "spotify_uri": item["uri"],
+                "spotify_duration_ms": item["duration_ms"],
+                "spotify_name": item["name"],
+            })
+        return data
 
     def get_playlist_info(self, spotify_uri):
         spotify_id = spotify_uri[17:]
@@ -156,14 +160,15 @@ class Spotify(object):
         )
         response_json = response.json()
 
-        return [
-            {
+        items = response_json["tracks"]["items"]
+        data = []
+        for item in items:
+            data.append({
                 "spotify_uri": track["track"]["uri"],
                 "spotify_duration_ms": track["track"]["duration_ms"],
                 "spotify_name": track["track"]["name"],
-            }
-            for track in response_json["tracks"]["items"]
-        ]
+            })
+        return data
 
     def get_me(self):
         response = requests.get(

@@ -4,6 +4,7 @@ from channels.layers import get_channel_layer
 
 from django.apps import apps
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.utils.decorators import method_decorator
 
 from proj.core.views import BaseView

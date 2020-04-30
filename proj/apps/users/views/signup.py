@@ -34,7 +34,7 @@ def signup_view(request):
         user.set_password(password)
         user.save()
 
-        Ticket.objects.filter(email=old_email).update(holder=user, email=email)
+        Ticket.objects.filter(email=old_email).delete()
 
         login(request, user)
         return HttpResponse(status=201)

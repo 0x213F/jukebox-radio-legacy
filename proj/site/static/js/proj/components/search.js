@@ -48,6 +48,7 @@ function validate_search_eligible() {
   if(!$SEARCH_BAR_INPUT.val()) {
     throw DO_NOT_SUBMIT_FORM;
   }
+  $SEARCH_RESULTS.addClass('hidden');
 }
 
 function display_search_results(data) {

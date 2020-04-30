@@ -80,6 +80,7 @@ class TicketManager(BaseManager):
         them so their UI is updated with removed host controls. If the user has
         not created an account yet, pass.
         '''
+        Profile = apps.get_model('users', 'Profile')
         Ticket = self.model
 
         ticket = Ticket.objects.select_related('holder').get(stream=stream, email=email)

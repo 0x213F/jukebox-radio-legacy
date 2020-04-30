@@ -32,7 +32,8 @@ class CreateQueueView(BaseView):
         elif provider == 'youtube':
             record, queue = self.create_youtube_queue(request, stream)
         elif provider == 'file':
-            print('create_file_queue')
+            if not request.user.is_staff:
+                raise ValueError('Needs to be staff')
             record, queue = self.create_file_queue(request, stream)
         else:
             raise ValueError('Needs ID')
