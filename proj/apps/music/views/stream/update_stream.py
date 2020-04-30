@@ -27,9 +27,13 @@ class UpdateStreamView(BaseView):
         is_private = stream_is_private == 'on'
 
         if not stream_name or not stream_tags:
-            self.http_response_400('Missing data')
+            return self.http_response_400('Missing data')
 
         stream = Stream.objects.get(uuid=stream_uuid)
+
+        if not unique_custom_id.isalnum():
+            return self.http_response_400('Invalid character')
+
         stream.title = stream_name
         stream.tags = stream_tags
         stream.is_private = is_private

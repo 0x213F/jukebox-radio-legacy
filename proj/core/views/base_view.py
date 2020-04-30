@@ -1,4 +1,5 @@
 from django.core.serializers import serialize
+from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.template.response import TemplateResponse
@@ -13,6 +14,9 @@ class BaseView(View):
     '''
 
     def http_response_200(self, response):
+        '''
+        SUCCESS
+        '''
         if type(response) == dict:
             return JsonResponse(response)
         if type(response) == list:
@@ -20,10 +24,22 @@ class BaseView(View):
         return JsonResponse(serialize('json', [response])[1:-1], safe=False)
 
     def http_response_400(self, message):
+        '''
+        BAD REQUEST
+        '''
         return HttpResponseBadRequest(message)
 
     def http_response_403(self, message):
+        '''
+        FORBIDDEN
+        '''
         return HttpResponseForbidden(message)
+
+    # def http_response_422(self, message):
+    #     '''
+    #     INVALID FORMAT
+    #     '''
+    #     return HttpResponse(status_code=422, message=message)
 
     def template_response(self, request, template, context={}):
         return TemplateResponse(request, template, context)
