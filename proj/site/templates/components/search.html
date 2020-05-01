@@ -1,7 +1,7 @@
 
 <div id="search-view" class="main center-horizontal card hidden">
   <div class="card-body" style="width: 100%;">
-  
+
     <form id="search-library"
           class="ajax-form"
           url="../../../api/music/search/"
@@ -56,16 +56,20 @@
     </form>
 
     <form id="upload-file-form" class="hidden" style="margin-top: 16px;">
-      <input name="file" type="file" disabled />
+      <input name="file" type="file" {% if not user.is_staff %}disabled{% endif %} />
       <input class="hidden" name="provider" type="text" value="file" />
       {% csrf_token %}
 
       <input class="hidden" name="stream_uuid" type="text" value="{{ stream.uuid }}">
-      <button id="file-upload-button" class="btn btn-lg btn-secondary jr-btn" style="margin-top: 16px; margin-bottom: 16px;" type="" disabled>Submit</button>
+      <button id="file-upload-button" class="btn btn-lg btn-secondary jr-btn" style="margin-top: 16px; margin-bottom: 16px;" type="" {% if not user.is_staff %}disabled{% endif %}>Submit</button>
 
       <mark style="border-radius: 8px;">
         <p style="margin: 8px 12px;">
+          {% if user.is_staff %}
+          This feature allows you to upload a file. You are only permitted to upload content where you own the sole copyright. Everything that you publish will be public at no cost to the entire internet.
+          {% else %}
           This feature allows you to upload a file. It is currently only available to music educators and professional musicians. Email us at support@jukebox.radio to request access to this feature.
+          {% endif %}
         </p>
       </mark>
     </form>

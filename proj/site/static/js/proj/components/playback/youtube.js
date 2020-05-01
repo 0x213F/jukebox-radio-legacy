@@ -57,7 +57,7 @@ function onYouTubeIframeAPIReady() {
   $('#youtube-video-player').addClass('hidden');
   YOUTUBE_PLAYER = new YT.Player('youtube-video-player', {
     height: '198',
-    width: '352',
+    width: '100%',
     events: {
       'onReady': onPlayerReady,
       'onStateChange': onPlayerStateChange2,
@@ -66,7 +66,7 @@ function onYouTubeIframeAPIReady() {
   $('#youtube-video-player-2').addClass('hidden');
   YOUTUBE_PLAYER_2 = new YT.Player('youtube-video-player-2', {
     height: '198',
-    width: '352',
+    width: '100%',
     events: {
       'onReady': onPlayerReady2,
       'onStateChange': onPlayerStateChange2,

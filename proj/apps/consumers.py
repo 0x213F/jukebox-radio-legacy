@@ -216,6 +216,16 @@ class Consumer(AsyncConsumer):
 
     async def sync_playback(self, onload=False):
 
+        # get user's profile to refresh spotify token
+        self.scope["profile"] = await database_sync_to_async(Profile.objects.get)(
+            user=self.scope["user"]
+        )
+
+        # init spotify interface
+        self.scope["spotify"] = Spotify(
+            self.scope["user"], profile=self.scope["profile"]
+        )
+
         # reload stream object
         # TODO load from cache
         self.scope['stream'] = await database_sync_to_async(

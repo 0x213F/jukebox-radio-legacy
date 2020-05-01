@@ -71,7 +71,7 @@
 
     <!-- - - --->
     <!-- CHAT -->
-    <div class="chat-container" style="overflow-y: scroll; margin-top: 16px; height: calc(100% - 112px); margin-bottom: 16px;"></div>
+    <div class="chat-container" style="overflow-y: scroll; margin-top: 16px; margin-bottom: 16px;"></div>
 
     <!-- - - --->
     <!-- SYNC -->
@@ -83,7 +83,7 @@
 
     <!-- - - - - - - - --->
     <!-- CHAT INPUT BAR -->
-    <div style="width: 100%;">
+    <div style="width: calc(100% - 48px); position: absolute; bottom: 24px;">
       <form class="ajax-form card-body" type="websocket">
 
         <input class="hidden" name="stream_uuid" value="{{ stream.uuid }}" />
