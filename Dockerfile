@@ -39,4 +39,4 @@ RUN export PYTHONPATH=`which python3`
 
 EXPOSE 8000
 RUN export PYTHONPATH=.
-CMD ["daphne", "-p", "8000", "proj.asgi:application"]
+CMD ["daphne", "-p", "8000:8000", "proj.asgi:application"]

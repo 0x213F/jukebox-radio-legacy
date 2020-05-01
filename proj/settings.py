@@ -1,5 +1,5 @@
 import os
-import proj.secrets as secrets
+from proj import secrets
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -148,7 +148,8 @@ STATIC_URL = "/static/"
 if not secrets.DEBUG:
     STATIC_ROOT = f'{BASE_DIR}/proj/site/static/'
 else:
-    STATICFILES_DIRS = [f'{BASE_DIR}/proj/site/static/']
+    STATIC_ROOT = f'{BASE_DIR}/proj/site/static/'
+    # STATICFILES_DIRS = [f'{BASE_DIR}/proj/site/static/']
 
     # Disable OAuthlib's HTTPS verification when running locally.
     # *DO NOT* leave this option enabled in production.
