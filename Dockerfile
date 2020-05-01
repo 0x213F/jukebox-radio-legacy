@@ -37,6 +37,6 @@ RUN pip3 install -r requirements.txt
 
 RUN export PYTHONPATH=`which python3`
 
-EXPOSE 80
+EXPOSE 8000
 RUN export PYTHONPATH=.
-CMD ["python3", "manage.py", "runserver"]
+CMD ["daphne", "-p", "8000", "proj.asgi:application"]
