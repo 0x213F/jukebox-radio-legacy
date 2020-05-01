@@ -100,7 +100,7 @@ class RecordManager(BaseManager):
         storage_id = str(uuid.uuid4())
         storage_filename = f'uploads/{storage_id}.mp3'
 
-        client.upload_fileobj(file, 'jukebox-radio-space', storage_filename)
+        client.upload_fileobj(file, 'jukebox-radio-space', storage_filename, ExtraArgs={'ACL': 'public-read'})
 
         from mutagen.mp3 import MP3
         audio = MP3(file)
