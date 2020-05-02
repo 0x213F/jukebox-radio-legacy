@@ -3,6 +3,8 @@ from datetime import datetime
 from django.conf import settings
 from django.db import models
 
+import uuid as _uuid
+
 from proj.apps.music.models.managers import QueueManager
 from proj.apps.music.models.querysets import QueueQuerySet
 
@@ -26,6 +28,8 @@ class Queue(BaseModel):
     # - - - -
     # fields |
     # - - - -
+
+    uuid = models.UUIDField(default=_uuid.uuid4, editable=False)
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='queued', on_delete=models.DO_NOTHING,

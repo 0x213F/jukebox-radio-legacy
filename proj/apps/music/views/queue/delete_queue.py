@@ -21,9 +21,9 @@ class DeleteQueueView(BaseView):
         Queue = apps.get_model('music.Queue')
         Ticket = apps.get_model('music.Ticket')
 
-        queue_id = request.POST.get('queue_id', None)
+        queue_uuid = request.POST.get('queue_uuid', None)
 
-        queue = Queue.objects.select_related('stream').get(id=queue_id)
+        queue = Queue.objects.select_related('stream').get(uuid=queue_uuid)
         queue.delete()
 
         payload = {

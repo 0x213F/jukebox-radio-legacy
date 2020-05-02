@@ -2,6 +2,8 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from datetime import datetime
 
+import uuid
+
 from django.apps import apps
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -48,13 +50,17 @@ class CreateQueueView(BaseView):
             stream, queue = Stream.objects.spin(queue, stream)
         else:
             payload = {
-                'type': 'sync_playback',
+                'type': 'send_update',
+                'text': {
+                    'created': {
+                        'queues': [Queue.objects.serialize(queue)],
+                    }
+                }
             }
-            for ticket in Ticket.objects.administrators(stream):
+
+            for ticket in Ticket.objects.administrators(stream=stream):
                 user_id = ticket.holder_id
-                async_to_sync(channel_layer.group_send)(
-                    f'user-{user_id}', payload
-                )
+                async_to_sync(channel_layer.group_send)(f'user-{user_id}', payload)
 
         return self.http_response_200({})
 

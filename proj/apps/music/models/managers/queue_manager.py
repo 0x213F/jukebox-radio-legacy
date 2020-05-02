@@ -39,7 +39,7 @@ class QueueManager(BaseManager):
         '''
         Record = apps.get_model('music', 'Record')
         return {
-            'id': queue.id,
+            'uuid': str(queue.uuid),
             'stream_uuid': str(queue.stream.uuid),
             'record': Record.objects.serialize(queue.record),
             'created_at': queue.created_at.isoformat(),

@@ -110,6 +110,27 @@ function updateURL(payload) {
   }
 }
 
+////
+
+function addQueue(payload) {
+  if(!payload.created || !payload.created || !payload.created.queues || !payload.created.queues.length) {
+    return;
+  }
+  $div = $('#queued-up');
+  for(var queue of payload.created.queues) {
+    $div.append(generate_queue(queue));
+  }
+}
+
+function removeQueue(payload) {
+  if(!payload.deleted || !payload.deleted || !payload.deleted.queues || !payload.deleted.queues.length) {
+    return;
+  }
+
+  // where I should work when I get back :)
+
+}
+
   /////  //////////  /////
  /////  NAVIGATION  /////
 /////  //////////  /////
@@ -177,4 +198,7 @@ function onmessage(event) {
   updatePlaybackData(payload);
   refreshQueue(payload);
   updateHostButton(payload);
+
+  addQueue(payload);
+  removeQueue(payload);
 }

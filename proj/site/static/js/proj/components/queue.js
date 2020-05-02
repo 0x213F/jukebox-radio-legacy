@@ -8,9 +8,14 @@ function refreshQueue(payload) {
     return;
   }
 
-  var queues = payload.read.playback[0].up_next
   $div = $('#queued-up');
   $div.empty();
+
+  var queues = payload.read.playback[0].up_next
+  if(!queues || !queues.length) {
+    return;
+  }
+
   for(var queue of queues) {
     $div.append(generate_queue(queue));
   }
@@ -45,9 +50,8 @@ function generate_queue(queue) {
     <div class="queue-card">
       <form class="ajax-form"
             type="post"
-            url="../../../api/music/queue/delete/"
-            redirect="/stream/${STREAM_UNIQUE_CUSTOM_ID}/">
-        <input class="hidden" type="text" name="queue_id" value="${queue.id}">
+            url="../../../api/music/queue/delete/">
+        <input class="hidden" type="text" name="queue_uuid" value="${queue.uuid}">
 
         <div>
           <img src="${display_img}" />

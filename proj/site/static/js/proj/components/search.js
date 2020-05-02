@@ -259,6 +259,11 @@ $(document).keydown(function(event) {
 function click_provider_chip() {
   var $this = $(this);
   var value = $this.attr('value');
+
+  if($this.attr('disabled') === 'disabled') {
+    return;
+  }
+
   $PROVIDER_CHIPS.removeClass('active');
   $SEARCH_RESULTS.addClass('hidden');
   $this.addClass('active');
