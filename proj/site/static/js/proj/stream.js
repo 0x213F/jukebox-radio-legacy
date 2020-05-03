@@ -13,7 +13,7 @@ function updateStreamTitle(payload) {
   if(!stream) {
     return;
   }
-  $('.jr-banner').text(stream.name);
+  $('.jr-info-banner').text(stream.name);
 }
 
 var IS_PAGE_LOAD_PLAYBACK_UPDATE = true;
@@ -120,6 +120,7 @@ function addQueue(payload) {
   for(var queue of payload.created.queues) {
     $div.append(generate_queue(queue));
   }
+  setup_ajax_forms();
 }
 
 function removeQueue(payload) {
@@ -127,7 +128,12 @@ function removeQueue(payload) {
     return;
   }
 
+  for(var queue of payload.deleted.queues) {
+    $('#queued-up').find(`input[value="${queue.uuid}"]`).parent().parent().remove();
+  }
+
   // where I should work when I get back :)
+  // also, we should get the queue ordering more robust sometime
 
 }
 

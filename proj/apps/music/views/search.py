@@ -13,16 +13,16 @@ class SearchView(BaseView):
         Search a user's library
         '''
         query = request.GET.get('query', None)
-        type = request.GET.get('type', None)
+        spotify_type = request.GET.get('spotify_type', None)
         provider = request.GET.get('provider', None)
 
         if provider == 'spotify':
             spotify = Spotify(request.user)
-            search_results = spotify.search_library(query, type)
+            search_results = spotify.search_library(query, spotify_type)
 
             return self.http_response_200({
                 'search_results': search_results,
-                'type': type,
+                'spotify_type': spotify_type,
                 'provider': 'spotify',
             })
 
@@ -35,9 +35,4 @@ class SearchView(BaseView):
             })
 
         if provider == 'soundcloud':
-            search_results = SoundCloud.search_library(query)
-
-            return self.http_response_200({
-                    'search_results': search_results,
-                    'provider': 'youtube',
-            })
+            raise NotImplimentedError()

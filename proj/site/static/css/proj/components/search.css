@@ -65,3 +65,35 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* FILTER NAV CHOICE */
+
+.filter-nav-option {
+  font-size: 14px;
+  height: 32px;
+  line-height: 30px;
+
+  display: inline-block;
+  background-color: rgb(256, 256, 256, 0.95);
+  color: #5764c6;
+  border-radius: 8px;
+
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-right: 6px;
+  transition: all 0.2s ease;
+
+  cursor: pointer;
+}
+
+.filter-nav-option.deactivated {
+  color: #727e96;
+}
+
+.filter-nav-option:hover {
+  box-shadow: 0 0 0 2px rgba(234, 235, 248, 0.5)!important;
+}
+
+.filter-nav-option.active {
+  box-shadow: 0 0 0 2px rgba(234, 235, 248, 0.5)!important;
+}

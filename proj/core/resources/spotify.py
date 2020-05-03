@@ -96,7 +96,7 @@ class Spotify(object):
             for item in items:
                 data.append({
                     "record_name": item["name"],
-                    "uri": item["uri"],
+                    "spotify_uri": item["uri"],
                     "record_thumbnail": item["images"][0]["url"],
                 })
             return data
@@ -160,13 +160,15 @@ class Spotify(object):
         )
         response_json = response.json()
 
+        print(response_json)
+
         items = response_json["tracks"]["items"]
         data = []
         for item in items:
             data.append({
-                "spotify_uri": track["track"]["uri"],
-                "spotify_duration_ms": track["track"]["duration_ms"],
-                "spotify_name": track["track"]["name"],
+                "spotify_uri": item["track"]["uri"],
+                "spotify_duration_ms": item["track"]["duration_ms"],
+                "spotify_name": item["track"]["name"],
             })
         return data
 

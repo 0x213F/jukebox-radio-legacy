@@ -42,15 +42,7 @@ function defocus_searchbar() {
 
 $SEARCH_EXIT_BUTTON.click(defocus_searchbar);
 
-/////////////////////////////////////////////////////
-////////////////// ON SEARCH BEHAVIOR
-
-function validate_search_eligible() {
-  if(!$SEARCH_BAR_INPUT.val()) {
-    throw DO_NOT_SUBMIT_FORM;
-  }
-  $SEARCH_RESULTS.addClass('hidden');
-}
+////////////////////////////////////////////////////
 
 function display_search_results(data) {
   if(!data.search_results.length) {
@@ -67,6 +59,7 @@ function display_search_results(data) {
   }
 
   $SEARCH_RESULTS.empty();
+  console.log(data.search_results)
   for(var result of data.search_results) {
     $SEARCH_RESULTS.append(`
       <div class="search-result"
@@ -85,6 +78,16 @@ function display_search_results(data) {
   $('.search-result').click(add_to_queue);
 
   $SEARCH_RESULTS.removeClass('hidden');
+}
+
+/////////////////////////////////////////////////////
+//  ON SEARCH BEHAVIOR
+
+function validate_search_eligible() {
+  if(!$SEARCH_BAR_INPUT.val()) {
+    throw DO_NOT_SUBMIT_FORM;
+  }
+  $SEARCH_RESULTS.addClass('hidden');
 }
 
 function add_to_queue(e) {
@@ -248,57 +251,8 @@ $(document).keydown(function(event) {
 
 });
 
-
 ///////////////////////////////////////
-/// NOT DONE YET
-
-  /////  ////  /////
- /////  INIT  /////
-/////  ////  /////
-
-function click_provider_chip() {
-  var $this = $(this);
-  var value = $this.attr('value');
-
-  if($this.attr('disabled') === 'disabled') {
-    return;
-  }
-
-  $PROVIDER_CHIPS.removeClass('active');
-  $SEARCH_RESULTS.addClass('hidden');
-  $this.addClass('active');
-  $('#search-library-provider').val(value);
-  if(value === 'youtube') {
-    $SEARCH_TYPES.addClass('hidden');
-    $FILE_UPLOAD_FORM.addClass('hidden');
-    $SEARCH_BAR_INPUT.attr('disabled', false);
-  } else if(value === 'spotify') {
-    $SEARCH_TYPES.removeClass('hidden');
-    $FILE_UPLOAD_FORM.addClass('hidden');
-    $SEARCH_BAR_INPUT.attr('disabled', false);
-  } else if(value === 'file') {
-    $SEARCH_TYPES.addClass('hidden');
-    $SEARCH_RESULTS.addClass('hidden');
-    $FILE_UPLOAD_FORM.removeClass('hidden');
-    $SEARCH_BAR_INPUT.attr('disabled', true);
-  } else if(value === 'soundcloud') {
-    $SEARCH_TYPES.addClass('hidden');
-    $FILE_UPLOAD_FORM.addClass('hidden');
-    $SEARCH_BAR_INPUT.attr('disabled', false);
-  }
-  $SEARCH_LIBRARY_FORM.submit();
-  focus_searchbar();
-}
-
-function click_type_chip() {
-  var $this = $(this);
-  var value = $this.attr('value');
-  $TYPE_CHIPS.removeClass('active');
-  $this.addClass('active');
-  $('#search-library-type').val(value);
-  $SEARCH_LIBRARY_FORM.submit();
-  focus_searchbar();
-}
+///  INIT
 
 $SEARCH_BAR_INPUT.click(focus_searchbar);
 
@@ -311,7 +265,114 @@ $SEARCH_BAR_INPUT.keypress(function (e) {
   }
 });
 
+///////////////////////////////////////
+///  FILTER NAV
+
+function clickFilterNav() {
+  var $this = $(this);
+  var $parent = $this.parent();
+  var input_id = $parent.attr('for-input');
+  var $input = $(`#${input_id}`);
+  var val = $this.attr('value');
+  $input.val(val);
+
+  var $currently_active = $parent.find('.active');
+  $currently_active.removeClass('active');
+  $this.addClass('active');
+
+  $('#upload-file-form').addClass('hidden');
+  $('#coming-soon').addClass('hidden');
+}
+
+var $FILTER_NAV_OPTIONS = $('.filter-nav-option');
+
+///////////////////////////////////////
+///  SEARCH PROVIDER OPTIONS
+
+function clickSearchProvider() {
+  var $this = $(this);
+  var val = $this.attr('value');
+
+  var $level1 = $('.filter-nav.level-1');
+  $level1.addClass('hidden');
+
+  $SEARCH_PROVIDER_OPTIONS.addClass('deactivated');
+  $this.removeClass('deactivated');
+
+  if(val === 'spotify') {
+    $('#spotify-type-options').removeClass('hidden');
+    var $active_type = $('#spotify-type-options').find('.active');
+    if(!$active_type.length) {
+      $SEARCH_RESULTS.addClass('hidden');
+      $SEARCH_RESULTS.empty();
+    } else {
+      $active_type.click()
+    }
+  } else if(val === 'youtube') {
+    $SEARCH_LIBRARY_FORM.submit();
+  } else if(val === 'storage') {
+    $('#storage-type-options').removeClass('hidden');
+    $SEARCH_RESULTS.addClass('hidden');
+    $SEARCH_RESULTS.empty();
+
+    var $active_type = $('#storage-type-options').find('.active');
+    if($active_type.length) {
+      $active_type.click()
+    }
+  } else if(val === 'soundcloud') {
+    $('#coming-soon').removeClass('hidden');
+    $SEARCH_RESULTS.addClass('hidden');
+    $SEARCH_RESULTS.empty();
+  }
+}
+
+var $SEARCH_PROVIDER_OPTIONS = $('.search-provider-option');
+
+
+///////////////////////////////////////
+///  SPOTIFY TYPE OPTIONS
+
+function clickSpotifyType() {
+  var $this = $(this);
+
+  $SPOTIFY_TYPE_CHOICES.addClass('deactivated');
+  $this.removeClass('deactivated');
+  $('#storage-type').val(undefined);
+  $SEARCH_BAR_INPUT.focus();
+  $SEARCH_LIBRARY_FORM.submit();
+}
+
+var $SPOTIFY_TYPE_CHOICES = $('#spotify-type-options > .filter-nav-option');
+
+///////////////////////////////////////
+///  STORAGE OPTIONS
+
+function clickStorageType() {
+  var $this = $(this);
+
+  $STORAGE_TYPE_CHOICES.addClass('deactivated');
+  $this.removeClass('deactivated');
+  $('#spotify-type').val(undefined);
+
+  var val = $this.attr('value');
+  if(val === 'file') {
+    $('#upload-file-form').removeClass('hidden');
+  } else if(val === 'search') {
+    $('#coming-soon').removeClass('hidden');
+  } else if(val === 'mic') {
+    $('#coming-soon').removeClass('hidden');
+  }
+}
+
+var $STORAGE_TYPE_CHOICES = $('#storage-type-options > .filter-nav-option');
+
+///////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////
+
 $(document).ready(function() {
-  $TYPE_CHIPS.click(click_type_chip);
-  $PROVIDER_CHIPS.click(click_provider_chip);
+  $FILTER_NAV_OPTIONS.click(clickFilterNav);
+  $SEARCH_PROVIDER_OPTIONS.click(clickSearchProvider);
+  $SPOTIFY_TYPE_CHOICES.click(clickSpotifyType);
+  $STORAGE_TYPE_CHOICES.click(clickStorageType);
 });

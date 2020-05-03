@@ -38,8 +38,10 @@ function setup_ajax_forms() {
       } else if($this.attr("type") === "redirect") {
         window.location.href = $this.attr("url");
       } else {
-        var $input = $("<input>").attr("name", "csrfmiddlewaretoken").val(CSRF_TOKEN).hide();
-        $this.append($input);
+        if(!$this.serialize().csrfmiddlewaretoken) {
+          var $input = $("<input>").attr("name", "csrfmiddlewaretoken").val(CSRF_TOKEN).hide();
+          $this.append($input);
+        }
         $.ajax({
             url: $this.attr("url"),
             type: $this.attr("type"),
