@@ -11,7 +11,7 @@ function syncStoragePlayback() {
 
   console.log(storage_id);
 
-  var audio = new Audio(`https://jukebox-radio-space.sfo2.digitaloceanspaces.com/${storage_id}`);
+  var audio = new Audio(`https://jukebox-radio-space.sfo2.digitaloceanspaces.com/uploads/${storage_id}.mp3`);
   audio.currentTime = offset / 1000;
   audio.play();
 }
