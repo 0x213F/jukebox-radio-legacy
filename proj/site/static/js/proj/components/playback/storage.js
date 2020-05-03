@@ -3,6 +3,7 @@ function syncStoragePlayback() {
   var now = Date.now()
   var offset = now - PLAYBACK.stream.played_at
   if(offset < 0) {
+    console.log(-offset)
     setTimeout(syncStoragePlayback, -offset);
     return;
   }
