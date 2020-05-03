@@ -64,8 +64,9 @@ function syncSpotifyPlayback() {
     var deltaSincePlayMs = newNow.getTime() - newNow;
 
     var kindaClose = Math.abs(duration_ms - offset);
+    // TODO add this check too
 
-    if(spotify_uri === spotify_uris[0] && is_playing && kindaClose < 1000) {
+    if(spotify_uri === spotify_uris[0] && is_playing) {
       return;
     }
 

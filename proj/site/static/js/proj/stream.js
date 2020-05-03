@@ -34,15 +34,15 @@ function updatePlaybackData(payload) {
     }
 
     if(payload.read.playback[0].status === 'playing_and_synced') {
-      if(PLAYBACK.record.storage_id) {
-        var storage_filename = PLAYBACK.record.storage_filename;
-        $AUDIO.html(`<audio><source src="https://jukebox-radio-space.sfo2.digitaloceanspaces.com/${storage_filename}"></audio>`);
-        if(IS_PAGE_LOAD_PLAYBACK_UPDATE) {
-          $('#sync-playback').removeClass('hidden');
-        }
-      } else {
-        updatePlayback();
-      }
+      // if(PLAYBACK.record.storage_id) {
+      //   var storage_filename = PLAYBACK.record.storage_filename;
+      //   $AUDIO.html(`<audio><source src="https://jukebox-radio-space.sfo2.digitaloceanspaces.com/${storage_filename}"></audio>`);
+      //   if(IS_PAGE_LOAD_PLAYBACK_UPDATE) {
+      //     $('#sync-playback').removeClass('hidden');
+      //   }
+      // } else {
+      updatePlayback();
+      // }
     }
 
     IS_PAGE_LOAD_PLAYBACK_UPDATE = false;

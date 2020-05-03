@@ -53,7 +53,6 @@ function setup_ajax_forms() {
             },
             success: function(e) {
                 if(onsuccess) {
-                  console.log(onsuccess)
                   window[onsuccess](e, $status);
                 }
                 if(redirect) window.location = redirect;
