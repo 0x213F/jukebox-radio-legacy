@@ -81,11 +81,8 @@ function syncSpotifyPlayback() {
   })
 }
 
-https://api.spotify.com/v1/me/player/currently-playing
-
 
 function playTracks(spotify_uris, sat) {
-  console.log('hello')
   fetch(`https://api.spotify.com/v1/me/player/play`, {
     method: 'PUT',
     body: JSON.stringify({ uris: spotify_uris }),

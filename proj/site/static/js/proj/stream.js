@@ -33,10 +33,12 @@ function updatePlaybackData(payload) {
       }
     }
 
-    if(payload.read.playback[0].status === 'playing_and_synced') {
+    if(PLAYBACK.status === 'playing_and_synced') {
       if(PLAYBACK.record.storage_id) {
         if(IS_PAGE_LOAD_PLAYBACK_UPDATE) {
           $('#sync-playback').removeClass('hidden');
+        } else {
+          updatePlayback();
         }
       } else {
         updatePlayback();
@@ -85,6 +87,7 @@ function updatePlayback() {
     $('#info-album-art').attr('src', PLAYBACK.record.spotify_img_high);
     $('#info-record-name').text(PLAYBACK.record.spotify_name);
   } else {
+    console.log('!!!!!!!!!!')
     syncStoragePlayback();
     $('#info-record-name').text(PLAYBACK.record.storage_name);
   }
