@@ -125,7 +125,7 @@ class RecordManager(BaseManager):
         elif extension == '.mp3':
             from mutagen.mp3 import MP3
             audio = MP3(file)
-            storage_duration_ms = audio.info.length
+            storage_duration_ms = audio.info.length * 1000
         else:
             raise Exception('audio format not yet supported')
 
