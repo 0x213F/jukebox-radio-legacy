@@ -96,6 +96,8 @@ class StreamManager(BaseManager):
             record_length = record.tracks_through.all().duration()
         elif record.storage_duration_ms:
             record_length = record.storage_duration_ms
+            print('@!@!@!@!@')
+            print(record_length)
         stream.record_terminates_at = spin_at + timedelta(milliseconds=record_length)
         stream.played_at = spin_at
         stream.paused_at = None
