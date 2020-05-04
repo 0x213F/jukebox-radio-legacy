@@ -121,7 +121,7 @@ class RecordManager(BaseManager):
         if extension == '.wav':
             # suuuuuper hacky, but I spent a lot of time on this and this is
             # the best I got
-            storage_duration_ms = file.size / 8000
+            storage_duration_ms = file.size / 8
         elif extension == '.mp3':
             from mutagen.mp3 import MP3
             audio = MP3(file)
