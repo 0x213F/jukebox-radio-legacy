@@ -3,6 +3,8 @@ from django.apps import apps
 from boto3 import session
 from django.core.files.base import ContentFile
 
+import mutagen
+
 import io
 import os.path
 
@@ -88,7 +90,7 @@ class RecordManager(BaseManager):
         return record
 
 
-    def create_from_file(self, file):
+    def create_from_file(self, file, storage_type):
         Record = apps.get_model('music', 'Record')
         Track = apps.get_model('music', 'Track')
         TrackListing = apps.get_model('music', 'TrackListing')
@@ -103,9 +105,12 @@ class RecordManager(BaseManager):
 
         # get from filename. if not in filename, then it's a wav file uploaded
         # via the web browser
-        extension = os.path.splitext(file.name)[1] or '.wav'
-        if extension not in ['.wav', '.mp3']:
-            raise Exception('audio format not yet supported')
+        if storage_type == 'microphone':
+            extension = '.wav'
+        else:
+            extension = os.path.splitext(file.name)[1]
+            if extension not in ['.mp3']:
+                raise Exception('audio format not yet supported')
 
 
         storage_id = str(uuid.uuid4())
@@ -114,7 +119,9 @@ class RecordManager(BaseManager):
         client.upload_fileobj(file, 'jukebox-radio-space', storage_filename, ExtraArgs={'ACL': 'public-read'})
 
         if extension == '.wav':
-            storage_duration_ms = 10000
+            # suuuuuper hacky, but I spent a lot of time on this and this is
+            # the best I got
+            storage_duration_ms = file.size / 8000
         elif extension == '.mp3':
             from mutagen.mp3 import MP3
             audio = MP3(file)

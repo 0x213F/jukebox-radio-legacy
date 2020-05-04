@@ -38,13 +38,15 @@ function syncStoragePlayback() {
 }
 
 var AUDIO_CHUNKS;
+var STREAM;
 $('#record-button').click(function() {
   var $this = $(this);
   if($this.hasClass('btn-link')) {
     AUDIO_CHUNKS = [];
-    navigator.mediaDevices.getUserMedia({audio: true}).then(stream => {handlerFunction(stream)});
+    navigator.mediaDevices.getUserMedia({audio: true}).then(stream => {STREAM = stream; handlerFunction(stream)});
   } else {
     REC.stop();
+    STREAM.getTracks()[0].stop();
   }
 
   $this.toggleClass('btn-link');

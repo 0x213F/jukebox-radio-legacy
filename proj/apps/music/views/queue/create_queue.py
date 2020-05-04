@@ -42,7 +42,7 @@ class CreateQueueView(BaseView):
             if storage_type == 'file':
                 if not request.user.is_staff:
                     raise ValueError('Needs to be staff')
-            record, queue = self.create_file_queue(request, stream)                
+            record, queue = self.create_file_queue(request, stream, storage_type)
         else:
             raise ValueError('Needs ID')
 
@@ -108,13 +108,13 @@ class CreateQueueView(BaseView):
 
         return record, queue
 
-    def create_file_queue(self, request, stream):
+    def create_file_queue(self, request, stream, storage_type):
         Record = apps.get_model('music.Record')
         Queue = apps.get_model('music.Queue')
 
         file = request.FILES['file']
 
-        record = Record.objects.create_from_file(file)
+        record = Record.objects.create_from_file(file, storage_type)
 
         queue = Queue.objects.create(
             record=record,
