@@ -123,6 +123,7 @@ class RecordManager(BaseManager):
                 storage_duration_ms = frames / float(rate)
                 print(storage_duration_ms)
 
+        print(storage_duration_ms)
         record = Record.objects.create(
             storage_id=storage_id,
             storage_filename=storage_filename,
