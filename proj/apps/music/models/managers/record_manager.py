@@ -114,7 +114,14 @@ class RecordManager(BaseManager):
             audio = MP3(file)
             storage_duration_ms = audio.info.length * 1000
         except Exception:
-            storage_duration_ms = 10000
+            import wave
+            import contextlib
+            fname = '/tmp/test.wav'
+            with contextlib.closing(file) as f:
+                frames = f.getnframes()
+                rate = f.getframerate()
+                storage_duration_ms = frames / float(rate)
+                print(storage_duration_ms)
 
         record = Record.objects.create(
             storage_id=storage_id,
