@@ -5,7 +5,6 @@ from django.core.files.base import ContentFile
 
 import io
 import os.path
-from proj.core.resources import TinyTag
 
 from django.conf import settings
 from proj.core.models.managers import BaseManager
