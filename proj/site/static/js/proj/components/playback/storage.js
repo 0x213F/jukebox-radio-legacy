@@ -1,47 +1,40 @@
 
 const BASE_DIGITAL_OCEAN_SPACE_URL = 'https://jukebox-radio-space.sfo2.digitaloceanspaces.com/'
 
-function syncStoragePlayback() {
-  var now = Date.now()
+// The context is connected to the device speakers.
+// You only need one of these per document.
+const AUDIO_CONTEXT = new AudioContext();
 
+function syncStoragePlayback() {
   var filename = BASE_DIGITAL_OCEAN_SPACE_URL + PLAYBACK.record.storage_filename
 
-  // The context is connected to the device speakers.
-  // You only need one of these per document.
-  const context = new AudioContext();
+  var audio = new Audio(filename);
 
-  let oldSource, newSource;
+  var now = Date.now()
+  var offset = now - PLAYBACK.stream.played_at;
+  var playOffset = offset / 1000;
+  if(offset > 0) {
+    audio.currentTime = playOffset;
+  }
 
-  // Fetch the file
-  fetch(filename)
-    // Read it into memory as an arrayBuffer
-    .then(response => response.arrayBuffer())
-    // Turn it from mp3/aac/whatever into raw audio data
-    .then(arrayBuffer => context.decodeAudioData(arrayBuffer))
-    .then(audioBuffer => {
+  var needsToPlay = true;
 
-      if(newSource) {
-        oldSource = newSource;
-      }
+  audio.addEventListener('canplaythrough', function() {
+    if(!needsToPlay) return;
+    needsToPlay = false;
+    var now = Date.now()
+    var offset = now - PLAYBACK.stream.played_at;
+    var playOffset = offset / 1000;
+    if(playOffset < 0) {
+      setTimeout(function() {
+        audio.play();
+      }, -offset);
+    } else {
+      audio.currentTime = playOffset;
+      audio.play();
+    }
+  });
 
-      // Create a source:
-      // This represents a playback head.
-      newSource = context.createBufferSource();
-      // Give it the audio data we loaded:
-      newSource.buffer = audioBuffer;
-      // Plug it into the output:
-      newSource.connect(context.destination);
-
-      // And off we go!
-      let offset = now - PLAYBACK.stream.played_at;
-      if(offset < 0) {
-        newSource.start(-offset / 1000);
-      } else {
-        const buffer = 0.25;
-        newSource.currentTime = offset / 1000 + buffer;
-        newSource.start(buffer);
-      }
-    });
 }
 
 var AUDIO_CHUNKS;
@@ -78,10 +71,9 @@ function uploadMicrophoneBlob(e) {
   e.preventDefault();
 
   let data = new FormData($('#upload-microphone-form')[0]);
-  console.log($('#upload-microphone-form')[0])
-  console.log(data)
-  data.append('file', BLOB);
-  console.log(data)
+
+  data.append('file', BLOB, 'microphone.wav');
+
   $.ajax({
     url: '../../api/music/queue/create/',
     type: 'POST',

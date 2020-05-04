@@ -2,6 +2,7 @@ import uuid
 from django.apps import apps
 from boto3 import session
 
+import io
 import os.path
 
 from django.conf import settings
@@ -108,13 +109,18 @@ class RecordManager(BaseManager):
         client.upload_fileobj(file, 'jukebox-radio-space', storage_filename, ExtraArgs={'ACL': 'public-read'})
 
         from mutagen.mp3 import MP3
-        audio = MP3(file)
+
+        try:
+            audio = MP3(file)
+            storage_duration_ms = audio.info.length * 1000
+        except Exception:
+            storage_duration_ms = 10000
 
         record = Record.objects.create(
             storage_id=storage_id,
             storage_filename=storage_filename,
             storage_name=file.name,
-            storage_duration_ms=audio.info.length * 1000,
+            storage_duration_ms=storage_duration_ms,
         )
 
         return record
