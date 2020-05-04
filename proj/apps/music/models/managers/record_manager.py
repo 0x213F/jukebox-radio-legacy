@@ -100,7 +100,7 @@ class RecordManager(BaseManager):
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         )
 
-        extension = os.path.splitext(file.name)[1]
+        extension = os.path.splitext(file.name)[1] or '.wav'
         storage_id = str(uuid.uuid4())
         storage_filename = f'uploads/{storage_id}{extension}'
 
