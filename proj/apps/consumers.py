@@ -236,11 +236,7 @@ class Consumer(AsyncConsumer):
 
         # nothing is happening, come back later
         record_terminates_at = self.scope['stream'].record_terminates_at
-        if (
-            not record_terminates_at or
-            record_terminates_at
-            and datetime.now() > record_terminates_at.replace(tzinfo=None)
-        ):
+        if not record_terminates_at:
             playback_data = {
                 'record': None,
                 'queuelistings': None,

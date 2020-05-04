@@ -124,7 +124,8 @@ class StreamManager(BaseManager):
         next_play_time = stream.record_terminates_at.replace(tzinfo=None) - timedelta(seconds=3)
         tasks.schedule_spin.apply_async(eta=next_play_time, args=[stream.id])
 
-        queue.played_at = now
+        queue.played_at = spin_at
+        queue.scheduled_at = spin_at
         queue.save()
 
         return stream, queue
