@@ -148,6 +148,7 @@
       <input class="hidden" name="provider" type="text" value="storage" />
       {% csrf_token %}
 
+      <input class="hidden" name="storage_type" type="text" value="file" />
       <input class="hidden" name="stream_uuid" type="text" value="{{ stream.uuid }}">
       <button id="file-upload-button" class="btn btn-lg btn-secondary jr-btn" style="margin-top: 16px; margin-bottom: 16px;" type="button" {% if not user.is_staff %}disabled{% endif %}>Submit</button>
 
@@ -174,6 +175,7 @@
         click to record
       </span>
 
+      <input class="hidden" name="storage_type" type="text" value="microphone" />
       <input class="hidden" name="provider" type="text" value="storage" />
       {% csrf_token %}
       <input class="hidden" name="stream_uuid" type="text" value="{{ stream.uuid }}">

@@ -4,6 +4,7 @@ from boto3 import session
 
 import io
 import os.path
+from tinytag import TinyTag
 
 from django.conf import settings
 from proj.core.models.managers import BaseManager
@@ -111,17 +112,10 @@ class RecordManager(BaseManager):
         from mutagen.mp3 import MP3
 
         try:
-            audio = MP3(file)
-            storage_duration_ms = audio.info.length * 1000
-        except Exception:
-            import wave
-            import contextlib
-            fname = '/tmp/test.wav'
-            with contextlib.closing(file) as f:
-                frames = f.getnframes()
-                rate = f.getframerate()
-                storage_duration_ms = frames / float(rate)
-                print(storage_duration_ms)
+            tag = TinyTag.get(file)
+            storage_duration_ms = tag.duration * 1000
+        except Exception as e:
+            print(e)
 
         print(storage_duration_ms)
         record = Record.objects.create(
