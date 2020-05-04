@@ -112,7 +112,7 @@ class RecordManager(BaseManager):
         from mutagen.mp3 import MP3
 
         try:
-            tag = TinyTag.get(file)
+            tag = TinyTag.get(file.file)
             storage_duration_ms = tag.duration * 1000
         except Exception as e:
             print(e)
