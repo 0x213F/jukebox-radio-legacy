@@ -2,6 +2,8 @@ import uuid
 from django.apps import apps
 from boto3 import session
 
+import os.path
+
 from django.conf import settings
 from proj.core.models.managers import BaseManager
 from proj.core.resources import Spotify
@@ -97,8 +99,11 @@ class RecordManager(BaseManager):
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         )
 
+        extension = os.path.splitext(file.name)[1]
         storage_id = str(uuid.uuid4())
-        storage_filename = f'uploads/{storage_id}.mp3'
+        storage_filename = f'uploads/{storage_id}{extension}'
+
+        print(storage_filename)
 
         client.upload_fileobj(file, 'jukebox-radio-space', storage_filename, ExtraArgs={'ACL': 'public-read'})
 

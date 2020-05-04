@@ -26,7 +26,6 @@ function focus_searchbar() {
   $('#info-view').addClass('hidden');
 
   $SEARCH_VIEW.removeClass('hidden');
-  $SEARCH_BAR_INPUT.focus();
 }
 
 function defocus_searchbar() {
@@ -131,10 +130,6 @@ $('#file-upload-button').click(file_upload_to_queue);
 function file_upload_to_queue(e) {
   e.preventDefault();
 
-  var $this = $(this);
-
-  provider = 'file';
-
   $.ajax({
       url: '../../api/music/queue/create/',
       type: 'POST',
@@ -148,22 +143,22 @@ function file_upload_to_queue(e) {
       contentType: false,
       processData: false,
 
-      // Custom XMLHttpRequest
-      xhr: function () {
-        var myXhr = $.ajaxSettings.xhr();
-        if (myXhr.upload) {
-          // For handling the progress of the upload
-          myXhr.upload.addEventListener('progress', function (e) {
-            if (e.lengthComputable) {
-              $('progress').attr({
-                value: e.loaded,
-                max: e.total,
-              });
-            }
-          }, false);
-        }
-        return myXhr;
-      }
+      // // Custom XMLHttpRequest
+      // xhr: function () {
+      //   var myXhr = $.ajaxSettings.xhr();
+      //   if (myXhr.upload) {
+      //     // For handling the progress of the upload
+      //     myXhr.upload.addEventListener('progress', function (e) {
+      //       if (e.lengthComputable) {
+      //         $('progress').attr({
+      //           value: e.loaded,
+      //           max: e.total,
+      //         });
+      //       }
+      //     }, false);
+      //   }
+      //   return myXhr;
+      // }
   });
 }
 
@@ -281,7 +276,11 @@ function clickFilterNav() {
   $this.addClass('active');
 
   $('#upload-file-form').addClass('hidden');
+  $('#upload-microphone-form').addClass('hidden');
   $('#coming-soon').addClass('hidden');
+
+  $SEARCH_BAR_INPUT.attr('disabled', true);
+  $SEARCH_BAR_INPUT.blur();
 }
 
 var $FILTER_NAV_OPTIONS = $('.filter-nav-option');
@@ -309,6 +308,8 @@ function clickSearchProvider() {
       $active_type.click()
     }
   } else if(val === 'youtube') {
+    $SEARCH_BAR_INPUT.attr('disabled', false);
+    $SEARCH_BAR_INPUT.focus();
     $SEARCH_LIBRARY_FORM.submit();
   } else if(val === 'storage') {
     $('#storage-type-options').removeClass('hidden');
@@ -338,6 +339,7 @@ function clickSpotifyType() {
   $SPOTIFY_TYPE_CHOICES.addClass('deactivated');
   $this.removeClass('deactivated');
   $('#storage-type').val(undefined);
+  $SEARCH_BAR_INPUT.attr('disabled', false);
   $SEARCH_BAR_INPUT.focus();
   $SEARCH_LIBRARY_FORM.submit();
 }
@@ -359,8 +361,8 @@ function clickStorageType() {
     $('#upload-file-form').removeClass('hidden');
   } else if(val === 'search') {
     $('#coming-soon').removeClass('hidden');
-  } else if(val === 'mic') {
-    $('#coming-soon').removeClass('hidden');
+  } else if(val === 'microphone') {
+    $('#upload-microphone-form').removeClass('hidden');
   }
 }
 

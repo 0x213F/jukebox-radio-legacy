@@ -21,7 +21,8 @@
                type="text"
                name="query"
                autocomplete="off"
-               spellcheck="false">
+               spellcheck="false"
+               disabled>
         <button type="submit"
                 form="search-library"
                 class="hidden">
@@ -66,7 +67,7 @@
            for-input="storage-type"
            style="margin-top: 6px; margin-bottom: 6px; height: 32px;">
         <div class="filter-nav-option"
-             value="mic"
+             value="microphone"
              style="float: right; margin-right: 0px;">
           <svg
             width="18"
@@ -132,6 +133,7 @@
 
     </form>
 
+    <!-- COMING SOON -->
     <div id="coming-soon" class="hidden" style="margin-top: 16px;">
       <mark style="border-radius: 8px;">
         <p style="margin: 8px 12px;">
@@ -140,13 +142,14 @@
       </mark>
     </div>
 
+    <!-- STORAGE UPLOAD TYPE FILE -->
     <form id="upload-file-form" class="hidden" style="margin-top: 16px;">
-      <input name="file" type="file" {% if not user.is_staff %}disabled{% endif %} />
-      <input class="hidden" name="provider" type="text" value="file" />
+      <input name="file" type="file" accept="audio/*" {% if not user.is_staff %}disabled{% endif %} />
+      <input class="hidden" name="provider" type="text" value="storage" />
       {% csrf_token %}
 
       <input class="hidden" name="stream_uuid" type="text" value="{{ stream.uuid }}">
-      <button id="file-upload-button" class="btn btn-lg btn-secondary jr-btn" style="margin-top: 16px; margin-bottom: 16px;" type="" {% if not user.is_staff %}disabled{% endif %}>Submit</button>
+      <button id="file-upload-button" class="btn btn-lg btn-secondary jr-btn" style="margin-top: 16px; margin-bottom: 16px;" type="button" {% if not user.is_staff %}disabled{% endif %}>Submit</button>
 
       <mark style="border-radius: 8px;">
         <p style="margin: 8px 12px;">
@@ -159,6 +162,31 @@
       </mark>
     </form>
 
+    <!-- STORAGE UPLOAD TYPE MICROPHONE -->
+    <form id="upload-microphone-form" class="hidden" style="margin-top: 16px;">
+      <span>
+        <button id="record-button"
+                class="btn btn-lg btn-link jr-btn"
+                type="button"
+                style="margin-right: 12px;">
+          <i class="gg-record"></i>
+        </button>
+        click to record
+      </span>
+
+      <input class="hidden" name="provider" type="text" value="storage" />
+      {% csrf_token %}
+      <input class="hidden" name="stream_uuid" type="text" value="{{ stream.uuid }}">
+
+      <button id="microphone-upload-button"
+              class="btn btn-lg btn-secondary jr-btn"
+              style="margin-top: 16px; margin-bottom: 16px; display: block;"
+              type="button">
+        Submit
+      </button>
+    </form>
+
+    <!-- SEARCH RESULTS -->
     <div id="search-results" class="no-scrollbar hidden"></div>
 
   </div>

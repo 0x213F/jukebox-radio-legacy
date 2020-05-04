@@ -29,11 +29,15 @@ class CreateQueueView(BaseView):
 
         stream = Stream.objects.get(uuid=stream_uuid)
 
+
+        print('! ! ! ! !')
+        print(provider)
+
         if provider == 'spotify':
             record, queue = self.create_spotify_queue(request, stream)
         elif provider == 'youtube':
             record, queue = self.create_youtube_queue(request, stream)
-        elif provider == 'file':
+        elif provider == 'storage':
             if not request.user.is_staff:
                 raise ValueError('Needs to be staff')
             record, queue = self.create_file_queue(request, stream)
