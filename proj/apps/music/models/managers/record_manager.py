@@ -1,10 +1,11 @@
 import uuid
 from django.apps import apps
 from boto3 import session
+from django.core.files.base import ContentFile
 
 import io
 import os.path
-from tinytag import TinyTag
+from proj.core.resources import TinyTag
 
 from django.conf import settings
 from proj.core.models.managers import BaseManager
@@ -101,23 +102,27 @@ class RecordManager(BaseManager):
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         )
 
+        # get from filename. if not in filename, then it's a wav file uploaded
+        # via the web browser
         extension = os.path.splitext(file.name)[1] or '.wav'
+        if extension not in ['.wav', '.mp3']:
+            raise Exception('audio format not yet supported')
+
+
         storage_id = str(uuid.uuid4())
         storage_filename = f'uploads/{storage_id}{extension}'
 
-        print(storage_filename)
-
         client.upload_fileobj(file, 'jukebox-radio-space', storage_filename, ExtraArgs={'ACL': 'public-read'})
 
-        from mutagen.mp3 import MP3
+        if extension == '.wav':
+            storage_duration_ms = 10000
+        elif extension == '.mp3':
+            from mutagen.mp3 import MP3
+            audio = MP3(file)
+            storage_duration_ms = audio.info.length
+        else:
+            raise Exception('audio format not yet supported')
 
-        try:
-            tag = TinyTag.get(file)
-            storage_duration_ms = tag.duration * 1000
-        except Exception as e:
-            print(e)
-
-        print(storage_duration_ms)
         record = Record.objects.create(
             storage_id=storage_id,
             storage_filename=storage_filename,
