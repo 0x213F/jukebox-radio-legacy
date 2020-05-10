@@ -26,11 +26,21 @@ class DeleteQueueView(BaseView):
         queue = Queue.objects.select_related('stream').get(uuid=queue_uuid)
         queue.delete()
 
+        queue_qs = (
+            Queue.objects.select_related('stream', 'record')
+            .in_stream(queue.stream)
+            .filter(created_at__gt=queue.created_at)
+            .order_by('created_at')
+        )
+
         payload = {
             'type': 'send_update',
             'text': {
                 'deleted': {
                     'queues': [Queue.objects.serialize(queue)],
+                },
+                'updated': {
+                    'queues': [Queue.objects.serialize(queue1) for queue1 in queue_qs]
                 }
             }
         }

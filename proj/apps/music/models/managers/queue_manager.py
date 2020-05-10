@@ -38,10 +38,16 @@ class QueueManager(BaseManager):
         Make a Queue object JSON serializable.
         '''
         Record = apps.get_model('music', 'Record')
+
+        scheduled_at = None
+        if queue.scheduled_at:
+            epoch = datetime.utcfromtimestamp(0)
+            scheduled_at = (queue.scheduled_at.replace(tzinfo=None) - epoch).total_seconds() * 1000.0,
+
         return {
             'uuid': str(queue.uuid),
             'stream_uuid': str(queue.stream.uuid),
             'record': Record.objects.serialize(queue.record),
             'created_at': queue.created_at.isoformat(),
-            'scheduled_at': queue.scheduled_at.isoformat(),
+            'scheduled_at': scheduled_at,
         }

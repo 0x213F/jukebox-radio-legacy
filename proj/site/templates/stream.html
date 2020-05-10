@@ -3,38 +3,19 @@
 {% load static %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/proj/play_bar.css' %}">
 <link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
 <link rel="stylesheet" href="{% static 'css/proj/home.css' %}">
 <link rel="stylesheet" href="{% static 'css/proj/stream.css' %}">
 
 <link rel="stylesheet" href="{% static 'css/proj/components/info.css' %}">
 <link rel="stylesheet" href="{% static 'css/proj/components/search.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/components/manage.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/components/queue.css' %}">
 {% endblock %}
 
 {% block main %}
 
-<div id="stream-uuid" class="hidden">
-  <input type="text" value="{{ stream.uuid }}">
-</div>
-
-<div id="stream-unique-custom-id" class="hidden">
-  <input type="text" value="{{ stream.unique_custom_id }}">
-</div>
-
-<div id="is-stream-owner" class="hidden">
-  <input type="text" value="{{ is_host }}">
-</div>
-
-<!-- - - - - - -->
-<!--  MANAGE (HOST) -->
-{% include "manage.html" %}
-
-<!-- - - - - - -->
-<!--  MANAGE (ELSE) -->
-{% include "displayname.html" %}
-
-<div id="main-card" class="main center-horizontal card" style="height: calc(100% - 24px);">
+<div id="main-view" class="main center-horizontal card" style="height: calc(100% - 24px);">
 
   <div class="card-body">
 
@@ -48,15 +29,18 @@
         </button>
       </form>
 
-      <button type="button" id="go-to-manage" class="btn btn-lg btn-link jr-btn-sq" style="float: left;">
+      <button type="button"
+              class="go-to-manage-view btn btn-lg btn-link jr-btn-sq"
+              style="float: left;">
         <i class="gg-profile" style="bottom: 1px;"></i>
       </button>
 
-      <button class="btn btn-lg btn-link jr-btn-sq go-to-info" style="float: right; margin-right: 0px;">
+      <button class="btn btn-lg btn-link jr-btn-sq go-to-info-view" style="float: right; margin-right: 0px;">
         <i class="gg-info" style="left: 1px;"></i>
       </button>
 
-      <button id="go-to-queue-top" class="btn btn-lg btn-link jr-btn-sq go-to-queue hidden" style="float: right;">
+      <button id="go-to-queue-view" class="go-to-queue-view btn btn-lg btn-link jr-btn-sq" style="float: right;">
+        <i class="gg-play-list-search" style="left: 5px;"></i>
       </button>
 
     </div>
@@ -106,16 +90,20 @@
 
 </div>
 
-<!-- - - - - - - - -->
-<!--  QUEUE SCREEN -->
+<!-- - - - - - - --->
+<!--  MANAGE VIEW -->
+{% include "components/manage.html" %}
+
+<!-- - - - - - - -->
+<!--  QUEUE VIEW -->
 {% include "components/queue.html" %}
 
-<!-- - - - - - - - --->
-<!--  SEARCH SCREEN -->
+<!-- - - - - - - --->
+<!--  SEARCH VIEW -->
 {% include "components/search.html" %}
 
-<!-- - - - - - - --->
-<!--  INFO SCREEN -->
+<!-- - - - - - --->
+<!--  INFO VIEW -->
 {% include "components/info.html" %}
 
 {% endblock %}
@@ -124,7 +112,6 @@
 <script src="https://sdk.scdn.co/spotify-player.js"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
 
-<script src="{% static 'js/proj/play_bar.js' %}"></script>
 <script src="{% static 'js/proj/stream.js' %}"></script>
 
 <script src="{% static 'js/proj/components/chat.js' %}"></script>

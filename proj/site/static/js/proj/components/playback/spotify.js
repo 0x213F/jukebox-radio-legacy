@@ -1,10 +1,8 @@
 
-
 var SPOTIFY_PLAYER;
 function onSpotifyWebPlaybackSDKReady() {
   SPOTIFY_PLAYER = new Spotify.Player({ name: "..." });
 }
-
 
 var PLAYBACK;
 function syncSpotifyPlayback() {
@@ -55,6 +53,10 @@ function syncSpotifyPlayback() {
   })
   .then(response => response.json())
   .then(function(response_json) {
+    if(!response_json.item) {
+      return;
+    }
+
     var timestamp = response_json.timestamp;
     var spotify_uri = response_json.item.uri;
     var duration_ms = response_json.item.duration_ms;
@@ -79,6 +81,7 @@ function syncSpotifyPlayback() {
       },
     });
   })
+  .catch((error) => {})
 }
 
 

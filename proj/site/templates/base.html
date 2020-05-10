@@ -53,11 +53,29 @@
     <!-- global JS variable: CSRF_TOKEN -->
     <div id="csrf-token" class="hidden">{% csrf_token %}</div>
 
+    <!-- global JS variable: STREAM_UUID -->
+    <div id="stream-uuid" class="hidden">
+      <input type="text" value="{{ stream.uuid }}">
+    </div>
+
+    <!-- global JS variable: STREAM_UNIQUE_CUSTOM_ID -->
+    <div id="stream-unique-custom-id" class="hidden">
+      <input type="text" value="{{ stream.unique_custom_id }}">
+    </div>
+
+    <!-- global JS variable: IS_STREAM_OWNER -->
+    <div id="is-stream-owner" class="hidden">
+      <input type="text" value="{{ is_host }}">
+    </div>
+
     {% block basescripts %}
     <script src="{% static 'js/external/jquery.js' %}"></script>
     <script src="{% static 'js/external/codepen/lavalamp.js' %}"></script>
+
     <script src="{% static 'js/proj/globals.js' %}"></script>
     <script src="{% static 'js/proj/main.js' %}"></script>
+    <script src="{% static 'js/proj/view.js' %}"></script>
+    <script src="{% static 'js/proj/data.js' %}"></script>
     {% endblock %}
 
     {% block scripts %}{% endblock %}

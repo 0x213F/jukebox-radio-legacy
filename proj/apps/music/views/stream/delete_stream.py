@@ -27,6 +27,9 @@ class DeleteStreamView(BaseView):
         if stream.owner != request.user:
             self.http_response_403('Not permitted')
 
+        stream.unique_custom_id = str(stream.uuid)
+        stream.save()
+
         stream.delete()
 
         for ticket in Ticket.objects.filter(is_active=True, stream=stream):

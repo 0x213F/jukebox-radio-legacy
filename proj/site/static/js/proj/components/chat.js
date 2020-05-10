@@ -4,7 +4,7 @@
 
 let $CHAT_CONTAINER = $('.chat-container');
 
-function displayComments(payload) {
+function renderComments(payload) {
   var comments;
   if(payload.read && payload.read.comments && payload.read.comments.length) {
     comments = payload.read.comments;

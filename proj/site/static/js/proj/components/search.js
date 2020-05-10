@@ -1,64 +1,28 @@
 
-var $MAIN_CARD = $('#main-card');
-var $PLAY_BAR = $('#play-bar');
-var $QUEUE_VIEW = $('#queue-view');
-
 var $PROVIDER_CHIPS = $('#search-providers > .search-provider');
 var $TYPE_CHIPS = $('#search-types > .search-type');
 var $SEARCH_TYPES = $('#search-types');
 
 var $SEARCH_LIBRARY_FORM = $('#search-library');
-var $SEARCH_TYPE_YOUTUBE = $('#search-type-youtube');
 var $SEARCH_RESULTS = $('#search-results');
 var $SEARCH_BAR_INPUT = $('#search-bar-input');
-var $SEARCH_VIEW = $('#search-view');
-var $SEARCH_EXIT_BUTTON = $('.exit-search-button');
-
-var $FILE_UPLOAD_FORM = $('#upload-file-form');
-
-/////////////////////////////////////////////////////
-////////////////// FOCUS BEHAVIOR
-
-function focus_searchbar() {
-  $MAIN_CARD.addClass('hidden');
-  $PLAY_BAR.addClass('hidden');
-  $QUEUE_VIEW.addClass('hidden');
-  $('#info-view').addClass('hidden');
-
-  $SEARCH_VIEW.removeClass('hidden');
-}
-
-function defocus_searchbar() {
-  $SEARCH_VIEW.addClass('hidden');
-  $SEARCH_RESULTS.addClass('hidden');
-  $QUEUE_VIEW.addClass('hidden');
-
-  $SEARCH_BAR_INPUT.val('');
-  $SEARCH_RESULTS.empty();
-
-  $MAIN_CARD.removeClass('hidden');
-}
-
-$SEARCH_EXIT_BUTTON.click(defocus_searchbar);
 
 ////////////////////////////////////////////////////
 
 function display_search_results(data) {
   if(!data.search_results.length) {
     $SEARCH_RESULTS.addClass('hidden');
-    // TODO: display zero state
     return;
   }
 
   var result = data.search_results[0]
   if(result.spotify_uri) {
-    $SEARCH_RESULTS.css('max-height', 'calc(100% - 194px)');
+    $SEARCH_RESULTS.css('max-height', 'calc(100% - 142px)');
   } else if(result.youtube_id) {
-    $SEARCH_RESULTS.css('max-height', 'calc(100% - 160px)');
+    $SEARCH_RESULTS.css('max-height', 'calc(100% - 104px)');
   }
 
   $SEARCH_RESULTS.empty();
-  console.log(data.search_results)
   for(var result of data.search_results) {
     $SEARCH_RESULTS.append(`
       <div class="search-result"
@@ -80,7 +44,7 @@ function display_search_results(data) {
 }
 
 /////////////////////////////////////////////////////
-//  ON SEARCH BEHAVIOR
+////  ON SEARCH BEHAVIOR
 
 function validate_search_eligible() {
   if(!$SEARCH_BAR_INPUT.val()) {
@@ -120,7 +84,7 @@ function add_to_queue(e) {
       },
       success: function(e) {
         $('#form-load-queue').submit();
-          defocus_searchbar();
+        $('.go-to-main-view').first().click();
       }
   });
 }
@@ -142,23 +106,6 @@ function file_upload_to_queue(e) {
       cache: false,
       contentType: false,
       processData: false,
-
-      // // Custom XMLHttpRequest
-      // xhr: function () {
-      //   var myXhr = $.ajaxSettings.xhr();
-      //   if (myXhr.upload) {
-      //     // For handling the progress of the upload
-      //     myXhr.upload.addEventListener('progress', function (e) {
-      //       if (e.lengthComputable) {
-      //         $('progress').attr({
-      //           value: e.loaded,
-      //           max: e.total,
-      //         });
-      //       }
-      //     }, false);
-      //   }
-      //   return myXhr;
-      // }
   });
 }
 
@@ -248,8 +195,6 @@ $(document).keydown(function(event) {
 
 ///////////////////////////////////////
 ///  INIT
-
-$SEARCH_BAR_INPUT.click(focus_searchbar);
 
 $SEARCH_BAR_INPUT.keypress(function (e) {
   if (e.which == 13) {

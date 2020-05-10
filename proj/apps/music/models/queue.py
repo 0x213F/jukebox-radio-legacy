@@ -25,6 +25,26 @@ class Queue(BaseModel):
     def __str__(self):
         return f'[{self.user}] {self.record}'
 
+    def delete(self):
+        self.deleted_at = datetime.utcnow()
+        self.save()
+
+        queue_qs = (
+            Queue.objects.select_related('stream', 'record')
+            .in_stream(self.stream)
+            .filter(created_at__gt=self.created_at)
+            .order_by('created_at')
+        )
+
+        scheduled_at = self.scheduled_at
+        for queue in queue_qs:
+            temp = queue.scheduled_at;
+            queue.scheduled_at = scheduled_at;
+            queue.save()
+            scheduled_at = temp;
+
+
+
     # - - - -
     # fields |
     # - - - -

@@ -30,10 +30,6 @@ class CreateQueueView(BaseView):
 
         stream = Stream.objects.get(uuid=stream_uuid)
 
-
-        print('! ! ! ! !')
-        print(provider)
-
         if provider == 'spotify':
             record, queue = self.create_spotify_queue(request, stream)
         elif provider == 'youtube':

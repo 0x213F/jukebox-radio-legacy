@@ -6,6 +6,13 @@ class QueueQuerySet(BaseQuerySet):
     Django QuerySet used to query Queue objects.
     '''
 
+    def delete(self):
+        '''
+        Manually turn off to update all queues up next.
+        '''
+        for queue in self:
+            queue.delete()
+
     def get_up_next(self, stream):
         return (
             self.filter(stream=stream, played_at__isnull=True)

@@ -1,9 +1,44 @@
+  /////  //////////  /////
+ /////    VIEW      /////
+/////  //////////  /////
+
+function focusMainView() {
+  // noop
+}
+
+function focusInfoView() {
+  // noop
+}
+
+function focusManageView() {
+  // noop
+}
+
+function focusQueueView() {
+  // noop
+}
+
+function focusSearchView() {
+  // noop
+}
+
+var view_mapping = {
+  'main-view': focusMainView,
+  'info-view': focusInfoView,
+  'manage-view': focusManageView,
+  'queue-view': focusQueueView,
+  'search-view': focusSearchView,
+}
+
+$(document).ready(function() {
+  initViews(view_mapping);
+});
 
   /////  //////////  /////
  /////    DISPLAY   /////
 /////  //////////  /////
 
-function updateStreamTitle(payload) {
+function renderStreamTitle(payload) {
   var stream;
   if(payload.read && payload.read.streams && payload.read.streams.length) {
     stream = payload.read.streams[0];
@@ -17,7 +52,7 @@ function updateStreamTitle(payload) {
 }
 
 var IS_PAGE_LOAD_PLAYBACK_UPDATE = true;
-function updatePlaybackData(payload) {
+function renderHostControls(payload) {
   if(payload.read && payload.read.playback && payload.read.playback.length) {
 
     PLAYBACK = payload.read.playback[0];
@@ -26,7 +61,7 @@ function updatePlaybackData(payload) {
       var $GO_TO_QUEUE_BUTTON = $('#go-to-queue-top');
       $GO_TO_QUEUE_BUTTON.removeClass('hidden');
       $GO_TO_QUEUE_BUTTON.empty()
-      if(!PLAYBACK.up_next || !PLAYBACK.up_next.length) {
+      if(PLAYBACK.status !== 'playing_and_synced') {
         $GO_TO_QUEUE_BUTTON.append('<i class="gg-play-list-add" style="left: 5px;"></i>')
       } else {
         $GO_TO_QUEUE_BUTTON.append('<i class="gg-play-list-search" style="left: 5px;"></i>')
@@ -52,22 +87,15 @@ function updatePlaybackData(payload) {
 function updateHostButton(payload) {
   if(payload.updated && payload.updated.users && payload.updated.users.length) {
     var user = payload.updated.users[0];
-    console.log(user.profile.active_stream_ticket.uuid, PLAYBACK.ticket.uuid)
     if(user.profile.active_stream_ticket.uuid === PLAYBACK.ticket.uuid) {
 
       var $GO_TO_QUEUE_BUTTON = $('#go-to-queue-top');
       if(user.profile.active_stream_ticket.is_administrator) {
         $GO_TO_QUEUE_BUTTON.removeClass('hidden');
-        $GO_TO_QUEUE_BUTTON.empty()
-        if(!PLAYBACK.up_next || !PLAYBACK.up_next.length) {
-          $GO_TO_QUEUE_BUTTON.append('<i class="gg-play-list-add" style="left: 5px;"></i>')
-        } else {
-          $GO_TO_QUEUE_BUTTON.append('<i class="gg-play-list-search" style="left: 5px;"></i>')
-        }
       } else {
         $GO_TO_QUEUE_BUTTON.addClass('hidden');
         if(!$QUEUE_VIEW.hasClass('hidden') || !$SEARCH_VIEW.hasClass('hidden')) {
-          defocus_searchbar();
+          $('.go-to-main-view').children().first().click();
         }
       }
 
@@ -113,56 +141,6 @@ function updateURL(payload) {
 
 ////
 
-function addQueue(payload) {
-  if(!payload.created || !payload.created || !payload.created.queues || !payload.created.queues.length) {
-    return;
-  }
-  $div = $('#queued-up');
-  for(var queue of payload.created.queues) {
-    $div.append(generate_queue(queue));
-  }
-  setup_ajax_forms();
-}
-
-function removeQueue(payload) {
-  if(!payload.deleted || !payload.deleted || !payload.deleted.queues || !payload.deleted.queues.length) {
-    return;
-  }
-
-  for(var queue of payload.deleted.queues) {
-    $('#queued-up').find(`input[value="${queue.uuid}"]`).parent().parent().remove();
-  }
-
-  // where I should work when I get back :)
-  // also, we should get the queue ordering more robust sometime
-
-}
-
-  /////  //////////  /////
- /////  NAVIGATION  /////
-/////  //////////  /////
-
-$('.exit-manage').click(exit_manage);
-function exit_manage() {
-  $('#manage-html').addClass('hidden');
-  $('#displayname-html').addClass('hidden');
-  $('#info-view').addClass('hidden');
-  $('#main-card').removeClass('hidden');
-}
-
-$('#go-to-manage').click(go_to_manage)
-function go_to_manage() {
-  if(IS_STREAM_OWNER) {
-    $('#manage-html').removeClass('hidden');
-    $('#displayname-html').addClass('hidden');
-    $('#main-card').addClass('hidden');
-  } else {
-    $('#manage-html').addClass('hidden');
-    $('#displayname-html').removeClass('hidden');
-    $('#main-card').addClass('hidden');
-  }
-}
-
   /////  ////////////////  /////
  /////  SETUP WEBSOCKETS  /////
 /////  ////////////////  /////
@@ -191,21 +169,20 @@ $(window).focus(function() {
  /////  HANDLE WEBSOCKETS  /////
 /////  /////////////////  /////
 
+
 function onopen(event) {}
 
 function onmessage(event) {
   let text = event.data;
   let payload = JSON.parse(text);
-  console.log(payload)
+
+  updateData(payload)
 
   updateURL(payload);
 
-  updateStreamTitle(payload);
-  displayComments(payload);
-  updatePlaybackData(payload);
-  refreshQueue(payload);
+  renderStreamTitle(payload);
+  renderComments(payload);
+  renderHostControls(payload);
+  renderQueue();
   updateHostButton(payload);
-
-  addQueue(payload);
-  removeQueue(payload);
 }

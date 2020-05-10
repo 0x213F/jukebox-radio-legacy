@@ -35,6 +35,14 @@ INSTALLED_APPS = [
 ]
 
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'jukebox_radio_cache',
+    }
+}
+
+
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
@@ -125,7 +133,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-DATA_UPLOAD_MAX_MEMORY_SIZE = 10*1024*1024 * 128
+DATA_UPLOAD_MAX_MEMORY_SIZE = 64000000  # 64 MB
 
 AWS_S3_REGION_NAME = 'sfo2'
 
