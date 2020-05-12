@@ -21,6 +21,10 @@ class DeleteStreamView(BaseView):
         Ticket = apps.get_model('music', 'Ticket')
 
         stream_uuid = request.POST.get('stream_uuid', None)
+        confirm = request.POST.get('confirm', None)
+
+        if confirm != 'on':
+            raise ValueError('Must confirm!')
 
         stream = Stream.objects.get(uuid=stream_uuid)
 

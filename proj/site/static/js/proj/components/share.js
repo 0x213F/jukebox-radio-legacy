@@ -8,8 +8,7 @@ var $MANAGE_BACK_BUTTON = $('.exit-manage');
 if(navigator.share) {
   $SHARE_LINK_BUTTONS.click(share_website);
 } else {
-  $SHARE_LINK_BUTTONS.addClass('hidden');
-  $MANAGE_BACK_BUTTON.css('float', '');
+  $SHARE_LINK_BUTTONS.click(copy_website);
 }
 
 function share_website() {
@@ -20,4 +19,16 @@ function share_website() {
     });
   }
   $(this).blur();
+}
+
+function copy_website() {
+  const text = `https://jukebox.radio/stream/${STREAM_UNIQUE_CUSTOM_ID}/`
+
+  const el = document.createElement('textarea');
+  el.value = text;
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand('copy');
+  document.body.removeChild(el);
+
 }

@@ -52,4 +52,6 @@ class Ticket(BaseModel):
     name = models.CharField(max_length=32, editable=False)
     status = models.CharField(choices=STATUS_CHOICES, max_length=32)
     is_active = models.BooleanField(default=False)
+
+    is_hidden_when_idle = models.BooleanField(default=False)
     is_administrator = models.BooleanField(default=False)

@@ -115,7 +115,6 @@ function updatePlayback() {
     $('#info-album-art').attr('src', PLAYBACK.record.spotify_img_high);
     $('#info-record-name').text(PLAYBACK.record.spotify_name);
   } else {
-    console.log('!!!!!!!!!!')
     syncStoragePlayback();
     $('#info-record-name').text(PLAYBACK.record.storage_name);
   }
@@ -138,8 +137,6 @@ function updateURL(payload) {
     }
   }
 }
-
-////
 
   /////  ////////////////  /////
  /////  SETUP WEBSOCKETS  /////

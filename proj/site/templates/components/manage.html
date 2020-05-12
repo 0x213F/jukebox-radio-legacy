@@ -23,25 +23,26 @@
         <i class="gg-arrow-bottom-left-o" style="bottom: 1px;"></i>
       </button>
 
+      <!-- go to hosts view -->
+      <!-- <button type="button"
+              class="go-to-hosts-view btn btn-lg btn-link jr-btn-sq"
+              style="float: left; padding-left: 9px;">
+        <i class="gg-user-list"></i>
+      </button> -->
+
       <!-- go to info view -->
-      <button type="button"
-              class="go-to-info btn btn-lg btn-link jr-btn-sq"
-              style="float: right; margin-right: 0px;">
+      <button class="btn btn-lg btn-link jr-btn-sq go-to-info-view" style="float: right; margin-right: 0px;">
         <i class="gg-info" style="left: 1px;"></i>
       </button>
 
       <!-- go to search view -->
-      <button type="button"
-              class="go-to-search-view btn btn-lg btn-link jr-btn-sq"
+      <button id="go-to-queue-view"
+              class="go-to-queue-view btn btn-lg btn-link jr-btn-sq"
               style="float: right;">
-        <i class="gg-play-list-add" style="left: 5px;"></i>
+        <i class="gg-play-list-search" style="left: 5px;"></i>
       </button>
 
     </div>
-
-    <!-- <button type="button" class="btn btn-lg btn-link jr-btn-sq share-link">
-      <i class="gg-share" style="left: 2px;"></i>
-    </button> -->
 
 
     <!-- - - - - - - - - -->
@@ -50,7 +51,8 @@
           class="ajax-form card-body"
           url="../../../api/music/stream/update/"
           type="post"
-          onsuccess="display_status_success">
+          onsuccess="display_status_success"
+          style="margin-top: 6px;">
 
       <input class="hidden" type="text" name="stream_uuid" value="{{ stream.uuid }}">
 
@@ -105,6 +107,14 @@
         <input class="form-input input-lg jr-input" id="change-display-name" type="text" name="display_name" value="{{ ticket.name }}">
       </div>
 
+      <div class="form-group" style="margin-bottom: 26px; margin-top: 24px;">
+        <label class="form-checkbox">
+          <input name="is_hidden_when_idle" type="checkbox" {% if ticket.is_hidden_when_idle %}checked{% endif %}>
+          <i class="form-icon" style="width: 18px; height: 18px; border-radius: 6px;"></i>
+          <span style="padding-left: 8px; padding-top: 2px; font-size: 14px; line-height: 23px;">Hide when idle?</span>
+        </label>
+      </div>
+
       <input class="hidden" type="text" name="stream_uuid" value="{{ stream.uuid }}">
 
       <div class="form-group">
@@ -155,6 +165,14 @@
           type="post"
           redirect="/">
       <input class="hidden" type="text" name="stream_uuid" value="{{ stream.uuid }}">
+
+      <div class="form-group" style="margin-bottom: 26px; margin-top: 24px;">
+        <label class="form-checkbox">
+          <input name="confirm" type="checkbox">
+          <i class="form-icon" style="width: 18px; height: 18px; border-radius: 6px;"></i>
+          <span style="padding-left: 8px; padding-top: 2px; font-size: 14px; line-height: 23px;">Are you sure?</span>
+        </label>
+      </div>
 
       <button class="btn btn-lg btn-primary jr-btn-primary">Delete Stream</button>
 

@@ -26,12 +26,15 @@ class UpdateStreamView(BaseView):
 
         is_private = stream_is_private == 'on'
 
+        stream = Stream.objects.get(uuid=stream_uuid)
+
+        if not stream.owner == request.user:
+            return self.http_response_403('Must be stream owner')
+
         if not stream_name or not stream_tags:
             return self.http_response_400('Missing data')
 
-        stream = Stream.objects.get(uuid=stream_uuid)
-
-        if not unique_custom_id.isalnum():
+        if not unique_custom_id.isalnum() and '-' not in unique_custom_id:
             return self.http_response_400('Invalid character')
 
         stream.title = stream_name

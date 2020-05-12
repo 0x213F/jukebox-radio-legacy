@@ -29,6 +29,7 @@ class TicketManager(BaseManager):
             'email': ticket.email,
             'is_administrator': ticket.is_administrator,
             'status': ticket.status,
+            'is_hidden_when_idle': ticket.is_hidden_when_idle,
         }
 
     def promote_to_host(self, email, stream):

@@ -27,6 +27,8 @@ class UpdateTicketView(BaseView):
         is_administrator = request.POST.get('is_administrator', None)
         is_administrator = is_administrator == 'true'
         stream_uuid = request.POST.get('stream_uuid', None)
+        is_hidden_when_idle = request.POST.get('is_hidden_when_idle', None)
+        is_hidden_when_idle = is_hidden_when_idle == 'on'
 
         ticket = Ticket.objects.select_related('stream').get(
             email=request.user.email, stream__uuid=stream_uuid,
@@ -35,7 +37,7 @@ class UpdateTicketView(BaseView):
 
         if email:
             if not stream.owner == request.user:
-                self.http_response_403('Not permitted')
+                return self.http_response_403('Not permitted')
             if is_administrator:
                 Ticket.objects.promote_to_host(email, stream)
             else:
@@ -43,6 +45,12 @@ class UpdateTicketView(BaseView):
         else:
             if holder_name:
                 ticket.name = holder_name
+            if is_hidden_when_idle:
+                if stream.owner == request.user:
+                    return self.http_response_403('Not permitted')
+                ticket.is_hidden_when_idle = is_hidden_when_idle
+
+            if holder_name or is_hidden_when_idle:
                 ticket.save()
                 user = ticket.holder
                 async_to_sync(channel_layer.group_send)(

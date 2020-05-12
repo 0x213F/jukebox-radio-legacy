@@ -12,7 +12,7 @@ var $QUEUED_UP = $('#queued-up');
 function renderQueue() {
   var queues = DATA.up_next;
 
-  if(!queues.length) {
+  if(!queues || !queues.length) {
     $QUEUED_UP.addClass('hidden');
     return;
   }

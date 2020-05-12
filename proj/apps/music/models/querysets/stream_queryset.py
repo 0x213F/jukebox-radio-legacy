@@ -18,7 +18,10 @@ class StreamQuerySet(BaseQuerySet):
         return self.filter(
             Exists(
                 Ticket.objects.filter(
-                    stream_id=OuterRef('id'), email=user.email, is_administrator=True,
+                    stream_id=OuterRef('id'),
+                    email=user.email,
+                    is_administrator=True,
+                    is_hidden_when_idle=False,
                 )
             )
         )

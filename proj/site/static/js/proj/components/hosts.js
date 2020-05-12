@@ -16,7 +16,7 @@ function generate_host(ticket) {
         <input class="hidden" type="text" name="stream_uuid" value="${STREAM_UUID}">
         <input class="hidden" type="text" name="is_administrator" value="false">
 
-        <button class="btn btn-error btn-lg" style="height: 10px;">
+        <button class="btn btn-error btn-lg" style="height: 10px; float: right;">
             <i class="icon icon-cross"
                style="height: 10px; width: 10px; top: -12px;">
             </i>

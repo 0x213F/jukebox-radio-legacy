@@ -1,7 +1,14 @@
 var DATA = {}
 
-function updateData(payload) {
 
+function updateData(payload) {
+  updateQueueData(payload);
+}
+
+
+/////////////////////////////////
+
+function updateQueueData(payload) {
   // initialize "up_next" queue
   if(!DATA.up_next) {
     DATA.up_next = [];
@@ -9,7 +16,6 @@ function updateData(payload) {
 
   // create "up_next" queue
   if(payload.created && payload.created.queues && payload.created.queues.length) {
-    console.log(payload.created.queues[0])
     DATA.up_next.push(payload.created.queues[0]);
   }
 
