@@ -12,36 +12,36 @@ function syncSpotifyPlayback() {
   var now = Date.now()
   var spotify_uris = [];
   var offset = -1;
-  var last_queue_listing;
 
+  var lastVisitedQueueListing;
+  var visitedFirstInFutureQueueListing;
+  var firstQueueListing;
   var isFirst = true;
   for(var queue_listing of playback.queuelistings) {
 
     var time_until_queue_listing = queue_listing.played_at - now
-    if(Math.abs(time_until_queue_listing) < 10) {
-      time_until_queue_listing = 0
-    }
-
     if(isFirst && time_until_queue_listing > 0) {
       setTimeout(syncSpotifyPlayback, time_until_queue_listing);
       return;
     }
     isFirst = false;
 
+    if(Math.abs(time_until_queue_listing) < 10) {
+      time_until_queue_listing = 0
+    }
+
     if(time_until_queue_listing >= 0) {
-      if(offset < 0) {
-        offset = -time_until_queue_listing
-        if(last_queue_listing) {
-          offset = now - last_queue_listing.played_at
-          spotify_uris.push(last_queue_listing.tracklisting.track.spotify_uri);
-        } else {
-          offset = -time_until_queue_listing
-        }
+
+      if(!visitedFirstInFutureQueueListing) {
+        spotify_uris.push(lastVisitedQueueListing.tracklisting.track.spotify_uri);
+        firstQueueListing = lastVisitedQueueListing;
       }
+      visitedFirstInFutureQueueListing = true;
+
       spotify_uris.push(queue_listing.tracklisting.track.spotify_uri);
       continue;
     }
-    last_queue_listing = queue_listing;
+    lastVisitedQueueListing = queue_listing;
   }
 
   fetch(`https://api.spotify.com/v1/me/player/currently-playing`, {
@@ -63,14 +63,16 @@ function syncSpotifyPlayback() {
     var is_playing = response_json.is_playing;
 
     var newNow = new Date(timestamp);
-    var deltaSincePlayMs = newNow.getTime() - newNow;
+    var firstQL = new Date(firstQueueListing.played_at);
 
-    var kindaClose = Math.abs(duration_ms - offset);
-    // TODO add this check too
+    var kindaClose = Math.abs(newNow - firstQL);
 
-    if(spotify_uri === spotify_uris[0] && is_playing) {
+    if(spotify_uri === spotify_uris[0] && is_playing && kindaClose < 1000) {
       return;
     }
+
+    var now = Date.now()
+    var offset = now - firstQL
 
     fetch(`https://api.spotify.com/v1/me/player/play`, {
       method: 'PUT',
