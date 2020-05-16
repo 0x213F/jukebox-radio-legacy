@@ -17,6 +17,8 @@ function syncSpotifyPlayback() {
   var visitedFirstInFutureQueueListing;
   var firstQueueListing;
   var isFirst = true;
+  var firstIsPositive;
+
   for(var queue_listing of playback.queuelistings) {
 
     var time_until_queue_listing = queue_listing.played_at - now
@@ -24,7 +26,6 @@ function syncSpotifyPlayback() {
       setTimeout(syncSpotifyPlayback, time_until_queue_listing);
       return;
     }
-    isFirst = false;
 
     if(Math.abs(time_until_queue_listing) < 10) {
       time_until_queue_listing = 0
@@ -33,20 +34,21 @@ function syncSpotifyPlayback() {
     if(time_until_queue_listing >= 0) {
 
       if(!visitedFirstInFutureQueueListing) {
+        firstQueueListing = queue_listing;
         if(lastVisitedQueueListing) {
           spotify_uris.push(lastVisitedQueueListing.tracklisting.track.spotify_uri);
         }
       }
       visitedFirstInFutureQueueListing = true;
-
-      spotify_uris.push(queue_listing.tracklisting.track.spotify_uri);
-      continue;
+    } else if(isFirst) {
+      firstQueueListing = queue_listing;
     }
+    spotify_uris.push(queue_listing.tracklisting.track.spotify_uri);
+
     lastVisitedQueueListing = queue_listing;
-    firstQueueListing = lastVisitedQueueListing;
+    isFirst = false;
   }
 
-  // console.log('!!')
 
   fetch(`https://api.spotify.com/v1/me/player/currently-playing`, {
     method: 'GET',
@@ -60,7 +62,6 @@ function syncSpotifyPlayback() {
     if(!response_json.item) {
       return;
     }
-
     var timestamp = response_json.timestamp;
     var spotify_uri = response_json.item.uri;
     var duration_ms = response_json.item.duration_ms;
@@ -70,13 +71,13 @@ function syncSpotifyPlayback() {
     var firstQL = new Date(firstQueueListing.played_at);
 
     var kindaClose = Math.abs(newNow - firstQL);
-
     if(spotify_uri === spotify_uris[0] && is_playing && kindaClose < 1000) {
       return;
     }
 
     var now = Date.now()
     var offset = now - firstQL
+
 
     fetch(`https://api.spotify.com/v1/me/player/play`, {
       method: 'PUT',
@@ -86,6 +87,5 @@ function syncSpotifyPlayback() {
         'Authorization': `Bearer ${playback.spotify_token}`
       },
     })
-    // .then(console.log);
   }).catch((error) => {})
 }
