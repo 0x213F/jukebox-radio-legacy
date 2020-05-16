@@ -35,11 +35,11 @@
         <i class="gg-profile" style="bottom: 1px;"></i>
       </button>
 
-      <button class="btn btn-lg btn-link jr-btn-sq go-to-info-view" style="float: right; margin-right: 0px;">
+      <button class="btn btn-lg btn-link jr-btn-sq go-to-info-view " style="float: right; margin-right: 0px;">
         <i class="gg-info" style="left: 1px;"></i>
       </button>
 
-      <button id="go-to-queue-view" class="go-to-queue-view btn btn-lg btn-link jr-btn-sq" style="float: right;">
+      <button id="go-to-queue-view" class="go-to-queue-view btn btn-lg btn-link jr-btn-sq {% if not ticket.is_administrator %}hidden{% endif %}" style="float: right;">
         <i class="gg-play-list-search" style="left: 5px;"></i>
       </button>
 
@@ -71,15 +71,17 @@
         <input class="hidden" name="track_id" value="" />
 
         <div class="input-group">
-          <input type="text"
+          <textarea rows="1"
+                 type="text"
                  id="chat-input-main"
-                 class="form-input input-lg jr-input-left-half"
+                 class="form-input jr-input-left-half no-scrollbar"
                  placeholder=""
                  name="text"
-                 autocomplete="off">
+                 autocomplete="off"
+                 oninput="auto_grow(this)"></textarea>
           <button id="chat-submit"
-                  class="btn btn-secondary btn-lg jr-btn-sq-right-half">
-            <i class="icon icon-2x icon-message"></i>
+                  class="btn btn-link jr-btn-sq-right-half">
+            <i class="icon icon-2x icon-message" style="font-size: 16px; bottom: 6px;"></i>
           </button>
         </div>
 

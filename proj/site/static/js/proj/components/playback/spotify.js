@@ -33,8 +33,9 @@ function syncSpotifyPlayback() {
     if(time_until_queue_listing >= 0) {
 
       if(!visitedFirstInFutureQueueListing) {
-        spotify_uris.push(lastVisitedQueueListing.tracklisting.track.spotify_uri);
-        firstQueueListing = lastVisitedQueueListing;
+        if(lastVisitedQueueListing) {
+          spotify_uris.push(lastVisitedQueueListing.tracklisting.track.spotify_uri);
+        }
       }
       visitedFirstInFutureQueueListing = true;
 
@@ -42,7 +43,10 @@ function syncSpotifyPlayback() {
       continue;
     }
     lastVisitedQueueListing = queue_listing;
+    firstQueueListing = lastVisitedQueueListing;
   }
+
+  // console.log('!!')
 
   fetch(`https://api.spotify.com/v1/me/player/currently-playing`, {
     method: 'GET',
@@ -81,19 +85,7 @@ function syncSpotifyPlayback() {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${playback.spotify_token}`
       },
-    });
-  })
-  .catch((error) => {})
-}
-
-
-function playTracks(spotify_uris, sat) {
-  fetch(`https://api.spotify.com/v1/me/player/play`, {
-    method: 'PUT',
-    body: JSON.stringify({ uris: spotify_uris }),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${sat}`
-    },
-  });
+    })
+    // .then(console.log);
+  }).catch((error) => {})
 }

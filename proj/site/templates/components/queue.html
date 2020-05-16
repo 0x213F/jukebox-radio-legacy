@@ -34,9 +34,17 @@
     <!-- queue list view -->
     <div class="content queue" style="margin-top: 16px;">
 
+      <div class="empty-state hidden">
+        <mark style="border-radius: 8px;">
+          <p style="margin: 8px 12px;">
+            The queue is empty. Click <i class="gg-play-list-add" style="display: inline-block; margin-left: 6px; margin-right: 10px;"></i> to add to the queue.
+          </p>
+        </mark>
+      </div>
+
       <!-- TABS TO SELECT SEARCH PROVIDER -->
-      <!-- <input id="queue-action" class="hidden" name="provider">
-      <div id="queue-action-options"
+      <input id="queue-action" class="hidden" name="provider">
+      <!-- <div id="queue-action-options"
            class="filter-nav"
            for-input="queue-action"
            style="margin-top: 16px; margin-bottom: 16px; height: 32px;">

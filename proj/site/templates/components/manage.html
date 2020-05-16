@@ -37,7 +37,7 @@
 
       <!-- go to search view -->
       <button id="go-to-queue-view"
-              class="go-to-queue-view btn btn-lg btn-link jr-btn-sq"
+              class="go-to-queue-view btn btn-lg btn-link jr-btn-sq {% if not ticket.is_administrator %}hidden{% endif %}"
               style="float: right;">
         <i class="gg-play-list-search" style="left: 5px;"></i>
       </button>
@@ -48,7 +48,7 @@
     <!-- - - - - - - - - -->
     <!--  UPDATE STREAM  -->
     <form id="update-stream"
-          class="ajax-form card-body"
+          class="ajax-form card-body manage-administrator"
           url="../../../api/music/stream/update/"
           type="post"
           onsuccess="display_status_success"
@@ -90,7 +90,7 @@
 
     </form>
 
-    <div class="form-group">
+    <div class="form-group manage-administrator">
       <div class="divider" style="margin-top: 24px; margin-bottom: 14;"></div>
     </div>
 
@@ -109,7 +109,7 @@
 
       <div class="form-group" style="margin-bottom: 26px; margin-top: 24px;">
         <label class="form-checkbox">
-          <input name="is_hidden_when_idle" type="checkbox" {% if ticket.is_hidden_when_idle %}checked{% endif %}>
+          <input name="is_hidden_when_idle" type="checkbox" {% if ticket.is_hidden_when_idle %}checked{% endif %} {% if is_host %}disabled{% endif %}>
           <i class="form-icon" style="width: 18px; height: 18px; border-radius: 6px;"></i>
           <span style="padding-left: 8px; padding-top: 2px; font-size: 14px; line-height: 23px;">Hide when idle?</span>
         </label>
@@ -124,18 +124,18 @@
 
     </form>
 
-    <div class="form-group">
+    <div class="form-group manage-administrator">
       <div class="divider" style="margin-top: 24px; margin-bottom: 14;"></div>
     </div>
 
     <!-- - - - - - --->
     <!-- HOSTS LIST -->
-    <div class="hosts-list hidden" style="margin-top: 24px; margin-bottom: 8px;"></div>
+    <div class="hosts-list hidden manage-administrator" style="margin-top: 24px; margin-bottom: 8px;"></div>
 
     <!-- - - - - - - -->
     <!--  ADD HOST   -->
     <form id="add-host"
-          class="ajax-form card-body"
+          class="ajax-form card-body  manage-administrator"
           url="../../../api/music/ticket/update/"
           type="post"
           onsuccess="list_hosts">
@@ -155,12 +155,12 @@
 
     </form>
 
-    <div class="form-group">
+    <div class="form-group manage-administrator">
       <div class="divider" style="margin-top: 24px; margin-bottom: 24px;"></div>
     </div>
 
     <form id="delete-stream"
-          class="ajax-form card-body"
+          class="ajax-form card-body manage-administrator"
           url="../../../api/music/stream/delete/"
           type="post"
           redirect="/">

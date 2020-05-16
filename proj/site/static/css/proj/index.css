@@ -25,15 +25,6 @@
   padding-right: 24px!important;
 }
 
-.jr-btn-sq-right-half {
-  min-width: 40px!important;
-  border-top-right-radius: 12px;
-  border-bottom-right-radius: 12px;
-  border-top-left-radius: 0px;
-  border-bottom-left-radius: 0px;
-  border-left: none!important;
-}
-
 .jr-btn-sq {
   min-width: 40px!important;
   border-radius: 12px;
@@ -42,14 +33,12 @@
 }
 
 .jr-btn.btn-secondary,
-.jr-btn-sq.btn-secondary,
-.jr-btn-sq-right-half {
+.jr-btn-sq.btn-secondary {
   background-color: rgb(256, 256, 256, 0.95)!important;
 }
 
 .jr-btn.btn-secondary:hover,
-.jr-btn-sq.btn-secondary:hover,
-.jr-btn-sq-right-half:hover {
+.jr-btn-sq.btn-secondary:hover {
   background-color: #5764c6!important;
 }
 
@@ -58,22 +47,17 @@
 .jr-btn.btn-link:active,
 .jr-btn-sq.btn-link:hover,
 .jr-btn-sq.btn-link:focus,
-.jr-btn-sq.btn-link:active,
-.jr-btn-sq-right-half:hover,
-.jr-btn-sq-right-half:focus,
-.jr-btn-sq-right-half:active {
+.jr-btn-sq.btn-link:active {
   box-shadow: 0 0 0 2px rgba(234, 235, 248, 0.5)!important;
 }
 
 .jr-btn.btn-secondary:focus,
-.jr-btn-sq.btn-secondary:focus,
-.jr-btn-sq-right-half:focus {
+.jr-btn-sq.btn-secondary:focus {
   background-color: #fbfbfe!important;
 }
 
 .jr-btn.btn-secondary:active,
-.jr-btn-sq.btn-secondary:active,
-.jr-btn-sq-right-half:active {
+.jr-btn-sq.btn-secondary:active {
   background-color: #4c59c2!important;
 }
 
@@ -92,15 +76,29 @@
   font-size: 14px!important;
 }
 
+
+.jr-btn-sq-right-half {
+  width: 48px!important;
+  height: 24px!important;
+  border-radius: 12px;
+  float: right;
+  top: 8px;
+  right: 8px;
+  position: absolute;
+  font-size: 24px;
+  z-index: 2;
+}
+
 .jr-input-left-half {
   padding-left: 12px!important;
+  padding-right: 64px!important;
+  padding-top: 9px!important;
+  padding-bottom: 9px!important;
+  min-height: 40px;
   color: #727e96;
   border: 1px solid #5764c6;
-  border-top-left-radius: 12px!important;
-  border-bottom-left-radius: 12px!important;
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
-  border-right: none!important;
-  box-shadow: none!important;
+  border-radius: 12px!important;
   background-color: rgb(256, 256, 256, 0.95)!important;
+  resize: none;
+  overflow: auto;
 }

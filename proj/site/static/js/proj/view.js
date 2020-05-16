@@ -5,7 +5,6 @@ function initViews(view_mapping) {
       const view_names = Object.keys(view_mapping);
 
       var $views = $('#' + view_names.join(',#'));
-      console.log('#' + view_names.join(',#'))
       $views.addClass('hidden');
 
       var $target_view = $('#' + view_name);

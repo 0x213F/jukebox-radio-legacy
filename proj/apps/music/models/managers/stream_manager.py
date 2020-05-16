@@ -60,7 +60,9 @@ class StreamManager(BaseManager):
         Spin the record.
         '''
         QueueListing = apps.get_model('music', 'QueueListing')
+        Queue = apps.get_model('music', 'Queue')
         Stream = apps.get_model('music', 'Stream')
+        Ticket = apps.get_model('music', 'Ticket')
 
         if not queue:
             stream.current_queue = None
@@ -120,6 +122,21 @@ class StreamManager(BaseManager):
         async_to_sync(channel_layer.group_send)(
             stream.chat_room, {'type': 'sync_playback'},
         )
+
+        ###########
+        payload = {
+            'type': 'send_update',
+            'text': {
+                'deleted': {
+                    'queues': [Queue.objects.serialize(queue)],
+                },
+            }
+        }
+
+        for ticket in Ticket.objects.administrators(stream=queue.stream):
+            user_id = ticket.holder_id
+            async_to_sync(channel_layer.group_send)(f'user-{user_id}', payload)
+        ############
 
         next_play_time = stream.record_terminates_at.replace(tzinfo=None) - timedelta(seconds=3)
         tasks.schedule_spin.apply_async(eta=next_play_time, args=[stream.id])

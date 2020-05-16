@@ -240,9 +240,6 @@ function clickSearchProvider() {
   var $level1 = $('.filter-nav.level-1');
   $level1.addClass('hidden');
 
-  $SEARCH_PROVIDER_OPTIONS.addClass('deactivated');
-  $this.removeClass('deactivated');
-
   if(val === 'spotify') {
     $('#spotify-type-options').removeClass('hidden');
     var $active_type = $('#spotify-type-options').find('.active');
@@ -281,8 +278,6 @@ var $SEARCH_PROVIDER_OPTIONS = $('.search-provider-option');
 function clickSpotifyType() {
   var $this = $(this);
 
-  $SPOTIFY_TYPE_CHOICES.addClass('deactivated');
-  $this.removeClass('deactivated');
   $('#storage-type').val(undefined);
   $SEARCH_BAR_INPUT.attr('disabled', false);
   $SEARCH_BAR_INPUT.focus();
@@ -296,9 +291,7 @@ var $SPOTIFY_TYPE_CHOICES = $('#spotify-type-options > .filter-nav-option');
 
 function clickStorageType() {
   var $this = $(this);
-
-  $STORAGE_TYPE_CHOICES.addClass('deactivated');
-  $this.removeClass('deactivated');
+  
   $('#spotify-type').val(undefined);
 
   var val = $this.attr('value');

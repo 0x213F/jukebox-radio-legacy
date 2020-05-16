@@ -86,14 +86,17 @@
   cursor: pointer;
 }
 
-.filter-nav-option.deactivated {
-  color: #727e96;
-}
-
 .filter-nav-option:hover {
   box-shadow: 0 0 0 2px rgba(234, 235, 248, 0.5)!important;
 }
 
 .filter-nav-option.active {
   box-shadow: 0 0 0 2px rgba(234, 235, 248, 0.5)!important;
+}
+
+/* SEARCH BAR */
+#search-bar-input {
+  border-radius: 12px;
+  padding-left: 12px;
+  color: #5764c6;
 }

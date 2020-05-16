@@ -12,12 +12,12 @@ var $QUEUED_UP = $('#queued-up');
 function renderQueue() {
   var queues = DATA.up_next;
 
+  $QUEUED_UP.empty();
   if(!queues || !queues.length) {
     $QUEUED_UP.addClass('hidden');
     return;
   }
 
-  $QUEUED_UP.empty();
   for(var queue of queues) {
     var scheduled_at = new Date(queue.scheduled_at[0])
     var display_time = scheduled_at.toLocaleTimeString(

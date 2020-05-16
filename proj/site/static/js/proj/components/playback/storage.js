@@ -87,7 +87,7 @@ function uploadMicrophoneBlob(e) {
     contentType: false,
     processData: false,
   }).done(function(data) {
-    console.log(data);
+    //
   });
 }
 

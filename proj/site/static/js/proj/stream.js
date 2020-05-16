@@ -11,11 +11,22 @@ function focusInfoView() {
 }
 
 function focusManageView() {
-  // noop
+  if(PLAYBACK.ticket.is_administrator) {
+    $('.manage-administrator').removeClass('hidden');
+  } else {
+    $('.manage-administrator').addClass('hidden');
+  }
 }
 
 function focusQueueView() {
-  // noop
+  var queue_is_empty = !$('#queued-up').children().length;
+  if(queue_is_empty) {
+    $('.queue > .empty-state').removeClass('hidden');
+    $('#queue-action-options').addClass('hidden');
+  } else {
+    $('.queue > .empty-state').addClass('hidden');
+    $('#queue-action-options').removeClass('hidden');
+  }
 }
 
 function focusSearchView() {
@@ -67,17 +78,19 @@ function renderHostControls(payload) {
         $GO_TO_QUEUE_BUTTON.append('<i class="gg-play-list-search" style="left: 5px;"></i>')
       }
     }
-
+    var shouldUpdatePlayback = true;
     if(PLAYBACK.status === 'playing_and_synced') {
       if(PLAYBACK.record.storage_id) {
         if(IS_PAGE_LOAD_PLAYBACK_UPDATE) {
           $('#sync-playback').removeClass('hidden');
-        } else {
-          updatePlayback();
+          shouldUpdatePlayback = false;
         }
-      } else {
-        updatePlayback();
       }
+    }
+
+    if(shouldUpdatePlayback) {
+      // console.log('!!')
+      updatePlayback();
     }
 
     IS_PAGE_LOAD_PLAYBACK_UPDATE = false;
@@ -172,6 +185,7 @@ function onopen(event) {}
 function onmessage(event) {
   let text = event.data;
   let payload = JSON.parse(text);
+  // console.log(payload);
 
   updateData(payload)
 
