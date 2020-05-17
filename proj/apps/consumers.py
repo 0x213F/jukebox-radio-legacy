@@ -113,6 +113,19 @@ class Consumer(AsyncConsumer):
     # - - - - -
 
     async def websocket_receive(self, event):
+        if 'bytes' in event:
+            new_event = {
+                'type': 'websocket.send',
+                'bytes': event['bytes'],
+            }
+            await self.channel_layer.group_send(
+                self.scope['stream'].chat_room,
+                {
+                    'type': 'send_audio',
+                    'bytes': event['bytes'],
+                }
+            )
+            return
         payload = json.loads(event["text"])
         # action = payload['action']
 
@@ -147,6 +160,12 @@ class Consumer(AsyncConsumer):
         await self.send({
             'type': 'websocket.send',
             'text': json.dumps(data),
+        })
+
+    async def send_audio(self, event):
+        await self.send({
+            'type': 'websocket.send',
+            'bytes': event['bytes'],
         })
 
     async def play_tracks(self, playback):

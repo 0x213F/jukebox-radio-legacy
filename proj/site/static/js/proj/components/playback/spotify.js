@@ -21,29 +21,33 @@ function syncSpotifyPlayback() {
 
   for(var queue_listing of playback.queuelistings) {
 
-    var time_until_queue_listing = queue_listing.played_at - now
+    var time_until_queue_listing = queue_listing.played_at - now;
     if(isFirst && time_until_queue_listing > 0) {
       setTimeout(syncSpotifyPlayback, time_until_queue_listing);
       return;
     }
 
-    if(Math.abs(time_until_queue_listing) < 10) {
+    if(isFirst) {
+      firstQueueListing = queue_listing;
+    }
+
+    // rounding
+    if(time_until_queue_listing > -10 && time_until_queue_listing <= 0) {
       time_until_queue_listing = 0
     }
 
     if(time_until_queue_listing >= 0) {
 
       if(!visitedFirstInFutureQueueListing) {
-        firstQueueListing = queue_listing;
         if(lastVisitedQueueListing) {
+          firstQueueListing = lastVisitedQueueListing;
           spotify_uris.push(lastVisitedQueueListing.tracklisting.track.spotify_uri);
         }
       }
+      spotify_uris.push(queue_listing.tracklisting.track.spotify_uri);
       visitedFirstInFutureQueueListing = true;
-    } else if(isFirst) {
-      firstQueueListing = queue_listing;
+      continue;
     }
-    spotify_uris.push(queue_listing.tracklisting.track.spotify_uri);
 
     lastVisitedQueueListing = queue_listing;
     isFirst = false;
@@ -68,9 +72,14 @@ function syncSpotifyPlayback() {
     var is_playing = response_json.is_playing;
 
     var newNow = new Date(timestamp);
-    var firstQL = new Date(firstQueueListing.played_at);
 
-    var kindaClose = Math.abs(newNow - firstQL);
+    var firstQL = new Date(firstQueueListing.played_at);
+    if(!spotify_uris.length) {
+      spotify_uris = [firstQueueListing.tracklisting.track.spotify_uri];
+    }
+
+    var kindaClose = Math.abs(Math.abs(newNow - firstQL) - duration_ms);
+    console.log(newNow - firstQL, newNow, firstQL)
     if(spotify_uri === spotify_uris[0] && is_playing && kindaClose < 1000) {
       return;
     }
@@ -81,7 +90,7 @@ function syncSpotifyPlayback() {
 
     fetch(`https://api.spotify.com/v1/me/player/play`, {
       method: 'PUT',
-      body: JSON.stringify({ uris: spotify_uris, position_ms: offset }),
+      body: JSON.stringify({ uris: spotify_uris, position_ms: Math.abs(newNow - firstQL) }),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${playback.spotify_token}`

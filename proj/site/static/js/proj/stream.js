@@ -1,3 +1,52 @@
+var LIVESTREAM;
+
+var $broadcastAudioButton = $('#broadcast-audio');
+$broadcastAudioButton.click(function() {
+  if($broadcastAudioButton.hasClass('btn-link')) {
+    $broadcastAudioButton.removeClass('btn-link');
+    $broadcastAudioButton.addClass('btn-primary');
+    startLiveStream();
+  } else {
+    $broadcastAudioButton.addClass('btn-link');
+    $broadcastAudioButton.removeClass('btn-primary');
+    stopLiveStream();
+  }
+});
+
+
+function startLiveStream() {
+  const constraints = { audio: true };
+
+  navigator.mediaDevices
+
+      .getUserMedia(constraints)
+
+      .then(mediaStream => {
+
+          // use MediaStream Recording API
+          const recorder = new MediaRecorder(mediaStream);
+          LIVESTREAM = recorder;
+
+          // fires every one second and passes an BlobEvent
+          recorder.ondataavailable = event => {
+
+              // get the Blob from the event
+              const blob = event.data;
+
+              // and send that blob to the server
+              window['SOCKET'].send(blob);
+          };
+
+          // make data available event fire every ten times per second
+          recorder.start(1);
+      });
+}
+
+function stopLiveStream() {
+  LIVESTREAM.stop();
+}
+
+
   /////  //////////  /////
  /////    VIEW      /////
 /////  //////////  /////
@@ -119,15 +168,15 @@ function updateHostButton(payload) {
 $('#sync-playback').click(updatePlayback)
 
 function updatePlayback() {
-  if(PLAYBACK.record.youtube_id) {
+  if(PLAYBACK.record && PLAYBACK.record.youtube_id) {
     syncYouTubePlayback();
     $('#info-album-art').attr('src', PLAYBACK.record.youtube_img_high);
     $('#info-record-name').text(PLAYBACK.record.youtube_name);
-  } else if(PLAYBACK.record.spotify_uri) {
+  } else if(PLAYBACK.record && PLAYBACK.record.spotify_uri) {
     syncSpotifyPlayback();
     $('#info-album-art').attr('src', PLAYBACK.record.spotify_img_high);
     $('#info-record-name').text(PLAYBACK.record.spotify_name);
-  } else {
+  } else if(PLAYBACK.record) {
     syncStoragePlayback();
     $('#info-record-name').text(PLAYBACK.record.storage_name);
   }
@@ -179,10 +228,40 @@ $(window).focus(function() {
  /////  HANDLE WEBSOCKETS  /////
 /////  /////////////////  /////
 
+var audio = new Audio();
+
+if (window.MediaSource) {
+  var mediaSource = new MediaSource();
+  audio.src = URL.createObjectURL(mediaSource);
+  mediaSource.addEventListener('sourceopen', sourceOpen);
+} else {
+  console.log("The Media Source Extensions API is not supported.")
+}
+
+function sourceOpen(e) {
+  sourceBuffer = mediaSource.addSourceBuffer('audio/webm; codecs="opus"');
+}
+
+function playAudioData(audioData) {
+  audioData.arrayBuffer().then(
+    buffer => {
+      sourceBuffer.appendBuffer(buffer);
+      if(audio.paused) {
+        audio.play()
+      }
+    }
+  );
+}
+
 
 function onopen(event) {}
 
 function onmessage(event) {
+  if(typeof event.data !== 'string') {
+    playAudioData(event.data)
+    return;
+  }
+
   let text = event.data;
   let payload = JSON.parse(text);
   // console.log(payload);
