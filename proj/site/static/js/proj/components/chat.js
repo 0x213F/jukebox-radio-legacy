@@ -1,17 +1,32 @@
-var shifted;
-$(document).on('keyup keydown', function(e){shifted = e.shiftKey} );
 
 $('#chat-input-main').keypress(function(event) {
-    if (event.which == 13 && !shifted) {
+    if (event.which == 13) {
         event.preventDefault();
         $('#chat-input-main').submit();
     }
 });
 
 function auto_grow(element) {
-    // element.style.height = "5px";
-    element.style.height = (element.scrollHeight)+"px";
+  var height = element.scrollHeight;
+  if(height > 78) {
+    height = 78;
+  }
+  element.style.height = height + 'px';
 }
+
+
+var $chatOption = $('.jr-chat-option');
+
+$chatOption.click(function() {
+  var $this = $(this);
+  var value = $this.attr('value');
+
+  $chatOption.removeClass('active');
+  $(this).addClass('active');
+
+  $('.jr-bottom-bar').addClass('hidden');
+  $(`.jr-${value}`).removeClass('hidden');
+});
 
 
   /////  ////////////////   /////

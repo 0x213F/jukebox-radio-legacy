@@ -1,58 +1,13 @@
-var LIVESTREAM;
-
-var $broadcastAudioButton = $('#broadcast-audio');
-$broadcastAudioButton.click(function() {
-  if($broadcastAudioButton.hasClass('btn-link')) {
-    $broadcastAudioButton.removeClass('btn-link');
-    $broadcastAudioButton.addClass('btn-primary');
-    startLiveStream();
-  } else {
-    $broadcastAudioButton.addClass('btn-link');
-    $broadcastAudioButton.removeClass('btn-primary');
-    stopLiveStream();
-  }
-});
-
-
-function startLiveStream() {
-  const constraints = { audio: true };
-
-  navigator.mediaDevices
-
-      .getUserMedia(constraints)
-
-      .then(mediaStream => {
-
-          // use MediaStream Recording API
-          const recorder = new MediaRecorder(mediaStream);
-          LIVESTREAM = recorder;
-
-          // fires every one second and passes an BlobEvent
-          recorder.ondataavailable = event => {
-
-              // get the Blob from the event
-              const blob = event.data;
-
-              // and send that blob to the server
-              window['SOCKET'].send(blob);
-          };
-
-          // make data available event fire every ten times per second
-          recorder.start(1);
-      });
-}
-
-function stopLiveStream() {
-  LIVESTREAM.stop();
-}
-
-
   /////  //////////  /////
  /////    VIEW      /////
 /////  //////////  /////
 
-function focusMainView() {
+function focusLoadingView() {
   // noop
+}
+
+function focusChatView() {
+  $CHAT_CONTAINER.scrollTop($CHAT_CONTAINER[0].scrollHeight);
 }
 
 function focusInfoView() {
@@ -83,7 +38,8 @@ function focusSearchView() {
 }
 
 var view_mapping = {
-  'main-view': focusMainView,
+  'loading-view': focusLoadingView,
+  'chat-view': focusChatView,
   'info-view': focusInfoView,
   'manage-view': focusManageView,
   'queue-view': focusQueueView,
@@ -92,6 +48,10 @@ var view_mapping = {
 
 $(document).ready(function() {
   initViews(view_mapping);
+});
+
+$('#join-stream-btn').click(function() {
+  updatePlayback();
 });
 
   /////  //////////  /////
@@ -111,10 +71,8 @@ function renderStreamTitle(payload) {
   $('.jr-info-banner').text(stream.name);
 }
 
-var IS_PAGE_LOAD_PLAYBACK_UPDATE = true;
-function renderHostControls(payload) {
+function renderHostControlsOnPlayback(payload) {
   if(payload.read && payload.read.playback && payload.read.playback.length) {
-
     PLAYBACK = payload.read.playback[0];
 
     if(PLAYBACK.ticket.is_administrator) {
@@ -127,26 +85,14 @@ function renderHostControls(payload) {
         $GO_TO_QUEUE_BUTTON.append('<i class="gg-play-list-search" style="left: 5px;"></i>')
       }
     }
-    var shouldUpdatePlayback = true;
-    if(PLAYBACK.status === 'playing_and_synced') {
-      if(PLAYBACK.record.storage_id) {
-        if(IS_PAGE_LOAD_PLAYBACK_UPDATE) {
-          $('#sync-playback').removeClass('hidden');
-          shouldUpdatePlayback = false;
-        }
-      }
-    }
 
-    if(shouldUpdatePlayback) {
-      // console.log('!!')
+    if($('#loading-view').hasClass('hidden')) {
       updatePlayback();
     }
-
-    IS_PAGE_LOAD_PLAYBACK_UPDATE = false;
   }
 }
 
-function updateHostButton(payload) {
+function renderHostControlsOnUserChange(payload) {
   if(payload.updated && payload.updated.users && payload.updated.users.length) {
     var user = payload.updated.users[0];
     if(user.profile.active_stream_ticket.uuid === PLAYBACK.ticket.uuid) {
@@ -157,7 +103,7 @@ function updateHostButton(payload) {
       } else {
         $GO_TO_QUEUE_BUTTON.addClass('hidden');
         if(!$QUEUE_VIEW.hasClass('hidden') || !$SEARCH_VIEW.hasClass('hidden')) {
-          $('.go-to-main-view').children().first().click();
+          $('.go-to-chat-view').children().first().click();
         }
       }
 
@@ -169,35 +115,124 @@ $('#sync-playback').click(updatePlayback)
 
 function updatePlayback() {
   if(PLAYBACK.record && PLAYBACK.record.youtube_id) {
+    $('.chat-container').css('top', '298px');
     syncYouTubePlayback();
     $('#info-album-art').attr('src', PLAYBACK.record.youtube_img_high);
     $('#info-record-name').text(PLAYBACK.record.youtube_name);
   } else if(PLAYBACK.record && PLAYBACK.record.spotify_uri) {
+    $('.chat-container').css('top', '76px');
     syncSpotifyPlayback();
     $('#info-album-art').attr('src', PLAYBACK.record.spotify_img_high);
     $('#info-record-name').text(PLAYBACK.record.spotify_name);
   } else if(PLAYBACK.record) {
+    $('.chat-container').css('top', '76px');
     syncStoragePlayback();
     $('#info-record-name').text(PLAYBACK.record.storage_name);
   }
   $('#sync-playback').addClass('hidden');
 }
 
-function updateURL(payload) {
+function renderURL(payload) {
   if(payload.updated && payload.updated.streams && payload.updated.streams.length) {
     var currSite = window.location.href;
     currSite = currSite.substring(currSite.indexOf('/stream/')+1);
 
     var stream = payload.updated.streams[0];
 
-    if(stream.is_private && !PLAYBACK.ticket.is_administrator) {
-      window.location.href = '/'
-    }
-
     if('stream/' + stream.unique_custom_id + '/' !== currSite) {
       window.location.href = '/stream/' + stream.unique_custom_id;
     }
   }
+}
+
+function renderHostOnly(payload) {
+  if(payload.updated && payload.updated.streams && payload.updated.streams.length) {
+    var stream = payload.updated.streams[0];
+    if(stream.is_private && !PLAYBACK.ticket.is_administrator) {
+      window.location.href = '/'
+    }
+  }
+}
+
+  /////  ////////////////  /////
+ /////     LIVESTREAM     /////
+/////  ////////////////  /////
+
+var audio = new Audio();
+
+if (window.MediaSource) {
+  var mediaSource = new MediaSource();
+  audio.src = URL.createObjectURL(mediaSource);
+} else {
+  console.log('The Media Source Extensions API is not supported.')
+}
+
+
+var sourceBuffer;
+function playAudioData(audioData) {
+  audioData.arrayBuffer().then(
+    buffer => {
+      if(audio.paused) {
+        // if(sourceBuffer) {
+        //   sourceBuffer.abort();
+        // }
+        sourceBuffer = mediaSource.addSourceBuffer('audio/webm; codecs="opus"');
+        sourceBuffer.appendBuffer(buffer);
+        audio.play()
+      } else {
+        sourceBuffer.appendBuffer(buffer);
+      }
+    }
+  );
+}
+
+var $broadcastAudioButton = $('#broadcast-audio-livestream');
+$broadcastAudioButton.click(function() {
+  if($broadcastAudioButton.hasClass('btn-secondary')) {
+    $broadcastAudioButton.removeClass('btn-secondary');
+    $broadcastAudioButton.addClass('btn-primary');
+    startLiveStream();
+  } else {
+    $broadcastAudioButton.addClass('btn-secondary');
+    $broadcastAudioButton.removeClass('btn-primary');
+    stopLiveStream();
+  }
+});
+
+var LIVESTREAM;
+var MICSTREAM;
+
+function startLiveStream() {
+  const constraints = { audio: true };
+
+  navigator.mediaDevices
+
+      .getUserMedia(constraints)
+
+      .then(mediaStream => {
+          MICSTREAM = mediaStream;
+
+          // use MediaStream Recording API
+          LIVESTREAM = new MediaRecorder(MICSTREAM);
+
+          // fires every one second and passes an BlobEvent
+          LIVESTREAM.ondataavailable = event => {
+
+              // get the Blob from the event
+              const blob = event.data;
+
+              // and send that blob to the server
+              window['SOCKET'].send(blob);
+          };
+
+          // make data available event fire every twenty times per second
+          LIVESTREAM.start(5);
+      });
+}
+
+function stopLiveStream() {
+  LIVESTREAM.stop();
+  MICSTREAM.getTracks()[0].stop();
 }
 
   /////  ////////////////  /////
@@ -219,39 +254,9 @@ window['SOCKET'] = new WebSocket(endpoint)
 window['SOCKET'].onopen = onopen
 window['SOCKET'].onmessage = onmessage
 
-// on window focus, try re-syncing playback
-$(window).focus(function() {
-  // syncSpotifyPlayback();
-});
-
   /////  /////////////////  /////
  /////  HANDLE WEBSOCKETS  /////
 /////  /////////////////  /////
-
-var audio = new Audio();
-
-if (window.MediaSource) {
-  var mediaSource = new MediaSource();
-  audio.src = URL.createObjectURL(mediaSource);
-  mediaSource.addEventListener('sourceopen', sourceOpen);
-} else {
-  console.log("The Media Source Extensions API is not supported.")
-}
-
-function sourceOpen(e) {
-  sourceBuffer = mediaSource.addSourceBuffer('audio/webm; codecs="opus"');
-}
-
-function playAudioData(audioData) {
-  audioData.arrayBuffer().then(
-    buffer => {
-      sourceBuffer.appendBuffer(buffer);
-      if(audio.paused) {
-        audio.play()
-      }
-    }
-  );
-}
 
 
 function onopen(event) {}
@@ -268,11 +273,14 @@ function onmessage(event) {
 
   updateData(payload)
 
-  updateURL(payload);
+  renderURL(payload);
+  renderHostOnly(payload);
+
+  renderHostControlsOnPlayback(payload);
+  renderHostControlsOnUserChange(payload);
 
   renderStreamTitle(payload);
+
   renderComments(payload);
-  renderHostControls(payload);
   renderQueue();
-  updateHostButton(payload);
 }

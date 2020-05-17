@@ -84,7 +84,7 @@ function add_to_queue(e) {
       },
       success: function(e) {
         $('#form-load-queue').submit();
-        $('.go-to-main-view').first().click();
+        $('.go-to-chat-view').first().click();
       }
   });
 }

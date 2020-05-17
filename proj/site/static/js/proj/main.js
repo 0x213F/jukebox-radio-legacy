@@ -35,6 +35,7 @@ function setup_ajax_forms() {
         window['SOCKET'].send(msg);
         // TODO don't put this in here
         $('#chat-input-main').val('');
+        $('#chat-input-main').css('height', '38px');
       } else if($this.attr("type") === "redirect") {
         window.location.href = $this.attr("url");
       } else {
