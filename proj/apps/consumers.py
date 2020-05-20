@@ -137,7 +137,7 @@ class Consumer(AsyncConsumer):
             self.scope['user'],
             self.scope['stream'],
             self.scope['ticket'],
-            text=payload['text'],
+            text=data['text'],
         )
 
         # else:
