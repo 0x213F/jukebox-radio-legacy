@@ -127,21 +127,21 @@ class Consumer(AsyncConsumer):
         )
 
     async def _websocket_receive_data(self, data):
-        view = payload['view']
+        # view = payload['view']
+        #
+        # if view == 'syncplayback':
+        #     await self.sync_playback(onload=True)
 
-        if view == 'syncplayback':
-            await self.sync_playback(onload=True)
+        # elif view == 'createcomment':
+        await Comment.objects.create_and_share_comment_async(
+            self.scope['user'],
+            self.scope['stream'],
+            self.scope['ticket'],
+            text=payload['text'],
+        )
 
-        elif view == 'createcomment':
-            await Comment.objects.create_and_share_comment_async(
-                self.scope['user'],
-                self.scope['stream'],
-                self.scope['ticket'],
-                text=payload['text'],
-            )
-
-        else:
-            raise ValueError('Invalid view.')
+        # else:
+        #     raise ValueError('Invalid view.')
 
     # - - - - - -
     # disconnect

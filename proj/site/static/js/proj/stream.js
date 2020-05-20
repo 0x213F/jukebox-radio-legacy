@@ -119,6 +119,10 @@ function renderHostControlsOnUserChange(payload) {
 }
 
 function updatePlayback() {
+  if(!PLAYBACK){
+    return;
+  }
+
   if(PLAYBACK.record && PLAYBACK.record.youtube_id) {
     $('.chat-container').css('top', '298px');
     syncYouTubePlayback();
