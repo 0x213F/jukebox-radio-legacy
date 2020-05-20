@@ -51,6 +51,13 @@ $(document).ready(function() {
 });
 
 $('#join-stream-btn').click(function() {
+
+  // NOTE: There seems to be a bug where this btn is "clicked" once selecting a
+  //       search result. This is a hacky way of making sure that click
+  //       doesn't actually go through.
+  if($('#loading-view').hasClass('hidden')) {
+    return;
+  }
   updatePlayback();
 });
 
@@ -110,8 +117,6 @@ function renderHostControlsOnUserChange(payload) {
     }
   }
 }
-
-$('#sync-playback').click(updatePlayback)
 
 function updatePlayback() {
   if(PLAYBACK.record && PLAYBACK.record.youtube_id) {
@@ -269,7 +274,6 @@ function onmessage(event) {
 
   let text = event.data;
   let payload = JSON.parse(text);
-  // console.log(payload);
 
   updateData(payload)
 

@@ -105,50 +105,78 @@ class Consumer(AsyncConsumer):
             await self.send_update({'read': {'playback': [{'status': self.PLAY_BAR_AUTHORIZE_SPOITFY}]}})
             return
 
-        # sync playback
-        await self.sync_playback(onload=True)
-
     # - - - - -
     # receieve
     # - - - - -
 
     async def websocket_receive(self, event):
         if 'bytes' in event:
-            new_event = {
-                'type': 'websocket.send',
-                'bytes': event['bytes'],
+            bytes = event['bytes']
+            await self._websocket_receive_bytes(bytes)
+        elif 'text' in event:
+            data = json.loads(event['text'])
+            await self._websocket_receive_data(data)
+
+    async def _websocket_receive_bytes(self, bytes):
+        await self.channel_layer.group_send(
+            self.scope['stream'].chat_room,
+            {
+                'type': 'send_audio',
+                'bytes': bytes,
             }
-            await self.channel_layer.group_send(
-                self.scope['stream'].chat_room,
-                {
-                    'type': 'send_audio',
-                    'bytes': event['bytes'],
-                }
-            )
-            return
-        payload = json.loads(event["text"])
-        # action = payload['action']
-
-        if "resync" in payload:
-            await self.sync_playback()
-            return
-
-        await Comment.objects.create_and_share_comment_async(
-            self.scope["user"],
-            self.scope["stream"],
-            self.scope["ticket"],
-            text=payload["text"],
         )
+
+    async def _websocket_receive_data(self, data):
+        view = payload['view']
+
+        if view == 'syncplayback':
+            await self.sync_playback(onload=True)
+
+        elif view == 'createcomment':
+            await Comment.objects.create_and_share_comment_async(
+                self.scope['user'],
+                self.scope['stream'],
+                self.scope['ticket'],
+                text=payload['text'],
+            )
+
+        else:
+            raise ValueError('Invalid view.')
 
     # - - - - - -
     # disconnect
     # - - - - - -
 
     async def websocket_disconnect(self, event):
+
+        # remove from group channel
+        await self.channel_layer.group_discard(
+            self.scope['stream'].chat_room, self.channel_name
+        )
+
+        # create DB record
         await Profile.objects.leave_stream_async(
             self.scope["user"], self.scope["ticket"], self.scope["stream"]
         )
-        await self.remove_from_channel()
+
+        # remove from group channel
+        await self.channel_layer.group_discard(
+            self.scope['stream'].chat_room, self.channel_name
+        )
+
+        # remove from individual channel
+        user_id = self.scope['user'].id
+        await self.channel_layer.group_discard(
+            f'user-{user_id}', self.channel_name
+        )
+
+        # create db log
+        await Comment.objects.create_and_share_comment_async(
+            self.scope["user"],
+            self.scope["stream"],
+            self.scope["ticket"],
+            status=Comment.STATUS_LEFT,
+        )
 
     # - - - - - - - - - - - -
     # broadcast
@@ -198,26 +226,6 @@ class Consumer(AsyncConsumer):
         user_id = self.scope['user'].id
         await self.channel_layer.group_add(
             f'user-{user_id}', self.channel_name
-        )
-
-    async def remove_from_channel(self):
-        # remove from group channel
-        await self.channel_layer.group_discard(
-            self.scope['stream'].chat_room, self.channel_name
-        )
-
-        # remove from individual channel
-        user_id = self.scope['user'].id
-        await self.channel_layer.group_discard(
-            f'user-{user_id}', self.channel_name
-        )
-
-        # create db log
-        await Comment.objects.create_and_share_comment_async(
-            self.scope["user"],
-            self.scope["stream"],
-            self.scope["ticket"],
-            status=Comment.STATUS_LEFT,
         )
 
     async def update_playbar(self, status):

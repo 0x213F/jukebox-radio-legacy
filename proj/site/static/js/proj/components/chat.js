@@ -22,7 +22,8 @@ $chatOption.click(function() {
   var value = $this.attr('value');
 
   $chatOption.removeClass('active');
-  $(this).addClass('active');
+  $this.addClass('active');
+  $this.blur();
 
   $('.jr-bottom-bar').addClass('hidden');
   $(`.jr-${value}`).removeClass('hidden');
