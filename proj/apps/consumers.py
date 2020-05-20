@@ -105,6 +105,8 @@ class Consumer(AsyncConsumer):
             await self.send_update({'read': {'playback': [{'status': self.PLAY_BAR_AUTHORIZE_SPOITFY}]}})
             return
 
+        await self.sync_playback(onload=True)
+
     # - - - - -
     # receieve
     # - - - - -

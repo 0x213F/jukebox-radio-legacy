@@ -119,10 +119,10 @@ function renderHostControlsOnUserChange(payload) {
 }
 
 function updatePlayback() {
+  console.log(PLAYBACK)
   if(!PLAYBACK){
     return;
   }
-
   if(PLAYBACK.record && PLAYBACK.record.youtube_id) {
     $('.chat-container').css('top', '298px');
     syncYouTubePlayback();
@@ -278,6 +278,7 @@ function onmessage(event) {
 
   let text = event.data;
   let payload = JSON.parse(text);
+  console.log(payload)
 
   updateData(payload)
 
