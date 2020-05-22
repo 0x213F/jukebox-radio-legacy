@@ -2,15 +2,8 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path
 
-from .views import AccountView
-from .views import ConnectView
-from .views import CreateStreamView
-from .views import IndexView
-from .views import LinkSpotifyView
-from .views import SignInView
-from .views import SignUpView
-from .views import StreamView
-
+from .views import (AccountView, ConnectView, CreateStreamView, IndexView,
+                    LinkSpotifyView, SignInView, SignUpView, StreamView)
 
 urlpatterns = [
     path("", IndexView.as_view()),

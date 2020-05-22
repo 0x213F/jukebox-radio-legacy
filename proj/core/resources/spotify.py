@@ -1,8 +1,8 @@
+from urllib.parse import urlparse
+
 import requests
 import requests_async
-from urllib.parse import urlparse
 from cryptography.fernet import Fernet
-
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 
@@ -83,33 +83,43 @@ class Spotify(object):
             data = []
             items = response_json["albums"]["items"]
             for item in items:
-                data.append({
-                    "record_artist": ", ".join([a["name"] for a in item["artists"]]),
-                    "record_name": item["name"],
-                    "spotify_uri": item["uri"],
-                    "record_thumbnail": item["images"][0]["url"],
-                })
+                data.append(
+                    {
+                        "record_artist": ", ".join(
+                            [a["name"] for a in item["artists"]]
+                        ),
+                        "record_name": item["name"],
+                        "spotify_uri": item["uri"],
+                        "record_thumbnail": item["images"][0]["url"],
+                    }
+                )
             return data
         elif type == "playlist":
             data = []
             items = response_json["playlists"]["items"]
             for item in items:
-                data.append({
-                    "record_name": item["name"],
-                    "spotify_uri": item["uri"],
-                    "record_thumbnail": item["images"][0]["url"],
-                })
+                data.append(
+                    {
+                        "record_name": item["name"],
+                        "spotify_uri": item["uri"],
+                        "record_thumbnail": item["images"][0]["url"],
+                    }
+                )
             return data
         else:
             data = []
             items = response_json["tracks"]["items"]
             for item in items:
-                data.append({
-                    "record_artist": ", ".join([a["name"] for a in item["artists"]]),
-                    "record_name": item["name"],
-                    "spotify_uri": item["uri"],
-                    "record_thumbnail": item["album"]["images"][0]["url"],
-                })
+                data.append(
+                    {
+                        "record_artist": ", ".join(
+                            [a["name"] for a in item["artists"]]
+                        ),
+                        "record_name": item["name"],
+                        "spotify_uri": item["uri"],
+                        "record_thumbnail": item["album"]["images"][0]["url"],
+                    }
+                )
             return data
 
     def get_track_info(self, spotify_uri):
@@ -142,11 +152,13 @@ class Spotify(object):
         items = response_json["items"]
         data = []
         for item in items:
-            data.append({
-                "spotify_uri": item["uri"],
-                "spotify_duration_ms": item["duration_ms"],
-                "spotify_name": item["name"],
-            })
+            data.append(
+                {
+                    "spotify_uri": item["uri"],
+                    "spotify_duration_ms": item["duration_ms"],
+                    "spotify_name": item["name"],
+                }
+            )
         return data
 
     def get_playlist_info(self, spotify_uri):
@@ -165,19 +177,21 @@ class Spotify(object):
         items = response_json["tracks"]["items"]
         data = []
         for item in items:
-            data.append({
-                "spotify_uri": item["track"]["uri"],
-                "spotify_duration_ms": item["track"]["duration_ms"],
-                "spotify_name": item["track"]["name"],
-            })
+            data.append(
+                {
+                    "spotify_uri": item["track"]["uri"],
+                    "spotify_duration_ms": item["track"]["duration_ms"],
+                    "spotify_name": item["track"]["name"],
+                }
+            )
         return data
 
     def get_me(self):
         response = requests.get(
-            'https://api.spotify.com/v1/me/',
+            "https://api.spotify.com/v1/me/",
             headers={
-                'Authorization': f'Bearer {self.token}',
-                'Content-Type': 'application/json',
+                "Authorization": f"Bearer {self.token}",
+                "Content-Type": "application/json",
             },
         )
         return response.json()

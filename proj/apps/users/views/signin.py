@@ -1,5 +1,4 @@
-from django.contrib.auth import authenticate
-from django.contrib.auth import login
+from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_protect
 

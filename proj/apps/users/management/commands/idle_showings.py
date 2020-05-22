@@ -1,5 +1,4 @@
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.apps import apps
 from django.core.management.base import BaseCommand
@@ -7,10 +6,10 @@ from django.db.models import Q
 
 
 class Command(BaseCommand):
-    help = 'Idle streams'
+    help = "Idle streams"
 
     def handle(self, *args, **options):
-        Stream = apps.get_model('music.Stream')
+        Stream = apps.get_model("music.Stream")
 
         now = datetime.now()
 
@@ -26,4 +25,4 @@ class Command(BaseCommand):
                 updated_at__lt=now - timedelta(minutes=2),
             )
         )
-        streams_to_idle.update(status=Stream.STATUS_IDLE, current_record=None)
+        streams_to_idle.update(status=Stream.STATUS_IDLE)

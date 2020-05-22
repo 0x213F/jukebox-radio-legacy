@@ -3,7 +3,6 @@ from django.db import models
 
 from proj.apps.users.models.managers import ProfileManager
 from proj.apps.users.models.querysets import ProfileQuerySet
-
 from proj.core.models import BaseModel
 
 
@@ -26,7 +25,7 @@ class Profile(BaseModel):
     # - - - -
 
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, related_name='profile', on_delete=models.DO_NOTHING,
+        settings.AUTH_USER_MODEL, related_name="profile", on_delete=models.DO_NOTHING,
     )
 
     default_display_name = models.CharField(max_length=32, null=True, blank=True)

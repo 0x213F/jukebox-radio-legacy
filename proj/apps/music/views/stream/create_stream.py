@@ -1,34 +1,33 @@
+from datetime import datetime
+
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from datetime import datetime
-from random_username.generate import generate_username
-
 from django.apps import apps
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from random_username.generate import generate_username
 
 from proj.core.views import BaseView
-
 
 channel_layer = get_channel_layer()
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class CreateStreamView(BaseView):
     def post(self, request, **kwargs):
-        '''
+        """
         Update the user's account information.
-        '''
-        Stream = apps.get_model('music.Stream')
-        Ticket = apps.get_model('music.Ticket')
+        """
+        Stream = apps.get_model("music.Stream")
+        Ticket = apps.get_model("music.Ticket")
 
         if not request.user.profile.activated_at:
-            self.http_response_403('Not permitted')
+            self.http_response_403("Not permitted")
 
-        stream_name = request.POST.get('name', None)
-        tags = request.POST.get('tags', None)
+        stream_name = request.POST.get("name", None)
+        tags = request.POST.get("tags", None)
         if not stream_name or not tags:
-            self.http_response_400('Missing data')
+            self.http_response_400("Missing data")
 
         now = datetime.now()
         holder_name = (
@@ -51,21 +50,15 @@ class CreateStreamView(BaseView):
             email=request.user.email,
             name=holder_name,
             is_administrator=True,
-            status=Ticket.STATUS_CREATED_STREAM,
             updated_at=now,
         )
 
         async_to_sync(channel_layer.group_send)(
-            'homepage',
+            "homepage",
             {
-                'type': 'send_update',
-                'text': {
-                    'created': {
-                        'stream': [Stream.objects.serialize(stream)],
-                    }
-                }
+                "type": "send_update",
+                "text": {"created": {"stream": [Stream.objects.serialize(stream)],}},
             },
         )
-
 
         return self.http_response_200({})

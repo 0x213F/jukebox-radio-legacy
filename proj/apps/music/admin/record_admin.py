@@ -11,14 +11,12 @@ class RecordAdmin(admin.ModelAdmin):
     # - - - - -
 
     search_fields = (
-        'id',
-        'name__icontains',
+        "id",
+        "name__icontains",
     )
 
-    list_display = (
-        'spotify_name',
-    )
+    list_display = ("spotify_name",)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.order_by('id')
+        return qs.order_by("id")

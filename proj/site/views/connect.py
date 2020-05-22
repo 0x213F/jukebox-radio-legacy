@@ -1,15 +1,14 @@
-from cryptography.fernet import Fernet
 import requests
-
-from django.contrib.auth.decorators import login_required
+from cryptography.fernet import Fernet
 from django.conf import settings
-from django.utils.decorators import method_decorator
-from django.contrib.sites.shortcuts import get_current_site
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.decorators import method_decorator
 
 from proj import secrets
-from proj.core.views import BaseView
 from proj.core.resources import Spotify
+from proj.core.views import BaseView
 
 
 @method_decorator(login_required, name="dispatch")
@@ -39,7 +38,7 @@ class ConnectView(BaseView):
 
         if not request.user.profile.default_display_name:
             response_json = spotify.get_me()
-            my_name = response_json['display_name']
+            my_name = response_json["display_name"]
             request.user.profile.default_display_name = my_name
             request.user.profile.save()
 

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('music', '0009_queue_uuid'),
+        ("music", "0009_queue_uuid"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='ticket',
-            name='is_hidden_when_idle',
+            model_name="ticket",
+            name="is_hidden_when_idle",
             field=models.BooleanField(default=False),
         ),
     ]

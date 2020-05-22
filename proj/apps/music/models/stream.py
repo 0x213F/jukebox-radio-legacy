@@ -15,12 +15,12 @@ class Stream(BaseModel):
     # config model |
     # - - - - - - -
 
-    STATUS_ACTIVATED = 'activated'
-    STATUS_IDLE = 'idle'
+    STATUS_ACTIVATED = "activated"
+    STATUS_IDLE = "idle"
 
     STATUS_CHOICES = [
-        (STATUS_ACTIVATED, 'Activated'),
-        (STATUS_IDLE, 'Idle'),
+        (STATUS_ACTIVATED, "Activated"),
+        (STATUS_IDLE, "Idle"),
     ]
 
     class Meta:
@@ -29,8 +29,8 @@ class Stream(BaseModel):
     objects = StreamManager.from_queryset(StreamQuerySet)()
 
     def __str__(self):
-        checked = 'x' if self.status == self.STATUS_ACTIVATED else ' '
-        return f'[{checked}] {self.title}'
+        checked = "x" if self.status == self.STATUS_ACTIVATED else " "
+        return f"[{checked}] {self.title}"
 
     # - - - -
     # fields |
@@ -47,7 +47,7 @@ class Stream(BaseModel):
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='owned_streams',
+        related_name="owned_streams",
         on_delete=models.DO_NOTHING,
     )
     owner_name = models.CharField(max_length=128)
@@ -55,15 +55,15 @@ class Stream(BaseModel):
     is_private = models.BooleanField(default=False)
 
     current_queue = models.OneToOneField(
-        'music.Queue',
-        related_name='active_stream',
+        "music.Queue",
+        related_name="active_stream",
         on_delete=models.SET_NULL,
         null=True,
         blank=False,
     )
     current_tracklisting = models.ForeignKey(
-        'music.TrackListing',
-        related_name='now_playing_tracklisting',
+        "music.TrackListing",
+        related_name="now_playing_tracklisting",
         on_delete=models.SET_NULL,
         null=True,
         blank=False,
@@ -81,7 +81,7 @@ class Stream(BaseModel):
 
     @property
     def chat_room(self):
-        return f'stream-{self.id}'
+        return f"stream-{self.id}"
 
     @property
     def time_left_on_current_record(self):

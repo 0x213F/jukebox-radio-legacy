@@ -10,21 +10,21 @@ class CommentAdmin(admin.ModelAdmin):
     # display
     # - - - - -
 
-    search_fields = ('text',)
+    search_fields = ("text",)
 
     list_display = (
-        'commenter',
-        'status',
-        'text',
-        'track',
-        'track_timestamp',
-        'stream',
-        'created_at',
+        "commenter",
+        "status",
+        "text",
+        "track",
+        "track_timestamp",
+        "stream",
+        "created_at",
     )
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.order_by('id')
+        return qs.order_by("id")
 
     def has_add_permission(self, request):
         return False

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('music', '0006_stream_record_begun_at'),
+        ("music", "0006_stream_record_begun_at"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='tracklisting',
-            name='relative_duration',
+            model_name="tracklisting",
+            name="relative_duration",
             field=models.PositiveIntegerField(default=1),
             preserve_default=False,
         ),
