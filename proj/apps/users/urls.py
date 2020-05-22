@@ -1,14 +1,10 @@
-from django.contrib import admin
 from django.urls import path
 
-from .views import authenticate_view
-from .views import create_view
-from .views import logout_view
-from .views import UpdateView
+from .views import UpdateView, signin_view, signout_view, signup_view
 
 urlpatterns = [
-    path("authenticate/", authenticate_view),
-    path("create/", create_view),
-    path("logout/", logout_view),
+    path("signin/", signin_view),
+    path("signout/", signout_view),
+    path("signup/", signup_view),
     path("update/", UpdateView.as_view()),
 ]

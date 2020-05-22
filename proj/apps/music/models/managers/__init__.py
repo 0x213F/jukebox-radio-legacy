@@ -1,4 +1,5 @@
 from .comment_manager import CommentManager
+from .queue_listing_manager import QueueListingManager
 from .queue_manager import QueueManager
 from .record_manager import RecordManager
 from .stream_manager import StreamManager

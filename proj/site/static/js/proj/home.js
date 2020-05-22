@@ -16,7 +16,6 @@ var emojiStringToArray = function (str) {
 };
 
 function generate_stream(stream, class_name) {
-
   var background_color = ''
   if(stream.status === 'activated') {
     background_color = '#32b643';
@@ -26,18 +25,18 @@ function generate_stream(stream, class_name) {
 
   var tags_html = ''
   for(tag of emojiStringToArray(stream.tags)) {
-    tags_html += `<span class="chip" style="border-radius: 28px; margin-right: 8px; width: 28px; line-height: 28px; text-align: center; display: inline-block;">${tag}</span>`
+    tags_html += `<span class="chip" style="border-radius: 28px; margin-right: 8px; width: 28px; line-height: 28px; text-align: center; display: inline-block;">${encodeHTML(tag)}</span>`
   }
-  var user_count = 3;
+
   return `
   <div class="card stream ${class_name}" uuid="${stream.uuid}" unique_custom_id="${stream.unique_custom_id}" style="cursor: pointer;">
     <div class="card-body" style="width: 100%;">
 
-      <h3 class="stream-name">${stream.name}</h5>
+      <h3 class="stream-name">${encodeHTML(stream.name)}</h5>
 
       <div class="form-group" style="line-height: 36px;">
         <div class="chip" style="border-radius: 28px">
-          <figure class="avatar avatar-sm" data-initial="" style="background-color: ${background_color};"></figure>${stream.owner_name}
+          <figure class="avatar avatar-sm" data-initial="" style="background-color: ${background_color};"></figure>${encodeHTML(stream.owner_name)}
         </div>
         ${tags_html}
       </div>
@@ -54,7 +53,7 @@ function generate_stream(stream, class_name) {
 }
 
 function display_tune_in_streams(data) {
-  let list_streams = data[KEY_SHOWINGS];
+  let list_streams = data[KEY_STREAMS];
   let $streams_container = $('.tune-in-streams');
   for(let stream of list_streams) {
     $streams_container.append(generate_stream(stream, 'tune-in'));
@@ -66,7 +65,7 @@ function display_tune_in_streams(data) {
 }
 
 function display_broadcasting_streams(data) {
-  let list_streams = data[KEY_SHOWINGS];
+  let list_streams = data[KEY_STREAMS];
   if(!list_streams.length) {
     return;
   }
@@ -82,10 +81,6 @@ function display_broadcasting_streams(data) {
 
   $('.card.stream').click(activate_stream)
 }
-
-// we need this inside play_bar.js so we can display a dialog to tell the user
-// to start playing music
-var IS_BROADCASTING = false;
 
 function activate_stream() {
   var $this = $(this);

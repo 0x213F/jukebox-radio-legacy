@@ -1,0 +1,86 @@
+.comment {
+  margin-bottom: 6px;
+}
+
+.comment > .c-commenter {
+  background-color: rgb(256, 256, 256, 0.95)!important;
+  color: #727e96;
+  margin-top: 8px;
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  padding-left: 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.comment > .c-text {
+  background-color: rgba(234, 235, 248, 0.5)!important;
+  color: #727e96;
+  border-radius: 12px;
+  padding: 7px 12px;
+  display: table-cell;
+  font-size: 16px;
+}
+
+.chat-container {
+  position: absolute;
+  overflow-y: scroll;
+  bottom: 106px;
+  top: 76px;
+  width: calc(100% - 48px);
+}
+
+.chat-container::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+}
+
+
+.jr-chat-options {
+  position: absolute;
+  bottom: 76px;
+  right: 24px;
+}
+
+.jr-chat-options > .jr-chat-option {
+  width: 42px;
+  height: 24px;
+  border-radius: 12px;
+  float: right;
+
+  margin-left: 12px;
+
+  transition: all 0.2s ease;
+}
+
+.jr-chat-options > .jr-chat-option.active {
+  box-shadow: 0 0 0 0.2rem rgba(87,100,198,.15);
+}
+
+.jr-bottom-bar {
+  width: calc(100% - 48px);
+
+  position: absolute;
+  bottom: 24px;
+}
+
+.jr-microphone > button {
+  width: 100%;
+  border-radius: 12px;
+}
+
+.jr-chat-bar-input {
+  padding-left: 12px!important;
+  padding-right: 12px!important;
+  padding-top: 9px!important;
+  padding-bottom: 9px!important;
+  line-height: 20px;
+  min-height: 40px;
+  color: #727e96;
+  border: 1px solid #5764c6;
+  border-radius: 12px!important;
+  background-color: rgb(256, 256, 256, 0.95)!important;
+  resize: none;
+  overflow: auto;
+}

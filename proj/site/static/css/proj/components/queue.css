@@ -1,0 +1,41 @@
+.queue-cards {
+  border: 1px solid #727e96;
+  border-radius: 12px;
+}
+
+.queue-card {
+  width: calc(100% - 32px);
+  min-height: 56px;
+
+  margin-top: 16px;
+  margin-left: 16px;
+}
+
+.queue-card:last-child {
+  margin-bottom: 16px;
+}
+
+
+.queue-card img {
+  display: inline-block;
+  height: 72px;
+  object-fit: cover;
+}
+
+.ellipsis {
+  margin-top: 16px;
+  margin-left: 16px;
+
+  height: 20px;
+  display: inline-block;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+
+.queue-delete-form {
+  display: flex;
+}

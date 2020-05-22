@@ -35,11 +35,14 @@ function setup_ajax_forms() {
         window['SOCKET'].send(msg);
         // TODO don't put this in here
         $('#chat-input-main').val('');
+        $('#chat-input-main').css('height', '38px');
       } else if($this.attr("type") === "redirect") {
         window.location.href = $this.attr("url");
       } else {
-        var $input = $("<input>").attr("name", "csrfmiddlewaretoken").val(CSRF_TOKEN).hide();
-        $this.append($input);
+        if(!$this.serialize().csrfmiddlewaretoken) {
+          var $input = $("<input>").attr("name", "csrfmiddlewaretoken").val(CSRF_TOKEN).hide();
+          $this.append($input);
+        }
         $.ajax({
             url: $this.attr("url"),
             type: $this.attr("type"),
@@ -50,7 +53,9 @@ function setup_ajax_forms() {
                 $status.removeClass('success');
             },
             success: function(e) {
-                if(onsuccess) window[onsuccess](e, $status);
+                if(onsuccess) {
+                  window[onsuccess](e, $status);
+                }
                 if(redirect) window.location = redirect;
             }
         });

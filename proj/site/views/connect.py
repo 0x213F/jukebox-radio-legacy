@@ -1,15 +1,14 @@
-from cryptography.fernet import Fernet
 import requests
-
-from django.contrib.auth.decorators import login_required
+from cryptography.fernet import Fernet
 from django.conf import settings
-from django.utils.decorators import method_decorator
-from django.contrib.sites.shortcuts import get_current_site
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.decorators import method_decorator
 
 from proj import secrets
-from proj.core.views import BaseView
 from proj.core.resources import Spotify
+from proj.core.views import BaseView
 
 
 @method_decorator(login_required, name="dispatch")
@@ -27,8 +26,8 @@ class ConnectView(BaseView):
                 "grant_type": "authorization_code",
                 "code": code,
                 "redirect_uri": f"{secrets.SPOTIFY_HTTP}://{current_site}/connect",
-                "client_id": "133a25c7195344dbafd4f50d7450330f",
-                "client_secret": "4029f523ad8a46cb86e29b9dd54cc257",
+                "client_id": secrets.SPOTIFY_CLIENT_ID,
+                "client_secret": secrets.SPOITFY_CLIENT_SECRET,
             },
         )
         response_json = response.json()
@@ -36,6 +35,12 @@ class ConnectView(BaseView):
         spotify = Spotify(request.user)
         spotify.store_access_token(response_json["access_token"])
         spotify.store_refresh_token(response_json["refresh_token"])
+
+        if not request.user.profile.default_display_name:
+            response_json = spotify.get_me()
+            my_name = response_json["display_name"]
+            request.user.profile.default_display_name = my_name
+            request.user.profile.save()
 
         if request.user.profile.activated_stream_redirect:
             stream_uuid_str = str(request.user.profile.activated_stream_redirect)

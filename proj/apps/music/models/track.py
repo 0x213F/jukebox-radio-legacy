@@ -2,7 +2,6 @@ from django.db import models
 
 from proj.apps.music.models.managers import TrackManager
 from proj.apps.music.models.querysets import TrackQuerySet
-
 from proj.core.models import BaseModel
 
 

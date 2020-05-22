@@ -18,25 +18,48 @@ class Record(BaseModel):
     objects = RecordManager.from_queryset(RecordQuerySet)()
 
     def __str__(self):
-        return self.name
+        return self.spotify_name
 
     # - - - -
     # fields |
     # - - - -
 
-    name = models.CharField(max_length=128)
+    tracks = models.ManyToManyField("music.Track", through="music.TrackListing")
 
-    tracks = models.ManyToManyField('music.Track', through='music.TrackListing')
-
-    spotify_uri = models.CharField(max_length=128)  # TODO make unique
-    spotify_name = models.CharField(max_length=128)
+    spotify_uri = models.CharField(
+        max_length=128, null=True, blank=True
+    )  # TODO make unique
+    spotify_name = models.CharField(max_length=128, null=True, blank=True)
     spotify_duration_ms = models.PositiveIntegerField(null=True, blank=True)
-    spotify_img = models.CharField(max_length=256)
+    spotify_img = models.CharField(max_length=256, null=True, blank=True)
+
+    youtube_id = models.CharField(
+        max_length=128, null=True, blank=True
+    )  # TODO make unique
+    youtube_name = models.CharField(max_length=128, null=True, blank=True)
+    youtube_duration_ms = models.PositiveIntegerField(null=True, blank=True)
+    youtube_img_high = models.CharField(max_length=256, null=True, blank=True)
+
+    storage_id = models.CharField(
+        max_length=128, null=True, blank=True
+    )  # TODO make unique
+    storage_filename = models.CharField(
+        max_length=128, null=True, blank=True
+    )  # TODO make unique
+    storage_name = models.CharField(max_length=128, null=True, blank=True)
+    storage_duration_ms = models.PositiveIntegerField(null=True, blank=True)
 
     @property
     def duration_ms(self):
-        TrackListing = apps.get_model('music.TrackListing')
+        TrackListing = apps.get_model("music.TrackListing")
+
+        if self.youtube_duration_ms:
+            return self.youtube_duration_ms
+
+        if self.storage_duration_ms:
+            return self.storage_duration_ms
+
         track_durations_ms = TrackListing.objects.from_record(self).values_list(
-            'track__spotify_duration_ms', flat=True
+            "track__spotify_duration_ms", flat=True
         )
         return sum(track_durations_ms)

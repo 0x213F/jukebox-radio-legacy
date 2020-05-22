@@ -3,105 +3,73 @@
 {% load static %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/proj/play_bar.css' %}">
 <link rel="stylesheet" href="{% static 'css/proj/index.css' %}">
 <link rel="stylesheet" href="{% static 'css/proj/home.css' %}">
 <link rel="stylesheet" href="{% static 'css/proj/stream.css' %}">
+
+<link rel="stylesheet" href="{% static 'css/proj/components/info.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/components/search.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/components/manage.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/components/queue.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/components/chat.css' %}">
 {% endblock %}
 
 {% block main %}
 
-<div id="stream-uuid" class="hidden">
-  <input type="text" value="{{ stream.uuid }}">
-</div>
-
-<div id="stream-unique-custom-id" class="hidden">
-  <input type="text" value="{{ stream.unique_custom_id }}">
-</div>
-
-<div id="is-stream-owner" class="hidden">
-  <input type="text" value="{{ is_host }}">
-</div>
-
-<!-- - - - - - -->
-<!--  MANAGE (HOST) -->
-{% include "manage.html" %}
-
-<!-- - - - - - -->
-<!--  MANAGE (ELSE) -->
-{% include "displayname.html" %}
-
-<div id="main-card" class="main center-horizontal card">
+<div id="loading-view" class="main center-horizontal card" style="height: calc(100% - 24px);">
 
   <div class="card-body">
 
-    <!-- - - - - -->
-    <!--  BANNER -->
-    <div class="jr-banner">
-      {{ stream.title }}
+    <div class="jr-flex-center jr-title no-select">
+      <i class="gg-spinner-two-alt"></i>
     </div>
 
-    <!-- - - - - --->
-    <!--  BUTTONS -->
-    <div style="width: 100%; height: 40px;">
-
-      <form class="ajax-form" redirect="/" style="float: left;">
-        <button class="btn btn-lg btn-secondary jr-btn-sq">
-          <i class="icon icon-2x icon-back"></i>
-        </button>
-      </form>
-      <form style="float: left;">
-        <button type="button" id="go-to-manage" class="btn btn-lg btn-secondary jr-btn-sq">
-          <i class="icon icon-2x icon-people"></i>
-        </button>
-      </form>
-
-      <button id="go-to-queue-top" class="btn btn-lg btn-secondary jr-btn-sq go-to-queue {% if not ticket.is_administrator %}hidden{% endif %}" style="float: right; margin-right: 0px;">
-        <i class="gg-layout-list" style="left: 6px;"></i>
+    <div class="jr-flex-center jr-title no-select" style="margin-top: 40px;">
+      <button id="join-stream-btn" class="btn btn-lg btn-primary jr-btn-primary go-to-chat-view">
+        Join Stream
       </button>
-
-    </div>
-
-    <!-- - - --->
-    <!-- CHAT -->
-    <div class="chat-container" style="overflow-y: scroll; margin-top: 16px; height: calc(100% - 172px); margin-bottom: 16px;"></div>
-
-    <!-- - - - - - - - --->
-    <!-- CHAT INPUT BAR -->
-    <div style="width: 100%;">
-      <form class="ajax-form card-body" type="websocket">
-
-        <input class="hidden" name="stream_uuid" value="{{ stream.uuid }}" />
-        <input class="hidden" name="track_id" value="" />
-
-        <div class="input-group">
-          <input type="text"
-                 id="chat-input-main"
-                 class="form-input input-lg jr-input-left-half"
-                 placeholder=""
-                 name="text"
-                 autocomplete="off">
-          <button id="chat-submit"
-                  class="btn btn-secondary btn-lg jr-btn-sq-right-half">
-            <i class="icon icon-2x icon-message"></i>
-          </button>
-        </div>
-
-      </form>
     </div>
 
   </div>
 
 </div>
 
-<!-- - - - - - -->
-<!--  PLAY BAR -->
-{% include "play_bar.html" %}
+<!-- - - - - - - --->
+<!--  CHAT VIEW -->
+{% include "components/chat.html" %}
+
+<!-- - - - - - - --->
+<!--  MANAGE VIEW -->
+{% include "components/manage.html" %}
+
+<!-- - - - - - - -->
+<!--  QUEUE VIEW -->
+{% include "components/queue.html" %}
+
+<!-- - - - - - - --->
+<!--  SEARCH VIEW -->
+{% include "components/search.html" %}
+
+<!-- - - - - - --->
+<!--  INFO VIEW -->
+{% include "components/info.html" %}
 
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/proj/play_bar.js' %}"></script>
+<script src="https://sdk.scdn.co/spotify-player.js"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
+
 <script src="{% static 'js/proj/stream.js' %}"></script>
-<script src="{% static '/js/proj/manage.js' %}"></script>
+
+<script src="{% static 'js/proj/components/chat.js' %}"></script>
+<script src="{% static 'js/proj/components/hosts.js' %}"></script>
+<script src="{% static 'js/proj/components/queue.js' %}"></script>
+<script src="{% static 'js/proj/components/search.js' %}"></script>
+<script src="{% static 'js/proj/components/share.js' %}"></script>
+<script src="{% static 'js/proj/components/info.js' %}"></script>
+
+<script src="{% static 'js/proj/components/playback/spotify.js' %}"></script>
+<script src="{% static 'js/proj/components/playback/youtube.js' %}"></script>
+<script src="{% static 'js/proj/components/playback/storage.js' %}"></script>
 {% endblock %}

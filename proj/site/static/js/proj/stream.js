@@ -1,118 +1,252 @@
-
-var IS_STREAM_OWNER = $('#is-stream-owner').children().first().val() === 'True'
-
-$('.exit-manage').click(exit_manage);
-function exit_manage() {
-  $('#manage-html').addClass('hidden');
-  $('#displayname-html').addClass('hidden');
-  $('#main-card').removeClass('hidden');
-}
-
-$('#go-to-manage').click(go_to_manage)
-function go_to_manage() {
-  if(IS_STREAM_OWNER) {
-    $('#manage-html').removeClass('hidden');
-    $('#displayname-html').addClass('hidden');
-    $('#main-card').addClass('hidden');
-  } else {
-    $('#manage-html').addClass('hidden');
-    $('#displayname-html').removeClass('hidden');
-    $('#main-card').addClass('hidden');
-  }
-}
-
-
-
-  /////  ////////////   /////
- /////  CHAT HELPERS   /////
-/////  ////////////   /////
-
-let $CHAT_CONTAINER = $('.chat-container')
-
-function display_text(comment) {
-  var holder_uuid = comment.ticket.holder_uuid
-  var last_holder_uuid = $CHAT_CONTAINER.children().last().attr('holder-uuid')
-  if(holder_uuid === last_holder_uuid) {
-    return `
-      <div class="comment" holder-uuid="${comment.ticket.holder_uuid}">
-        <span class="c-text">${encodeHTML(comment.text)}</span>
-      </div>
-    `
-  } else if(!last_holder_uuid) {
-    return `
-      <div class="comment" holder-uuid="${comment.ticket.holder_uuid}" style="margin-top: 0px!important;">
-        <span class="c-commenter" style="margin-top: 0px!important;">${encodeHTML(comment.ticket.holder_name)}</span>
-        <span class="c-text">${encodeHTML(comment.text)}</span>
-      </div>
-    `
-  } else {
-    return `
-      <div class="comment" holder-uuid="${comment.ticket.holder_uuid}">
-        <span class="c-commenter">${encodeHTML(comment.ticket.holder_name)}</span>
-        <span class="c-text">${encodeHTML(comment.text)}</span>
-      </div>
-    `
-  }
-}
-
-function display_comment(comment) {
-  var html = '';
-  if(comment.status === 'mid_high') {
-    html = display_text(comment);
-  } else {
-    return;
-  }
-  if(!comment.text) {
-    return;
-  }
-  $CHAT_CONTAINER.append(html);
-}
-
   /////  //////////  /////
- /////  WEBSOCKETS  /////
+ /////    VIEW      /////
 /////  //////////  /////
 
-function onopen(event) {
-
+function focusLoadingView() {
+  // noop
 }
 
-function display_comments(payload) {
-  let comments = payload.data[KEY_COMMENTS];
-  if(comments && comments.length) {
-    for(comment of comments) {
-      display_comment(comment);
-    }
-    $CHAT_CONTAINER.scrollTop($CHAT_CONTAINER[0].scrollHeight);
-  }
+function focusChatView() {
+  $CHAT_CONTAINER.scrollTop($CHAT_CONTAINER[0].scrollHeight);
 }
 
-function onmessage(event) {
-  let text = event.data;
-  let payload = JSON.parse(text);
-  console.log(payload)
-  if(payload.data && 'promote_to_host' in payload.data) {
-    if(payload.data.promote_to_host) {
-      $('#go-to-queue-top').removeClass('hidden');
-    } else {
-      $('#go-to-queue-top').addClass('hidden');
-      $('#main-card').removeClass('hidden');
-      $('#search-view').addClass('hidden');
-      $('#queue-view').addClass('hidden');
-      $('#play-bar').removeClass('hidden');
-    }
-  } else if(payload.data && 'update_queue' in payload.data) {
-    $('#form-load-queue').submit();
-  } else if(payload.data && 'holder_uuid' in payload.data) {
-    $( `.comment[holder-uuid='${payload.data.holder_uuid}'] > .c-commenter` ).text(payload.data.holder_name);
+function focusInfoView() {
+  // noop
+}
+
+function focusManageView() {
+  if(PLAYBACK.ticket.is_administrator) {
+    $('.manage-administrator').removeClass('hidden');
   } else {
-    try {
-      update_play_bar(payload);
-    } catch(e) {
-
-    }
-    display_comments(payload);
+    $('.manage-administrator').addClass('hidden');
   }
 }
+
+function focusQueueView() {
+  var queue_is_empty = !$('#queued-up').children().length;
+  if(queue_is_empty) {
+    $('.queue > .empty-state').removeClass('hidden');
+    $('#queue-action-options').addClass('hidden');
+  } else {
+    $('.queue > .empty-state').addClass('hidden');
+    $('#queue-action-options').removeClass('hidden');
+  }
+}
+
+function focusSearchView() {
+  // noop
+}
+
+var view_mapping = {
+  'loading-view': focusLoadingView,
+  'chat-view': focusChatView,
+  'info-view': focusInfoView,
+  'manage-view': focusManageView,
+  'queue-view': focusQueueView,
+  'search-view': focusSearchView,
+}
+
+$(document).ready(function() {
+  initViews(view_mapping);
+});
+
+$('#join-stream-btn').click(function() {
+
+  // NOTE: There seems to be a bug where this btn is "clicked" once selecting a
+  //       search result. This is a hacky way of making sure that click
+  //       doesn't actually go through.
+  if($('#loading-view').hasClass('hidden')) {
+    return;
+  }
+  updatePlayback();
+});
+
+  /////  //////////  /////
+ /////    DISPLAY   /////
+/////  //////////  /////
+
+function renderStreamTitle(payload) {
+  var stream;
+  if(payload.read && payload.read.streams && payload.read.streams.length) {
+    stream = payload.read.streams[0];
+  } else if(payload.updated && payload.updated.streams && payload.updated.streams.length) {
+    stream = payload.updated.streams[0];
+  }
+  if(!stream) {
+    return;
+  }
+  $('.jr-info-banner').text(stream.name);
+}
+
+function renderHostControlsOnPlayback(payload) {
+  if(payload.read && payload.read.playback && payload.read.playback.length) {
+    PLAYBACK = payload.read.playback[0];
+
+    if(PLAYBACK.ticket.is_administrator) {
+      var $GO_TO_QUEUE_BUTTON = $('#go-to-queue-top');
+      $GO_TO_QUEUE_BUTTON.removeClass('hidden');
+      $GO_TO_QUEUE_BUTTON.empty()
+      if(PLAYBACK.status !== 'playing_and_synced') {
+        $GO_TO_QUEUE_BUTTON.append('<i class="gg-play-list-add" style="left: 5px;"></i>')
+      } else {
+        $GO_TO_QUEUE_BUTTON.append('<i class="gg-play-list-search" style="left: 5px;"></i>')
+      }
+    }
+
+    if($('#loading-view').hasClass('hidden')) {
+      updatePlayback();
+    }
+  }
+}
+
+function renderHostControlsOnUserChange(payload) {
+  if(payload.updated && payload.updated.users && payload.updated.users.length) {
+    var user = payload.updated.users[0];
+    if(user.profile.active_stream_ticket.uuid === PLAYBACK.ticket.uuid) {
+
+      var $GO_TO_QUEUE_BUTTON = $('#go-to-queue-top');
+      if(user.profile.active_stream_ticket.is_administrator) {
+        $GO_TO_QUEUE_BUTTON.removeClass('hidden');
+      } else {
+        $GO_TO_QUEUE_BUTTON.addClass('hidden');
+        if(!$QUEUE_VIEW.hasClass('hidden') || !$SEARCH_VIEW.hasClass('hidden')) {
+          $('.go-to-chat-view').children().first().click();
+        }
+      }
+
+    }
+  }
+}
+
+function updatePlayback() {
+  console.log(PLAYBACK)
+  if(!PLAYBACK){
+    return;
+  }
+  if(PLAYBACK.record && PLAYBACK.record.youtube_id) {
+    $('.chat-container').css('top', '298px');
+    syncYouTubePlayback();
+    $('#info-album-art').attr('src', PLAYBACK.record.youtube_img_high);
+    $('#info-record-name').text(PLAYBACK.record.youtube_name);
+  } else if(PLAYBACK.record && PLAYBACK.record.spotify_uri) {
+    $('.chat-container').css('top', '76px');
+    syncSpotifyPlayback();
+    $('#info-album-art').attr('src', PLAYBACK.record.spotify_img_high);
+    $('#info-record-name').text(PLAYBACK.record.spotify_name);
+  } else if(PLAYBACK.record) {
+    $('.chat-container').css('top', '76px');
+    syncStoragePlayback();
+    $('#info-record-name').text(PLAYBACK.record.storage_name);
+  }
+  $('#sync-playback').addClass('hidden');
+}
+
+function renderURL(payload) {
+  if(payload.updated && payload.updated.streams && payload.updated.streams.length) {
+    var currSite = window.location.href;
+    currSite = currSite.substring(currSite.indexOf('/stream/')+1);
+
+    var stream = payload.updated.streams[0];
+
+    if('stream/' + stream.unique_custom_id + '/' !== currSite) {
+      window.location.href = '/stream/' + stream.unique_custom_id;
+    }
+  }
+}
+
+function renderHostOnly(payload) {
+  if(payload.updated && payload.updated.streams && payload.updated.streams.length) {
+    var stream = payload.updated.streams[0];
+    if(stream.is_private && !PLAYBACK.ticket.is_administrator) {
+      window.location.href = '/'
+    }
+  }
+}
+
+  /////  ////////////////  /////
+ /////     LIVESTREAM     /////
+/////  ////////////////  /////
+
+var audio = new Audio();
+
+if (window.MediaSource) {
+  var mediaSource = new MediaSource();
+  audio.src = URL.createObjectURL(mediaSource);
+} else {
+  console.log('The Media Source Extensions API is not supported.')
+}
+
+
+var sourceBuffer;
+function playAudioData(audioData) {
+  audioData.arrayBuffer().then(
+    buffer => {
+      if(audio.paused) {
+        // if(sourceBuffer) {
+        //   sourceBuffer.abort();
+        // }
+        sourceBuffer = mediaSource.addSourceBuffer('audio/webm; codecs="opus"');
+        sourceBuffer.appendBuffer(buffer);
+        audio.play()
+      } else {
+        sourceBuffer.appendBuffer(buffer);
+      }
+    }
+  );
+}
+
+var $broadcastAudioButton = $('#broadcast-audio-livestream');
+$broadcastAudioButton.click(function() {
+  if($broadcastAudioButton.hasClass('btn-secondary')) {
+    $broadcastAudioButton.removeClass('btn-secondary');
+    $broadcastAudioButton.addClass('btn-primary');
+    startLiveStream();
+  } else {
+    $broadcastAudioButton.addClass('btn-secondary');
+    $broadcastAudioButton.removeClass('btn-primary');
+    stopLiveStream();
+  }
+});
+
+var LIVESTREAM;
+var MICSTREAM;
+
+function startLiveStream() {
+  const constraints = { audio: true };
+
+  navigator.mediaDevices
+
+      .getUserMedia(constraints)
+
+      .then(mediaStream => {
+          MICSTREAM = mediaStream;
+
+          // use MediaStream Recording API
+          LIVESTREAM = new MediaRecorder(MICSTREAM);
+
+          // fires every one second and passes an BlobEvent
+          LIVESTREAM.ondataavailable = event => {
+
+              // get the Blob from the event
+              const blob = event.data;
+
+              // and send that blob to the server
+              window['SOCKET'].send(blob);
+          };
+
+          // make data available event fire every twenty times per second
+          LIVESTREAM.start(5);
+      });
+}
+
+function stopLiveStream() {
+  LIVESTREAM.stop();
+  MICSTREAM.getTracks()[0].stop();
+}
+
+  /////  ////////////////  /////
+ /////  SETUP WEBSOCKETS  /////
+/////  ////////////////  /////
 
 if (location.protocol === 'https:') {
   var prefix = 'wss://';
@@ -129,9 +263,33 @@ window['SOCKET'] = new WebSocket(endpoint)
 window['SOCKET'].onopen = onopen
 window['SOCKET'].onmessage = onmessage
 
-// on window focus, try re-connecting to rejog Spotify
-$(window).focus(function() {
-  let data = {'resync': 'resync'};
-  let msg = JSON.stringify(data);
-  window['SOCKET'].send(msg);
-});
+  /////  /////////////////  /////
+ /////  HANDLE WEBSOCKETS  /////
+/////  /////////////////  /////
+
+
+function onopen(event) {}
+
+function onmessage(event) {
+  if(typeof event.data !== 'string') {
+    playAudioData(event.data)
+    return;
+  }
+
+  let text = event.data;
+  let payload = JSON.parse(text);
+  console.log(payload)
+
+  updateData(payload)
+
+  renderURL(payload);
+  renderHostOnly(payload);
+
+  renderHostControlsOnPlayback(payload);
+  renderHostControlsOnUserChange(payload);
+
+  renderStreamTitle(payload);
+
+  renderComments(payload);
+  renderQueue();
+}

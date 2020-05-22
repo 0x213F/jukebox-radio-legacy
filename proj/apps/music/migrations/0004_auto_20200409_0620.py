@@ -6,49 +6,52 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('music', '0003_auto_20200406_0216'),
+        ("music", "0003_auto_20200406_0216"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='record',
-            name='is_playing',
-        ),
-        migrations.RemoveField(
-            model_name='record',
-            name='user',
-        ),
-        migrations.RemoveField(
-            model_name='stream',
-            name='showtime_actual',
-        ),
-        migrations.RemoveField(
-            model_name='ticket',
-            name='holder_uuid',
-        ),
-        migrations.RemoveField(
-            model_name='ticket',
-            name='is_listed',
-        ),
-        migrations.RemoveField(
-            model_name='ticket',
-            name='is_subscribed',
-        ),
+        migrations.RemoveField(model_name="record", name="is_playing",),
+        migrations.RemoveField(model_name="record", name="user",),
+        migrations.RemoveField(model_name="stream", name="showtime_actual",),
+        migrations.RemoveField(model_name="ticket", name="holder_uuid",),
+        migrations.RemoveField(model_name="ticket", name="is_listed",),
+        migrations.RemoveField(model_name="ticket", name="is_subscribed",),
         migrations.AddField(
-            model_name='record',
-            name='spotify_duration_ms',
+            model_name="record",
+            name="spotify_duration_ms",
             field=models.PositiveIntegerField(default=1),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='record',
-            name='spotify_name',
-            field=models.CharField(default='1', max_length=128),
+            model_name="record",
+            name="spotify_name",
+            field=models.CharField(default="1", max_length=128),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='comment',
-            name='status',
-            field=models.CharField(choices=[('joined', 'Joined'), ('left', 'Left'), ('activated', 'Activated'), ('idle', 'Idle'), ('low', ':('), ('mid_low', ':/'), ('neutral', ':|'), ('mid_high', ':)'), ('high', ':D'), ('spin', 'Spinning'), ('stop', 'Stopped'), ('start', 'Started'), ('play', 'Played'), ('pause', 'Paused'), ('neutral', 'Neutral'), ('next', 'Skipped'), ('prev', 'Backtracked')], max_length=12),
+            model_name="comment",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("joined", "Joined"),
+                    ("left", "Left"),
+                    ("activated", "Activated"),
+                    ("idle", "Idle"),
+                    ("low", ":("),
+                    ("mid_low", ":/"),
+                    ("neutral", ":|"),
+                    ("mid_high", ":)"),
+                    ("high", ":D"),
+                    ("spin", "Spinning"),
+                    ("stop", "Stopped"),
+                    ("start", "Started"),
+                    ("play", "Played"),
+                    ("pause", "Paused"),
+                    ("neutral", "Neutral"),
+                    ("next", "Skipped"),
+                    ("prev", "Backtracked"),
+                ],
+                max_length=12,
+            ),
         ),
     ]

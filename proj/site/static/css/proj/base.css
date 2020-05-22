@@ -64,13 +64,27 @@ html, body {
 .main {
     width: calc(100% - 24px);
     min-width: 310px;
-    max-width: 400px;
+    max-width: 500px;
     height: calc(100% - 96px);
     border: 0px!important;
     margin-top: 12px;
     border-radius: 20px;
     background-color: rgb(256, 256, 256, 0.95);
     backdrop-filter: blur(12px);
+}
+
+.main.top {
+  border-top-left-radius: 0px!important;
+  border-top-right-radius: 0px!important;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.main.bottom {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 0px!important;
+  border-bottom-right-radius: 0px!important;
 }
 
 .main.card > .card-body {
@@ -92,7 +106,7 @@ html, body {
 }
 
 .ajax-form-status.success {
-  color: green;
+  color: #32b643;
 }
 
 .chip {
