@@ -65,17 +65,7 @@ class Consumer(AsyncConsumer):
             self.scope["profile"],
         ) = await Profile.objects.join_stream_async(self.scope["user"], stream_uuid)
 
-        # init audio playback if there is a livestream happening
-        speaker = await database_sync_to_async(self.scope["stream"].tickets.filter(is_speaking=True).first)()
-        if speaker:
-            initial_audio_bytes = bytearray()
-            initial_audio_bytes.extend(speaker.initialization_segment)
-            initial_audio_bytes.extend(speaker.partial_block)
-            print('IM HERE!')
-            print(len(initial_audio_bytes))
-            await self.send(
-                {"type": "websocket.send", "bytes": bytes(initial_audio_bytes),}
-            )
+        self.scope["is_tuned_in_to_livestream"] = False
 
         # add to channel
         await self.add_to_channel()
@@ -160,12 +150,28 @@ class Consumer(AsyncConsumer):
         )
 
     async def _websocket_receive_data(self, data):
-        await Comment.objects.create_and_share_comment_async(
-            self.scope["user"],
-            self.scope["stream"],
-            self.scope["ticket"],
-            text=data["text"],
-        )
+        if "text" in data:
+            await Comment.objects.create_and_share_comment_async(
+                self.scope["user"],
+                self.scope["stream"],
+                self.scope["ticket"],
+                text=data["text"],
+            )
+        if "connect_to_livestream" in data:
+
+            # init audio playback if there is a livestream happening
+            speaker = await database_sync_to_async(self.scope["stream"].tickets.filter(is_speaking=True).first)()
+            if speaker:
+                initial_audio_bytes = bytearray()
+                initial_audio_bytes.extend(speaker.initialization_segment)
+                initial_audio_bytes.extend(speaker.partial_block)
+                print('IM HERE!')
+                print(len(initial_audio_bytes))
+                await self.send(
+                    {"type": "websocket.send", "bytes": bytes(initial_audio_bytes),}
+                )
+
+            self.scope["is_tuned_in_to_livestream"] = True
 
     # - - - - - -
     # disconnect
@@ -212,6 +218,8 @@ class Consumer(AsyncConsumer):
         )
 
     async def send_audio(self, event):
+        if not self.scope["is_tuned_in_to_livestream"]:
+            return
         await self.send(
             {"type": "websocket.send", "bytes": event["bytes"],}
         )

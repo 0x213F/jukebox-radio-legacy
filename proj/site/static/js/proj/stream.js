@@ -58,6 +58,9 @@ $('#join-stream-btn').click(function() {
   if($('#loading-view').hasClass('hidden')) {
     return;
   }
+
+  window['SOCKET'].send(JSON.stringify({connect_to_livestream: true}));
+
   updatePlayback();
 });
 
