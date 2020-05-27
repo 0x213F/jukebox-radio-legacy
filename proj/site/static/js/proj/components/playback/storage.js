@@ -7,6 +7,7 @@ const AUDIO_CONTEXT = new AudioContext();
 
 function syncStoragePlayback() {
   var filename = BASE_DIGITAL_OCEAN_SPACE_URL + PLAYBACK.record.storage_filename
+  console.log(filename)
 
   var audio = new Audio(filename);
 
@@ -59,11 +60,16 @@ $('#record-button').click(function() {
 var REC;
 var BLOB;
 function handlerFunction(stream) {
-  REC = new MediaRecorder(stream);
+  const mimeType = 'audio/webm';
+  const options = { type: mimeType };
+  REC = new MediaRecorder(stream, options);
   REC.ondataavailable = e => {
+    console.log(e)
     AUDIO_CHUNKS.push(e.data);
     if(REC.state === 'inactive') {
-      BLOB = new Blob(AUDIO_CHUNKS, {type: 'audio/mpeg-3'});
+      console.log(AUDIO_CHUNKS)
+      BLOB = AUDIO_CHUNKS[0];
+      console.log(BLOB);
     }
   };
   REC.start();
@@ -74,7 +80,7 @@ function uploadMicrophoneBlob(e) {
 
   let data = new FormData($('#upload-microphone-form')[0]);
 
-  data.append('file', BLOB, 'microphone.wav');
+  data.append('file', BLOB, 'microphone.webm');
 
   $.ajax({
     url: '../../api/music/queue/create/',

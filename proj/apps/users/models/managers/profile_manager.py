@@ -47,7 +47,11 @@ class ProfileManager(BaseManager):
 
         ticket.is_active = False
         await database_sync_to_async(Ticket.objects.filter(id=ticket.id).update)(
-            is_active=False
+            is_active=False,
+            is_speaking=False,
+            sent_initialization_segment=False,
+            initialization_segment=None,
+            partial_block=None,
         )
 
     async def join_stream_async(self, user, stream_uuid):

@@ -19,7 +19,7 @@ function renderQueue() {
   }
 
   for(var queue of queues) {
-    var scheduled_at = new Date(queue.scheduled_at[0])
+    var scheduled_at = new Date(queue.scheduled_at)
     var display_time = scheduled_at.toLocaleTimeString(
       'en-US', { hour12: true, hour: "numeric", minute: "numeric"}
     )

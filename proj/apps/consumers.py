@@ -1,10 +1,15 @@
 import json
+import wave
 from datetime import datetime
 from urllib import parse
+
+from django.core.cache import cache
 
 import requests_async
 from channels.consumer import AsyncConsumer
 from channels.db import database_sync_to_async
+import io
+import soundfile
 
 from proj.apps.music.models import (Comment, Queue, QueueListing, Record,
                                     Stream, Ticket, Track)
@@ -61,6 +66,18 @@ class Consumer(AsyncConsumer):
             self.scope["profile"],
         ) = await Profile.objects.join_stream_async(self.scope["user"], stream_uuid)
 
+        # init audio playback if there is a livestream happening
+        speaker = await database_sync_to_async(self.scope["stream"].tickets.filter(is_speaking=True).first)()
+        if speaker:
+            initial_audio_bytes = bytearray()
+            initial_audio_bytes.extend(speaker.initialization_segment)
+            initial_audio_bytes.extend(speaker.partial_block)
+            print('IM HERE!')
+            print(len(initial_audio_bytes))
+            await self.send(
+                {"type": "websocket.send", "bytes": bytes(initial_audio_bytes),}
+            )
+
         # add to channel
         await self.add_to_channel()
 
@@ -100,9 +117,47 @@ class Consumer(AsyncConsumer):
             data = json.loads(event["text"])
             await self._websocket_receive_data(data)
 
-    async def _websocket_receive_bytes(self, bytes):
+    async def _websocket_receive_bytes(self, byte_data):
+        ticket = self.scope["ticket"]
+
+        if "microphone" not in self.scope:
+            self.scope["microphone"] = bytearray()
+            ticket.is_speaking = True
+
+
+        self.scope["microphone"].extend(byte_data)
+
+        INITIALIZATION_SEGMENT_LENGTH = 161
+
+        microphone_len = len(self.scope["microphone"])
+
+        if microphone_len >= INITIALIZATION_SEGMENT_LENGTH:
+            initialization_segment = self.scope["microphone"][:INITIALIZATION_SEGMENT_LENGTH]
+            if ticket.initialization_segment != initialization_segment:
+                ticket.initialization_segment = initialization_segment
+
+        if ticket.initialization_segment:
+            if "_partial_block_idx" not in self.scope:
+                self.scope["_partial_block_idx"] = INITIALIZATION_SEGMENT_LENGTH
+
+            partial_block_idx = self.scope["_partial_block_idx"]
+
+            while True:
+                block_size_raw = self.scope["microphone"][partial_block_idx+1:partial_block_idx+3]
+                block_size = int.from_bytes(block_size_raw, byteorder='big', signed=False) + 3
+                block_size = block_size & 0x0FFF
+
+                if partial_block_idx + block_size > microphone_len:
+                    ticket.partial_block = self.scope["microphone"][partial_block_idx:]
+                    break
+
+                partial_block_idx += block_size
+                self.scope["_partial_block_idx"] = partial_block_idx
+
+        await database_sync_to_async(ticket.save)()
+
         await self.channel_layer.group_send(
-            self.scope["stream"].chat_room, {"type": "send_audio", "bytes": bytes,}
+            self.scope["stream"].chat_room, {"type": "send_audio", "bytes": byte_data,}
         )
 
     async def _websocket_receive_data(self, data):
@@ -196,7 +251,7 @@ class Consumer(AsyncConsumer):
     # helpers
     # - - - - - - - - - - - -
 
-    async def sync_playback(self):
+    async def sync_playback(self, event=None):
 
         # get user's profile to refresh spotify token
         self.scope["profile"] = await database_sync_to_async(Profile.objects.get)(

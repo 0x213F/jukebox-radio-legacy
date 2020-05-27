@@ -3,6 +3,8 @@ import os.path
 import uuid
 
 import mutagen
+import audiofile as af
+
 from boto3 import session
 from django.apps import apps
 from django.conf import settings
@@ -112,7 +114,7 @@ class RecordManager(BaseManager):
         # get from filename. if not in filename, then it's a wav file uploaded
         # via the web browser
         if storage_type == "microphone":
-            extension = ".wav"
+            extension = ".webm"
         else:
             extension = os.path.splitext(file.name)[1]
             if extension not in [".mp3"]:
@@ -128,7 +130,7 @@ class RecordManager(BaseManager):
             ExtraArgs={"ACL": "public-read"},
         )
 
-        if extension == ".wav":
+        if extension == ".webm":
             # suuuuuper hacky, but I spent a lot of time on this and this is
             # the best I got
             storage_duration_ms = file.size / 8

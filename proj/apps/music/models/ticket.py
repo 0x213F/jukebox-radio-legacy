@@ -42,6 +42,11 @@ class Ticket(BaseModel):
 
     name = models.CharField(max_length=32, editable=False)
     is_active = models.BooleanField(default=False)
+    is_speaking = models.BooleanField(default=False)
+
+    sent_initialization_segment = models.BooleanField(default=False)
+    initialization_segment = models.BinaryField(max_length=500, null=True, blank=True)
+    partial_block = models.BinaryField(max_length=1024, null=True, blank=True)
 
     is_hidden_when_idle = models.BooleanField(default=False)
     is_administrator = models.BooleanField(default=False)

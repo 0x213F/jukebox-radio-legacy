@@ -181,13 +181,11 @@ var sourceBuffer;
 function playAudioData(audioData) {
   audioData.arrayBuffer().then(
     buffer => {
+      console.log(buffer)
       if(audio.paused) {
-        // if(sourceBuffer) {
-        //   sourceBuffer.abort();
-        // }
         sourceBuffer = mediaSource.addSourceBuffer('audio/webm; codecs="opus"');
         sourceBuffer.appendBuffer(buffer);
-        audio.play()
+        audio.play();
       } else {
         sourceBuffer.appendBuffer(buffer);
       }
