@@ -9,7 +9,6 @@ import requests_async
 from channels.consumer import AsyncConsumer
 from channels.db import database_sync_to_async
 import io
-import soundfile
 
 from proj.apps.music.models import (Comment, Queue, QueueListing, Record,
                                     Stream, Ticket, Track)
