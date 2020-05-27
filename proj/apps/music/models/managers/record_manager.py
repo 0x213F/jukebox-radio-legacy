@@ -3,7 +3,6 @@ import os.path
 import uuid
 
 import mutagen
-import audiofile as af
 
 from boto3 import session
 from django.apps import apps
