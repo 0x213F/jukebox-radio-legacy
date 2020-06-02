@@ -23,10 +23,8 @@ function generate_stream(stream, class_name) {
     background_color = "#5755d9";
   }
 
-  var tags_html = ''
-  for(tag of emojiStringToArray(stream.tags)) {
-    tags_html += `<span class="chip" style="border-radius: 28px; margin-right: 8px; width: 28px; line-height: 28px; text-align: center; display: inline-block;">${encodeHTML(tag)}</span>`
-  }
+  var tags_html = `<span class="chip" style="border-radius: 28px; padding: 0px 16px; line-height: 28px; text-align: center; display: inline-block;">${encodeHTML(stream.tags)}</span>`
+  console.log(tags_html)
 
   return `
   <div class="card stream ${class_name}" uuid="${stream.uuid}" unique_custom_id="${stream.unique_custom_id}" style="cursor: pointer;">

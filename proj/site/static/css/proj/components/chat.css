@@ -26,7 +26,7 @@
 .chat-container {
   position: absolute;
   overflow-y: scroll;
-  bottom: 106px;
+  bottom: 76px;
   top: 76px;
   width: calc(100% - 48px);
 }

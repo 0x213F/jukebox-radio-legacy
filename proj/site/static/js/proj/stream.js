@@ -15,7 +15,12 @@ function focusInfoView() {
 }
 
 function focusManageView() {
-  if(PLAYBACK.ticket.is_administrator) {
+  let playback = DATA.playback;
+  if(!playback) {
+    return;
+  }
+
+  if(playback.ticket.is_administrator) {
     $('.manage-administrator').removeClass('hidden');
   } else {
     $('.manage-administrator').addClass('hidden');
@@ -38,7 +43,17 @@ function focusSearchView() {
 }
 
 function focusVoiceView() {
-  // noop
+  let playback = DATA.playback;
+  if(!playback) {
+    $('.jr-microphone').removeClass('hidden');
+    return;
+  }
+
+  if(playback.ticket.is_administrator) {
+    $('.jr-microphone').removeClass('hidden');
+  } else {
+    $('.jr-microphone').addClass('hidden');
+  }
 }
 
 var view_mapping = {
@@ -64,111 +79,101 @@ $('#join-stream-btn').click(function() {
     return;
   }
 
-  window['SOCKET'].send(JSON.stringify({connect_to_livestream: true}));
+  // NOTE: Livestream audio is currently disabled.
+  // window['SOCKET'].send(JSON.stringify({connect_to_livestream: true}));
 
-  updatePlayback();
+  initiatePlayback();
 });
+
+  /////  /////////////////////  /////
+ /////    INITIATE PLAYBACK    /////
+/////  /////////////////////  /////
+
+function initiatePlayback() {
+  let playback = DATA.playback;
+  if(!playback) {
+    return;
+  }
+
+  // YouTube
+  if(playback.record && playback.record.youtube_id) {
+    $('.chat-container').css('top', '298px');
+    syncYouTubePlayback();
+    $('#info-album-art').attr('src', playback.record.youtube_img_high);
+    $('#info-record-name').text(playback.record.youtube_name);
+
+  // Spotify
+  } else if(playback.record && playback.record.spotify_uri) {
+    $('.chat-container').css('top', '76px');
+    syncSpotifyPlayback();
+    $('#info-album-art').attr('src', playback.record.spotify_img_high);
+    $('#info-record-name').text(playback.record.spotify_name);
+
+  // JukeboxRadio Storage
+  } else if(playback.record) {
+    $('.chat-container').css('top', '76px');
+    syncStoragePlayback();
+    $('#info-record-name').text(playback.record.storage_name);
+  }
+}
 
   /////  //////////  /////
  /////    DISPLAY   /////
 /////  //////////  /////
 
 function renderStreamTitle(payload) {
-  var stream;
-  if(payload.read && payload.read.streams && payload.read.streams.length) {
-    stream = payload.read.streams[0];
-  } else if(payload.updated && payload.updated.streams && payload.updated.streams.length) {
-    stream = payload.updated.streams[0];
-  }
+  let stream = DATA.stream;
   if(!stream) {
     return;
   }
-  $('.jr-info-banner').text(stream.name);
-}
 
-function renderHostControlsOnPlayback(payload) {
-  if(payload.read && payload.read.playback && payload.read.playback.length) {
-    PLAYBACK = payload.read.playback[0];
-
-    if(PLAYBACK.ticket.is_administrator) {
-      var $GO_TO_QUEUE_BUTTON = $('#go-to-queue-top');
-      $GO_TO_QUEUE_BUTTON.removeClass('hidden');
-      $GO_TO_QUEUE_BUTTON.empty()
-      if(PLAYBACK.status !== 'playing_and_synced') {
-        $GO_TO_QUEUE_BUTTON.append('<i class="gg-play-list-add" style="left: 5px;"></i>')
-      } else {
-        $GO_TO_QUEUE_BUTTON.append('<i class="gg-play-list-search" style="left: 5px;"></i>')
-      }
-    }
-
-    if($('#loading-view').hasClass('hidden')) {
-      updatePlayback();
-    }
+  let $banners = $('.jr-info-banner');
+  if($banners.text() !== stream.name) {
+    $banners.text(stream.name);
   }
 }
 
-function renderHostControlsOnUserChange(payload) {
-  if(payload.updated && payload.updated.users && payload.updated.users.length) {
-    var user = payload.updated.users[0];
-    if(user.profile.active_stream_ticket.uuid === PLAYBACK.ticket.uuid) {
-
-      var $GO_TO_QUEUE_BUTTON = $('#go-to-queue-top');
-      if(user.profile.active_stream_ticket.is_administrator) {
-        $GO_TO_QUEUE_BUTTON.removeClass('hidden');
-      } else {
-        $GO_TO_QUEUE_BUTTON.addClass('hidden');
-        if(!$QUEUE_VIEW.hasClass('hidden') || !$SEARCH_VIEW.hasClass('hidden')) {
-          $('.go-to-chat-view').children().first().click();
-        }
-      }
-
-    }
-  }
-}
-
-function updatePlayback() {
-  console.log(PLAYBACK)
-  if(!PLAYBACK){
+function renderGoToQueueViewButtons(payload) {
+  let playback = DATA.playback;
+  if(!playback) {
     return;
   }
-  if(PLAYBACK.record && PLAYBACK.record.youtube_id) {
-    $('.chat-container').css('top', '298px');
-    syncYouTubePlayback();
-    $('#info-album-art').attr('src', PLAYBACK.record.youtube_img_high);
-    $('#info-record-name').text(PLAYBACK.record.youtube_name);
-  } else if(PLAYBACK.record && PLAYBACK.record.spotify_uri) {
-    $('.chat-container').css('top', '76px');
-    syncSpotifyPlayback();
-    $('#info-album-art').attr('src', PLAYBACK.record.spotify_img_high);
-    $('#info-record-name').text(PLAYBACK.record.spotify_name);
-  } else if(PLAYBACK.record) {
-    $('.chat-container').css('top', '76px');
-    syncStoragePlayback();
-    $('#info-record-name').text(PLAYBACK.record.storage_name);
+
+  let $goToQueueButtons = $('.go-to-queue-view');
+  if(playback.ticket.is_administrator) {
+    $goToQueueButtons.removeClass('hidden');
+  } else {
+    $goToQueueButtons.addClass('hidden');
   }
-  $('#sync-playback').addClass('hidden');
 }
 
 function renderURL(payload) {
-  if(payload.updated && payload.updated.streams && payload.updated.streams.length) {
-    var currSite = window.location.href;
-    currSite = currSite.substring(currSite.indexOf('/stream/')+1);
+  let stream = DATA.stream;
+  if(!stream) {
+    return;
+  }
 
-    var stream = payload.updated.streams[0];
+  let currSite = window.location.href;
+  currSite = currSite.substring(currSite.indexOf('/stream/')+1);
+  let expectedSite = 'stream/' + stream.unique_custom_id + '/';
 
-    if('stream/' + stream.unique_custom_id + '/' !== currSite) {
-      window.location.href = '/stream/' + stream.unique_custom_id;
-    }
+  if(expectedSite !== currSite) {
+    window.location.href = '/stream/' + stream.unique_custom_id;
   }
 }
 
-function renderHostOnly(payload) {
-  if(payload.updated && payload.updated.streams && payload.updated.streams.length) {
-    var stream = payload.updated.streams[0];
-    if(stream.is_private && !PLAYBACK.ticket.is_administrator) {
-      window.location.href = '/'
-    }
+function renderHostAccessOnly(payload) {
+  let stream = DATA.stream;
+  let playback = DATA.playback;
+  if(!stream || !playback) {
+    return;
   }
+
+  if(!stream.is_private || (stream.is_private && playback.ticket.is_administrator)) {
+    return;
+  }
+
+  window.location.href = '/';
 }
 
   /////  ////////////////  /////
@@ -195,9 +200,14 @@ window['SOCKET'].onmessage = onmessage
 /////  /////////////////  /////
 
 
-function onopen(event) {}
+function onopen(event) {
+  // noop
+}
 
 function onmessage(event) {
+
+  // NOTE: if we are recieving binary data it is an audio stream. handle this
+  //       separately.
   if(typeof event.data !== 'string') {
     playAudioData(event.data)
     return;
@@ -206,21 +216,21 @@ function onmessage(event) {
   let text = event.data;
   let payload = JSON.parse(text);
 
-  console.log(payload)
-
+  // data.js
   updateData(payload)
 
   renderURL(payload);
-  renderHostOnly(payload);
-
-  renderHostControlsOnPlayback(payload);
-  renderHostControlsOnUserChange(payload);
-
+  renderHostAccessOnly(payload);
+  renderGoToQueueViewButtons(payload);
   renderStreamTitle(payload);
 
+  // chat.js
   renderComments(payload);
+
+  // queue.js
   renderQueue();
 
+  // voice.js
   renderTranscriptBubbles()
   renderTranscriptText();
 }
