@@ -33,7 +33,8 @@ function setup_ajax_forms() {
         }
         let msg = JSON.stringify(data);
         window['SOCKET'].send(msg);
-        // TODO don't put this in here
+        // TODO don't put this in here. it's ok for now since type=websocket is
+        // only true in one place
         $('#chat-input-main').val('');
         $('#chat-input-main').css('height', '38px');
       } else if($this.attr("type") === "redirect") {

@@ -95,7 +95,8 @@ class RecordManager(BaseManager):
 
     def create_from_file(self, file, storage_type):
         """
-        TODO: some kind of cleanup here...
+        TODO: some kind of cleanup here, especially with accessing the uploaded
+              file and calculating audio file duration.
         """
         Record = apps.get_model("music", "Record")
         Track = apps.get_model("music", "Track")

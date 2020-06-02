@@ -1,6 +1,5 @@
 var DATA = {}
 
-
 function updateData(payload) {
   `
   - - - - - - - -
@@ -36,7 +35,6 @@ function updateData(payload) {
   updateTranscriptData(payload);
 }
 
-
 /////////////////////////////////
 
 function updateStreamData(payload) {
@@ -50,8 +48,6 @@ function updateStreamData(payload) {
 }
 
 function updatePlaybackData(payload) {
-
-  console.log(payload)
 
   // reading playback
   if(payload.read && payload.read.playback && payload.read.playback.length) {

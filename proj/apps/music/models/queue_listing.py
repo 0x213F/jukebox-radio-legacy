@@ -30,7 +30,7 @@ class QueueListing(BaseModel):
         "music.Queue", related_name="queue_listings", on_delete=models.DO_NOTHING,
     )
 
-    # TODO this can be tracks instead
+    # TODO this can be FK to tracks instead
     track_listing = models.ForeignKey(
         "music.Tracklisting",
         related_name="queued_listing",
