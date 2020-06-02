@@ -95,6 +95,8 @@ function initiatePlayback() {
     return;
   }
 
+  console.log('initiating playback')
+
   // YouTube
   if(playback.record && playback.record.youtube_id) {
     $('.chat-container').css('top', '298px');
@@ -223,6 +225,14 @@ function onmessage(event) {
   renderHostAccessOnly(payload);
   renderGoToQueueViewButtons(payload);
   renderStreamTitle(payload);
+
+  try {
+    if(payload.read.playback.length && $('#loading-view').hasClass('hidden')) {
+      initiatePlayback();
+    }
+  } catch(e) {
+    // noop
+  }
 
   // chat.js
   renderComments(payload);

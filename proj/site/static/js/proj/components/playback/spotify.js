@@ -1,36 +1,36 @@
 
-let SPOTIFY_PLAYER;
+var SPOTIFY_PLAYER;
 function onSpotifyWebPlaybackSDKReady() {
   SPOTIFY_PLAYER = new Spotify.Player({ name: "..." });
 }
 
-let PLAYBACK;
 function syncSpotifyPlayback() {
   $('#youtube-video-player').addClass('hidden');
   $('#youtube-video-player-2').addClass('hidden');
-  let playback = PLAYBACK;
-  let now = Date.now()
-  let spotify_uris = [];
-  let offset = -1;
+  var playback = DATA.playback;
+  var now = Date.now()
+  var spotify_uris = [];
+  var offset = -1;
 
-  let lastVisitedQueueListing;
-  let visitedFirstInFutureQueueListing;
-  let firstQueueListing;
-  let isFirst = true;
-  let firstIsPositive;
+  var lastVisitedQueueListing;
+  var visitedFirstInFutureQueueListing;
+  var firstQueueListing;
+  var isFirst = true;
+  var firstIsPositive;
 
-  let ql = playback.queuelistings[0];
-  let time_until_queue_listing = ql.played_at - now;
+  var ql = playback.queuelistings[0];
+  var time_until_queue_listing = ql.played_at - now;
   if(time_until_queue_listing > 0) {
     setTimeout(syncSpotifyPlayback, time_until_queue_listing);
+    console.log(time_until_queue_listing)
     return;
   }
 
-  let firstPlaytime;
-  for(let queue_listing of playback.queuelistings.reverse()) {
+  var firstPlaytime;
+  for(var queue_listing of playback.queuelistings.reverse()) {
 
-    let time_until_queue_listing = queue_listing.played_at - now;
-    let spotify_uri = queue_listing.tracklisting.track.spotify_uri
+    var time_until_queue_listing = queue_listing.played_at - now;
+    var spotify_uri = queue_listing.tracklisting.track.spotify_uri
 
     spotify_uris.unshift(spotify_uri);
     firstPlaytime = queue_listing.played_at;
@@ -53,21 +53,21 @@ function syncSpotifyPlayback() {
     if(!response_json.item) {
       return;
     }
-    let timestamp = response_json.timestamp;
-    let spotify_uri = response_json.item.uri;
-    let duration_ms = response_json.item.duration_ms;
-    let is_playing = response_json.is_playing;
+    var timestamp = response_json.timestamp;
+    var spotify_uri = response_json.item.uri;
+    var duration_ms = response_json.item.duration_ms;
+    var is_playing = response_json.is_playing;
 
-    let playback_now = new Date(timestamp).getTime();
-    let now = Date.now();
+    var playback_now = new Date(timestamp).getTime();
+    var now = Date.now();
 
-    let kindaClose = Math.abs(playback_now - (firstPlaytime + duration_ms));
+    var kindaClose = Math.abs(playback_now - (firstPlaytime + duration_ms));
 
     if(spotify_uri === spotify_uris[0] && is_playing && kindaClose < 1000) {
       return;
     }
 
-    let offset = now - firstPlaytime
+    var offset = now - firstPlaytime
 
     fetch(`https://api.spotify.com/v1/me/player/play`, {
       method: 'PUT',

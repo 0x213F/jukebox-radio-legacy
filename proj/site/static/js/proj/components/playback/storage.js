@@ -6,12 +6,12 @@ const BASE_DIGITAL_OCEAN_SPACE_URL = 'https://jukebox-radio-space.sfo2.digitaloc
 const AUDIO_CONTEXT = new AudioContext();
 
 function syncStoragePlayback() {
-  var filename = BASE_DIGITAL_OCEAN_SPACE_URL + PLAYBACK.record.storage_filename
+  var filename = BASE_DIGITAL_OCEAN_SPACE_URL + DATA.playback.record.storage_filename
 
   var audio = new Audio(filename);
 
   var now = Date.now()
-  var offset = now - PLAYBACK.stream.played_at;
+  var offset = now - DATA.playback.stream.played_at;
   var playOffset = offset / 1000;
   if(offset > 0) {
     audio.currentTime = playOffset;
@@ -23,7 +23,7 @@ function syncStoragePlayback() {
     if(!needsToPlay) return;
     needsToPlay = false;
     var now = Date.now()
-    var offset = now - PLAYBACK.stream.played_at;
+    var offset = now - DATA.playback.stream.played_at;
     var playOffset = offset / 1000;
     if(playOffset < 0) {
       setTimeout(function() {
