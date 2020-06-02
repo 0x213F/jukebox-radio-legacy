@@ -65,7 +65,18 @@ class Consumer(AsyncConsumer):
             self.scope["profile"],
         ) = await Profile.objects.join_stream_async(self.scope["user"], stream_uuid)
 
-        self.scope["is_tuned_in_to_livestream"] = False
+        # say who the current hosts are
+        ticket_qs = Ticket.objects.administrators(self.scope["stream"])
+        tickets = await database_sync_to_async(list)(ticket_qs)
+
+        await self.send(
+            {"type": "websocket.send", "text": json.dumps({
+                    "read": {
+                        "tickets": [Ticket.objects.serialize(ticket) for ticket in tickets],
+                    }
+                }),
+            }
+        )
 
         # add to channel
         await self.add_to_channel()
@@ -157,6 +168,19 @@ class Consumer(AsyncConsumer):
                 self.scope["ticket"],
                 text=data["text"],
             )
+
+        if "transcript" in data:
+            data['holder_uuid'] = str(self.scope["ticket"].uuid)
+
+            await self.channel_layer.group_send(
+                self.scope["stream"].chat_room,
+                {
+                    "type": "send_update",
+                    "text": {"updated": {"transcripts": [data]}},
+                },
+            )
+
+
         if "connect_to_livestream" in data:
 
             # init audio playback if there is a livestream happening
@@ -165,8 +189,6 @@ class Consumer(AsyncConsumer):
                 initial_audio_bytes = bytearray()
                 initial_audio_bytes.extend(speaker.initialization_segment)
                 initial_audio_bytes.extend(speaker.partial_block)
-                print('IM HERE!')
-                print(len(initial_audio_bytes))
                 await self.send(
                     {"type": "websocket.send", "bytes": bytes(initial_audio_bytes),}
                 )

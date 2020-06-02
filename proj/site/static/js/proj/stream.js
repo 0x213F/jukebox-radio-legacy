@@ -37,6 +37,10 @@ function focusSearchView() {
   // noop
 }
 
+function focusVoiceView() {
+  // noop
+}
+
 var view_mapping = {
   'loading-view': focusLoadingView,
   'chat-view': focusChatView,
@@ -44,6 +48,7 @@ var view_mapping = {
   'manage-view': focusManageView,
   'queue-view': focusQueueView,
   'search-view': focusSearchView,
+  'voice-view': focusVoiceView,
 }
 
 $(document).ready(function() {
@@ -167,85 +172,6 @@ function renderHostOnly(payload) {
 }
 
   /////  ////////////////  /////
- /////     LIVESTREAM     /////
-/////  ////////////////  /////
-
-var audio = new Audio();
-
-if (window.MediaSource) {
-  var mediaSource = new MediaSource();
-  audio.src = URL.createObjectURL(mediaSource);
-} else {
-  console.log('The Media Source Extensions API is not supported.')
-}
-
-
-var sourceBuffer;
-function playAudioData(audioData) {
-  audioData.arrayBuffer().then(
-    buffer => {
-      console.log(buffer)
-      if(audio.paused) {
-        sourceBuffer = mediaSource.addSourceBuffer('audio/webm; codecs="opus"');
-        sourceBuffer.appendBuffer(buffer);
-        audio.play();
-      } else {
-        sourceBuffer.appendBuffer(buffer);
-      }
-    }
-  );
-}
-
-var $broadcastAudioButton = $('#broadcast-audio-livestream');
-$broadcastAudioButton.click(function() {
-  if($broadcastAudioButton.hasClass('btn-secondary')) {
-    $broadcastAudioButton.removeClass('btn-secondary');
-    $broadcastAudioButton.addClass('btn-primary');
-    startLiveStream();
-  } else {
-    $broadcastAudioButton.addClass('btn-secondary');
-    $broadcastAudioButton.removeClass('btn-primary');
-    stopLiveStream();
-  }
-});
-
-var LIVESTREAM;
-var MICSTREAM;
-
-function startLiveStream() {
-  const constraints = { audio: true };
-
-  navigator.mediaDevices
-
-      .getUserMedia(constraints)
-
-      .then(mediaStream => {
-          MICSTREAM = mediaStream;
-
-          // use MediaStream Recording API
-          LIVESTREAM = new MediaRecorder(MICSTREAM);
-
-          // fires every one second and passes an BlobEvent
-          LIVESTREAM.ondataavailable = event => {
-
-              // get the Blob from the event
-              const blob = event.data;
-
-              // and send that blob to the server
-              window['SOCKET'].send(blob);
-          };
-
-          // make data available event fire every twenty times per second
-          LIVESTREAM.start(5);
-      });
-}
-
-function stopLiveStream() {
-  LIVESTREAM.stop();
-  MICSTREAM.getTracks()[0].stop();
-}
-
-  /////  ////////////////  /////
  /////  SETUP WEBSOCKETS  /////
 /////  ////////////////  /////
 
@@ -279,6 +205,7 @@ function onmessage(event) {
 
   let text = event.data;
   let payload = JSON.parse(text);
+
   console.log(payload)
 
   updateData(payload)
@@ -293,4 +220,7 @@ function onmessage(event) {
 
   renderComments(payload);
   renderQueue();
+
+  renderTranscriptBubbles()
+  renderTranscriptText();
 }

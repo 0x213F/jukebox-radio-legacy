@@ -3,6 +3,8 @@ var DATA = {}
 
 function updateData(payload) {
   updateQueueData(payload);
+  updateHostData(payload);
+  updateTranscriptData(payload);
 }
 
 
@@ -38,5 +40,26 @@ function updateQueueData(payload) {
     DATA.up_next = DATA.up_next.filter(function(value) {
       return value.uuid !== queue.uuid;
     });
+  }
+}
+
+function updateHostData(payload) {
+  // update the transcript of speakers
+  if(payload.read && payload.read.tickets && payload.read.tickets.length) {
+    DATA.hosts = payload.read.tickets
+  }
+}
+
+function updateTranscriptData(payload) {
+  // initialize "up_next" queue
+  if(!DATA.transcripts) {
+    DATA.transcripts = {};
+  }
+
+  // update the transcript of speakers
+  if(payload.updated && payload.updated.transcripts && payload.updated.transcripts.length) {
+    for(let transcript_data of payload.updated.transcripts) {
+      DATA.transcripts[transcript_data.holder_uuid] = transcript_data;
+    }
   }
 }

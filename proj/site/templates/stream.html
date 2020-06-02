@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="{% static 'css/proj/components/manage.css' %}">
 <link rel="stylesheet" href="{% static 'css/proj/components/queue.css' %}">
 <link rel="stylesheet" href="{% static 'css/proj/components/chat.css' %}">
+<link rel="stylesheet" href="{% static 'css/proj/components/voice.css' %}">
 {% endblock %}
 
 {% block main %}
@@ -54,6 +55,10 @@
 <!--  INFO VIEW -->
 {% include "components/info.html" %}
 
+<!-- - - - - - --->
+<!--  INFO VIEW -->
+{% include "components/voice.html" %}
+
 {% endblock %}
 
 {% block scripts %}
@@ -68,6 +73,7 @@
 <script src="{% static 'js/proj/components/search.js' %}"></script>
 <script src="{% static 'js/proj/components/share.js' %}"></script>
 <script src="{% static 'js/proj/components/info.js' %}"></script>
+<script src="{% static 'js/proj/components/voice.js' %}"></script>
 
 <script src="{% static 'js/proj/components/playback/spotify.js' %}"></script>
 <script src="{% static 'js/proj/components/playback/youtube.js' %}"></script>
