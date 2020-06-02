@@ -178,7 +178,6 @@ DATABASE_ENCRYPTION_KEY = secrets.DATABASE_ENCRYPTION_KEY.encode("utf-8")
 # https://sentry.io/for/django/
 
 
-
 sentry_sdk.init(
     dsn=secrets.SENTRY_SECRET,
     integrations=[DjangoIntegration()],

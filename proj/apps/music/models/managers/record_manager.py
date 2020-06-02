@@ -38,10 +38,10 @@ class RecordManager(BaseManager):
         }
 
     def get_or_create_from_uri(self, uri, record_name, img, user=None):
-        '''
+        """
         TODO: do not pass IMG from client to server
         TODO: get or create from spotify_uri (rename)
-        '''
+        """
         Record = apps.get_model("music", "Record")
         Track = apps.get_model("music", "Track")
         TrackListing = apps.get_model("music", "TrackListing")
@@ -94,9 +94,9 @@ class RecordManager(BaseManager):
         return record
 
     def create_from_file(self, file, storage_type):
-        '''
+        """
         TODO: some kind of cleanup here...
-        '''
+        """
         Record = apps.get_model("music", "Record")
         Track = apps.get_model("music", "Track")
         TrackListing = apps.get_model("music", "TrackListing")

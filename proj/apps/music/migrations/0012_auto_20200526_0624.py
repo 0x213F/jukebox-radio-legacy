@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('music', '0011_auto_20200522_0534'),
+        ("music", "0011_auto_20200522_0534"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='ticket',
-            name='initialization_segment',
+            model_name="ticket",
+            name="initialization_segment",
             field=models.BinaryField(blank=True, max_length=161, null=True),
         ),
         migrations.AddField(
-            model_name='ticket',
-            name='is_speaking',
+            model_name="ticket",
+            name="is_speaking",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='ticket',
-            name='partial_block',
+            model_name="ticket",
+            name="partial_block",
             field=models.BinaryField(blank=True, max_length=1024, null=True),
         ),
     ]

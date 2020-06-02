@@ -160,7 +160,6 @@ class StreamManager(BaseManager):
             user_id = ticket.holder_id
             async_to_sync(channel_layer.group_send)(f"user-{user_id}", payload)
 
-
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         # create scheduled task for when to spin the next record
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - -

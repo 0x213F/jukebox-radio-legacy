@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('music', '0013_ticket_sent_initialization_segment'),
+        ("music", "0013_ticket_sent_initialization_segment"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='ticket',
-            name='initialization_segment',
+            model_name="ticket",
+            name="initialization_segment",
             field=models.BinaryField(blank=True, max_length=500, null=True),
         ),
     ]

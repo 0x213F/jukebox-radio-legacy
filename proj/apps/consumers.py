@@ -10,8 +10,15 @@ from channels.consumer import AsyncConsumer
 from channels.db import database_sync_to_async
 import io
 
-from proj.apps.music.models import (Comment, Queue, QueueListing, Record,
-                                    Stream, Ticket, Track)
+from proj.apps.music.models import (
+    Comment,
+    Queue,
+    QueueListing,
+    Record,
+    Stream,
+    Ticket,
+    Track,
+)
 from proj.apps.users.models import Profile
 from proj.core.resources import Spotify
 
@@ -70,11 +77,17 @@ class Consumer(AsyncConsumer):
         tickets = await database_sync_to_async(list)(ticket_qs)
 
         await self.send(
-            {"type": "websocket.send", "text": json.dumps({
-                    "read": {
-                        "tickets": [Ticket.objects.serialize(ticket) for ticket in tickets],
+            {
+                "type": "websocket.send",
+                "text": json.dumps(
+                    {
+                        "read": {
+                            "tickets": [
+                                Ticket.objects.serialize(ticket) for ticket in tickets
+                            ],
+                        }
                     }
-                }),
+                ),
             }
         )
 
@@ -124,7 +137,6 @@ class Consumer(AsyncConsumer):
             self.scope["microphone"] = bytearray()
             ticket.is_speaking = True
 
-
         self.scope["microphone"].extend(byte_data)
 
         INITIALIZATION_SEGMENT_LENGTH = 161
@@ -132,7 +144,9 @@ class Consumer(AsyncConsumer):
         microphone_len = len(self.scope["microphone"])
 
         if microphone_len >= INITIALIZATION_SEGMENT_LENGTH:
-            initialization_segment = self.scope["microphone"][:INITIALIZATION_SEGMENT_LENGTH]
+            initialization_segment = self.scope["microphone"][
+                :INITIALIZATION_SEGMENT_LENGTH
+            ]
             if ticket.initialization_segment != initialization_segment:
                 ticket.initialization_segment = initialization_segment
 
@@ -143,8 +157,12 @@ class Consumer(AsyncConsumer):
             partial_block_idx = self.scope["_partial_block_idx"]
 
             while True:
-                block_size_raw = self.scope["microphone"][partial_block_idx+1:partial_block_idx+3]
-                block_size = int.from_bytes(block_size_raw, byteorder='big', signed=False) + 3
+                block_size_raw = self.scope["microphone"][
+                    partial_block_idx + 1 : partial_block_idx + 3
+                ]
+                block_size = (
+                    int.from_bytes(block_size_raw, byteorder="big", signed=False) + 3
+                )
                 block_size = block_size & 0x0FFF
 
                 if partial_block_idx + block_size > microphone_len:
@@ -170,21 +188,19 @@ class Consumer(AsyncConsumer):
             )
 
         if "transcript" in data:
-            data['holder_uuid'] = str(self.scope["ticket"].uuid)
+            data["holder_uuid"] = str(self.scope["ticket"].uuid)
 
             await self.channel_layer.group_send(
                 self.scope["stream"].chat_room,
-                {
-                    "type": "send_update",
-                    "text": {"updated": {"transcripts": [data]}},
-                },
+                {"type": "send_update", "text": {"updated": {"transcripts": [data]}},},
             )
-
 
         if "connect_to_livestream" in data:
 
             # init audio playback if there is a livestream happening
-            speaker = await database_sync_to_async(self.scope["stream"].tickets.filter(is_speaking=True).first)()
+            speaker = await database_sync_to_async(
+                self.scope["stream"].tickets.filter(is_speaking=True).first
+            )()
             if speaker:
                 initial_audio_bytes = bytearray()
                 initial_audio_bytes.extend(speaker.initialization_segment)

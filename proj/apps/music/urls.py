@@ -1,10 +1,13 @@
 from django.urls import path
 
 from proj.apps.music.views import SearchView, StreamView
-from proj.apps.music.views.queue import (CreateQueueView, DeleteQueueView,
-                                         ListQueuesView)
-from proj.apps.music.views.stream import (CreateStreamView, DeleteStreamView,
-                                          ListStreamsView, UpdateStreamView)
+from proj.apps.music.views.queue import CreateQueueView, DeleteQueueView, ListQueuesView
+from proj.apps.music.views.stream import (
+    CreateStreamView,
+    DeleteStreamView,
+    ListStreamsView,
+    UpdateStreamView,
+)
 from proj.apps.music.views.ticket import ListTicketsView, UpdateTicketView
 
 urlpatterns = [

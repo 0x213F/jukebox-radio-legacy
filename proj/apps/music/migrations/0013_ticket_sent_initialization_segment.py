@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('music', '0012_auto_20200526_0624'),
+        ("music", "0012_auto_20200526_0624"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='ticket',
-            name='sent_initialization_segment',
+            model_name="ticket",
+            name="sent_initialization_segment",
             field=models.BooleanField(default=False),
         ),
     ]
