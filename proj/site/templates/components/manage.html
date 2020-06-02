@@ -3,17 +3,6 @@
 
   <div class="card-body">
 
-    <!-- - - - - - - - - - - - - -->
-    <!--  LOAD PAGE (LIST HOSTS) -->
-    <form id="list-hosts-form"
-          class="ajax-form hidden"
-          type="get"
-          url="../../../api/music/ticket/list"
-          submit="onload"
-          onsuccess='display_hosts'>
-          <input type="text" name="stream_uuid" value="{{ stream.uuid }}">
-    </form>
-
     <div style="width: 100%; height: 40px;">
 
       <!-- go back to main view -->
@@ -138,7 +127,7 @@
           class="ajax-form card-body  manage-administrator"
           url="../../../api/music/ticket/update/"
           type="post"
-          onsuccess="list_hosts">
+          onsuccess="refreshPage">
 
       <div class="form-group">
         <label class="form-label" for="email-signup">Email</label>

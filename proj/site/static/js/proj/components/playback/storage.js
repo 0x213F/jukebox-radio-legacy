@@ -7,7 +7,6 @@ const AUDIO_CONTEXT = new AudioContext();
 
 function syncStoragePlayback() {
   var filename = BASE_DIGITAL_OCEAN_SPACE_URL + PLAYBACK.record.storage_filename
-  console.log(filename)
 
   var audio = new Audio(filename);
 

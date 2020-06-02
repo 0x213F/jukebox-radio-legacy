@@ -227,6 +227,9 @@ function onmessage(event) {
   // chat.js
   renderComments(payload);
 
+  // manage.js
+  renderHosts();
+
   // queue.js
   renderQueue();
 

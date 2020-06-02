@@ -10,7 +10,7 @@ function onYouTubeIframeAPIReady() {
 
 function syncYouTubePlayback() {
   var now = Date.now()
-  var offset = now - PLAYBACK.stream.played_at
+  var offset = now - DATA.playback.stream.played_at
   if(offset < 0) {
     setTimeout(syncYouTubePlayback, -offset);
     return;
@@ -26,9 +26,9 @@ function syncYouTubePlayback() {
 
   var player = getYouTubePlayer();
   player.loadVideoById({
-    videoId: PLAYBACK.record.youtube_id,
+    videoId: DATA.playback.record.youtube_id,
     startSeconds: Math.floor(offset / 1000),
-    endSeconds: PLAYBACK.record.youtube_duration_ms,
+    endSeconds: DATA.playback.record.youtube_duration_ms,
   });
 }
 

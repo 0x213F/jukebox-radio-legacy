@@ -30,5 +30,4 @@ function copy_website() {
   el.select();
   document.execCommand('copy');
   document.body.removeChild(el);
-
 }

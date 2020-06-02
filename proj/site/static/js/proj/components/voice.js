@@ -9,7 +9,7 @@ try {
 
   recognition.onresult = function(event) {
 
-    // event is a SpeechRecognitionEvent object.
+    // "event" is a SpeechRecognitionEvent object.
     // It holds all the lines we have captured so far.
     // We only need the current one.
     var current = event.resultIndex;
@@ -25,6 +25,7 @@ try {
     });
     window['SOCKET'].send(msg);
 
+    // If the transcript is final, register it as a comment as well
     if(isFinal) {
       $('#chat-input-main').val(transcript);
       $('#chat-form').submit();
@@ -32,88 +33,78 @@ try {
   }
 }
 catch(e) {
-  console.error(e);
+  // noop
 }
-
 
   /////  ////////////////  /////
  /////     LIVESTREAM     /////
 /////  ////////////////  /////
+
+var $broadcastAudioButton = $('#broadcast-audio-livestream');
+$broadcastAudioButton.click(function() {
+$(this).blur();
+  if($broadcastAudioButton.hasClass('btn-secondary')) {
+    $broadcastAudioButton.removeClass('btn-secondary');
+    $broadcastAudioButton.addClass('btn-primary');
+    recognition.start();
+    // startLiveStream();
+  } else {
+    $broadcastAudioButton.addClass('btn-secondary');
+    $broadcastAudioButton.removeClass('btn-primary');
+    recognition.stop();
+    // stopLiveStream();
+  }
+});
 
 var audio = new Audio();
 
 if (window.MediaSource) {
   var mediaSource = new MediaSource();
   audio.src = URL.createObjectURL(mediaSource);
-} else {
-  console.log('The Media Source Extensions API is not supported.');
 }
-
 
 var sourceBuffer;
 function playAudioData(audioData) {
-audioData.arrayBuffer().then(
-  buffer => {
-    if(audio.paused) {
-      sourceBuffer = mediaSource.addSourceBuffer('audio/webm; codecs="opus"');
-      sourceBuffer.appendBuffer(buffer);
-      audio.play();
-    } else {
-      sourceBuffer.appendBuffer(buffer);
+  audioData.arrayBuffer().then(
+    buffer => {
+      if(audio.paused) {
+        sourceBuffer = mediaSource.addSourceBuffer('audio/webm; codecs="opus"');
+        sourceBuffer.appendBuffer(buffer);
+        audio.play();
+      } else {
+        sourceBuffer.appendBuffer(buffer);
+      }
     }
-  }
-);
+  );
 }
-
-var $broadcastAudioButton = $('#broadcast-audio-livestream');
-
-
-
-
-$broadcastAudioButton.click(function() {
-$(this).blur();
-if($broadcastAudioButton.hasClass('btn-secondary')) {
-  $broadcastAudioButton.removeClass('btn-secondary');
-  $broadcastAudioButton.addClass('btn-primary');
-  recognition.start();
-  // startLiveStream();
-} else {
-  $broadcastAudioButton.addClass('btn-secondary');
-  $broadcastAudioButton.removeClass('btn-primary');
-  recognition.stop();
-  // stopLiveStream();
-}
-});
 
 var LIVESTREAM;
 var MICSTREAM;
 
 function startLiveStream() {
-const constraints = { audio: true };
+  const constraints = { audio: true };
 
-navigator.mediaDevices
-
+  navigator.mediaDevices
     .getUserMedia(constraints)
+      .then(mediaStream => {
+          MICSTREAM = mediaStream;
 
-    .then(mediaStream => {
-        MICSTREAM = mediaStream;
+          // use MediaStream Recording API
+          LIVESTREAM = new MediaRecorder(MICSTREAM);
 
-        // use MediaStream Recording API
-        LIVESTREAM = new MediaRecorder(MICSTREAM);
+          // fires every one second and passes an BlobEvent
+          LIVESTREAM.ondataavailable = event => {
 
-        // fires every one second and passes an BlobEvent
-        LIVESTREAM.ondataavailable = event => {
+              // get the Blob from the event
+              const blob = event.data;
 
-            // get the Blob from the event
-            const blob = event.data;
+              // and send that blob to the server
+              window['SOCKET'].send(blob);
+          };
 
-            // and send that blob to the server
-            window['SOCKET'].send(blob);
-        };
-
-        // make data available event fire every twenty times per second
-        LIVESTREAM.start(5);
-    });
+          // make data available event fire every twenty times per second
+          LIVESTREAM.start(5);
+      });
 }
 
 function stopLiveStream() {
@@ -145,14 +136,9 @@ function renderTranscriptBubbles() {
       </div>
     `);
   }
-  // console.log(DATA.hosts)
-
 }
 
 function renderTranscriptText() {
-
-  console.log(DATA.transcripts)
-
   let $parent = $('.speakers');
 
   for(let holder_uuid in DATA.transcripts) {

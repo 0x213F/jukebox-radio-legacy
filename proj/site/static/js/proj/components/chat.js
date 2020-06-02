@@ -14,22 +14,6 @@ function auto_grow(element) {
   element.style.height = height + 'px';
 }
 
-
-var $chatOption = $('.jr-chat-option');
-
-$chatOption.click(function() {
-  var $this = $(this);
-  var value = $this.attr('value');
-
-  $chatOption.removeClass('active');
-  $this.addClass('active');
-  $this.blur();
-
-  $('.jr-bottom-bar').addClass('hidden');
-  $(`.jr-${value}`).removeClass('hidden');
-});
-
-
   /////  ////////////////   /////
  /////  DISPLAY COMMENTS   /////
 /////  ////////////////   /////
