@@ -6,6 +6,9 @@ const BASE_DIGITAL_OCEAN_SPACE_URL = 'https://jukebox-radio-space.sfo2.digitaloc
 const AUDIO_CONTEXT = new AudioContext();
 
 function syncStoragePlayback() {
+  $('#youtube-video-player').addClass('hidden');
+  $('#youtube-video-player-2').addClass('hidden');
+
   var filename = BASE_DIGITAL_OCEAN_SPACE_URL + DATA.playback.record.storage_filename
 
   var audio = new Audio(filename);

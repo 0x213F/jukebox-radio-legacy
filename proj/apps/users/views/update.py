@@ -17,10 +17,8 @@ class UpdateView(BaseView):
         request.user.profile.default_display_name = display_name
         request.user.profile.save()
 
-        if first_name or last_name:
+        if first_name:
             if first_name:
                 request.user.first_name = first_name
-            if last_name:
-                request.user.last_name = last_name
             request.user.save()
         return self.http_response_200({})

@@ -22,16 +22,38 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" > <path d="M22 12C22 10.6868 21.7413 9.38647 21.2388 8.1731C20.7362 6.95996 19.9997 5.85742 19.0711 4.92896C18.1425 4.00024 17.0401 3.26367 15.8268 2.76123C14.6136 2.25854 13.3132 2 12 2V4C13.0506 4 14.0909 4.20703 15.0615 4.60889C16.0321 5.01099 16.914 5.60034 17.6569 6.34326C18.3997 7.08594 18.989 7.96802 19.391 8.93848C19.7931 9.90918 20 10.9495 20 12H22Z" fill="currentColor" /> <path d="M2 10V5C2 4.44775 2.44772 4 3 4H8C8.55228 4 9 4.44775 9 5V9C9 9.55225 8.55228 10 8 10H6C6 14.4182 9.58173 18 14 18V16C14 15.4478 14.4477 15 15 15H19C19.5523 15 20 15.4478 20 16V21C20 21.5522 19.5523 22 19 22H14C7.37259 22 2 16.6274 2 10Z" fill="currentColor" /> <path d="M17.5433 9.70386C17.8448 10.4319 18 11.2122 18 12H16.2C16.2 11.4485 16.0914 10.9023 15.8803 10.3928C15.6692 9.88306 15.3599 9.42017 14.9698 9.03027C14.5798 8.64014 14.1169 8.33081 13.6073 8.11963C13.0977 7.90869 12.5515 7.80005 12 7.80005V6C12.7879 6 13.5681 6.15527 14.2961 6.45679C15.024 6.7583 15.6855 7.2002 16.2426 7.75732C16.7998 8.31445 17.2418 8.97583 17.5433 9.70386Z" fill="currentColor" /> </svg>
       </button>
 
-      <button id="go-to-queue-view" class="go-to-queue-view btn btn-lg btn-link jr-btn-sq {% if not ticket.is_administrator %}hidden{% endif %}" style="float: right;">
-        <i class="gg-play-list-search" style="left: 5px;"></i>
+      <button class="btn btn-lg btn-link jr-btn-sq go-to-chat-view" style="float: right;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top:1px; margin-right: 1px;"> <path d="M17 9H7V7H17V9Z" fill="currentColor" /> <path d="M7 13H17V11H7V13Z" fill="currentColor" /> <path fill-rule="evenodd" clip-rule="evenodd" d="M2 18V2H22V18H16V22H14C11.7909 22 10 20.2091 10 18H2ZM12 16V18C12 19.1046 12.8954 20 14 20V16H20V4H4V16H12Z" fill="currentColor" /> </svg>
       </button>
+
+      <button id="go-to-queue-view" class="go-to-queue-view btn btn-lg btn-link jr-btn-sq {% if not ticket.is_administrator %}hidden{% endif %}" style="float: right;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: -3px;"> <path d="M16 5H4V7H16V5Z" fill="currentColor" /> <path d="M16 9H4V11H16V9Z" fill="currentColor" /> <path d="M4 13H12V15H4V13Z" fill="currentColor" /> <path d="M20 16L14 13V19L20 16Z" fill="currentColor" /> </svg>
+      </button>
+
+      <!-- <ul class="tab tab-block">
+        <li class="tab-item active">
+          <button class="badge go-to-queue-view" data-badge="!">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" > <path d="M15.8787 4.87866H3.87872V6.87866H15.8787V4.87866Z" fill="currentColor" /> <path d="M15.8787 8.87866H3.87872V10.8787H15.8787V8.87866Z" fill="currentColor" /> <path d="M3.87872 12.8787H11.8787V14.8787H3.87872V12.8787Z" fill="currentColor" /> <path fill-rule="evenodd" clip-rule="evenodd" d="M13.7574 12.7573C12.5858 13.9289 12.5858 15.8284 13.7574 17C14.681 17.9236 16.0571 18.1191 17.1722 17.5864L18.7071 19.1213L20.1213 17.7071L18.5864 16.1722C19.1191 15.057 18.9236 13.681 18 12.7573C16.8284 11.5858 14.9289 11.5858 13.7574 12.7573ZM15.1716 15.5858C15.5621 15.9763 16.1953 15.9763 16.5858 15.5858C16.9763 15.1952 16.9763 14.5621 16.5858 14.1716C16.1953 13.781 15.5621 13.781 15.1716 14.1716C14.7811 14.5621 14.7811 15.1952 15.1716 15.5858Z" fill="currentColor" /> </svg>
+          </button>
+        </li>
+        <li class="tab-item active">
+          <button class="badge go-to-chat-view" data-badge="!">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top:1px; margin-right: 1px;"> <path d="M17 9H7V7H17V9Z" fill="currentColor" /> <path d="M7 13H17V11H7V13Z" fill="currentColor" /> <path fill-rule="evenodd" clip-rule="evenodd" d="M2 18V2H22V18H16V22H14C11.7909 22 10 20.2091 10 18H2ZM12 16V18C12 19.1046 12.8954 20 14 20V16H20V4H4V16H12Z" fill="currentColor" /> </svg>
+          </button>
+        </li>
+        <li class="tab-item active">
+          <button class="badge go-to-voice-view" data-badge="!">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" > <path d="M22 12C22 10.6868 21.7413 9.38647 21.2388 8.1731C20.7362 6.95996 19.9997 5.85742 19.0711 4.92896C18.1425 4.00024 17.0401 3.26367 15.8268 2.76123C14.6136 2.25854 13.3132 2 12 2V4C13.0506 4 14.0909 4.20703 15.0615 4.60889C16.0321 5.01099 16.914 5.60034 17.6569 6.34326C18.3997 7.08594 18.989 7.96802 19.391 8.93848C19.7931 9.90918 20 10.9495 20 12H22Z" fill="currentColor" /> <path d="M2 10V5C2 4.44775 2.44772 4 3 4H8C8.55228 4 9 4.44775 9 5V9C9 9.55225 8.55228 10 8 10H6C6 14.4182 9.58173 18 14 18V16C14 15.4478 14.4477 15 15 15H19C19.5523 15 20 15.4478 20 16V21C20 21.5522 19.5523 22 19 22H14C7.37259 22 2 16.6274 2 10Z" fill="currentColor" /> <path d="M17.5433 9.70386C17.8448 10.4319 18 11.2122 18 12H16.2C16.2 11.4485 16.0914 10.9023 15.8803 10.3928C15.6692 9.88306 15.3599 9.42017 14.9698 9.03027C14.5798 8.64014 14.1169 8.33081 13.6073 8.11963C13.0977 7.90869 12.5515 7.80005 12 7.80005V6C12.7879 6 13.5681 6.15527 14.2961 6.45679C15.024 6.7583 15.6855 7.2002 16.2426 7.75732C16.7998 8.31445 17.2418 8.97583 17.5433 9.70386Z" fill="currentColor" /> </svg>
+          </button>
+        </li>
+      </ul> -->
 
     </div>
 
     <!-- - - - - -->
     <!-- YOUTUBE -->
-    <div id="youtube-video-player" style="margin-top: 24px;"></div>
-    <div id="youtube-video-player-2" style="margin-top: 24px;"></div>
+    <div id="youtube-video-player" class="hidden" style="margin-top: 24px;"></div>
+    <div id="youtube-video-player-2" class="hidden" style="margin-top: 24px;"></div>
 
     <!-- - - --->
     <!-- CHAT -->

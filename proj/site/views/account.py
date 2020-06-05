@@ -1,5 +1,7 @@
 from proj.core.views import BaseView
 
+from proj import secrets
+
 
 class AccountView(BaseView):
     def get(self, request, **kwargs):
@@ -12,5 +14,6 @@ class AccountView(BaseView):
             {
                 "default_display_name": request.user.profile.default_display_name or "",
                 "user": request.user,
+                "secrets": secrets,
             },
         )

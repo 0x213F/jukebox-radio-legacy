@@ -22,11 +22,13 @@
   <div class="card-body">
 
     <div class="jr-flex-center jr-title no-select">
-      <i class="gg-spinner-two-alt"></i>
+      <i id="join-stream-spinner" class="gg-spinner-two-alt"></i>
     </div>
 
+    <div id="join-stream-status" class="jr-flex-center jr-title no-select hidden"></div>
+
     <div class="jr-flex-center jr-title no-select" style="margin-top: 40px;">
-      <button id="join-stream-btn" class="btn btn-lg btn-primary jr-btn-primary go-to-chat-view">
+      <button id="join-stream-btn" class="btn btn-lg btn-primary jr-btn-primary go-to-chat-view hidden">
         Join Stream
       </button>
     </div>
@@ -56,7 +58,7 @@
 {% include "components/info.html" %}
 
 <!-- - - - - - --->
-<!--  INFO VIEW -->
+<!--  VOICE VIEW -->
 {% include "components/voice.html" %}
 
 {% endblock %}
@@ -74,6 +76,7 @@
 <script src="{% static 'js/proj/components/share.js' %}"></script>
 <script src="{% static 'js/proj/components/info.js' %}"></script>
 <script src="{% static 'js/proj/components/voice.js' %}"></script>
+<script src="{% static 'js/proj/components/status.js' %}"></script>
 
 <script src="{% static 'js/proj/components/playback/spotify.js' %}"></script>
 <script src="{% static 'js/proj/components/playback/youtube.js' %}"></script>

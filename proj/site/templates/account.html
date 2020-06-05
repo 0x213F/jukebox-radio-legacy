@@ -28,7 +28,7 @@
           class="ajax-form card-body"
           url="../api/user/update/"
           type="post"
-          redirect="/">
+          onsuccess="display_status_success">
 
       <div class="form-group">
         <label class="form-label label-lg"
@@ -53,22 +53,12 @@
 
       <div class="form-group">
         <label class="form-label label-lg"
-               for="update-account-first-name">First Name</label>
+               for="update-account-first-name">Full Name</label>
         <input class="form-input input-lg jr-input"
                id="update-account-first-name"
                type="text"
                name="first_name"
                value="{{ user.first_name }}">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label label-lg"
-               for="update-account-last-name">Last Name</label>
-        <input class="form-input input-lg jr-input"
-               id="update-account-last-name"
-               type="text"
-               name="last_name"
-               value="{{ user.last_name }}">
       </div>
 
       <div class="form-group">
@@ -78,6 +68,16 @@
         <span class="ajax-form-status"><span>
       </div>
 
+    </form>
+
+    <div class="form-group manage-administrator">
+      <div class="divider" style="margin-top: 24px; margin-bottom: 14;"></div>
+    </div>
+
+    <form class="ajax-form" redirect="https://accounts.spotify.com/authorize?client_id={{ secrets.SPOTIFY_CLIENT_ID }}&response_type=code&redirect_uri={{ secrets.SPOTIFY_HTTP }}%3A%2F%2F{{ secrets.SPOTIFY_DOMAIN }}%2Fconnect&scope=streaming%20app-remote-control%20user-modify-playback-state%20user-read-currently-playing%20user-read-playback-state">
+      <button class="btn btn-lg btn-secondary jr-btn">
+        Authorize Spotify <i class="fab fa-spotify" style="margin-left: 8px;"></i>
+      </button>
     </form>
 
   </div>

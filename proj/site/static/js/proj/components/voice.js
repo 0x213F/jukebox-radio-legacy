@@ -152,7 +152,10 @@ function renderTranscriptText() {
 
     let transcript = DATA.transcripts[holder_uuid];
     let $transcript = speaker.find('.transcript');
+
     $transcript.html(encodeHTML(transcript.transcript))
+
+    $transcript.scrollTop($transcript[0].scrollHeight);
 
     if(transcript.isFinal) {
       setTimeout(function() {

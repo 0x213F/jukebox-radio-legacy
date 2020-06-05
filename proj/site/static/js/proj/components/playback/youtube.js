@@ -3,6 +3,9 @@
 var YOUTUBE_PLAYER;
 var YOUTUBE_PLAYER_2;
 
+var YOUTUBE_PLAYER_IS_READY = false;
+var YOUTUBE_PLAYER_2_IS_READY = false;
+
 var ACTIVE_YOUTUBE_PLAYER;
 function onYouTubeIframeAPIReady() {
   // <div id="youtube-video-player"></div>
@@ -76,11 +79,11 @@ function onYouTubeIframeAPIReady() {
 
 // The API will call this function when the video player is ready.
 function onPlayerReady(event) {
-  //
+  YOUTUBE_PLAYER_IS_READY = true;
 }
 
 function onPlayerReady2(event) {
-  //
+  YOUTUBE_PLAYER_2_IS_READY = true;
 }
 
 // The API calls this function when the player's state changes.

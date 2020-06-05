@@ -150,6 +150,7 @@ class Spotify(object):
         response_json = response.json()
 
         items = response_json["items"]
+        items = sorted(items, key=lambda obj: obj['track_number'])
         data = []
         for item in items:
             data.append(
@@ -171,8 +172,6 @@ class Spotify(object):
             },
         )
         response_json = response.json()
-
-        print(response_json)
 
         items = response_json["tracks"]["items"]
         data = []

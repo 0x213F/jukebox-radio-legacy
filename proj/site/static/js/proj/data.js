@@ -28,6 +28,7 @@ function updateData(payload) {
   - Key[1]: one of the following:
         - ['streams', 'queues', 'tickets', 'playback', 'transcripts']
   `
+  initStatus();
   updateStreamData(payload);
   updatePlaybackData(payload);
   updateQueueData(payload);
@@ -117,4 +118,16 @@ function updateTranscriptData(payload) {
       DATA.transcripts[transcript_data.holder_uuid] = transcript_data;
     }
   }
+}
+
+function initStatus() {
+  // initialize "status" queue
+  if(!DATA.status) {
+    DATA.status = {
+      youtube: {isReady: false},
+      spotify: {isReady: false},
+      storage: {isReady: false},
+    };
+  }
+
 }

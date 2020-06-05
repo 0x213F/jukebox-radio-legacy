@@ -95,8 +95,6 @@ function initiatePlayback() {
     return;
   }
 
-  console.log('initiating playback')
-
   // YouTube
   if(playback.record && playback.record.youtube_id) {
     $('.chat-container').css('top', '298px');
