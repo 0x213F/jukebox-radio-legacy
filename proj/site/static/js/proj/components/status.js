@@ -1,7 +1,7 @@
 
 
 var periodic_task_count = 0;
-var periodic_task = setInterval(updateLoadingScreenStatus, 500);
+var periodic_task = setInterval(updateLoadingScreenStatus, 800);
 
 
 function updateLoadingScreenStatus() {
@@ -41,8 +41,9 @@ function updateLoadingScreenStatus() {
     $('#join-stream-status').removeClass('hidden');
     $('#join-stream-btn').removeClass('hidden');
     $('#join-stream-spinner').addClass('hidden');
+    $('#stream-loading-content').addClass('hidden');
     clearInterval(periodic_task);
-  } else if(periodic_task_count > 4) {
+  } else if(periodic_task_count > 2) {
 
     if(DATA.status.storage.isReady) {
       var storage_status = "gg-check-r";
@@ -54,12 +55,14 @@ function updateLoadingScreenStatus() {
       var spotify_status = "gg-check-r";
     } else {
       var spotify_status = "gg-close-r";
+      $('#join-stream-debug-spotify').removeClass('hidden');
     }
 
     if(DATA.status.youtube.isReady) {
       var youtube_status = "gg-check-r";
     } else {
       var youtube_status = "gg-close-r";
+      $('#join-stream-debug-youtube').removeClass('hidden');
     }
 
     $('#join-stream-status').html(`
@@ -82,6 +85,7 @@ function updateLoadingScreenStatus() {
     $('#join-stream-status').removeClass('hidden');
     $('#join-stream-btn').removeClass('hidden');
     $('#join-stream-spinner').addClass('hidden');
+    $('#stream-loading-content').addClass('hidden');
     clearInterval(periodic_task);
   } else {
     periodic_task_count += 1;
@@ -109,14 +113,16 @@ function updateSpotifyStatus() {
   already_updating_spotify_status = true;
 
 
-  fetch(`https://api.spotify.com/v1/me`, {
+  fetch(`https://api.spotify.com/v1/me/player/currently-playing`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${playback.spotify_token}`
     },
   })
-  .then(function(response) {
+  .then(response => response.json())
+  .then(function(response_json) {
+    console.log(response_json);
     DATA.status.spotify = {
       'isReady': true,
     }

@@ -7,7 +7,7 @@
 
       <!-- go back to main view -->
       <button type="button"
-              class="go-to-chat-view btn btn-link btn-lg jr-btn-sq"
+              class="go-to-chat-view btn btn-link btn-lg jr-btn-sq tooltip tooltip-bottom" data-tooltip="Chat"
               style="float: left;">
         <i class="gg-arrow-bottom-left-o" style="bottom: 1px;"></i>
       </button>
@@ -20,13 +20,13 @@
       </button> -->
 
       <!-- go to info view -->
-      <button class="btn btn-lg btn-link jr-btn-sq go-to-info-view" style="float: right; margin-right: 0px;">
+      <button class="btn btn-lg btn-link jr-btn-sq go-to-info-view tooltip tooltip-bottom" data-tooltip="Info" style="float: right; margin-right: 0px;">
         <i class="gg-info" style="left: 1px;"></i>
       </button>
 
       <!-- go to search view -->
       <button id="go-to-queue-view"
-              class="go-to-queue-view btn btn-lg btn-link jr-btn-sq {% if not ticket.is_administrator %}hidden{% endif %}"
+              class="go-to-queue-view btn btn-lg btn-link jr-btn-sq {% if not ticket.is_administrator %}hidden{% endif %} tooltip tooltip-bottom" data-tooltip="Queue"
               style="float: right;">
         <i class="gg-play-list-search" style="left: 5px;"></i>
       </button>

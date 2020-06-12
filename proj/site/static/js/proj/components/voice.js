@@ -160,7 +160,7 @@ function renderTranscriptText() {
     if(transcript.isFinal) {
       setTimeout(function() {
         $transcript.html('...');
-      }, 3000)
+      }, 10000)
     }
 
   }

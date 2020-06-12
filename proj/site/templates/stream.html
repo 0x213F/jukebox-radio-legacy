@@ -21,11 +21,23 @@
 
   <div class="card-body">
 
+    <div id="stream-loading-content" class="jr-flex-center jr-title no-select">
+      <p>Checking your connection...</p>
+    </div>
+
     <div class="jr-flex-center jr-title no-select">
       <i id="join-stream-spinner" class="gg-spinner-two-alt"></i>
     </div>
 
     <div id="join-stream-status" class="jr-flex-center jr-title no-select hidden"></div>
+
+    <div id="join-stream-debug-spotify" class="jr-flex-center jr-title no-select hidden" style="margin-top: 36px;">
+      <p>We cannot reach your Spotify playback. On whatever device you are using, you must open the Spotify app, play any song, return here to this page, and then refresh.</p>
+    </div>
+
+    <div id="join-stream-debug-youtube" class="jr-flex-center jr-title no-select hidden" style="margin-top: 36px;">
+      <p>If YouTube is not connected, you must refresh the webpage. You may also try opening the website in a new tab or closing and reopening your web browser.<p>
+    </div>
 
     <div class="jr-flex-center jr-title no-select" style="margin-top: 40px;">
       <button id="join-stream-btn" class="btn btn-lg btn-primary jr-btn-primary go-to-chat-view hidden">
