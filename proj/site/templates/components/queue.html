@@ -1,13 +1,19 @@
 <div id="queue-view" class="main center-horizontal card hidden" style="height: calc(100% - 24px);">
   <div class="card-body" style="width: 100%;">
 
+    <button type="button"
+            class="go-to-info-view btn btn-primary jr-info-title-btn">
+    </button>
+
+    <!-- - - - - --->
+    <!--  BUTTONS -->
     <div style="width: 100%; height: 40px;">
 
-      <button type="button"
-              class="go-to-chat-view btn btn-link btn-lg jr-btn-sq tooltip tooltip-bottom" data-tooltip="Chat"
-              style="float: left;">
-        <i class="gg-arrow-bottom-left-o" style="bottom: 1px;"></i>
-      </button>
+      <form class="ajax-form" redirect="/" style="float: left;">
+        <button class="btn btn-lg btn-link jr-btn-sq tooltip tooltip-bottom" data-tooltip="Home">
+          <i class="gg-arrow-left-o" style="bottom: 1px;"></i>
+        </button>
+      </form>
 
       <button type="button"
               class="go-to-manage-view btn btn-lg btn-link jr-btn-sq tooltip tooltip-bottom" data-tooltip="Profile"
@@ -20,11 +26,23 @@
       </button>
 
       <button class="btn btn-lg btn-link jr-btn-sq go-to-chat-view tooltip tooltip-bottom" data-tooltip="Chat" style="float: right;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top:1px; margin-right: 1px;"> <path d="M17 9H7V7H17V9Z" fill="currentColor" /> <path d="M7 13H17V11H7V13Z" fill="currentColor" /> <path fill-rule="evenodd" clip-rule="evenodd" d="M2 18V2H22V18H16V22H14C11.7909 22 10 20.2091 10 18H2ZM12 16V18C12 19.1046 12.8954 20 14 20V16H20V4H4V16H12Z" fill="currentColor" /> </svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top:1px;"> <path d="M17 9H7V7H17V9Z" fill="currentColor" /> <path d="M7 13H17V11H7V13Z" fill="currentColor" /> <path fill-rule="evenodd" clip-rule="evenodd" d="M2 18V2H22V18H16V22H14C11.7909 22 10 20.2091 10 18H2ZM12 16V18C12 19.1046 12.8954 20 14 20V16H20V4H4V16H12Z" fill="currentColor" /> </svg>
       </button>
 
-      <button class="go-to-search-view btn btn-lg btn-link jr-btn-sq {% if not ticket.is_administrator %}hidden{% endif %} tooltip tooltip-bottom" data-tooltip="Add" style="float: right;">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: -3px;"> <path d="M2 5H14V7H2V5Z" fill="currentColor" /> <path d="M2 9H14V11H2V9Z" fill="currentColor" /> <path d="M10 13H2V15H10V13Z" fill="currentColor" /> <path d="M16 9H18V13H22V15H18V19H16V15H12V13H16V9Z" fill="currentColor" /> </svg>
+      <button class="go-to-search-view btn btn-lg btn-link jr-btn-sq {% if not ticket.is_administrator %}hidden{% endif %} tooltip tooltip-bottom" data-tooltip="Queue" style="float: right;">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style="margin-right: -4px;"
+        >
+          <path d="M2 5H14V7H2V5Z" fill="currentColor" />
+          <path d="M2 9H14V11H2V9Z" fill="currentColor" />
+          <path d="M10 13H2V15H10V13Z" fill="currentColor" />
+          <path d="M16 9H18V13H22V15H18V19H16V15H12V13H16V9Z" fill="currentColor" />
+        </svg>
       </button>
 
     </div>
@@ -35,7 +53,7 @@
       <div class="empty-state hidden">
         <mark style="border-radius: 8px; width: 100%;">
           <p style="margin: 8px 12px; text-align: center;">
-            The queue is empty. Click <i class="gg-play-list-add" style="display: inline-block; margin-left: 6px; margin-right: 10px;"></i> to add to the queue.
+            The queue is empty. Click <i class="gg-play-list-add go-to-search-view" style="display: inline-block; margin-left: 6px; margin-right: 10px;"></i> to add to the queue.
           </p>
         </mark>
       </div>
@@ -67,15 +85,61 @@
 
       </div> -->
 
-      <div id="queued-up" class="queue-cards"></div>
     </div>
 
+    <div id="queued-up" class="queue-cards no-scrollbar"></div>
+
     <div class="jr-bottom-bar jr-controls">
-      <mark style="border-radius: 12px; width: 100%;">
-        <p style="margin: 5px 12px; text-align: center;">
-          Playback controls coming soon...
-        </p>
-      </mark>
+      <button id="pause-playback" class="btn btn-lg btn-secondary jr-btn-playback tooltip tooltip-bottom" data-tooltip="Pause">
+        <!-- <svg
+          width="30"
+          height="30"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style="margin-top: -6px;"
+        >
+          <path d="M15 12.3301L9 16.6603L9 8L15 12.3301Z" fill="currentColor" />
+        </svg> -->
+        <svg
+          width="30"
+          height="30"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style="margin-top: -6px;"
+        >
+          <path d="M11 7H8V17H11V7Z" fill="currentColor" />
+          <path d="M13 17H16V7H13V17Z" fill="currentColor" />
+        </svg>
+      </button>
+      <button id="next-playback" class="btn btn-lg btn-secondary jr-btn-playback tooltip tooltip-bottom" data-tooltip="Next">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style="margin-top: -2px;"
+        >
+          <path d="M6 17L14 12L6 7V17Z" fill="currentColor" />
+          <path d="M18 7H15V12V17H18V7Z" fill="currentColor" />
+        </svg>
+      </button>
+      <button id="skip-playback" class="btn btn-lg btn-secondary jr-btn-playback tooltip tooltip-bottom" data-tooltip="Skip" style="margin-left: 0px;">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style="margin-top: -2px;"
+        >
+          <path d="M21.0023 17H18.0023V7H21.0023V17Z" fill="currentColor" />
+          <path d="M17.0023 12L10 17V7L17.0023 12Z" fill="currentColor" />
+          <path d="M2 17L9.00232 12L2 7V17Z" fill="currentColor" />
+        </svg>
+      </button>
     </div>
 
   </div>

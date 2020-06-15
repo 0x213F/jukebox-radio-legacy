@@ -1,6 +1,8 @@
 .queue-cards {
   border: 1px solid #727e96;
   border-radius: 12px;
+  max-height: calc(100% - 152px);
+  overflow-y: auto;
 }
 
 .queue-card {
@@ -38,4 +40,12 @@
 
 .queue-delete-form {
   display: flex;
+}
+
+
+.jr-btn-playback {
+  width: calc(33.33% - 16px);
+  float: right;
+  border-radius: 12px;
+  margin-left: 24px;
 }

@@ -2,6 +2,11 @@
   margin-top: 16px;
 }
 
+.speakers > .speaker:first-child {
+  margin-top: 0px;
+}
+
+
 
 .speakers > .speaker > .name {
   background-color: rgb(256, 256, 256, 0.95)!important;

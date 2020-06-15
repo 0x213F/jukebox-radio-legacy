@@ -42,7 +42,25 @@ function display_comment(comment) {
   if(comment.status != 'comment') {
     return;
   }
-  $CHAT_CONTAINER.append(display_text(comment));
+
+  var $node = $(display_text(comment));
+
+  $node.mouseup(function(event) {
+		var selection = getSelected();
+        selection = $.trim(selection);
+      if(selection != ''){
+        // $("span.popup-tag").css("display","block");
+        // $("span.popup-tag").css("top", event.clientY);
+        // $("span.popup-tag").css("left", event.clientX);
+        // console.log(event)
+        // $("span.popup-tag").text(selection);
+      } else{
+        // $("span.popup-tag").css("display","none");
+      }
+      $("span.popup-tag").css("display","none");
+	});
+
+  $CHAT_CONTAINER.append($node);
 }
 
 function display_text(comment) {
@@ -70,4 +88,18 @@ function display_text(comment) {
       </div>
     `;
   }
+}
+
+
+// SELECTION
+
+function getSelected() {
+	if(window.getSelection) { return window.getSelection(); }
+	else if(document.getSelection) { return document.getSelection(); }
+	else {
+		var selection = document.selection && document.selection.createRange();
+    if(selection.text) { return selection.text; }
+  		return false;
+  	}
+  	return false;
 }

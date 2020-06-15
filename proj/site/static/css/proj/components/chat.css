@@ -27,7 +27,7 @@
   position: absolute;
   overflow-y: scroll;
   bottom: 76px;
-  top: 76px;
+  top: 116px;
   width: calc(100% - 48px);
 }
 
@@ -63,4 +63,17 @@
   overflow: auto;
   transition: all 0.2s ease;
   transition: height 0.0s ease;
+}
+
+.jr-info-title-btn {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.popup-tag{
+  position: fixed;
+  display: none;
+  background-color: rgb(256, 256, 256, 0.95)!important;
+  padding: 12px;
 }

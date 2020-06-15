@@ -74,3 +74,26 @@ function renderQueue() {
 $('.queue-action-option').click(function() {
   setTimeout(renderQueue, 0)
 });
+
+
+$('#pause-playback').click(function() {
+  let msg = JSON.stringify({
+    'playback': 'pause',
+  });
+  console.log('sent')
+  window['SOCKET'].send(msg);
+});
+
+$('#next-playback').click(function() {
+  let msg = JSON.stringify({
+    'playback': 'next',
+  });
+  window['SOCKET'].send(msg);
+});
+
+$('#skip-playback').click(function() {
+  let msg = JSON.stringify({
+    'playback': 'skip',
+  });
+  window['SOCKET'].send(msg);
+});

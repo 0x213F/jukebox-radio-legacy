@@ -170,3 +170,7 @@ class StreamManager(BaseManager):
         tasks.schedule_spin.apply_async(eta=next_play_time, args=[stream.id])
 
         return stream, queue
+
+
+    async def pause(self, stream):
+        pass

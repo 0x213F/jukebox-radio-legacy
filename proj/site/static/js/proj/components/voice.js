@@ -16,6 +16,7 @@ try {
 
     // Get a transcript of what was said.
     var transcript = event.results[current][0].transcript;
+    console.log(transcript)
 
     // Send the transcript to the server
     let isFinal = event.results[current].isFinal
@@ -29,6 +30,9 @@ try {
     if(isFinal) {
       $('#chat-input-main').val(transcript);
       $('#chat-form').submit();
+      $broadcastAudioButton.addClass('btn-secondary');
+      $broadcastAudioButton.removeClass('btn-primary');
+      recognition.stop();
     }
   }
 }
@@ -138,6 +142,9 @@ function renderTranscriptBubbles() {
   }
 }
 
+
+var transcript_cache = {};
+
 function renderTranscriptText() {
   let $parent = $('.speakers');
 
@@ -153,6 +160,13 @@ function renderTranscriptText() {
     let transcript = DATA.transcripts[holder_uuid];
     let $transcript = speaker.find('.transcript');
 
+    let old_transcript = transcript_cache[holder_uuid]
+    if(old_transcript && old_transcript.length > transcript.transcript.length) {
+      transcript = old_transcript;
+    } else {
+      transcript_cache[holder_uuid] = transcript.transcript;
+    }
+
     $transcript.html(encodeHTML(transcript.transcript))
 
     $transcript.scrollTop($transcript[0].scrollHeight);
@@ -160,7 +174,7 @@ function renderTranscriptText() {
     if(transcript.isFinal) {
       setTimeout(function() {
         $transcript.html('...');
-      }, 10000)
+      }, 6000)
     }
 
   }

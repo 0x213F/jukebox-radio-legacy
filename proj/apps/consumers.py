@@ -179,6 +179,8 @@ class Consumer(AsyncConsumer):
         )
 
     async def _websocket_receive_data(self, data):
+        print(data)
+
         if "text" in data:
             await Comment.objects.create_and_share_comment_async(
                 self.scope["user"],
@@ -194,6 +196,21 @@ class Consumer(AsyncConsumer):
                 self.scope["stream"].chat_room,
                 {"type": "send_update", "text": {"updated": {"transcripts": [data]}},},
             )
+
+        if "playback" in data:
+            playback = data["playback"]
+
+            if playback == "pause":
+                await Stream.objects.pause(self.scope["stream"])
+
+            # if playback == "play":
+            #     await Stream.objects.play(self.scope["stream"])
+            #
+            # if playback == "next":
+            #     await Stream.objects.next(self.scope["stream"])
+            #
+            # if playback == "skip":
+            #     await Stream.objects.pause(self.scope["stream"])
 
         if "connect_to_livestream" in data:
 

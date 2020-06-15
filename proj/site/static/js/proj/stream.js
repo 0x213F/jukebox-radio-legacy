@@ -97,21 +97,21 @@ function initiatePlayback() {
 
   // YouTube
   if(playback.record && playback.record.youtube_id) {
-    $('.chat-container').css('top', '298px');
+    $('.chat-container').css('top', '346px');
     syncYouTubePlayback();
     $('#info-album-art').attr('src', playback.record.youtube_img_high);
     $('#info-record-name').text(playback.record.youtube_name);
 
   // Spotify
   } else if(playback.record && playback.record.spotify_uri) {
-    $('.chat-container').css('top', '76px');
+    $('.chat-container').css('top', '116px');
     syncSpotifyPlayback();
     $('#info-album-art').attr('src', playback.record.spotify_img_high);
     $('#info-record-name').text(playback.record.spotify_name);
 
   // JukeboxRadio Storage
   } else if(playback.record) {
-    $('.chat-container').css('top', '76px');
+    $('.chat-container').css('top', '116px');
     syncStoragePlayback();
     $('#info-record-name').text(playback.record.storage_name);
   }
@@ -127,10 +127,8 @@ function renderStreamTitle(payload) {
     return;
   }
 
-  let $banners = $('.jr-info-banner');
-  if($banners.text() !== stream.name) {
-    $banners.text(stream.name);
-  }
+  let $banners = $('.jr-info-title-btn');
+  $banners.text(stream.name);
 }
 
 function renderGoToQueueViewButtons(payload) {
