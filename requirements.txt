@@ -29,7 +29,7 @@ colorama==0.3.7
 ConfigArgParse==1.0
 configobj==5.0.6
 constantly==15.1.0
-cryptography==2.8
+cryptography==3.2
 daphne==2.3.0
 distro==1.4.0
 Django==3.0.3
