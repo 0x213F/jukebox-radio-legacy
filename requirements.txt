@@ -54,7 +54,7 @@ h2==3.2.0
 hiredis==1.0.0
 hpack==3.0.0
 http3==0.6.7
-httplib2==0.9.2
+httplib2==0.19.0
 httptools==0.0.13
 hyperframe==5.2.0
 hyperlink==19.0.0
