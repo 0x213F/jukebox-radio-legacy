@@ -18,9 +18,9 @@ var emojiStringToArray = function (str) {
 function generate_stream(stream, class_name) {
   var background_color = ''
   if(stream.status === 'activated') {
-    background_color = '#32b643';
+    background_color = '#4CCBA6';
   } else {
-    background_color = "#5755d9";
+    background_color = "#8F87D2";
   }
 
   var tags_html = ''
