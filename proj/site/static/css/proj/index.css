@@ -15,7 +15,7 @@
   border-radius: 12px;
   padding-left: 24px!important;
   padding-right: 24px!important;
-  color: #5764c6;
+  color: #9991D6;
   background-color: rgb(256, 256, 256, 0.95)!important;
 }
 
@@ -39,7 +39,7 @@
 
 .jr-btn.btn-secondary:hover,
 .jr-btn-sq.btn-secondary:hover {
-  background-color: #5764c6!important;
+  background-color: #9991D6!important;
 }
 
 .jr-btn.btn-link:hover,
