@@ -16,7 +16,7 @@ blinker==1.4
 boto3==1.12.46
 botocore==1.15.46
 cachetools==4.1.0
-celery==4.4.0
+celery==5.2.2
 certbot==1.1.0
 certbot-django==0.2.0
 certifi==2019.6.16
